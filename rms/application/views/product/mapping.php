@@ -101,7 +101,7 @@
 					var wrapper         = $(".input_fields_wrap_" + idl); //Fields wrapper
 
 					if(! x){
-					    var x = 0;
+					    x = 0;
 					};
 
 					if(x < max_fields){ //max input box allowed
