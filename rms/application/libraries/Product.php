@@ -39,7 +39,7 @@ class Product {
 			LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product 
 			LEFT JOIN users AS u ON ps.last_update_id_user = u.id
 			WHERE p.deleted=0 $sqladd 
-		ORDER BY p.`active` DESC, p.id_supplier ASC LIMIT 10") or die($this->mysqli->error);
+		ORDER BY p.`active` DESC, p.id_supplier ASC LIMIT 10000") or die($this->mysqli->error);
 
 	$ret = array();
 	foreach ($req->result_array() as $key) {
