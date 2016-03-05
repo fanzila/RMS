@@ -48,7 +48,7 @@
 										</select>
 									</td>
 									<td><input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>"  data-mini="true"></td>
-									<td><input type="text" name="packaging" value="<?=$line['packaging']?>"  data-mini="true"></td>
+									<td><input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" data-mini="true"></td>
 									<td>
 										<select id="id_unit<?=$line['id']?>" name="id_unit"  data-mini="true">
 											<? foreach ($products_unit as $pack_unit) { ?>
@@ -95,10 +95,10 @@
 														<option value="0" <? if($line['stock_management'] == 0 ) { echo "selected"; } ?>>no</option>
 														<option value="1" <? if($line['stock_management'] == 1 ) { echo "selected"; } ?>>yes</option>
 													</select></td>
-													<td><input type="text" name="stock_qtty" value="<?=$line['stock_qtty']?>"  data-mini="true"></td></td>
-													<td><input type="text" name="stock_warning" value="<?=$line['stock_warning']?>"  data-mini="true"></td></td>
-													<td><input type="text" name="stock_mini" value="<?=$line['stock_mini']?>"  data-mini="true"></td></td>
-													<td><input type="text" name="stock_max" value="<?=$line['stock_max']?>"  data-mini="true"></td></td>
+													<td><input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=$line['stock_qtty']?>"  data-mini="true"></td></td>
+													<td><input type="text" id="stock_warning-<?=$line['id']?>" name="stock_warning" value="<?=$line['stock_warning']?>"  data-mini="true"></td></td>
+													<td><input type="text" id="stock_mini-<?=$line['id']?>" name="stock_mini" value="<?=$line['stock_mini']?>"  data-mini="true"></td></td>
+													<td><input type="text" id="stock_max-<?=$line['id']?>" name="stock_max" value="<?=$line['stock_max']?>"  data-mini="true"></td></td>
 													<td valign="top"><small><?=$line['last_update_user']?> <br /><?=$line['last_update_user_name']?></small></td>
 													<td valign="top"><small><?=$line['last_update_pos']?></small></td>
 													<td colspan="5"><input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true"></td>
@@ -141,7 +141,7 @@
 														</select>
 													</td>
 													<td><input type="text" name="price" id="price-1" value="0"  data-mini="true"></td>
-													<td><input type="text" name="packaging" data-mini="true"></td>
+													<td><input type="text" name="packaging" id="packaging-1" data-mini="true"></td>
 													<td>
 														<select id="id_unit" name="id_unit"  data-mini="true">
 															<? foreach ($products_unit as $id_unit) { ?>
@@ -190,10 +190,10 @@
 																		<option value="0">no</option>
 																		<option value="1">yes</option>
 																	</select></td>
-																	<td><input type="text" name="stock_qtty" value=""  data-mini="true"></td></td>
-																	<td><input type="text" name="stock_warning" value=""  data-mini="true"></td></td>
-																	<td><input type="text" name="stock_mini" value=""  data-mini="true"></td></td>
-																	<td><input type="text" name="stock_max" value=""  data-mini="true"></td></td>
+																	<td><input type="text" id="stock_qtty-1" name="stock_qtty" value=""  data-mini="true"></td></td>
+																	<td><input type="text" id="stock_warning-1" name="stock_warning" value=""  data-mini="true"></td></td>
+																	<td><input type="text" id="stock_mini-1" name="stock_mini" value=""  data-mini="true"></td></td>
+																	<td><input type="text" id="stock_max-1" name="stock_max" value=""  data-mini="true"></td></td>
 																	<td valign="top"><small></small></td>
 																	<td valign="top"><small></small></td>
 																	<td colspan="5"><input type="text" name="comment" data-mini="true"></td>
@@ -213,18 +213,42 @@
 
 											<script>
 											
+											function isNumeric(n) {
+												return !isNaN(parseFloat(n)) && isFinite(n);
+											}
+											
 											function validate(idl) {
 												var $form = $('#pdt' + idl);
 												var done = 0;
 												$form.on('submit', function() {
 
 													var name = $('#name-' + idl).val();
-													var price = $('#price-' + idl).val();				
+													var price = $('#price-' + idl).val();
+													var stock_qtty = $('#stock_qtty-' + idl).val();				
+													var stock_warning = $('#stock_warning-' + idl).val();	
+													var stock_mini = $('#stock_mini-' + idl).val();	
+													var stock_max = $('#stock_max-' + idl).val();	
+													var packaging = $('#packaging-' + idl).val();	
 
+													
 													if(name == '' || price == '') {
 														alert('Please fill mandatory fields.');
 														return false;
 													}
+													
+													var price_test 			= isNumeric(price);
+													var stock_qtty_test 	= isNumeric(stock_qtty);
+													var stock_warning_test 	= isNumeric(stock_warning);
+													var stock_mini_test 	= isNumeric(stock_mini);
+													var stock_max_test	 	= isNumeric(stock_max);
+													var packaging_test	 	= isNumeric(packaging);
+													
+													
+													if((!price_test && price) || (!stock_qtty_test && stock_qtty) || (!stock_warning_test && stock_warning) || (!stock_mini_test && stock_mini) || (!stock_max_test && stock_max) || (!packaging_test && packaging)) {
+														alert('Please enter numeric value for numeric fields.');
+														return false;
+													}
+													
 													$.ajax({
 														url: $(this).attr('action'),
 														type: $(this).attr('method'),

@@ -386,11 +386,15 @@ class Order extends CI_Controller {
 		foreach ($data as $key => $var) {
 			if(is_numeric($key)) {
 				$$products[$key]['supplier_name'] = array($key => $var);
+				
+				$qtty = $this->clean_number($var);
+				if(!empty($var) AND !is_numeric($qtty)) exit('Quantity has to be numeric, invalid: '.$var);
+				
 				$complet[] = array(
 					'supplier' => $products[$key]['supplier_name'], 
 					'supplier_id' => $products[$key]['supplier_id'], 
 					'id' => $key, 
-					'qtty' => $var, 
+					'qtty' => $qtty, 
 					'name' => $products[$key]['name'], 
 					'unitname' => $products[$key]['unit_name'],
 					'packaging' => $products[$key]['packaging'],
@@ -441,6 +445,12 @@ class Order extends CI_Controller {
 		return $total;
 	}
 
+	private function clean_number($num) {
+		$t1 = str_replace ( ',' , '.' , $num);
+		$t2 = trim($t1);
+		//$t3 = preg_replace("/[^0-9,.]/", "", $t2);
+		return $t2;
+	}
 }
 
 /**

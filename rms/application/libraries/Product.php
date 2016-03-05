@@ -39,7 +39,7 @@ class Product {
 			LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product 
 			LEFT JOIN users AS u ON ps.last_update_id_user = u.id
 			WHERE p.deleted=0 $sqladd 
-		ORDER BY p.`active` DESC, p.id_supplier ASC LIMIT 10000") or die($this->mysqli->error);
+		ORDER BY p.`active` DESC, p.id_supplier ASC LIMIT 10") or die($this->mysqli->error);
 
 	$ret = array();
 	foreach ($req->result_array() as $key) {
@@ -86,7 +86,7 @@ public function getSuppliers() {
 	$req = $CI->db->query("SELECT * FROM suppliers WHERE active=1 AND deleted=0 ORDER BY `id` ASC") or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
-		$reql = $CI->db->query("SELECT `date`, user FROM orders WHERE supplier_id = $key[id] ORDER BY `date` DESC LIMIT 1") or die($this->mysqli->error);
+		$reql = $CI->db->query("SELECT `date`, user FROM orders WHERE supplier_id = $key[id] AND status = 'sent' ORDER BY `date` DESC LIMIT 1") or die($this->mysqli->error);
 		$rowl = $reql->result_array();
 		$ret[$key['id']] = $key;
 		if(isset($rowl[0]['date'])) {
