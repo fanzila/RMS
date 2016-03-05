@@ -130,8 +130,7 @@ class Crud extends CI_Controller {
     public function products()
     {
 		$this->grocery_crud->set_relation('id_supplier','suppliers','name');
-		$this->grocery_crud->set_relation('id_price_unit','products_unit','name');
-		$this->grocery_crud->set_relation('id_packaging_unit','products_unit','name');
+		$this->grocery_crud->set_relation('id_unit','products_unit','name');
 		$this->grocery_crud->set_relation('id_category','products_category','name');
         $this->grocery_crud->set_table('products');
         $output = $this->grocery_crud->render();

@@ -29,8 +29,9 @@ class Cashier {
 		$db		= new SQLite3($path);
 
 		$result_check = $db->query("SELECT * FROM sqlite_master WHERE name ='ARCHIVEDRECEIPT' and type='table'");
+		$result_check_ar = $result_check->fetchArray(SQLITE3_ASSOC);
 
-		if(!empty($result_check->fetchArray(SQLITE3_ASSOC))) {
+        if(!empty($result_check_ar)) {
 
 			//RECEIPT
 			$result_receipt = $db->query('SELECT * FROM ARCHIVEDRECEIPT');
