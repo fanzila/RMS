@@ -100,7 +100,9 @@
 					var max_fields      = 100000; //maximum input boxes allowed
 					var wrapper         = $(".input_fields_wrap_" + idl); //Fields wrapper
 
-					//var x = 1; //initlal text box count
+					if(! x){
+					    var x = 0;
+					};
 
 					if(x < max_fields){ //max input box allowed
 
