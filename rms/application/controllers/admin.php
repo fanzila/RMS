@@ -47,12 +47,6 @@ class Admin extends CI_Controller {
 		$bal_ca = $this->db->query($bal_ca);
 		$ca = $bal_ca->row_array();
 		
-		include($_SERVER['DOCUMENT_ROOT']."/application/config/database.php");
-		$mysqli = new mysqli($db['pasteque']['hostname'], $db['pasteque']['username'], $db['pasteque']['password'], $db['pasteque']['database']);
-		if ($mysqli->connect_errno) {
-			echo "Echec lors de la connexion à MySQL : (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-		}
-		
 		$data = array(
 			'user_groups'		=> $user_groups[0],
 			'bank_balance'		=> $bal['val'],
