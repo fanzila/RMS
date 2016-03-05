@@ -1,0 +1,18 @@
+.back-to-top {
+    background-color:#333;
+    border:1px solid #222;
+    border-bottom:0;
+    bottom:0;
+    color:#bbb;
+    display:none;
+    float:left;
+    font-size:11px;
+    padding:10px 10px 5px;
+    position:fixed;
+    right:30px;
+    text-decoration:none;
+    z-index:99999;
+    -webkit-border-radius:10px 10px 0 0;
+    -moz-border-radius:10px 10px 0 0;
+    border-radius:10px 10px 0 0;
+}
