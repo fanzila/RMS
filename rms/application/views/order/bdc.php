@@ -53,7 +53,7 @@ body {
 	<td class="table_bdc" align="center"><b>Code Art.</b></td>
 	<td class="table_bdc" align="center"><b>Colisage</b></td>
 	<td class="table_bdc" align="center"><b>Qtte unitaire</b></td>
-	<td class="table_bdc" align="center"><b>Sous total prix H.T.</b></td>
+	<td class="table_bdc" align="center"><b>Sous total prix unitaire H.T.</b></td>
 </tr>
 <? foreach ($products as $key => $var) { ?>
 <tr>
