@@ -2,12 +2,14 @@
 
 class Product {
 
-	public function getProducts($id = null, $supplier_id = null) {
+	public function getProducts($id = null, $supplier_id = null, $order = null) {
 
 		$CI =& get_instance();
 		$sqladd = '';
 		if($id) $sqladd = " AND p.id = $id";
 		if($supplier_id) $sqladd = " AND s.id = $supplier_id";
+		$ordersql = "p.`active` DESC"; 
+		if($order) $ordersql = $order; 
 		
 		$req = $CI->db->query("SELECT 
 			p.`id`, 
@@ -39,7 +41,7 @@ class Product {
 			LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product 
 			LEFT JOIN users AS u ON ps.last_update_id_user = u.id
 			WHERE p.deleted=0 $sqladd 
-		ORDER BY p.`active` DESC, p.id_supplier ASC LIMIT 10000") or die($this->mysqli->error);
+		ORDER BY $ordersql, p.id_supplier ASC LIMIT 10000") or die($this->mysqli->error);
 
 	$ret = array();
 	foreach ($req->result_array() as $key) {
