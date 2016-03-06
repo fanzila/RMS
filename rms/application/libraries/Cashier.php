@@ -2,6 +2,78 @@
 
 class Cashier {
 
+	private function getSalesForProduct($id) {
+		$CI = & get_instance(); 
+		$CI->load->database();
+		$qtty = 0;
+
+		//get last_stock_update 
+		$q_stock = "SELECT last_update_stock FROM sales_product WHERE id_pos = '".$id."'";
+		$r_stock = $CI->db->query($q_stock) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$row_stock = $r_stock->result_array();
+		$last_update = $row_stock[0]['last_update_stock'];
+		
+		//get sales product
+		$q_sp = "SELECT sri.quantity AS quantity 
+			FROM sales_receipt AS sr
+			JOIN sales_receiptitem AS sri ON sri.receipt = sr.`id`
+			WHERE sri.product = '".$id."'
+			AND (sr.date_closed > '".$last_update."') 
+			AND sr.canceled = 0";
+		$r_sp = $CI->db->query($q_sp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$row_sp = $r_sp->result_array();
+		
+		foreach ($row_sp as $key) {
+			$qtty += 1*($key['quantity']/1000);
+		}
+
+		//get productaddon
+		$q_spa = "SELECT sria.quantity FROM sales_productaddon AS spa
+			JOIN sales_receiptitemaddon AS sria ON sria.productaddon = spa.id_pos
+			JOIN sales_receiptitem AS sri ON sri.id = sria.receiptitem
+			JOIN sales_receipt AS sr ON sr.`id` = sri.receipt
+			JOIN sales_product AS sp ON sp.id_pos = spa.id_pos_product
+			WHERE spa.id_pos_product = '".$id."'
+			AND (sr.date_closed > '".$last_update."') 
+			AND sr.canceled = 0";
+		$r_spa = $CI->db->query($q_spa) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$row_spa = $r_spa->result_array();
+		foreach ($row_spa as $keya) {
+			$qtty += 1*($keya['quantity']);
+		}
+
+		return $qtty;
+	}
+
+	public function updateStock() {
+
+		$CI = & get_instance(); 
+		$CI->load->database();
+
+		$q_pos_pdt = "SELECT * FROM sales_product WHERE deleted=0";
+		$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$res_pos_pdt = $r_pos_pdt->result_array();
+
+		foreach ($res_pos_pdt as $pos_pdt) {
+			$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			
+			$sales = $this->getSalesForProduct($pos_pdt['id_pos']);
+			//echo "$sales for $pos_pdt[name]";
+			
+			$q_mapping = "SELECT * FROM products_mapping WHERE id_pos=$pos_pdt[id]";
+			$r_mapping = $CI->db->query($q_mapping) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$res_mapping = $r_mapping->result_array();
+
+			foreach ($res_mapping as $mapping) {				
+				$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product]") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			}
+			
+			$CI->db->query("UPDATE sales_product SET last_update_stock = NOW() WHERE id_pos = '".$pos_pdt['id_pos']."'") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		}
+
+	}
+
 	private function getDoneArchivesList() {
 
 		$CI = & get_instance(); 
@@ -18,7 +90,7 @@ class Cashier {
 
 		return $ret;
 	}
-
+	
 	private function insertArchives($file) {
 
 		$CI = & get_instance(); 
@@ -31,7 +103,7 @@ class Cashier {
 		$result_check = $db->query("SELECT * FROM sqlite_master WHERE name ='ARCHIVEDRECEIPT' and type='table'");
 		$result_check_ar = $result_check->fetchArray(SQLITE3_ASSOC);
 
-        if(!empty($result_check_ar)) {
+		if(!empty($result_check_ar)) {
 
 			//RECEIPT
 			$result_receipt = $db->query('SELECT * FROM ARCHIVEDRECEIPT');
@@ -96,11 +168,19 @@ class Cashier {
 		$db		= new SQLite3($file);
 
 		//PRODUCT
-		$CI->db->query('TRUNCATE TABLE  `sales_product`') or die($this->db->_error_message());
 		$result_product = $db->query('SELECT * FROM PRODUCT');
 		while($row_product=$result_product->fetchArray(SQLITE3_ASSOC)){
-			$q_product = "INSERT INTO sales_product SET id_pos='".$row_product['ID']."',  name='".addslashes($row_product['NAME'])."', category='".$row_product['CATEGORY']."', deleted=".$row_product['DELETED'];
+	
+			$q_product = "INSERT INTO sales_product SET id_pos='".$row_product['ID']."',  name='".addslashes($row_product['NAME'])."', category='".$row_product['CATEGORY']."', deleted=".$row_product['DELETED']." ON DUPLICATE KEY UPDATE name='".addslashes($row_product['NAME'])."', category='".$row_product['CATEGORY']."', deleted=".$row_product['DELETED'];
+			
 			$r_product = $CI->db->query($q_product) or die($this->db->_error_message());
+		}
+
+		//PRODUCTADDON
+		$result_productaddon = $db->query('SELECT * FROM PRODUCTADDON');
+		while($row_productaddon=$result_productaddon->fetchArray(SQLITE3_ASSOC)){
+			$q_productaddon = "INSERT INTO sales_productaddon SET id_pos='".$row_productaddon['ID']."',  property_name='".addslashes($row_productaddon['PROPERTY_NAME'])."', category='".$row_productaddon['CATEGORY']."', id_pos_product='".$row_productaddon['PRODUCT']."', deleted=".$row_productaddon['DELETED']." ON DUPLICATE KEY UPDATE property_name='".addslashes($row_productaddon['PROPERTY_NAME'])."', category='".$row_productaddon['CATEGORY']."', id_pos_product='".$row_productaddon['PRODUCT']."', deleted=".$row_productaddon['DELETED'];
+			$r_productaddon = $CI->db->query($q_productaddon) or die($this->db->_error_message());
 		}
 
 		//RECEIPT

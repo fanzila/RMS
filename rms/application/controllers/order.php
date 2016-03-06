@@ -33,7 +33,8 @@ class Order extends CI_Controller {
 
 		$this->hmw->keyLogin();		
 		$this->load->library('product');
-		
+		$this->load->library("cashier");
+				
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 		$freq			= $this->freq();
 		$suppliers 		= $this->product->getSuppliers();
@@ -44,9 +45,8 @@ class Order extends CI_Controller {
 			'suppliers'    => $suppliers,
 			'freq'			=> $freq);
 
-		//get POS stock 
-		$this->load->library("cashier");
-		$stock = $this->cashier->posInfo('salesUpdate');
+		$stock = $this->cashier->posInfo('salesUpdate');		
+		$this->cashier->updateStock();
 
 		$this->load->view('order/index',$data);
 	}
@@ -128,7 +128,7 @@ class Order extends CI_Controller {
 				$pdt_info = $this->product->getProducts($ex[1]);
 				$maj[$ex[1]]['stock'] = $var;
 				$maj[$ex[1]]['name'] = $pdt_info[$ex[1]]['name'];
-				if($var > 0) $stock_update = true;
+				if(!empty($var)) $stock_update = true;
 			}
 		}
 

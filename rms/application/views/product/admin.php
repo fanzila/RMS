@@ -95,7 +95,7 @@
 														<option value="0" <? if($line['stock_management'] == 0 ) { echo "selected"; } ?>>no</option>
 														<option value="1" <? if($line['stock_management'] == 1 ) { echo "selected"; } ?>>yes</option>
 													</select></td>
-													<td><input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=$line['stock_qtty']?>"  data-mini="true"></td></td>
+													<td><input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=round($line['stock_qtty'],2)?>"  data-mini="true"></td></td>
 													<td><input type="text" id="stock_warning-<?=$line['id']?>" name="stock_warning" value="<?=$line['stock_warning']?>"  data-mini="true"></td></td>
 													<td><input type="text" id="stock_mini-<?=$line['id']?>" name="stock_mini" value="<?=$line['stock_mini']?>"  data-mini="true"></td></td>
 													<td><input type="text" id="stock_max-<?=$line['id']?>" name="stock_max" value="<?=$line['stock_max']?>"  data-mini="true"></td></td>
