@@ -3,3 +3,5 @@ rms/application/config/database.php
 rms/application/helpers/dompdf/lib/fonts/
 rms/orders/
 rms/application/helpers/dompdf/lib/fonts/log.htm
+
+rms/application/helpers/dompdf/lib/fonts/log.htm
