@@ -57,7 +57,7 @@ body {
 </tr>
 <? foreach ($products as $key => $var) { ?>
 <tr>
-	<td class="table_bdc"><?=$var['name']?></td>
+	<td class="table_bdc"><?=$var['name']?> <? if($var['attribut'] > 0) { echo $var['attributname']; } ?></td>
 	<td class="table_bdc"><?=$var['codef']?></td>
 	<td class="table_bdc"><?=$var['packaging']?> <?=$var['unitname']?></td>
 	<td class="table_bdc"><?=$var['qtty']?></td>

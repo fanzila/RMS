@@ -61,6 +61,23 @@ public function getPosProducts() {
 	return $ret;
 }
 
+public function getAttributName($id) {
+	$CI =& get_instance();
+	$req = $CI->db->query("SELECT name FROM products_attribut WHERE id = $id LIMIT 1") or die($this->mysqli->error);
+	$ret = $req->result_array();
+	return $ret[0]['name'];
+}
+
+public function getAttributs() {
+	$CI =& get_instance();
+	$req = $CI->db->query("SELECT * FROM products_attribut") or die($this->mysqli->error);
+	$ret = array();
+	foreach ($req->result_array() as $key) {
+		$ret[$key['id']] = $key;
+	}
+	return $ret;
+}
+
 public function getMapping() {
 	$CI =& get_instance();
 	$req = $CI->db->query("SELECT * FROM products_mapping") or die($this->mysqli->error);

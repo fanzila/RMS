@@ -27,86 +27,109 @@ $today = getdate();
 							<input type="hidden" name="unitname-<?=$line['id']?>" id="unitname-<?=$line['id']?>" value="<?=$line['unit_name']?>"> 
 							<table>
 								<tr>
-									<tbody>
+									<? $atexist = false; foreach ($attributs as $seek) { if($seek['id_product'] == $line['id']) $atexist = true; } ?>
+									<? if($atexist) { ?>
 										<td>
-											<input type="text" name="<?=$line['id']?>" id="pdt-<?=$line['id']?>" class="custom" data-mini="true" 
-											<? 
-											if($load > 0) {
-												$qtty = 0;
-												foreach ($order_prev as $key => $var) {
-													if($var['qtty'] > 0 AND strtoupper($var['id']) == strtoupper($line['id'])) {
-														echo "value='".$var['qtty']."'";
-														$qtty = $var['qtty'];
+											<select id="attribut-<?=$line['id']?>" name="attribut-<?=$line['id']?>"  data-mini="true">
+												<option value="0"></option>
+												<? foreach ($attributs as $att) { 
+													if($att['id_product'] == $line['id']) { 
+													?>
+													<option value="<?=$att['id']?>" 
+														<? 
+														if($load > 0) { 
+															foreach ($order_prev as $key => $var) {
+																if($var['attribut'] > 0 AND $var['attribut'] == $att['id']) {
+																	echo "selected";
+																}
+															}
+														}
+														?>
+														><?=$att['name']?></option>
+													<? } } ?>
+												</select>
+											</td>
+											<? } else { ?>
+												<td><input type="hidden" name="attribut-<?=$line['id']?>" id="attribut-<?=$line['id']?>" value="0"></td> 
+											<? } ?>
+											<td>
+												<input type="text" name="<?=$line['id']?>" id="pdt-<?=$line['id']?>" class="custom" data-mini="true" 
+												<? 
+												if($load > 0) {
+													$qtty = 0;
+													foreach ($order_prev as $key => $var) {
+														if($var['qtty'] > 0 AND strtoupper($var['id']) == strtoupper($line['id'])) {
+															echo "value='".$var['qtty']."'";
+															$qtty = $var['qtty'];
+														}
 													}
 												}
-											}
-											?>
-											/>
-										</td>
-										<? if($line['stock_management'] == 1) { ?>
-											<td><small>Stock adjust: </small></td>
-										<td>
-											<input type="text" name="stock-<?=$line['id']?>" id="stock-<?=$line['id']?>" class="custom" value="0">
-										</td>
-										<? if($load > 0 && $qtty > 0) { ?>
-											<td><label for="add<?=$line['id']?>" data-mini="true">Add to stock</label><input type="checkbox" id="add<?=$line['id']?>" name="add<?=$line['id']?>" class="add" data-mini="true" onclick="disableStock(<?=$line['id']?>);" />
+												?>
+												/>
 											</td>
-											<? } ?> 
-											<? } $qtty = 0; ?>
-										</tr>
-									</tbody>
-								</table>
-								</li>
-								<? } } ?>
-							</ul>	
-							<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
-								<li data-role="list-divider" style="list-style-type: none;">
-								TOTAL ORDER : <span id="total">0</span>€
-							</li> 
-						</ul>
-						<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
-							<li><input type="submit" name="save" value="SAVE"></li>
-						</ul>							
-						<input type="hidden" name="action" value="save_order">
-					</form>
-				</div><!-- /theme -->
-			</div><!-- /content -->
-		</div><!-- /page -->
-		<script>
+											<? if($line['stock_management'] == 1) { ?>
+												<td><small>Stock adjust: </small></td>
+												<td>
+													<input type="text" name="stock-<?=$line['id']?>" id="stock-<?=$line['id']?>" class="custom" value="0">
+												</td>
+												<? if($load > 0 && $qtty > 0) { ?>
+													<td><label for="add<?=$line['id']?>" data-mini="true">Add to stock</label><input type="checkbox" id="add<?=$line['id']?>" name="add<?=$line['id']?>" class="add" data-mini="true" onclick="disableStock(<?=$line['id']?>);" />
+													</td>
+													<? } ?> 
+													<? } $qtty = 0; ?>
+												</tr>
+										</table>
+									</li>
+									<? } } ?>
+								</ul>	
+								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
+									<li data-role="list-divider" style="list-style-type: none;">
+										TOTAL ORDER : <span id="total">0</span>€
+									</li> 
+								</ul>
+								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
+									<li><input type="submit" name="save" value="SAVE"></li>
+								</ul>							
+								<input type="hidden" name="action" value="save_order">
+							</form>
+						</div><!-- /theme -->
+					</div><!-- /content -->
+				</div><!-- /page -->
+				<script>
 
-		function disableStock(idl) {
-			pdt = $('#pdt-' + idl).val();
-			//if(typeof stock !== 'undefined') { stock = 0; } 
-			checked = $('#add' + idl).is(':checked');
-			sum = 0;
-			if(checked) { sum = parseInt(pdt); }
+				function disableStock(idl) {
+					pdt = $('#pdt-' + idl).val();
+					//if(typeof stock !== 'undefined') { stock = 0; } 
+					checked = $('#add' + idl).is(':checked');
+					sum = 0;
+					if(checked) { sum = parseInt(pdt); }
 
-			$('#stock-' + idl).val(sum);
-			//$('#stock-' + idl).prop('disabled', ! $('#stock-' + idl).prop('disabled') );
-		}
-
-		$("form :input").change(function() {
-			var total = 0;
-			$(".order input[type='text']").each(function () {
-
-				if($(this).val() === '') {
-					// empty
-				} else {
-					//get name/id of filled elements
-					var elid = $(this).attr("name");
-					//get price
-					var price = $("#price" + '-' + elid).val();
-					//get value 
-					var nb = $(this).val();
-					//get sub total
-					var sub = nb*price;
-					total = total + sub;
+					$('#stock-' + idl).val(sum);
+					//$('#stock-' + idl).prop('disabled', ! $('#stock-' + idl).prop('disabled') );
 				}
-				$( "#total" ).text( (Math.round(total*100)/100)/1000 );
-			});
+
+				$("form :input").change(function() {
+					var total = 0;
+					$(".order input[type='text']").each(function () {
+
+						if($(this).val() === '') {
+							// empty
+						} else {
+							//get name/id of filled elements
+							var elid = $(this).attr("name");
+							//get price
+							var price = $("#price" + '-' + elid).val();
+							//get value 
+							var nb = $(this).val();
+							//get sub total
+							var sub = nb*price;
+							total = total + sub;
+						}
+						$( "#total" ).text( (Math.round(total*100)/100)/1000 );
+					});
 
 
 
-		});
-		</script>
-		<? include('jq_footer.php'); ?>
+				});
+				</script>
+				<? include('jq_footer.php'); ?>

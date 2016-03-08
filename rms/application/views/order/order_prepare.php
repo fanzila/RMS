@@ -35,6 +35,7 @@
 								<input type="hidden" name="<? echo $i."_PDT_UNIT_".$pdt['id']; ?>" value="<?=$pdt['unitname']?>">
 								<input type="hidden" name="<? echo $i."_PDT_PACK_".$pdt['id']; ?>" value="<?=$pdt['packaging']?>">
 								<input type="hidden" name="<? echo $i."_PDT_CODEF_".$pdt['id']; ?>" value="<?=$pdt['codef']?>">
+								<input type="hidden" name="<? echo $i."_PDT_ATTR_".$pdt['id']; ?>" value="<?=$pdt['attribut']?>">
 								<input type="hidden" name="<? echo $i."_PDT_PRIC_".$pdt['id']; ?>" value="<?=$pdt['price']?>">
 								<? $totalprice += $pdt['subtotalprice']; } ?>				 
 								<? } ?>

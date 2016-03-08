@@ -22,6 +22,7 @@
 					<?php if($user_groups->level >= 2) { ?>
 						<a href="/product_admin/mapping" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products mapping</a>
 						<a href="/product_admin/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products admin</a>
+						<a href="/crud/productsAttribut/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products attribut</a>								
 						<hr />
 						<ul data-role="listview" data-inset="true" data-filter="true">
 							<li data-role="list-divider">SUPPLIERS</li>

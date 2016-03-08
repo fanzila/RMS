@@ -94,6 +94,7 @@ class Order extends CI_Controller {
 
 		$products	= $this->product->getProducts(null, $supplier_id);
 		$stock 		= $this->product->getStock();
+		$attributs	= $this->product->getAttributs();
 
 		$data = array(
 			'products'			=> $products,
@@ -101,6 +102,7 @@ class Order extends CI_Controller {
 			'freq_id'			=> $id_freq,
 			'order_prev'		=> $order_prev,
 			'stock'				=> $stock,
+			'attributs'			=> $attributs,
 			'load' 				=> $load,
 			'users'				=> $users
 			);
@@ -275,6 +277,7 @@ class Order extends CI_Controller {
 		$this->hmw->keyLogin();
 		$this->load->library('ion_auth');
 		$user = $this->ion_auth->user()->row();
+		$this->load->library('product');
 
 		$post = $this->input->post();
 		$sup = array();
@@ -300,8 +303,14 @@ class Order extends CI_Controller {
 					if(@$ex2[2] == 'QTTY') $pdt[$key2][$ex2[3]]['qtty'] 		= $var3;
 					if(@$ex2[2] == 'UNIT') $pdt[$key2][$ex2[3]]['unitname']		= $var3;
 					if(@$ex2[2] == 'PACK') $pdt[$key2][$ex2[3]]['packaging'] 	= $var3;
+					if(@$ex2[2] == 'ATTR') $pdt[$key2][$ex2[3]]['attribut'] 	= $var3;
 					if(@$ex2[2] == 'CODEF') $pdt[$key2][$ex2[3]]['codef']		= $var3;
 					if(@$ex2[2] == 'PRIC') $pdt[$key2][$ex2[3]]['pric']			= $var3;
+					if(@$ex2[2] == 'ATTR') {
+						$pdt[$key2][$ex2[3]]['attribut'] 	= $var3;
+						if($var3 > 0) $pdt[$key2][$ex2[3]]['attributname'] = $this->product->getAttributName($var3);
+					}
+					
 				}
 			}
 		}
@@ -386,10 +395,9 @@ class Order extends CI_Controller {
 		foreach ($data as $key => $var) {
 			if(is_numeric($key)) {
 				$$products[$key]['supplier_name'] = array($key => $var);
-				
 				$qtty = $this->clean_number($var);
 				if(!empty($var) AND !is_numeric($qtty)) exit('Quantity has to be numeric, invalid: '.$var);
-				
+								
 				$complet[] = array(
 					'supplier' => $products[$key]['supplier_name'], 
 					'supplier_id' => $products[$key]['supplier_id'], 
@@ -399,7 +407,8 @@ class Order extends CI_Controller {
 					'unitname' => $products[$key]['unit_name'],
 					'packaging' => $products[$key]['packaging'],
 					'codef' => $products[$key]['supplier_reference'],
-					'price' => $products[$key]['price']
+					'price' => $products[$key]['price'],
+					'attribut' => $data['attribut-'.$key]
 					);				
 			}
 		}
@@ -417,6 +426,7 @@ class Order extends CI_Controller {
 			$insert = '';
 			$idorder = date('ymd').rand(1000, 9000);
 			foreach ($complet as $key2) {
+
 				if($key2['supplier_id'] == $supplier_id) {
 					if($key2['qtty'] > 0) {
 						$insert = array(
@@ -430,6 +440,7 @@ class Order extends CI_Controller {
 							'supplier' => $key2['supplier'],
 							'supid' => $key2['supplier_id'],
 							'price' => $key2['price'],
+							'attribut' => $key2['attribut'],
 							'subtotalprice' => $key2['price']*$key2['qtty'] 
 							);
 						$total[$supplier_id][] = $insert;

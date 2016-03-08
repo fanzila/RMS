@@ -138,6 +138,15 @@ class Crud extends CI_Controller {
 		$this->_example_output($output); 
     }
 
+    public function productsAttribut()
+    {
+		$this->grocery_crud->set_relation('id_product','products','name');
+        $this->grocery_crud->set_table('products_attribut');
+        $output = $this->grocery_crud->render();
+ 
+		$this->_example_output($output); 
+    }
+
     public function suppliersCategory()
     {
         $this->grocery_crud->set_table('suppliers_category');
