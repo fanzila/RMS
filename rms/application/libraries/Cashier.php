@@ -2,17 +2,27 @@
 
 class Cashier {
 
+	private function debugFile($txt) { 
+		$file = 'orderdebug.txt';
+		$current = file_get_contents($file);
+		$current .= "$txt\r\n";
+		file_put_contents($file, $current);
+	}
+	 
 	private function getSalesForProduct($id) {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		$qtty = 0;
-
+		
 		//get last_stock_update 
 		$q_stock = "SELECT last_update_stock FROM sales_product WHERE id_pos = '".$id."'";
 		$r_stock = $CI->db->query($q_stock) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_stock = $r_stock->result_array();
 		$last_update = $row_stock[0]['last_update_stock'];
+		//$last_update = '2016-03-09 07:15:55';
+		$this->debugFile("Get last update for id_pos : $id"); 
 		
+		//AND (sr.date_closed BETWEEN '2016-03-09 07:15:55' AND '2016-03-09 23:15:55')
 		//get sales product
 		$q_sp = "SELECT sri.quantity AS quantity 
 			FROM sales_receipt AS sr
@@ -36,6 +46,7 @@ class Cashier {
 			WHERE spa.id_pos_product = '".$id."'
 			AND (sr.date_closed > '".$last_update."') 
 			AND sr.canceled = 0";
+
 		$r_spa = $CI->db->query($q_spa) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_spa = $r_spa->result_array();
 		foreach ($row_spa as $keya) {
@@ -56,20 +67,25 @@ class Cashier {
 
 		foreach ($res_pos_pdt as $pos_pdt) {
 			$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$this->debugFile("BEGIN at ".date('Y-m-d h:i:s')); 
 			
 			$sales = $this->getSalesForProduct($pos_pdt['id_pos']);
 			//echo "$sales for $pos_pdt[name]";
+			$this->debugFile("Found $sales sales for $pos_pdt[name]"); 
 			
 			$q_mapping = "SELECT * FROM products_mapping WHERE id_pos=$pos_pdt[id]";
 			$r_mapping = $CI->db->query($q_mapping) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$res_mapping = $r_mapping->result_array();
 
-			foreach ($res_mapping as $mapping) {				
+			foreach ($res_mapping as $mapping) {			
 				$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product]") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				$this->debugFile("Mapping: update for id_product : $mapping[id_product] set qtty = ".$sales*$mapping['coef']."");
 			}
 			
 			$CI->db->query("UPDATE sales_product SET last_update_stock = NOW() WHERE id_pos = '".$pos_pdt['id_pos']."'") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$this->debugFile("Update last_update_stock for sales_product"); 
 			$CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$this->debugFile("COMMIT"); 
 		}
 
 	}

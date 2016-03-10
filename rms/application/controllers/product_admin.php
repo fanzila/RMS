@@ -128,7 +128,7 @@ class Product_admin extends CI_Controller {
 		$this->load->library('product');
 
 		$products_pos	= $this->product->getPosProducts();
-		$products 		= $this->product->getProducts($id = null, $supplier_id = null);
+		$products 		= $this->product->getProducts(null, null, 'p.name');
 		$mapping		= $this->product->getMapping();
 		$data = array(
 			'products_pos'			=> $products_pos,
