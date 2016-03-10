@@ -33,7 +33,6 @@ class Order extends CI_Controller {
 
 		$this->hmw->keyLogin();		
 		$this->load->library('product');
-		$this->load->library("cashier");
 				
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 		$freq			= $this->freq();
@@ -44,11 +43,15 @@ class Order extends CI_Controller {
 			'user_groups'	=> $user_groups[0],
 			'suppliers'    => $suppliers,
 			'freq'			=> $freq);
-
-		$stock = $this->cashier->posInfo('salesUpdate');		
-		$this->cashier->updateStock();
-
+	
 		$this->load->view('order/index',$data);
+	}
+
+	public function cliUpdateSales() {
+			$this->load->library("cashier");
+	
+			$this->cashier->posInfo('salesUpdate');		
+			$this->cashier->updateStock();	
 	}
 
 	public function previousOrders()

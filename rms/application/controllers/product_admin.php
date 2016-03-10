@@ -28,6 +28,27 @@ class Product_admin extends CI_Controller {
 		$this->hmw->keyLogin();
 	}
 
+	public function index($create = null)
+	{		
+		$this->load->library('product');
+
+		$products 			= $this->product->getProducts();
+		$suppliers 			= $this->product->getSuppliers();
+		$products_unit 		= $this->product->getProductUnit();
+		$products_category 	= $this->product->getProductCategory();
+
+
+		$data = array(
+			'create'			=> $create,
+			'products'			=> $products,
+			'suppliers'			=> $suppliers,
+			'products_unit' 	=> $products_unit,
+			'products_category' => $products_category
+			);
+
+		$this->load->view('product/admin',$data);
+	}
+	
 	public function save()
 	{
 
@@ -137,27 +158,6 @@ class Product_admin extends CI_Controller {
 			);
 			
 		$this->load->view('product/mapping',$data);
-	}
-	
-	public function index($create = null)
-	{		
-		$this->load->library('product');
-
-		$products 			= $this->product->getProducts();
-		$suppliers 			= $this->product->getSuppliers();
-		$products_unit 		= $this->product->getProductUnit();
-		$products_category 	= $this->product->getProductCategory();
-
-
-		$data = array(
-			'create'			=> $create,
-			'products'			=> $products,
-			'suppliers'			=> $suppliers,
-			'products_unit' 	=> $products_unit,
-			'products_category' => $products_category
-			);
-
-		$this->load->view('product/admin',$data);
 	}
 
 }
