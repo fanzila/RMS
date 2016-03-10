@@ -79,7 +79,7 @@ class Cashier {
 
 			foreach ($res_mapping as $mapping) {			
 				$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product]") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-				$this->debugFile("Mapping: update for id_product : $mapping[id_product] set qtty = ".$sales*$mapping['coef']."");
+				$this->debugFile("Mapping: update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']."");
 			}
 			
 			$CI->db->query("UPDATE sales_product SET last_update_stock = NOW() WHERE id_pos = '".$pos_pdt['id_pos']."'") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
