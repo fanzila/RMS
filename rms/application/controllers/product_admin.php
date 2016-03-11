@@ -28,20 +28,25 @@ class Product_admin extends CI_Controller {
 		$this->hmw->keyLogin();
 	}
 
-	public function index($create = null)
+	public function index($command = null)
 	{		
 		$this->load->library('product');
-
-		$products 			= $this->product->getProducts();
+		
+		$supplier_id = '';
+		$postid = $this->input->post('supplier_id');
+		if($command == null && isset($postid)) $supplier_id = 1;
+		if($command == 'filter' && isset($postid)) $supplier_id = $this->input->post('supplier_id');
+		$products 			= $this->product->getProducts(null, $supplier_id, null);
 		$suppliers 			= $this->product->getSuppliers();
 		$products_unit 		= $this->product->getProductUnit();
 		$products_category 	= $this->product->getProductCategory();
 
 
 		$data = array(
-			'create'			=> $create,
+			'command'			=> $command,
 			'products'			=> $products,
 			'suppliers'			=> $suppliers,
+			'supplier_id'		=> $supplier_id,
 			'products_unit' 	=> $products_unit,
 			'products_category' => $products_category
 			);

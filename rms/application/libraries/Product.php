@@ -7,7 +7,7 @@ class Product {
 		$CI =& get_instance();
 		$sqladd = '';
 		if($id) $sqladd = " AND p.id = $id";
-		if($supplier_id) $sqladd = " AND s.id = $supplier_id";
+		if($supplier_id != null) $sqladd = " AND s.id = $supplier_id";
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
 		

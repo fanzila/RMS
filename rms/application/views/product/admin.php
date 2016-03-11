@@ -12,11 +12,26 @@
 <body>
 	<div data-role="page">
 		<div data-role="header">
-			<a href="/order/" data-ajax="false" data-icon="home">Home</a> <a href="/product_admin/index/1" data-ajax="false" data-icon="plus">Add</a>
+			<a href="/order/" data-ajax="false" data-icon="home">Home</a> <a href="/product_admin/index/create" data-ajax="false" data-icon="plus">Add</a>
 			<h1>Products admin</h1>
 		</div>
 		<div data-role="content">
-			<? if(!$create) { ?>
+			<? if($command != 'create') { ?>
+				<fieldset class="ui-grid-a">
+				<form id="filter" name="filter" method="post" action="/product_admin/index/filter">
+					<div class="ui-block-a">
+						<select name="supplier_id"  data-mini="true">
+							<option value="">ALL</option>
+						<? foreach ($suppliers as $sup) { ?>
+							<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; } ?> ><?=$sup['name']?></option>
+							<? } ?>
+						</select>
+						</div>
+						<div class="ui-block-b">
+						<input type="submit" name="submit" value="filter" data-mini="true">
+					</div>
+				</form>
+				</fieldset>
 				<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 				<? foreach ($products as $line) { ?>
 					<? 
@@ -113,8 +128,7 @@
 							} 
 							?>
 							</ul>
-							<? 
-							if($create) { ?>
+							<? if($command == 'create') { ?>
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 								<li>
 									<form id="pdt1" class="pdt1" name="pdt1" method="post" action="/product_admin/save">
