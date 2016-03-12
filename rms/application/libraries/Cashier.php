@@ -14,21 +14,12 @@ class Cashier {
 		$CI->load->database();
 		$qtty = 0;
 		
-		//get last_stock_update 
-		$q_stock = "SELECT last_update_stock FROM sales_product WHERE id_pos = '".$id."'";
-		$r_stock = $CI->db->query($q_stock) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		$row_stock = $r_stock->result_array();
-		$last_update = $row_stock[0]['last_update_stock'];
-		//$last_update = '2016-03-09 07:15:55';
-		$this->debugFile("Get last update for id_pos : $id"); 
-
-		//AND (sr.date_closed BETWEEN '2016-03-09 07:15:55' AND '2016-03-09 23:15:55')
 		//get sales product
 		$q_sp = "SELECT sri.quantity AS quantity 
 			FROM sales_receipt AS sr
 			JOIN sales_receiptitem AS sri ON sri.receipt = sr.`id`
 			WHERE sri.product = '".$id."'
-			AND ((DATE_ADD( sr.date_closed, INTERVAL 1 HOUR )) > '".$last_update."') 
+			AND sr.done = 0
 			AND sr.canceled = 0";
 
 		$r_sp = $CI->db->query($q_sp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -45,7 +36,7 @@ class Cashier {
 			JOIN sales_receipt AS sr ON sr.`id` = sri.receipt
 			JOIN sales_product AS sp ON sp.id_pos = spa.id_pos_product
 			WHERE spa.id_pos_product = '".$id."'
-			AND ((DATE_ADD( sr.date_closed, INTERVAL 1 HOUR )) > '".$last_update."') 
+			AND sr.done = 0
 			AND sr.canceled = 0";
 
 		$r_spa = $CI->db->query($q_spa) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -66,12 +57,12 @@ class Cashier {
 		$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$res_pos_pdt = $r_pos_pdt->result_array();
 
+		$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$this->debugFile("BEGIN at ".date('Y-m-d H:i:s')); 
+
 		foreach ($res_pos_pdt as $pos_pdt) {
-			$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			$this->debugFile("BEGIN at ".date('Y-m-d h:i:s')); 
 			
 			$sales = $this->getSalesForProduct($pos_pdt['id_pos']);
-			//echo "$sales for $pos_pdt[name]";
 			$this->debugFile("Found $sales sales for $pos_pdt[name]"); 
 			
 			$q_mapping = "SELECT coef, id_product  FROM products_mapping WHERE id_pos=$pos_pdt[id]";
@@ -85,12 +76,12 @@ class Cashier {
 				}
 			}
 			
-			$CI->db->query("UPDATE sales_product SET last_update_stock = NOW() WHERE id_pos = '".$pos_pdt['id_pos']."'") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			$this->debugFile("Update last_update_stock for sales_product"); 
-			$CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			$this->debugFile("COMMIT"); 
 		}
 
+		$CI->db->query("UPDATE sales_receipt SET done = 1") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+        $CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$this->debugFile("UPDATE sales_receipt SET done = 1
+		COMMIT"); 
 	}
 
 	private function getDoneArchivesList() {
@@ -128,7 +119,7 @@ class Cashier {
 			$result_receipt = $db->query('SELECT * FROM ARCHIVEDRECEIPT');
 			while($row_receipt=$result_receipt->fetchArray(SQLITE3_ASSOC)){
 				if(!empty($row_receipt['SEQUENTIAL_ID'])) {
-					$q_receipt = "INSERT IGNORE INTO sales_receipt SET id='".$row_receipt['ID']."', sequential_id=".$row_receipt['SEQUENTIAL_ID'].", owner='".$row_receipt['OWNER']."', date_created='".$row_receipt['DATE_CREATED']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', amount_total=".$row_receipt['AMOUNT_TOTAL']; 
+					$q_receipt = "INSERT IGNORE INTO sales_receipt SET id='".$row_receipt['ID']."', sequential_id=".$row_receipt['SEQUENTIAL_ID'].", owner='".$row_receipt['OWNER']."', date_created='".$row_receipt['DATE_CREATED']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', period_id='".$row_receipt['PERIOD_ID']."', amount_total=".$row_receipt['AMOUNT_TOTAL']; 
 					$r_receipt = $CI->db->query($q_receipt) or die($this->db->_error_message());
 				}
 			}
@@ -206,7 +197,7 @@ class Cashier {
 		$result_receipt = $db->query('SELECT * FROM RECEIPT');
 		while($row_receipt=$result_receipt->fetchArray(SQLITE3_ASSOC)){
 			if(!empty($row_receipt['SEQUENTIAL_ID'])) {
-				$q_receipt = "INSERT IGNORE INTO sales_receipt SET id='".$row_receipt['ID']."', sequential_id=".$row_receipt['SEQUENTIAL_ID'].", owner='".$row_receipt['OWNER']."', date_created='".$row_receipt['DATE_CREATED']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', amount_total=".$row_receipt['AMOUNT_TOTAL']; 
+				$q_receipt = "INSERT IGNORE INTO sales_receipt SET id='".$row_receipt['ID']."', sequential_id=".$row_receipt['SEQUENTIAL_ID'].", owner='".$row_receipt['OWNER']."', date_created='".$row_receipt['DATE_CREATED']."', period_id='".$row_receipt['PERIOD_ID']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', amount_total=".$row_receipt['AMOUNT_TOTAL']; 
 				$r_receipt = $CI->db->query($q_receipt) or die($this->db->_error_message());
 			}
 		}
