@@ -57,6 +57,7 @@ class Cashier {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		$debug = true;
+		$up = false;
 		
 		$q_pos_pdt = "SELECT * FROM sales_product WHERE deleted=0";
 		$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -77,6 +78,7 @@ class Cashier {
 				if($sales > 0) {		
 					$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product]") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 					$this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']."");
+					$up = true;
 				}
 			}
 			
@@ -84,7 +86,7 @@ class Cashier {
 
 		$CI->db->query("UPDATE sales_receipt SET done = 1") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
         $CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 && COMMIT"); 
+		if($debug AND $up) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 && COMMIT"); 
 	}
 
 	private function getDoneArchivesList() {
