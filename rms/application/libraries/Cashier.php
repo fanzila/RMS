@@ -68,7 +68,10 @@ class Cashier {
 		foreach ($res_pos_pdt as $pos_pdt) {
 			
 			$sales = $this->getSalesForProduct($pos_pdt['id_pos']);
-			if($debug AND $sales > 0) $this->debugFile(@date('Y-m-d H:i:s')." - Found $sales sales for $pos_pdt[name]"); 
+			if($debug AND $sales > 0) { 
+				$this->debugFile(@date('Y-m-d H:i:s')." - Found $sales sales for $pos_pdt[name]"); 
+				$up = true;
+			}
 			
 			$q_mapping = "SELECT coef, id_product  FROM products_mapping WHERE id_pos=$pos_pdt[id]";
 			$r_mapping = $CI->db->query($q_mapping) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
