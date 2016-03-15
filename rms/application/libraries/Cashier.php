@@ -84,7 +84,7 @@ class Cashier {
 
 		$CI->db->query("UPDATE sales_receipt SET done = 1") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
         $CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		if($debug AND $sales > 0) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 && COMMIT"); 
+		if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 && COMMIT"); 
 	}
 
 	private function getDoneArchivesList() {
