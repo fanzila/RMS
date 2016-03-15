@@ -13,9 +13,10 @@ class Cashier {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		$qtty = 0;
+		$debug = true;
 		
 		//get sales product
-		$q_sp = "SELECT sri.quantity AS quantity 
+		$q_sp = "SELECT sri.quantity AS quantity, sr.period_id as period_id, sri.product AS product
 			FROM sales_receipt AS sr
 			JOIN sales_receiptitem AS sri ON sri.receipt = sr.`id`
 			WHERE sri.product = '".$id."'
@@ -27,10 +28,12 @@ class Cashier {
 		
 		foreach ($row_sp as $key) {
 			$qtty += 1*($key['quantity']/1000);
+			if($debug AND $qtty > 0) $this->debugFile(@date('Y-m-d H:i:s')." - SP: Found $qtty sales for product $key[product] in receipt $key[period_id]"); 
 		}
-
+		
 		//get productaddon
-		$q_spa = "SELECT sria.quantity FROM sales_productaddon AS spa
+		$q_spa = "SELECT sria.quantity AS quantity, sr.period_id as period_id, sp.id_pos AS product 
+		FROM sales_productaddon AS spa
 			JOIN sales_receiptitemaddon AS sria ON sria.productaddon = spa.id_pos
 			JOIN sales_receiptitem AS sri ON sri.id = sria.receiptitem
 			JOIN sales_receipt AS sr ON sr.`id` = sri.receipt
@@ -42,9 +45,10 @@ class Cashier {
 		$r_spa = $CI->db->query($q_spa) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_spa = $r_spa->result_array();
 		foreach ($row_spa as $keya) {
-			$qtty += 1*($keya['quantity']);
+			$qtty += 1*($keya['quantity']); 
+			if($debug AND $qtty > 0) $this->debugFile(@date('Y-m-d H:i:s')." - SPA: Found $qtty sales for product $keya[product] in receipt  $keya[period_id]");
 		}
-
+		
 		return $qtty;
 	}
 
@@ -52,18 +56,18 @@ class Cashier {
 
 		$CI = & get_instance(); 
 		$CI->load->database();
-
+		$debug = true;
+		
 		$q_pos_pdt = "SELECT * FROM sales_product WHERE deleted=0";
 		$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$res_pos_pdt = $r_pos_pdt->result_array();
 
-		$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		$this->debugFile("BEGIN at ".date('Y-m-d H:i:s')); 
+		$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message())); 
 
 		foreach ($res_pos_pdt as $pos_pdt) {
 			
 			$sales = $this->getSalesForProduct($pos_pdt['id_pos']);
-			$this->debugFile("Found $sales sales for $pos_pdt[name]"); 
+			if($debug AND $sales > 0) $this->debugFile(@date('Y-m-d H:i:s')." - Found $sales sales for $pos_pdt[name]"); 
 			
 			$q_mapping = "SELECT coef, id_product  FROM products_mapping WHERE id_pos=$pos_pdt[id]";
 			$r_mapping = $CI->db->query($q_mapping) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -72,7 +76,7 @@ class Cashier {
 			foreach ($res_mapping as $mapping) {	
 				if($sales > 0) {		
 					$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product]") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-					$this->debugFile("Mapping: update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']."");
+					$this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']."");
 				}
 			}
 			
@@ -80,8 +84,7 @@ class Cashier {
 
 		$CI->db->query("UPDATE sales_receipt SET done = 1") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
         $CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		$this->debugFile("UPDATE sales_receipt SET done = 1
-		COMMIT"); 
+		if($debug AND $sales > 0) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 && COMMIT"); 
 	}
 
 	private function getDoneArchivesList() {
