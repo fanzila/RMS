@@ -45,8 +45,8 @@ class Cashier {
 		$r_spa = $CI->db->query($q_spa) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_spa = $r_spa->result_array();
 		foreach ($row_spa as $keya) {
-			$qtty += 1*($keya['quantity']); 
-			if($debug AND $qtty > 0) $this->debugFile(@date('Y-m-d H:i:s')." - SPA: Found $qtty sales for product $keya[product] in receipt  $keya[period_id]");
+			//$qtty += 1*($keya['quantity']); 
+			//if($debug AND $qtty > 0) $this->debugFile(@date('Y-m-d H:i:s')." - SPA: Found $qtty sales for product $keya[product] in receipt  $keya[period_id]");
 		}
 		
 		return $qtty;
@@ -78,13 +78,12 @@ class Cashier {
 			$res_mapping = $r_mapping->result_array();
 
 			foreach ($res_mapping as $mapping) {	
-				if($sales > 0) {		
+				if($sales > 0 AND $mapping['id_product'] == 74) {		
 					$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product]") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 					$this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']."");
 					$up = true;
 				}
 			}
-			
 		}
 
 		$CI->db->query("UPDATE sales_receipt SET done = 1") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
