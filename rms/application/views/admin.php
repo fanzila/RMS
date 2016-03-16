@@ -28,7 +28,7 @@
 			<? } ?>
 			<li><a rel="external" data-ajax="false" href="/news">News</a></li> 
 			<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/">Shiftplanning</a></li>
-			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/pos/">POS</a></li><? } ?>
+			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/pos/">Cashier</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/posmessage/">Message caisse</a></li><? } ?>			
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://hank.recruiterbox.com/app/#candidates/overview">Recruiter Box (RB)</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://www.cashpad.net">Reporting Cashpad</a></li><? } ?>
@@ -58,7 +58,7 @@
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsCategory/">productsCategory</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/products/">products</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/">suppliersCategory</a></li><? } ?>
-			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">suppliers</a></li><? } ?>
+			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">suppliers</a></li><? } ?>
 			<hr />
 			<li><a rel="external" data-ajax="false" href="http://intranet.hankrestaurant.com">Intranet (Wiki)</a></li>
 			<li><a rel="external" data-ajax="false" href="http://62.210.240.67/hank/public/videos/">Archives videos</a></li>
