@@ -204,7 +204,7 @@ class Cashier {
 		}
 
 		//RECEIPT
-		$result_receipt = $db->query('SELECT * FROM RECEIPT');
+		$result_receipt = $db->query('SELECT * FROM RECEIPT WHERE DATE_CLOSED  IS NOT NULL');
 		while($row_receipt=$result_receipt->fetchArray(SQLITE3_ASSOC)){
 			if(!empty($row_receipt['SEQUENTIAL_ID'])) {
 				$q_receipt = "INSERT INTO sales_receipt SET id='".$row_receipt['ID']."', sequential_id=".$row_receipt['SEQUENTIAL_ID'].", owner='".$row_receipt['OWNER']."', date_created='".$row_receipt['DATE_CREATED']."', period_id='".$row_receipt['PERIOD_ID']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', amount_total=".$row_receipt['AMOUNT_TOTAL']." ON DUPLICATE KEY UPDATE owner='".$row_receipt['OWNER']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', amount_total=".$row_receipt['AMOUNT_TOTAL']; 
@@ -213,14 +213,14 @@ class Cashier {
 		}
 
 		//RECEIPTITEM
-		$result_receiptitem = $db->query('SELECT * FROM RECEIPTITEM');
+		$result_receiptitem = $db->query('SELECT ri.ID, ri.RECEIPT, ri.PRODUCT, ri.QUANTITY FROM RECEIPTITEM AS ri JOIN RECEIPT AS r ON r.ID = ri.RECEIPT WHERE r.DATE_CLOSED IS NOT NULL');
 		while($row_receiptitem=$result_receiptitem->fetchArray(SQLITE3_ASSOC)){
 			$q_receiptitem = "INSERT IGNORE INTO sales_receiptitem SET id=".$row_receiptitem['ID'].", receipt='".$row_receiptitem['RECEIPT']."', product='".$row_receiptitem['PRODUCT']."', quantity=".$row_receiptitem['QUANTITY'];
 			$r_receiptitem = $CI->db->query($q_receiptitem) or die($this->db->_error_message());
 		}
 
 		//RECEIPTITEMADDON
-		$result_receiptitemaddon = $db->query('SELECT * FROM RECEIPTITEMADDON');
+		$result_receiptitemaddon = $db->query('SELECT ria.RECEIPTITEM, ria.ID, ria.PRODUCTADDON, ria.QUANTITY FROM RECEIPTITEMADDON AS ria JOIN RECEIPTITEM AS ri ON ria.RECEIPTITEM = ri.ID JOIN RECEIPT AS r ON ri.RECEIPT = r.ID WHERE r.DATE_CLOSED IS NOT NULL');
 		while($row_receiptitemaddon=$result_receiptitemaddon->fetchArray(SQLITE3_ASSOC)){
 			$q_receiptitemaddon = "INSERT IGNORE INTO sales_receiptitemaddon SET id=".$row_receiptitemaddon['ID'].", receiptitem=".$row_receiptitemaddon['RECEIPTITEM'].", productaddon='".$row_receiptitemaddon['PRODUCTADDON']."', quantity=".$row_receiptitemaddon['QUANTITY']; 
 			$r_receiptitemaddon = $CI->db->query($q_receiptitemaddon) or die($this->db->_error_message());
