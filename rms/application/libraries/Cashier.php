@@ -207,7 +207,7 @@ class Cashier {
 		$result_receipt = $db->query('SELECT * FROM RECEIPT');
 		while($row_receipt=$result_receipt->fetchArray(SQLITE3_ASSOC)){
 			if(!empty($row_receipt['SEQUENTIAL_ID'])) {
-				$q_receipt = "INSERT IGNORE INTO sales_receipt SET id='".$row_receipt['ID']."', sequential_id=".$row_receipt['SEQUENTIAL_ID'].", owner='".$row_receipt['OWNER']."', date_created='".$row_receipt['DATE_CREATED']."', period_id='".$row_receipt['PERIOD_ID']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', amount_total=".$row_receipt['AMOUNT_TOTAL']; 
+				$q_receipt = "INSERT INTO sales_receipt SET id='".$row_receipt['ID']."', sequential_id=".$row_receipt['SEQUENTIAL_ID'].", owner='".$row_receipt['OWNER']."', date_created='".$row_receipt['DATE_CREATED']."', period_id='".$row_receipt['PERIOD_ID']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', amount_total=".$row_receipt['AMOUNT_TOTAL']." ON DUPLICATE KEY UPDATE owner='".$row_receipt['OWNER']."', date_closed='".$row_receipt['DATE_CLOSED']."', canceled='".$row_receipt['CANCELLED']."', amount_total=".$row_receipt['AMOUNT_TOTAL']; 
 				$r_receipt = $CI->db->query($q_receipt) or die($this->db->_error_message());
 			}
 		}
@@ -215,14 +215,14 @@ class Cashier {
 		//RECEIPTITEM
 		$result_receiptitem = $db->query('SELECT * FROM RECEIPTITEM');
 		while($row_receiptitem=$result_receiptitem->fetchArray(SQLITE3_ASSOC)){
-			$q_receiptitem = "INSERT IGNORE INTO sales_receiptitem SET id=".$row_receiptitem['ID'].", receipt='".$row_receiptitem['RECEIPT']."', product='".$row_receiptitem['PRODUCT']."', quantity=".$row_receiptitem['QUANTITY'];
+			$q_receiptitem = "INSERT INTO sales_receiptitem SET id=".$row_receiptitem['ID'].", receipt='".$row_receiptitem['RECEIPT']."', product='".$row_receiptitem['PRODUCT']."', quantity=".$row_receiptitem['QUANTITY']." ON DUPLICATE KEY UPDATE  quantity=".$row_receiptitem['QUANTITY'].", product='".$row_receiptitem['PRODUCT']."'";
 			$r_receiptitem = $CI->db->query($q_receiptitem) or die($this->db->_error_message());
 		}
 
 		//RECEIPTITEMADDON
 		$result_receiptitemaddon = $db->query('SELECT * FROM RECEIPTITEMADDON');
 		while($row_receiptitemaddon=$result_receiptitemaddon->fetchArray(SQLITE3_ASSOC)){
-			$q_receiptitemaddon = "INSERT IGNORE INTO sales_receiptitemaddon SET id=".$row_receiptitemaddon['ID'].", receiptitem=".$row_receiptitemaddon['RECEIPTITEM'].", productaddon='".$row_receiptitemaddon['PRODUCTADDON']."', quantity=".$row_receiptitemaddon['QUANTITY']; 
+			$q_receiptitemaddon = "INSERT INTO sales_receiptitemaddon SET id=".$row_receiptitemaddon['ID'].", receiptitem=".$row_receiptitemaddon['RECEIPTITEM'].", productaddon='".$row_receiptitemaddon['PRODUCTADDON']."', quantity=".$row_receiptitemaddon['QUANTITY']." ON DUPLICATE KEY UPDATE productaddon='".$row_receiptitemaddon['PRODUCTADDON']."', quantity=".$row_receiptitemaddon['QUANTITY']; 
 			$r_receiptitemaddon = $CI->db->query($q_receiptitemaddon) or die($this->db->_error_message());
 		}
 
