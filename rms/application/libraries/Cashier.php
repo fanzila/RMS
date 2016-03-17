@@ -20,9 +20,11 @@ class Cashier {
 			FROM sales_receipt AS sr
 			JOIN sales_receiptitem AS sri ON sri.receipt = sr.`id`
 			WHERE sri.product = '".$id."'
-			AND sr.done = 0
+			AND sr.done = 0 
+			AND sr.date_closed != '0000-00-00' 
 			AND sr.canceled = 0";
-
+			
+			
 		$r_sp = $CI->db->query($q_sp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_sp = $r_sp->result_array();
 		
@@ -30,7 +32,7 @@ class Cashier {
 			$qtty += 1*($key['quantity']/1000);
 			if($debug AND $qtty > 0) $this->debugFile(@date('Y-m-d H:i:s')." - SP: Found $qtty sales for product $key[product] in receipt $key[period_id]"); 
 		}
-		
+
 		//get productaddon
 		$q_spa = "SELECT sria.quantity AS quantity, sr.period_id as period_id, sp.id_pos AS product 
 		FROM sales_productaddon AS spa
@@ -39,14 +41,15 @@ class Cashier {
 			JOIN sales_receipt AS sr ON sr.`id` = sri.receipt
 			JOIN sales_product AS sp ON sp.id_pos = spa.id_pos_product
 			WHERE spa.id_pos_product = '".$id."'
-			AND sr.done = 0
+			AND sr.done = 0 
+			AND sr.date_closed != '0000-00-00' 
 			AND sr.canceled = 0";
 
 		$r_spa = $CI->db->query($q_spa) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_spa = $r_spa->result_array();
 		foreach ($row_spa as $keya) {
-			//$qtty += 1*($keya['quantity']); 
-			//if($debug AND $qtty > 0) $this->debugFile(@date('Y-m-d H:i:s')." - SPA: Found $qtty sales for product $keya[product] in receipt  $keya[period_id]");
+			$qtty += 1*($keya['quantity']); 
+			if($debug AND $qtty > 0) $this->debugFile(@date('Y-m-d H:i:s')." - SPA: Found $qtty sales for product $keya[product] in receipt  $keya[period_id]");
 		}
 		
 		return $qtty;
@@ -86,9 +89,9 @@ class Cashier {
 			}
 		}
 
-		$CI->db->query("UPDATE sales_receipt SET done = 1") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$CI->db->query("UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00'") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
         $CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		if($debug AND $up) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 && COMMIT"); 
+		if($debug AND $up) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' && COMMIT"); 
 	}
 
 	private function getDoneArchivesList() {
