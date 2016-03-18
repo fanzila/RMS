@@ -36,7 +36,7 @@ class Order extends CI_Controller {
 				
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 		$freq			= $this->freq();
-		$suppliers 		= $this->product->getSuppliers();
+		$suppliers 		= $this->product->getSuppliers(true);
 
 		$data = array(
 			'keylogin'	=> $this->session->userdata('keylogin'),

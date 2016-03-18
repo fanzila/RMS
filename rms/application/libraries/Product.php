@@ -98,11 +98,15 @@ public function getStock() {
 	return $ret;
 }
 
-public function getSuppliers() {
+public function getSuppliers($order = null) {
 	$CI =& get_instance();
 	$CI->load->library('hmw');
 	
-	$req = $CI->db->query("SELECT * FROM suppliers WHERE active=1 AND deleted=0 ORDER BY `id` ASC") or die($this->mysqli->error);
+	$q = "SELECT * FROM suppliers WHERE active=1 AND deleted=0 ORDER BY `id` ASC";
+	
+	if($order) $q = "SELECT s.id, s.name  FROM suppliers AS s LEFT JOIN ( SELECT date, user, status, supplier_id FROM orders WHERE status = 'sent' AND date IS NOT NULL) AS o ON o.supplier_id = s.id WHERE s.active=1 AND s.deleted=0 ORDER BY o.date DESC"; 
+	
+	$req = $CI->db->query($q) or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$reql = $CI->db->query("SELECT `date`, user FROM orders WHERE supplier_id = $key[id] AND status = 'sent' ORDER BY `date` DESC LIMIT 1") or die($this->mysqli->error);
