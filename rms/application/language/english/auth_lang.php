@@ -84,7 +84,8 @@ $lang['edit_user_phone_label']                       = 'Phone:';
 $lang['edit_user_password_label']                    = 'Password: (if changing password)';
 $lang['edit_user_password_confirm_label']            = 'Confirm Password: (if changing password)';
 $lang['edit_user_level_label']           			 = 'Level';
-$lang['edit_user_groups_heading']                    = 'Member of groups';
+$lang['edit_user_groups_heading']                    = 'Groups';
+$lang['edit_user_bus_heading']                    	 = 'Business Units';
 $lang['edit_user_submit_btn']                        = 'Save User';
 $lang['edit_user_validation_fname_label']            = 'First Name';
 $lang['edit_user_validation_lname_label']            = 'Last Name';
@@ -95,6 +96,7 @@ $lang['edit_user_validation_phone2_label']           = 'Second Part of Phone';
 $lang['edit_user_validation_phone3_label']           = 'Third Part of Phone';
 $lang['edit_user_validation_company_label']          = 'Company Name';
 $lang['edit_user_validation_groups_label']           = 'Groups';
+$lang['edit_user_validation_bus_label']          	 = 'Bus';
 $lang['edit_user_validation_password_label']         = 'Password';
 $lang['edit_user_validation_password_confirm_label'] = 'Password Confirmation';
 

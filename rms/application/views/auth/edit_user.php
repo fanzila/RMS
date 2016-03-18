@@ -74,6 +74,25 @@ echo form_open(uri_string(), $attributes);
               </label>
           <?php endforeach?>
 
+          <h3><?php echo lang('edit_user_bus_heading');?></h3>
+          <?php foreach ($bus as $bu):?>
+              <label class="checkbox">
+              <?php
+                  $bID=$bu['id'];
+                  $checked = null;
+                  $item = null;
+                  foreach($currentBus as $up) {
+                      if ($bID == $up->id) {
+                          $checked= ' checked="checked"';
+                      break;
+                      }
+                  }
+              ?>
+              <input type="checkbox" name="bus[]" value="<?php echo $bu['id'];?>"<?php echo $checked;?>>
+              <?php echo htmlspecialchars($bu['name'],ENT_QUOTES,'UTF-8');?>
+              </label>
+          <?php endforeach?>
+
       <?php endif ?>
 
       <?php echo form_hidden('id', $user->id);?>

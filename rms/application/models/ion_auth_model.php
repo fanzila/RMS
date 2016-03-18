@@ -160,6 +160,7 @@ class Ion_auth_model extends CI_Model
 	 * @var array
 	 **/
 	public $_cache_user_in_group = array();
+	public $_cache_user_in_bu = array();
 
 	/**
 	 * caching of groups
@@ -167,6 +168,7 @@ class Ion_auth_model extends CI_Model
 	 * @var array
 	 **/
 	protected $_cache_groups = array();
+	protected $_cache_bus = array();
 
 	public function __construct()
 	{
@@ -937,11 +939,16 @@ class Ion_auth_model extends CI_Model
 		$id = $this->db->insert_id();
 		
 		//add in groups array if it doesn't exits and stop adding into default group if default group ids are set
+		
+		//START HACK, adding to group below is not working so adding to group user (id = 2) by default
+		$this->add_to_group(2, $id);
+		//END HACK 
+		
 		if( isset($default_group->id) && empty($groups) ) 
 		{
-			$groups[] = $default_group->id;			
+			$groups[] = $default_group->id;		
 		}
-
+		
 		if (!empty($groups))
 		{
 			//add to groups
@@ -1399,6 +1406,19 @@ class Ion_auth_model extends CI_Model
 		                ->get($this->tables['users_groups']);
 	}
 
+	public function get_users_bus($id=FALSE)
+	{
+		$this->trigger_events('get_users_bu');
+
+		//if no id was passed use the current users id
+		$id || $id = $this->session->userdata('user_id');
+
+		return $this->db->select($this->tables['users_bus'].'.'.$this->join['bus'].' as id, '.$this->tables['bus'].'.name')
+		                ->where($this->tables['users_bus'].'.'.$this->join['users'], $id)
+		                ->join($this->tables['bus'], $this->tables['users_bus'].'.'.$this->join['bus'].'='.$this->tables['bus'].'.id')
+		                ->get($this->tables['users_bus']);
+	}
+	
 	/**
 	 * add_to_group
 	 *
@@ -1430,6 +1450,37 @@ class Ion_auth_model extends CI_Model
 		return $return;
 	}
 
+	/**
+	 * add_to_bu
+	 *
+	 * @return bool
+	 * @author Ben Edmunds
+	 **/
+	public function add_to_bu($bu_id, $user_id=false)
+	{
+		$this->trigger_events('add_to_bu');
+
+		//if no id was passed use the current users id
+		$user_id || $user_id = $this->session->userdata('user_id');
+
+		//check if unique - num_rows() > 0 means row found
+		if ($this->db->where(array( $this->join['bus'] => (int)$bu_id, $this->join['users'] => (int)$user_id))->get($this->tables['users_bus'])->num_rows()) return false;
+
+		if ($return = $this->db->insert($this->tables['users_bus'], array( $this->join['bus'] => (int)$bu_id, $this->join['users'] => (int)$user_id)))
+		{
+			if (isset($this->_cache_bus[$bu_id])) {
+				$bu_name = $this->_cache_bus[$bu_id];
+			}
+			else {
+				$bu = $this->group($bu_id)->result();
+				$bu_name = $bu[0]->name;
+				$this->_cache_bus[$bu_id] = $bu_name;
+			}
+			$this->_cache_user_in_bu[$user_id][$bu_id] = $bu_name;
+		}
+		return $return;
+	}
+	
 	/**
 	 * remove_from_group
 	 *
@@ -1474,7 +1525,52 @@ class Ion_auth_model extends CI_Model
 		}
 		return $return;
 	}
+	
+	/**
+	 * remove_from_bu
+	 *
+	 * @return bool
+	 * @author Ben Edmunds
+	 **/
+	public function remove_from_bu($bu_ids=false, $user_id=false)
+	{
+		$this->trigger_events('remove_from_bu');
 
+		// user id is required
+		if(empty($user_id))
+		{
+			return FALSE;
+		}
+
+		// if group id(s) are passed remove user from the group(s)
+		if( ! empty($bu_ids))
+		{
+			if(!is_array($bu_ids))
+			{
+				$bu_ids = array($bu_ids);
+			}
+
+			foreach($bu_ids as $bu_id)
+			{
+				$this->db->delete($this->tables['users_bus'], array($this->join['bus'] => (int)$bu_id, $this->join['users'] => (int)$user_id));
+				if (isset($this->_cache_user_in_bu[$user_id]) && isset($this->_cache_user_in_bu[$user_id][$bu_id]))
+				{
+					unset($this->_cache_user_in_bu[$user_id][$bu_id]);
+				}
+			}
+
+			$return = TRUE;
+		}
+		// otherwise remove user from all bus
+		else
+		{
+			if ($return = $this->db->delete($this->tables['users_bus'], array($this->join['users'] => (int)$user_id))) {
+				$this->_cache_user_in_bu[$user_id] = array();
+			}
+		}
+		return $return;
+	}
+	
 	/**
 	 * groups
 	 *
@@ -1520,6 +1616,51 @@ class Ion_auth_model extends CI_Model
 		return $this;
 	}
 
+	/**
+	 * bus
+	 *
+	 * @return object
+	 * @author Ben Edmunds
+	 **/
+	public function bus()
+	{
+		$this->trigger_events('bus');
+
+		//run each where that was passed
+		if (isset($this->_ion_where) && !empty($this->_ion_where))
+		{
+			foreach ($this->_ion_where as $where)
+			{
+				$this->db->where($where);
+			}
+			$this->_ion_where = array();
+		}
+
+		if (isset($this->_ion_limit) && isset($this->_ion_offset))
+		{
+			$this->db->limit($this->_ion_limit, $this->_ion_offset);
+
+			$this->_ion_limit  = NULL;
+			$this->_ion_offset = NULL;
+		}
+		else if (isset($this->_ion_limit))
+		{
+			$this->db->limit($this->_ion_limit);
+
+			$this->_ion_limit  = NULL;
+		}
+
+		//set the order
+		if (isset($this->_ion_order_by) && isset($this->_ion_order))
+		{
+			$this->db->order_by($this->_ion_order_by, $this->_ion_order);
+		}
+
+		$this->response = $this->db->get($this->tables['bus']);
+
+		return $this;
+	}
+	
 	/**
 	 * group
 	 *

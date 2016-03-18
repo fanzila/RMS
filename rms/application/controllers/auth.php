@@ -456,7 +456,7 @@ class Auth extends CI_Controller {
 
 		if ($this->form_validation->run() == true)
 		{
-			$username = strtolower($this->input->post('first_name')) . ' ' . strtolower($this->input->post('last_name'));
+			$username = strtolower($this->input->post('first_name')) . '.' . strtolower($this->input->post('last_name'));
 			$email    = strtolower($this->input->post('email'));
 			$password = $this->input->post('password');
 
@@ -534,7 +534,9 @@ class Auth extends CI_Controller {
 
 		$user = $this->ion_auth->user($id)->row();
 		$groups=$this->ion_auth->groups()->result_array();
+		$bus=$this->ion_auth->bus()->result_array();
 		$currentGroups = $this->ion_auth->get_users_groups($id)->result();
+		$currentBus = $this->ion_auth->get_users_bus($id)->result();
 
 		//validate form input
 		$this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'required|xss_clean');
@@ -543,6 +545,7 @@ class Auth extends CI_Controller {
 		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'required|xss_clean');
 		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'required|xss_clean');
 		$this->form_validation->set_rules('groups', $this->lang->line('edit_user_validation_groups_label'), 'xss_clean');
+		$this->form_validation->set_rules('bus', $this->lang->line('edit_user_validation_bus_label'), 'xss_clean');
 
 		if (isset($_POST) && !empty($_POST))
 		{
@@ -582,6 +585,7 @@ class Auth extends CI_Controller {
 				{
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
+					$buData    = $this->input->post('bus');
 
 					if (isset($groupData) && !empty($groupData)) {
 
@@ -589,6 +593,16 @@ class Auth extends CI_Controller {
 
 						foreach ($groupData as $grp) {
 							$this->ion_auth->add_to_group($grp, $id);
+						}
+
+					}
+					
+					if (isset($buData) && !empty($buData)) {
+
+						$this->ion_auth->remove_from_bu('', $id);
+
+						foreach ($buData as $bu) {
+							$this->ion_auth->add_to_bu($bu, $id);
 						}
 
 					}
@@ -617,7 +631,10 @@ class Auth extends CI_Controller {
 		//pass the user to the view
 		$this->data['user'] = $user;
 		$this->data['groups'] = $groups;
+		$this->data['bus'] = $bus;
 		$this->data['currentGroups'] = $currentGroups;
+		$this->data['currentBus'] = $currentBus;
+		
 
 		$this->data['first_name'] = array(
 			'name'  => 'first_name',
