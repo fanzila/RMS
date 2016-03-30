@@ -3,6 +3,8 @@
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/admin/" data-transition="slide" data-icon="home">Home</a>
+			<?php if($users['0']->groups['0']->level >= 2) {?>
+				<a href="/auth/create_user" data-transition="slide" data-icon="plus">Create user</a><? } ?>
 			<h1>Users</h1>
 		</div>
 		<div data-role="content">
@@ -53,8 +55,6 @@
 		</tr>
 	<?php endforeach;?>
 </table>
-		
-<p><?php if($users['0']->groups['0']->level >= 2) { echo anchor('auth/create_user', lang('index_create_user_link'), $attributes); } ?></p>
 
 	</div><!-- /content -->
 	<br /><br />
