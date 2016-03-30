@@ -26,7 +26,6 @@ class Product {
 			p.packaging AS packaging,
 			p.freq_inventory, 
 			p.comment, 
-			p.stock_management AS stock_management, 
 			ps.mini AS stock_mini, 
 			ps.max AS stock_max, 
 			ps.qtty AS stock_qtty, 

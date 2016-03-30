@@ -18,7 +18,7 @@
 		<div data-role="content">
 			<? if($command != 'create') { ?>
 				<fieldset class="ui-grid-a">
-				<form id="filter" name="filter" method="post" action="/product_admin/index/filter">
+				<form id="filter" name="filter" method="post" data-ajax="false" action="/product_admin/index/filter">
 					<div class="ui-block-a">
 						<select name="supplier_id"  data-mini="true">
 							<option value="">ALL</option>
@@ -28,7 +28,7 @@
 						</select>
 						</div>
 						<div class="ui-block-b">
-						<input type="submit" name="submit" value="filter" data-mini="true">
+						<input type="submit" name="submit" value="filter" data-mini="true" data-ajax="false">
 					</div>
 				</form>
 				</fieldset>
@@ -36,12 +36,11 @@
 				<? foreach ($products as $line) { ?>
 					<? 
 					$bkgcolor = '';
-					if($line['stock_management'] == 1 ) $bkgcolor = '#f2ffeb'; 
 					if($line['active'] == 0 ) $bkgcolor = '#e5e5e5'; 
 					?>			
 					<li style="background-color: <?=$bkgcolor?>">
 					<form id="pdt<?=$line['id']?>" class="pdt<?=$line['id']?>" name="pdt<?=$line['id']?>" method="post" action="/product_admin/save">
-						<table>
+						<table width="100%">
 							<tr>
 								<td><small>Name - <?=$line['id']?></small></td>
 								<td><small>Supplier</small></td>
@@ -92,31 +91,25 @@
 														</select>
 													</td>
 													<td><input type="text" name="supplier_reference" value="<?=$line['supplier_reference']?>"  data-mini="true"></td>
-													<td></td>
 												</tr>
 												<tr>
-													<td><small>Stock mgmt.</small></td>
 													<td><small>Stock qtty</small></td>
 													<td><small>Stock warning</small></td>
 													<td><small>Stock mini</small></td>
 													<td><small>Stock max</small></td>
 													<td><small>Stock last up user</small></td>
 													<td><small>Stock last up pos</small></td>
-													<td colspan="5"><small>Comment</small></td>
+													<td colspan="2"><small>Comment</small></td>
 													<td></td>		
 												</tr>
 												<tr>
-													<td><select id="stock_management<?=$line['id']?>" name="stock_management"  data-mini="true">
-														<option value="0" <? if($line['stock_management'] == 0 ) { echo "selected"; } ?>>no</option>
-														<option value="1" <? if($line['stock_management'] == 1 ) { echo "selected"; } ?>>yes</option>
-													</select></td>
-													<td><input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=round($line['stock_qtty'],2)?>"  data-mini="true"></td></td>
-													<td><input type="text" id="stock_warning-<?=$line['id']?>" name="stock_warning" value="<?=$line['stock_warning']?>"  data-mini="true"></td></td>
-													<td><input type="text" id="stock_mini-<?=$line['id']?>" name="stock_mini" value="<?=$line['stock_mini']?>"  data-mini="true"></td></td>
-													<td><input type="text" id="stock_max-<?=$line['id']?>" name="stock_max" value="<?=$line['stock_max']?>"  data-mini="true"></td></td>
+													<td><input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=round($line['stock_qtty'],2)?>"  data-mini="true"></td>
+													<td><input type="text" id="stock_warning-<?=$line['id']?>" name="stock_warning" value="<?=$line['stock_warning']?>"  data-mini="true"></td>
+													<td><input type="text" id="stock_mini-<?=$line['id']?>" name="stock_mini" value="<?=$line['stock_mini']?>"  data-mini="true"></td>
+													<td><input type="text" id="stock_max-<?=$line['id']?>" name="stock_max" value="<?=$line['stock_max']?>"  data-mini="true"></td>
 													<td valign="top"><small><?=$line['last_update_user']?> <br /><?=$line['last_update_user_name']?></small></td>
 													<td valign="top"><small><?=$line['last_update_pos']?></small></td>
-													<td colspan="5"><input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true"></td>
+													<td colspan="2"><input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true"></td>
 													<td><input type="submit" id="sub<?=$line['id']?>" onclick="validate(<?=$line['id']?>)" name="submit" value="Save" data-mini="true"></td>		
 												</tr>
 												<input type="hidden" name="id" value="<?=$line['id']?>">
@@ -132,7 +125,7 @@
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 								<li>
 									<form id="pdt1" class="pdt1" name="pdt1" method="post" action="/product_admin/save">
-									<table>
+									<table width="100%">
 										<tr>
 											<td><small>Name</small></td>
 											<td><small>Supplier</small></td>
@@ -185,32 +178,22 @@
 																		</select>
 																	</td>
 																	<td><input type="text" name="supplier_reference" value=""  data-mini="true"></td>
-
-																	<td></td>
 																</tr>
 																<tr>
-																	<td><small>Stock mgmt.</small></td>
+																	
 																	<td><small>Stock qtty</small></td>
 																	<td><small>Stock warning</small></td>
 																	<td><small>Stock mini</small></td>
 																	<td><small>Stock max</small></td>
-																	<td><small>Stock last up user</small></td>
-																	<td><small>Stock last up pos</small></td>
-																	<td colspan="5"><small>Comment</small></td>
-																	<td></td>		
+																	<td colspan="4"><small>Comment</small></td>
+																	<td></td>	
 																</tr>
 																<tr>
-																	<td><select id="stock_management" name="stock_management"  data-mini="true">
-																		<option value="0">no</option>
-																		<option value="1">yes</option>
-																	</select></td>
-																	<td><input type="text" id="stock_qtty-1" name="stock_qtty" value=""  data-mini="true"></td></td>
-																	<td><input type="text" id="stock_warning-1" name="stock_warning" value=""  data-mini="true"></td></td>
-																	<td><input type="text" id="stock_mini-1" name="stock_mini" value=""  data-mini="true"></td></td>
-																	<td><input type="text" id="stock_max-1" name="stock_max" value=""  data-mini="true"></td></td>
-																	<td valign="top"><small></small></td>
-																	<td valign="top"><small></small></td>
-																	<td colspan="5"><input type="text" name="comment" data-mini="true"></td>
+																	<td><input type="text" id="stock_qtty-1" name="stock_qtty" value=""  data-mini="true"></td>
+																	<td><input type="text" id="stock_warning-1" name="stock_warning" value=""  data-mini="true"></td>
+																	<td><input type="text" id="stock_mini-1" name="stock_mini" value=""  data-mini="true"></td>
+																	<td><input type="text" id="stock_max-1" name="stock_max" value=""  data-mini="true"></td>
+																	<td colspan="4"><input type="text" name="comment" data-mini="true"></td>
 																	<td><input type="submit" id="sub1" onclick="validate(1)" name="submit" value="Save" data-mini="true"></td>		
 																</tr>
 																<input type="hidden" name="id" value="create">

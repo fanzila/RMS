@@ -79,7 +79,6 @@ class Product_admin extends CI_Controller {
 			price = '".$price."',
 			id_unit = '".$data['id_unit']."',
 			packaging = '".$data['packaging']."',
-			stock_management = '".$data['stock_management']."',
 			id_category = '".$data['id_category']."',
 			active = '".$data['active']."',
 			freq_inventory = '".$data['freq_inventory']."',
@@ -90,7 +89,6 @@ class Product_admin extends CI_Controller {
 		$req = $this->db->query($sql) or die($this->mysqli->error);
 		if($data['id'] == 'create') $new_id = $this->db->insert_id();
 		
-		if(!empty($data['stock_management'])) {
 			$user = $this->ion_auth->user()->row();
 			
 			if($data['id'] == 'create') $id_product = $new_id;
@@ -108,7 +106,6 @@ class Product_admin extends CI_Controller {
 				} else {
 					$this->db->query("UPDATE products_stock SET warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW() WHERE id_product = $id_product") or die($this->mysqli->error);
 				}
-			}
 		}
 
 		echo json_encode(['reponse' => $reponse]);

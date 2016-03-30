@@ -1327,7 +1327,7 @@ class Ion_auth_model extends CI_Model
 
 			$this->_ion_where = array();
 		}
-
+		
 		if (isset($this->_ion_like) && !empty($this->_ion_like))
 		{
 			foreach ($this->_ion_like as $like)
@@ -1360,7 +1360,7 @@ class Ion_auth_model extends CI_Model
 			$this->_ion_order    = NULL;
 			$this->_ion_order_by = NULL;
 		}
-
+		$this->db->order_by('active', 'DESC'); //hack
 		$this->response = $this->db->get($this->tables['users']);
 
 		return $this;
@@ -1413,7 +1413,7 @@ class Ion_auth_model extends CI_Model
 		//if no id was passed use the current users id
 		$id || $id = $this->session->userdata('user_id');
 
-		return $this->db->select($this->tables['users_bus'].'.'.$this->join['bus'].' as id, '.$this->tables['bus'].'.name')
+		return $this->db->select($this->tables['users_bus'].'.'.$this->join['bus'].' as id, '.$this->tables['bus'].'.name, '.$this->tables['bus'].'.country, '.$this->tables['bus'].'.zip')
 		                ->where($this->tables['users_bus'].'.'.$this->join['users'], $id)
 		                ->join($this->tables['bus'], $this->tables['users_bus'].'.'.$this->join['bus'].'='.$this->tables['bus'].'.id')
 		                ->get($this->tables['users_bus']);
