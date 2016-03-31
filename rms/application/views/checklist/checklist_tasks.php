@@ -47,7 +47,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 								
 								<li>
 									<input type="checkbox" name="<?=$line['id']?>" id="task-<?=$line['id']?>" class="custom" <?if(isset($form[$line['id']])) { ?>checked<? } ?> />
-									<label style="background-color: <?=$bkg_color?>" for="task-<?=$line['id']?>" id="label-<?=$line['id']?>"><?=$line['name']?> <br /> <i><span style="font-size:smaller"><?=nl2br($line['comment'])?></span></i></label>
+									<label style="background-color: <?=$bkg_color?>" for="task-<?=$line['id']?>" id="label-<?=$line['id']?>"><?=nl2br($line['name'])?> <br /> <i><span style="font-size:smaller"><?=nl2br($line['comment'])?></span></i></label>
 
 									<div data-role="fieldcontain">
 										<label style="font-size:smaller" for="comment-<?=$line['id']?>">Comments</label>
