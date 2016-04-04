@@ -67,7 +67,6 @@ $today = getdate();
 												?>
 												/>
 											</td>
-											<? if($line['stock_management'] == 1) { ?>
 												<td><small>Stock adjust: </small></td>
 												<td>
 													<input type="text" name="stock-<?=$line['id']?>" id="stock-<?=$line['id']?>" class="custom" value="0">
@@ -80,7 +79,7 @@ $today = getdate();
 												</tr>
 										</table>
 									</li>
-									<? } } ?>
+									<? } ?>
 								</ul>	
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 									<li data-role="list-divider" style="list-style-type: none;">

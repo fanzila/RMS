@@ -59,7 +59,7 @@ class Cashier {
 
 		$CI = & get_instance(); 
 		$CI->load->database();
-		$debug = true;
+		$debug = false;
 		
 		$q_pos_pdt = "SELECT * FROM sales_product WHERE deleted=0";
 		$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
