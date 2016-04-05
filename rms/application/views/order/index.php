@@ -30,7 +30,7 @@
 						foreach ($suppliers as $varsup) {
 								?>
 								<li><a data-ajax="false" href="/order/viewProducts/1000/0/<?=$varsup['id']?>"><?=strtoupper($varsup['name'])?> 
-								<? if(isset($varsup['last_order'])) { ?><small>  <i>Last order: <?=$varsup['last_order']?> days ago by <?=$varsup['last_order_user']->username?></i></small><? } ?></a></li>
+								<? if(isset($varsup['last_order'])) { ?><small>  <i>Last order: <?=$varsup['last_order']?> by <?=$varsup['last_order_user']->username?></i></small><? } ?></a></li>
 								<? } ?>
 							</ul>
 					<? } ?>

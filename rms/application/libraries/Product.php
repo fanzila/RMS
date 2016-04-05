@@ -114,8 +114,11 @@ public function getSuppliers($order = null) {
 		if(isset($rowl[0]['date'])) {
 			$now = new DateTime();
 			$dateBdd = new DateTime($rowl[0]['date']);
-						
-			$ret[$key['id']]['last_order'] = $dateBdd->diff($now)->days;
+			$interval = $dateBdd->diff($now);
+			
+			$ret[$key['id']]['last_order'] = $interval->format('%h hour(s) and %i minute(s) ago');
+			if($dateBdd->diff($now)->days > 0) $ret[$key['id']]['last_order'] = $interval->format('%d day(s) ago');
+			
 			$ret[$key['id']]['last_order_user'] = $CI->hmw->getUser($rowl[0]['user']);
 		}
 	}
