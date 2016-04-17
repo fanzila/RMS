@@ -6,11 +6,13 @@ class Sensors extends CI_Controller {
 		parent::__construct();
 		$this->load->library('ion_auth');
 		$this->load->library("hmw");
+		
 	}
 
 	public function index()
 	{
-
+		$this->hmw->keyLogin();
+		
 		$q = "SELECT * FROM 
 		( SELECT st.id AS stid, st.id_sensor AS idsensor, st.date, st.temp, s.name, s.correction, sa.lastalarm  
 			FROM sensors_temp AS st 
