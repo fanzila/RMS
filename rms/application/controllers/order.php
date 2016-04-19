@@ -47,6 +47,26 @@ class Order extends CI_Controller {
 		$this->load->view('order/index',$data);
 	}
 
+  	public function autoCompProducts(){
+	
+    	if (isset($_GET['q'])){
+      		$q = strtolower($_GET['q']);
+
+			$row_set = array();
+			$query = $this->db->query("SELECT 
+				p.name AS name, p.id AS id
+				FROM products AS p 
+			WHERE p.name LIKE LOWER('%$q%')
+				AND p.deleted=0 ORDER BY p.name ASC LIMIT 100") or die($this->mysqli->error);
+			if($query->num_rows() > 0){
+				foreach ($query->result_array() as $row){
+			    	$row_set[] = htmlentities(stripslashes($row['name']))."||".$row['id']; 
+				}
+		    }
+		    echo $_GET['callback']."(".json_encode($row_set).");";	
+		}
+  	}
+
 	public function cliUpdateSales() {
 		if($this->input->is_cli_request()) {
 					

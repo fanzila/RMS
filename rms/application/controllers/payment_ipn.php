@@ -331,7 +331,7 @@ if(!$this->db->query($up))
 	
 	$sms = array();
 	$sms['to']			= "email2sms@ovh.net";
-	$sms['subject'] 	= "sms-dp131762-1:hanksms:gxistf23:HNKMOORD:+33647384930:::1";
+	$sms['subject'] 	= "sms-dp131762-1:hanksms:pass:HNKMOORD:+33647384930:::1";
 	$sms['msg'] 		= $order_info;
 	$CI->mmail->sendEmail($sms);
 

@@ -1,6 +1,6 @@
 <?php $title = "Order"; include('jq_header.php'); ?> 
 <body>
-	<div data-role="page">
+	<div id="orderpage" data-role="page">
 		<div data-role="header">
 			<? if(!$keylogin) { ?><a href="/admin/" data-ajax="false" data-icon="home">Home</a><? } ?>
 			<h1>Order</h1>
@@ -8,7 +8,7 @@
 		<div data-role="content">
 			<?php if($user_groups->level >= 1) { ?>
 
-				<ul data-role="listview" data-inset="true" data-filter="true">
+				<ul data-role="listview" data-inset="true" data-filter="false">
 					<li data-role="list-divider">FREQUENCE</li>
 					<?
 				foreach ($freq as $var) {
@@ -20,9 +20,12 @@
 					<? } ?>
 					<a href="/order/previousOrders" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="search" data-mini="true" data-theme="a">Log</a>
 					<?php if($user_groups->level >= 2) { ?>
-						<a href="/product_admin/mapping" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products mapping</a>
 						<a href="/product_admin/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products admin</a>
-						<a href="/crud/productsAttribut/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products attribut</a>								
+						<a href="/product_admin/mapping" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products mapping</a>
+						<a href="/crud/suppliers/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Suplliers</a>
+						<a href="/crud/productsAttribut/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products attribut</a>
+							
+						<ul id="autocomplete" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..." data-filter-theme="d"></ul>
 						<hr />
 						<ul data-role="listview" data-inset="true" data-filter="true">
 							<li data-role="list-divider">SUPPLIERS</li>
@@ -34,9 +37,42 @@
 								<? } ?>
 							</ul>
 					<? } ?>
-					<br /><br />							
+					<br /><br />						
 				</div><!-- /content -->
 
 				<div id="view"></div>
 			</div><!-- /page -->
+		    <script>
+				$( document ).on( "pageinit", "#orderpage", function() {
+					$( "#autocomplete" ).on( "listviewbeforefilter", function ( e, data ) {
+						var $ul = $( this ),
+							$input = $( data.input ),
+							value = $input.val(),
+							html = "";
+						$ul.html( "" );
+						if ( value && value.length > 2 ) {
+							$ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+							$ul.listview( "refresh" );
+							$.ajax({
+								url: "/order/autoCompProducts",
+								
+								dataType: "jsonp",
+								crossDomain: true,
+								data: {
+									q: $input.val()
+								}
+							})
+							.then( function ( response ) {
+								$.each( response, function ( i, val ) {
+									var res = val.split("||");	
+									html += "<li><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'>" + res[0] + "</a></li>";
+								});
+								$ul.html( html );
+								$ul.listview( "refresh" );
+								$ul.trigger( "updatelayout");
+							});
+						}
+					});
+				});
+		    </script>
 			<?php include('jq_footer.php'); ?>

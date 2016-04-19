@@ -31,12 +31,18 @@ class Product_admin extends CI_Controller {
 	public function index($command = null)
 	{		
 		$this->load->library('product');
+		$product_id = null;
+		
+		if(isset($_GET['id_product'])) {
+			$product_id = $_GET['id_product']; 
+			$command = 'filter';
+		}
 		
 		$supplier_id = '';
 		$postid = $this->input->post('supplier_id');
 		if($command == null && isset($postid)) $supplier_id = 1;
 		if($command == 'filter' && isset($postid)) $supplier_id = $this->input->post('supplier_id');
-		$products 			= $this->product->getProducts(null, $supplier_id, null);
+		$products 			= $this->product->getProducts($product_id, $supplier_id, null);
 		$suppliers 			= $this->product->getSuppliers();
 		$products_unit 		= $this->product->getProductUnit();
 		$products_category 	= $this->product->getProductCategory();
