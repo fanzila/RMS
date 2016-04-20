@@ -9,7 +9,7 @@
 			<?php if($user_groups->level >= 1) { ?>
 
 				<ul data-role="listview" data-inset="true" data-filter="false">
-					<li data-role="list-divider">FREQUENCE</li>
+					<li data-role="list-divider">ORDER FREQUENCY</li>
 					<?
 				foreach ($freq as $var) {
 					if($var['name'] != 'previous') {
@@ -50,7 +50,7 @@
 							value = $input.val(),
 							html = "";
 						$ul.html( "" );
-						if ( value && value.length > 2 ) {
+						if ( value && value.length > 1 ) {
 							$ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
 							$ul.listview( "refresh" );
 							$.ajax({
@@ -64,8 +64,8 @@
 							})
 							.then( function ( response ) {
 								$.each( response, function ( i, val ) {
-									var res = val.split("||");	
-									html += "<li><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'>" + res[0] + "</a></li>";
+									var res = val.split("|||");	
+									html += "<li><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'><table width='100%' border='0'><tr><td width='40%'>" + res[0] + " </td><td width='40%'> " + res[2] + " </td><td width='10%'> QTTY: " + res[3] + " </td><td width='10%'> " + res[4]/1000 + "€ / " + res[5] + "</td></tr></table></a></li>";
 								});
 								$ul.html( html );
 								$ul.listview( "refresh" );

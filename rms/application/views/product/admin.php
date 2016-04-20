@@ -44,7 +44,7 @@
 							<tr>
 								<td><small>Name - <?=$line['id']?></small></td>
 								<td><small>Supplier</small></td>
-								<td><small>Unit price</small></td>
+								<td><small>Unit price €</small></td>
 								<td><small>Colisage</small></td>
 								<td><small>Unit type</small></td>
 								<td><small>Category</small></td>
@@ -129,7 +129,7 @@
 										<tr>
 											<td><small>Name</small></td>
 											<td><small>Supplier</small></td>
-											<td><small>Unit price</small></td>
+											<td><small>Unit price €</small></td>
 											<td><small>Packaging</small></td>
 											<td><small>Unit type</small></td>
 											<td><small>Category</small></td>

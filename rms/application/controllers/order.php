@@ -54,13 +54,16 @@ class Order extends CI_Controller {
 
 			$row_set = array();
 			$query = $this->db->query("SELECT 
-				p.name AS name, p.id AS id
+				p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, puprc.name AS unitname
 				FROM products AS p 
-			WHERE p.name LIKE LOWER('%$q%')
+				JOIN suppliers AS s ON p.id_supplier = s.`id` 
+				JOIN products_unit AS puprc ON p.id_unit = puprc.`id` 
+				LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product 
+				WHERE p.name LIKE LOWER('%$q%')
 				AND p.deleted=0 ORDER BY p.name ASC LIMIT 100") or die($this->mysqli->error);
 			if($query->num_rows() > 0){
 				foreach ($query->result_array() as $row){
-			    	$row_set[] = htmlentities(stripslashes($row['name']))."||".$row['id']; 
+			    	$row_set[] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']; 
 				}
 		    }
 		    echo $_GET['callback']."(".json_encode($row_set).");";	
