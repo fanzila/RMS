@@ -21,11 +21,11 @@
 			<table border="0" cellpadding="5" width="100%">
 				<tr style="background-color: #fdfff9;">
 					<td align="center">Montant Cash</td>
-					<td align="center">Montant TR</td>
+					<td align="center">Nombre TR</td>
 				</tr>
 				<tr style="background-color: #fdfff9;">
 					<td><input maxlength="20" type="text" name="man_1" id="man_1" value="0.00" /></td>
-					<td><input maxlength="20" type="text" name="man_3" id="man_3" value="0.00" /></td>
+					<td><input maxlength="20" type="text" name="man_3" id="man_3" value="0" /></td>
 				</tr>
 			</table>
 			
