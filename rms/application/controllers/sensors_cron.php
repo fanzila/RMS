@@ -48,7 +48,8 @@ class Sensors_cron extends CI_Controller {
 					// != 85 is a cludge for wrong data collecting by 1-wire which report sometimes, for unknown reason, 85 instead of minus something...
 					if(($temp >= $max OR $temp <= $min) AND $temp != 85) {
 
-						$msg = "ERROR sensor ".$is[0]->name.": the temperature should be max: ".$max."° and min: ".$min."° \nbut it's ".$temp."° at ".$is[0]->date."\n";
+						$msg = "ERROR sensor ".$is[0]->name.": ".$temp."° at ".$is[0]->date."\n 
+						The temperature should be max: ".$max."° and min: ".$min."°";
 
 						$this->hmw->sendNotif($msg);
 

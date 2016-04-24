@@ -12,6 +12,47 @@ class Hmw {
 		return $r[0]->val;
 	}
 
+	public function callBox($data) 
+	{
+	
+		/** DEMO
+		$_GET = array(
+		'key'	=> $key,
+		'order' => 'chacun', 
+		'module' => 'switch', // or 'dimmer'
+		'value' => 'on', // or '1' to '255'
+		'id' => '2');
+
+		$_GET = array(
+		'key'	=> $key,
+		'order' => 'sound', 
+		'jingle' => '/home/pos/sncf2.mp3', 
+		'type' => 'audio', //or 'text'
+		'message' => '/home/pos/evening.mp3'); // or text : 'Good morning planet.'
+		**/
+		
+		
+		$CI = & get_instance(); 
+		$CI->load->database();
+		
+		$jdata = json_encode($data);
+		
+		$ch = curl_init();
+		$api_box_url = $this->getParam('api_box_url');
+		$key = $this->getParam('keylogin');
+		if($_GET['key'] != $key) exit('error B');
+
+		curl_setopt($ch, CURLOPT_URL, $api_box_url);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, array('data' => $jdata));
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,30);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$server_output = curl_exec($ch);
+		var_dump($server_output);
+		curl_close ($ch);
+	}
+
 	public function getUser($id) 
 	{
 		$CI = & get_instance(); 

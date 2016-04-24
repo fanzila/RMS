@@ -14,7 +14,7 @@ class Wiki_key_login extends CI_Controller {
 
 		$this->load->library('hmw');
 
-		$loginkey = "hdgs6779shd6790nxbskq123hsdksncsaqpm";
+		$loginkey = "";
 		
 		$page = $this->input->get('page');
 		if(!isset($page)) $page = "start";
