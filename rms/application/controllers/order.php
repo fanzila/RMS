@@ -72,11 +72,9 @@ class Order extends CI_Controller {
 
 	public function cliUpdateSales() {
 		if($this->input->is_cli_request()) {
-					
 			$this->load->library("cashier");
-	
-			$this->cashier->posInfo('salesUpdate');		
-			$this->cashier->updateStock();	
+			$this->cashier->posInfo('salesUpdate');	
+			$this->cashier->updateStock();
 		} else { 
 			return false; 
 		}

@@ -89,14 +89,19 @@ class Pos extends CI_Controller {
 		$r_pm = $this->db->query($q_pm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 		foreach ($r_pm->result_array() as $key_pm => $m) {
-			$q_pp = "SELECT * FROM pos_payments AS pp JOIN pos_payments_type AS ppt ON pp.id_payment = ppt.id WHERE id_movement = ".$m['id']." ORDER BY  id_payment ASC";
+			$q_pp = "SELECT * FROM pos_payments AS pp 
+				JOIN pos_payments_type AS ppt ON pp.id_payment = ppt.id 
+				WHERE id_movement = ".$m['id']." 
+				ORDER BY  id_payment ASC";
 			$r_pp = $this->db->query($q_pp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$res_pp = $r_pp->result_array();
 			$lines[$m['id']]['mov'] = $m;
 			$lines[$m['id']]['pay'] = $res_pp;
+				
 			if($m['movement'] == 'close') {
 				$param = array('closing_file' =>  $m['closing_file']);
-				$lines[$m['id']]['close_users'] = $this->cashier->posInfo('getUsers', $param);
+				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
+				$lines[$m['id']]['cashmovements'] 	= $this->cashier->posInfo('getMovements', $param);
 			}
 		}
 

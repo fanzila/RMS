@@ -13,7 +13,7 @@ class Cashier {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		$qtty = 0;
-		$debug = true;
+		$debug = false;
 		
 		//get sales product
 		$q_sp = "SELECT sri.quantity AS quantity, sr.period_id as period_id, sri.product AS product
@@ -144,6 +144,13 @@ class Cashier {
 				$q_receiptitemaddon = "INSERT IGNORE INTO sales_receiptitemaddon SET id=".$row_receiptitemaddon['ID'].", receiptitem=".$row_receiptitemaddon['ARCHIVEDRECEIPTITEM'].", productaddon='".$row_receiptitemaddon['PRODUCTADDON']."', quantity=".$row_receiptitemaddon['QUANTITY']; 
 				$r_receiptitemaddon = $CI->db->query($q_receiptitemaddon) or die($this->db->_error_message());
 			}
+			
+			//CASHMOVEMENT
+			$result_cashmovement = $db->query('SELECT * FROM ARCHIVEDCASHMOVEMENT');
+			while($row_cashmovement=$result_cashmovement->fetchArray(SQLITE3_ASSOC)){
+				$q_cashmovement = "INSERT IGNORE INTO sales_cashmovements SET id_pos='".$row_cashmovement['ID']."', date='".$row_cashmovement['DATE']."', user='".$row_cashmovement['USER']."', amount=".$row_cashmovement['AMOUNT'].", method='".$row_cashmovement['METHOD']."', type=".$row_cashmovement['TYPE'].", description='".$row_cashmovement['DESCRIPTION']."', archive='".$file."', customer='".$row_cashmovement['CUSTOMER']."'"; 
+				$r_cashmovement = $CI->db->query($q_cashmovement) or die($this->db->_error_message());
+			}
 		}
 		//update pos_archive
 		$q_archives = "INSERT INTO pos_archives SET file ='".$file."'";
@@ -222,6 +229,14 @@ class Cashier {
 			$q_receiptitemaddon = "INSERT IGNORE INTO sales_receiptitemaddon SET id=".$row_receiptitemaddon['ID'].", receiptitem=".$row_receiptitemaddon['RECEIPTITEM'].", productaddon='".$row_receiptitemaddon['PRODUCTADDON']."', quantity=".$row_receiptitemaddon['QUANTITY']; 
 			$r_receiptitemaddon = $CI->db->query($q_receiptitemaddon) or die($this->db->_error_message());
 		}
+		
+		//CUSTOMER
+		$result_customer = $db->query('SELECT * FROM CUSTOMER');
+		while($row_customer=$result_customer->fetchArray(SQLITE3_ASSOC)){
+			$q_customer = "INSERT INTO sales_customers SET pos_id='".$row_customer['ID']."',  lastname='".addslashes($row_customer['LASTNAME'])."', firstname='".$row_customer['FIRSTNAME']."', zipcode='".addslashes($row_customer['ZIPCODE'])."', city='".addslashes($row_customer['CITY'])."', country='".addslashes($row_customer['COUNTRY'])."', email='".addslashes($row_customer['EMAIL'])."', phone='".addslashes($row_customer['PHONE'])."', loyalty_points=".$row_customer['LOYALTY_POINTS'].", account=".$row_customer['ACCOUNT'].", balance=".$row_customer['BALANCE'].", date_created='".$row_customer['DATE_CREATED']."', date_last_seen='".$row_customer['DATE_LAST_SEEN']."', deleted=".$row_customer['DELETED']." ON DUPLICATE KEY UPDATE lastname='".addslashes($row_customer['LASTNAME'])."', firstname='".$row_customer['FIRSTNAME']."', zipcode='".addslashes($row_customer['ZIPCODE'])."', city='".addslashes($row_customer['CITY'])."', country='".addslashes($row_customer['COUNTRY'])."', email='".addslashes($row_customer['EMAIL'])."', phone='".addslashes($row_customer['PHONE'])."', loyalty_points=".$row_customer['LOYALTY_POINTS'].", account=".$row_customer['ACCOUNT'].", balance=".$row_customer['BALANCE'].", date_created='".$row_customer['DATE_CREATED']."', date_last_seen='".$row_customer['DATE_LAST_SEEN']."', deleted=".$row_customer['DELETED'];
+			
+			$r_customer = $CI->db->query($q_customer) or die($this->db->_error_message());
+		}
 
 	}
 
@@ -270,6 +285,17 @@ class Cashier {
 					$resu = $CI->db->query($sqlu);
 				}
 			}
+			break;
+			
+			case 'getMovements':
+			$q_mov = "SELECT sc.`date`, u.`username`, sc.`user`, sc.amount, sc.method, sc.description, sc.customer, ppt.`name` AS method_name, sc2.`firstname` AS customer_first_name, sc2.`lastname` AS customer_last_name 
+				FROM sales_cashmovements AS sc 
+				LEFT JOIN users AS u ON u.pos_id = sc.user 
+				LEFT JOIN pos_payments_type AS ppt ON ppt.pos_id = sc.method 
+				LEFT JOIN sales_customers AS sc2 ON sc2.pos_id = sc.customer
+				WHERE archive = '".$param['closing_file']."'";
+			$r_mov = $CI->db->query($q_mov) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			return $r_mov->result_array();
 			break;
 
 			case 'getUsers':

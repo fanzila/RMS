@@ -25,7 +25,7 @@
 						<p>Comments: <?=$m['mov']['comment']?></p>
 						<p>Safe cash amount: <?=$m['mov']['safe_cash_amount']?> | POS cash amount: <?=$m['mov']['pos_cash_amount']?></p>
 			
-						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8" width="50%">
+						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 							<tr style="background-color: #fbf19e;">
 								<td>Payment type</td>
 								<td>Montant user</td>
@@ -33,23 +33,46 @@
 								<td>Solde</td>
 							</tr>
 							<?php foreach ($m['pay'] as $m2): ?>
-								<? if($m2['id'] == 1) $cash_user = $m2['amount_user']; ?>
 								<tr>
 									<td><?=$m2['name']?></td>
-									<td><?=$m2['amount_user']?></td>
-									<td><?=$m2['amount_pos']?></td>
-									<td><? echo $m2['amount_pos']-$m2['amount_user']; ?></td>
+									<td><? if($m2['id'] != 12 AND $m2['id'] != 11) { echo $m2['amount_user']; } else { echo "-"; } ?></td>
+									<td><? if($m2['id'] != 9) { echo $m2['amount_pos']; } else { echo "-"; } ?></td>
+									<td><? if($m2['id'] != 3 AND $m2['id'] != 1) { echo $m2['amount_pos']-$m2['amount_user']; } else echo "-"; ?></td>
 								</tr>						
 							<?php endforeach; ?>
 						</table>
 <? if($mov =='close') { ?>
-<p>Cash pos - cash user: = <?=$m['mov']['pos_cash_amount']-$cash_user?></p>
-<p>Users:<br /> 
-<?php foreach ($m['close_users'] as $cusers): ?> 
-	<?=$cusers?> <br />
-	<?php endforeach; ?>
-	</p> 
-<? } ?>
+		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+			<tr style="background-color: #fbf19e;"><td colspan="6">POS Movements</td></tr>
+			<tr style="background-color: #fbf19e;">
+				<td>Date</td>
+				<td>User</td>
+				<td>Amount</td>
+				<td>Payment type</td>
+				<td>Description</td>
+				<td>Customer</td>
+			</tr>
+		<?php foreach ($m['cashmovements'] as $mov): ?> 
+			<tr>
+				<td><?=$mov['date']?></td>
+				<td><? if(empty($mov['username'])) { echo $mov['user']; } echo $mov['username']; ?></td>
+				<td><?=$mov['amount']/1000?></td>
+				<td><?=$mov['method_name']?></td>
+				<td><?=$mov['description']?></td>
+				<td><? if($mov['customer_first_name']) { echo $mov['customer_first_name'].".".$mov['customer_last_name']; } ?></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+
+	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+		<tr style="background-color: #fbf19e;">
+			<td>Users</td>
+		</tr>
+	<?php foreach ($m['close_users'] as $cusers): ?> 
+		<tr><td><?=$cusers?></td></tr>
+		<?php endforeach; ?>
+	</table>
+	<? } ?>
 				</li>
 
 			</ul>
