@@ -44,11 +44,11 @@ class Automation extends CI_Controller {
 			//send sms IFFTT
 			$ifttmakerkey = $this->hmw->getParam('ifttmakerkey');
 			$url = "https://maker.ifttt.com/trigger/SendSMS/with/key/$ifttmakerkey?value1=alarm_trigered";
-			//$this->callUrl($url);
+			$this->callUrl($url);
 		
 			//Active alarm sound
 			$url = "https://maker.ifttt.com/trigger/AlarmToCall/with/key/$ifttmakerkey";
-			//$this->callUrl($url);
+			$this->callUrl($url);
 		
 			//log event //todo create log table
 		
