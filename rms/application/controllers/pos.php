@@ -181,7 +181,7 @@ class Pos extends CI_Controller {
 
 	public function save()
 	{
-
+	
 		$data = array();
 		$this->hmw->keyLogin();
 		$user					= $this->ion_auth->user()->row();
@@ -207,9 +207,11 @@ class Pos extends CI_Controller {
 				}
 			}
 			
-			$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash1'))+$this->cashier->clean_number($this->input->post('notes1'));
-			$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cbemv'))+$this->cashier->clean_number($this->input->post('cbcless'));
-			
+			if($this->input->post('mov') != 'safe_in' AND $this->input->post('mov') != 'safe_out') {
+				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash1'))+$this->cashier->clean_number($this->input->post('notes1'));
+				$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cbemv'))+$this->cashier->clean_number($this->input->post('cbcless'));
+			}
+
 			foreach ($pay as $idp => $val2) {
 				if(!isset($val2['man']) OR empty($val2['man']) ) $val2['man'] = 0;
 				if(!isset($val2['pos']) OR empty($val2['pos']) ) $val2['pos'] = 0;
