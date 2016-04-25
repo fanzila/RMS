@@ -56,7 +56,7 @@ class Automation extends CI_Controller {
 			$cmd = array(
 				'key'	=> $key,
 				'order' => 'sound', 
-				'jingle' => '', 
+				'jingle' => null, 
 				'type' => 'audio', //or 'text'
 				'message' => 'alarm.mp3'); // or text : 'Good morning planet.'
 			$this->hmw->callbox($cmd);
