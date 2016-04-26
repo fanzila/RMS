@@ -12,14 +12,14 @@ function validator() {
 				min: 1,
 				number: true
 			}, 
-			movement: {
+			mov: {
 				required: true,
 				minlength: 1
 			}
 		},
 		messages: {
 			user: "Please specify your name",
-			movement: "Please specify a movement",
+			mov: "Please specify a movement",
 		}
 		
 	});

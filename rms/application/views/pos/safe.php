@@ -30,17 +30,6 @@
 			</table>
 			
 			Comments: <input type="text" name="comment" id="comment"  />
-
-			<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
-				<option value="0">User</option>
-				<?
-			foreach ($users as $user) {
-				?>
-				<option value="<?=$user['id']?>" <? if(isset($form['user']) AND $form['user']==$user['id']) { ?> selected <? } ?>><?=$user['first_name']?> <?=$user['last_name']?></option>
-				<? 
-			}
-			?>
-		</select>
 		<input maxlength="20" type="hidden" name="action" value="safe" />
 		<input type="button" name="save" onClick="validator();" value="SAVE">
 	</form>
