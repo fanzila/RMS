@@ -191,8 +191,9 @@ class Pos extends CI_Controller {
 		$data["keylogin"]		= $this->session->userdata('keylogin');
 		$data['title']			= 'Cashier';
 		$data['mov']			= $this->input->post('mov');
-
-		if(empty($this->input->post('user'))) { 
+		$userpost 				= $this->input->post('user');
+		
+		if(empty($userpost)) { 
 			$userid = $user->id; 
 		} else {
 			$userid = $this->input->post('user');
