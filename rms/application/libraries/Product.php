@@ -35,9 +35,9 @@ class Product {
 			ps.last_update_pos AS last_update_pos,
 			u.username AS last_update_user_name
 			FROM products AS p 
-			JOIN products_category AS pc on p.`id_category` = pc.`id` 
 			JOIN suppliers AS s ON p.id_supplier = s.`id` 
 			JOIN products_unit AS puprc ON p.id_unit = puprc.`id` 
+			LEFT JOIN products_category AS pc on p.`id_category` = pc.`id` 
 			LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product 
 			LEFT JOIN users AS u ON ps.last_update_id_user = u.id
 			WHERE p.deleted=0 $sqladd 
