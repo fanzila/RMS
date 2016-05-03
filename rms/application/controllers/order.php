@@ -60,7 +60,9 @@ class Order extends CI_Controller {
 				JOIN products_unit AS puprc ON p.id_unit = puprc.`id` 
 				LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product 
 				WHERE p.name LIKE LOWER('%$q%')
-				AND p.deleted=0 ORDER BY p.name ASC LIMIT 100") or die($this->mysqli->error);
+				AND p.deleted = 0 
+				AND p.active = 1 
+				ORDER BY p.name ASC LIMIT 100") or die($this->mysqli->error);
 			if($query->num_rows() > 0){
 				foreach ($query->result_array() as $row){
 			    	$row_set[] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']; 

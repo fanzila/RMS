@@ -12,7 +12,7 @@
 <body>
 	<div data-role="page">
 		<div data-role="header">
-			<a href="/order/" data-ajax="false" data-icon="home">Home</a> <a href="/product_admin/index/create" data-ajax="false" data-icon="plus">Add</a>
+			<a href="/order/" data-ajax="false" data-icon="home">Back</a> <a href="/product_admin/index/create" data-ajax="false" data-icon="plus">Add</a>
 			<h1>Products admin</h1>
 		</div>
 		<div data-role="content">
