@@ -218,7 +218,7 @@
 												var $form = $('#pdt' + idl);
 												var done = 0;
 												$form.on('submit', function() {
-
+																										
 													var name = $('#name-' + idl).val();
 													var price = $('#price-' + idl).val();
 													var stock_qtty = $('#stock_qtty-' + idl).val();				
@@ -233,6 +233,7 @@
 														return false;
 													}
 													
+													
 													var price_test 			= isNumeric(price);
 													var stock_qtty_test 	= isNumeric(stock_qtty);
 													var stock_warning_test 	= isNumeric(stock_warning);
@@ -242,7 +243,7 @@
 													
 													
 													if((!price_test && price) || (!stock_qtty_test && stock_qtty) || (!stock_warning_test && stock_warning) || (!stock_mini_test && stock_mini) || (!stock_max_test && stock_max) || (!packaging_test && packaging)) {
-														alert('Please enter numeric value for numeric fields.');
+														alert('IMPORTANT! For decimal enter a  dot (.) and NOT a comma (,) and please enter numeric value for numeric fields.');
 														return false;
 													}
 													

@@ -9,19 +9,19 @@
 		<form id="pos" name="pos" method="post" action="/pos/save">
 
 			<div data-role="fieldcontain">
-				Mouvement: 
+				Movement: 
 				<fieldset data-role="controlgroup" data-type="horizontal">
 					<input type="radio" name="mov" id="radio-choice-a" value="safe_in" />
-					<label for="radio-choice-a">IN (rentrer dans le coffre)</label>
+					<label for="radio-choice-a">IN (inside safe)</label>
 					<input type="radio" name="mov" id="radio-choice-b" value="safe_out" />
-					<label for="radio-choice-b">OUT (sortir du coffre)</label>
+					<label for="radio-choice-b">OUT (outside safe)</label>
 				</fieldset>
 			</div>
 
 			<table border="0" cellpadding="5" width="100%">
 				<tr style="background-color: #fdfff9;">
-					<td align="center">Montant Cash</td>
-					<td align="center">Nombre TR</td>
+					<td align="center">Cash amount</td>
+					<td align="center">TR num</td>
 				</tr>
 				<tr style="background-color: #fdfff9;">
 					<td><input maxlength="20" type="text" name="man_1" id="man_1" value="0.00" /></td>

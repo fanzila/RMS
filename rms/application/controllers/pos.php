@@ -78,10 +78,11 @@ class Pos extends CI_Controller {
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= 'Cashier reports';
 		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount');
+		$data['safe_tr'] 		= $this->cashier->calc('safe_current_tr_num');
 		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat');
 		$lines					= array();
 
-		$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.closing_file 
+		$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file 
 			FROM pos_movements AS pm
 			LEFT JOIN users AS u ON u.id = pm.id_user 
 			ORDER BY pm.`id` DESC LIMIT 50";
@@ -199,7 +200,7 @@ class Pos extends CI_Controller {
 			$userid = $this->input->post('user');
 		}
 		
-		$qpm = "INSERT INTO pos_movements SET movement = '".$this->input->post('mov')."', id_user = ".$userid.", comment = '".$this->input->post('comment')."', pos_cash_amount = ".$this->cashier->posInfo('cashfloat').", safe_cash_amount = ".$this->cashier->calc('safe_current_cash_amount');
+		$qpm = "INSERT INTO pos_movements SET movement = '".$this->input->post('mov')."', id_user = ".$userid.", comment = '".$this->input->post('comment')."', pos_cash_amount = ".$this->cashier->posInfo('cashfloat').", safe_cash_amount = ".$this->cashier->calc('safe_current_cash_amount').", safe_tr_num = ".$this->cashier->calc('safe_current_tr_num');
 		$rpm = $this->db->query($qpm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$pmid = $this->db->insert_id();
 

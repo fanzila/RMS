@@ -336,6 +336,15 @@ class Cashier {
 			if(empty($ret)) $ret = 0;
 			return $ret;
 			break;
+			
+			case 'safe_current_tr_num':
+			$q = "SELECT SUM(amount_user) AS amount FROM pos_payments AS pp JOIN pos_movements AS pm ON pp.id_movement = pm.id WHERE pm.movement IN ('safe_in','safe_out') AND pp.id_payment = 3";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_object();
+			$ret = $o[0]->amount;
+			if(empty($ret)) $ret = 0;
+			return $ret;
+			break;
 		}
 
 	}
