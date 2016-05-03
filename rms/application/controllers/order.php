@@ -54,7 +54,7 @@ class Order extends CI_Controller {
 
 			$row_set = array();
 			$query = $this->db->query("SELECT 
-				p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, puprc.name AS unitname
+				p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, p.packaging AS packaging, puprc.name AS unitname
 				FROM products AS p 
 				JOIN suppliers AS s ON p.id_supplier = s.`id` 
 				JOIN products_unit AS puprc ON p.id_unit = puprc.`id` 
@@ -65,7 +65,7 @@ class Order extends CI_Controller {
 				ORDER BY p.name ASC LIMIT 100") or die($this->mysqli->error);
 			if($query->num_rows() > 0){
 				foreach ($query->result_array() as $row){
-			    	$row_set[] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']; 
+			    	$row_set[] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']."|||".$row['packaging']; 
 				}
 		    }
 		    echo $_GET['callback']."(".json_encode($row_set).");";	

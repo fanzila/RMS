@@ -65,7 +65,7 @@
 							.then( function ( response ) {
 								$.each( response, function ( i, val ) {
 									var res = val.split("|||");	
-									html += "<li><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'><table width='100%' border='0'><tr><td width='40%'>" + res[0] + " </td><td width='40%'> " + res[2] + " </td><td width='10%'> QTTY: " + res[3] + " </td><td width='10%'> " + res[4]/1000 + "€ / " + res[5] + "</td></tr></table></a></li>";
+									html += "<li><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'><table width='100%' border='0'><tr><td width='40%'>" + res[0] + " </td><td width='40%'> " + res[2] + " </td><td width='10%'> QTTY: " + res[3] + " </td><td width='10%'> Colisage: " + res[6] + " </td><td width='10%'> " + res[4]/1000 + "€ / " + res[5] + "</td></tr></table></a></li>";
 								});
 								$ul.html( html );
 								$ul.listview( "refresh" );
