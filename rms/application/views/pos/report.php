@@ -36,7 +36,7 @@
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
 								<tr>
 									<td><?=$m2['name']?></td>
-									<td><? if($m2['id'] != 12 AND $m2['id'] != 11) { echo $m2['amount_user']."€"; } else { echo "-"; } ?></td>
+									<td><? if($m2['id'] != 12 AND $m2['id'] != 11) { echo $m2['amount_user']; if($m2['id'] == 3) { echo " TR"; } else { echo "€"; }  } else { echo "-"; } ?></td>
 									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 9) { echo $m2['amount_pos']."€"; } else { echo "-"; } ?></td><? } ?>
 									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 3 AND $m2['id'] != 1) { echo $m2['amount_pos']-$m2['amount_user']."€"; } else echo "-"; ?></td><? } ?>
 								</tr>						
