@@ -200,7 +200,7 @@ class Pos extends CI_Controller {
 			$userid = $this->input->post('user');
 		}
 		
-		$qpm = "INSERT INTO pos_movements SET movement = '".$this->input->post('mov')."', id_user = ".$userid.", comment = '".$this->input->post('comment')."', pos_cash_amount = ".$this->cashier->posInfo('cashfloat').", safe_cash_amount = ".$this->cashier->calc('safe_current_cash_amount').", safe_tr_num = ".$this->cashier->calc('safe_current_tr_num');
+		$qpm = "INSERT INTO pos_movements SET movement = '".$this->input->post('mov')."', id_user = ".$userid.", comment = '".addslashes($this->input->post('comment'))."', pos_cash_amount = ".$this->cashier->posInfo('cashfloat').", safe_cash_amount = ".$this->cashier->calc('safe_current_cash_amount').", safe_tr_num = ".$this->cashier->calc('safe_current_tr_num');
 		$rpm = $this->db->query($qpm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$pmid = $this->db->insert_id();
 
