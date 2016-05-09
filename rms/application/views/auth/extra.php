@@ -42,8 +42,8 @@
 					<?=htmlspecialchars($group->name)?><br />
                 <?php endforeach?>
 			</td>
-			<td style="border:1px solid #ccc; padding:5px;"><input type="checkbox" name="sms-<?=$user->id?>" id="" class="" /></td>
-			<td style="border:1px solid #ccc; padding:5px;"><input type="checkbox" name="email-<?=$user->id?>" id="" class="" /></td>
+			<td style="border:1px solid #ccc; padding:5px;"><? $phonech = $user->phone; if(!empty($user->phone) AND $phonech[0] == '+') { ?><input type="checkbox" name="sms-<?=$user->id?>" id="" class="" /><? } ?></td>
+			<td style="border:1px solid #ccc; padding:5px;"><? if(!empty($user->email)) { ?><input type="checkbox" name="email-<?=$user->id?>" id="" class="" /><? } ?></td>
 		</tr>
 		<? } ?>
 	<?php endforeach;?>
