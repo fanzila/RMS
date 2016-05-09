@@ -33,10 +33,10 @@ echo form_open("auth/create_user", $attributes);
       </p>
 
       <p>
-            <?php echo lang('create_user_phone_label', 'phone');?> <br />
+            <?php echo lang('create_user_phone_label', 'phone');?> ONLY this format: +336XXXXXXXX <br />
             <?php echo form_input($phone);?>
       </p>
-
+	<? /**
       <p>
             <?php echo lang('create_user_password_label', 'password');?> <br />
             <?php echo form_input($password);?>
@@ -46,8 +46,33 @@ echo form_open("auth/create_user", $attributes);
             <?php echo lang('create_user_password_confirm_label', 'password_confirm');?> <br />
             <?php echo form_input($password_confirm);?>
       </p>
+	**/ ?>
+	
+      <h3><?php echo lang('edit_user_groups_heading');?></h3>
+      <?php foreach ($groups as $group):?>
+		<? if($group['level'] <= 0) { ?>
+          <label class="checkbox">
+          <input type="checkbox" name="groups[]" value="<?php echo $group['id'];?>" <? if($group['id'] == 2) echo "checked"; ?>>
+          <?php echo htmlspecialchars($group['name'],ENT_QUOTES,'UTF-8');?>
+          </label>
+		<? } ?>
+      <?php endforeach?>
 
+		<h3><?php echo lang('edit_user_bus_heading');?></h3>
+        <?php foreach ($bus as $bu):?>
+            <label class="checkbox">
+            <input type="checkbox" name="bus[]" value="<?php echo $bu['id'];?>">
+            <?php echo htmlspecialchars($bu['name'],ENT_QUOTES,'UTF-8');?>
+            </label>
+        <?php endforeach?>
 
+		<h3>Welcome email</h3>
+		<label class="checkbox">
+			<input type="checkbox" name="welcome_email" value="1" checked>
+			Send welcome email message
+		</label>
+<textarea name="txtmessage"><?=$welcome_email?></textarea>
+		
       <p><?php echo form_submit('submit', lang('create_user_submit_btn'));?></p>
 
 <?php echo form_close();?>

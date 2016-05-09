@@ -14,7 +14,7 @@
 			$date->add(new DateInterval('PT01H'));
 			$l = $user_groups->level;
 			
-			if($user_groups->level >= 2) { ?>
+			if($l >= 2) { ?>
 			Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
 			<? } ?> | CA: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€ | Last ticket: <?=$date->format('Y-m-d H:i:s')?> | Num: <?=$ca['num']?>
 			
@@ -38,6 +38,7 @@
 			<li><a rel="external" data-ajax="false" href="/sensors/">Sensors</a></li>
 			<li><a rel="external" data-ajax="false" href="/order/">Order</a></li>
 			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="/auth/">Staff management</a></li><? } ?>
+			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/auth/extra">Extra finder</a></li><? } ?>
 			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="/reminder_admin/">Reminder tasks management</a></li><? } ?>
 			<hr />
 			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="http://drive.google.com/">Google Drive</a></li><? } ?>

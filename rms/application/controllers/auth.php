@@ -8,7 +8,7 @@ class Auth extends CI_Controller {
 		$this->load->library('ion_auth');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
-
+	
 		$this->load->database();
 
 		$this->form_validation->set_error_delimiters($this->config->item('error_start_delimiter', 'ion_auth'), $this->config->item('error_end_delimiter', 'ion_auth'));
@@ -17,6 +17,58 @@ class Auth extends CI_Controller {
 		$this->load->helper('language');
 	}
 
+	//redirect if needed, otherwise display the user list
+	function extra()
+	{
+		
+		$this->load->library("hmw");
+		$this->load->library('mmail');
+		
+		$user = $this->ion_auth->user()->row();
+		
+		if (!$this->ion_auth->logged_in())
+		{
+			//redirect them to the login page
+			redirect('auth/login', 'refresh');
+		}
+		else
+		{
+			$txtmessage = $this->input->post('txtmessage');
+			$this->data['message']  = '';
+			$sento = '';
+			
+			if($txtmessage) {
+				foreach ($this->input->post() as $key => $var) {
+					$line = explode('-', $key);
+						if($line[0] == 'sms') {
+							$userinfo = $this->hmw->getUser($line[1]);
+							$sento .= $userinfo->username." by sms at ".$userinfo->phone ."<br/>";
+							$this->hmw->sendSms($userinfo->phone, $txtmessage);
+						}
+						if($line[0] == 'email') {
+							$userinfo = $this->hmw->getUser($line[1]);							
+							$email['to']	= $userinfo->email;
+							$email['subject'] = 'Open shift @Hank!';
+							$email['msg'] = $txtmessage;
+							$sento .= $userinfo->username." by email at ".$userinfo->email." <br/>";
+							$this->mmail->sendEmail($email);
+						}
+					}
+				$this->data['message']  = '<b>Message sent to:</b> <br />'.$sento;
+			}
+
+			//list the users
+			$this->data['users'] = $this->ion_auth->users()->result();
+			foreach ($this->data['users'] as $k => $user)
+			{
+				$this->data['users'][$k]->bus = $this->ion_auth->get_users_bus($user->id)->result();
+			}
+			
+			$this->data['current_user'] = $user;
+			$this->_render_page('auth/extra', $this->data);
+		}
+	}
+	
 	//redirect if needed, otherwise display the user list
 	function index()
 	{
@@ -438,6 +490,9 @@ class Auth extends CI_Controller {
 	//create a new user
 	function create_user()
 	{
+		$this->load->library("hmw");
+		$this->load->library('mmail');
+	
 		$this->data['title'] = "Create User";
 
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
@@ -451,26 +506,32 @@ class Auth extends CI_Controller {
 		$this->form_validation->set_rules('first_name', $this->lang->line('create_user_validation_fname_label'), 'required|xss_clean');
 		$this->form_validation->set_rules('last_name', $this->lang->line('create_user_validation_lname_label'), 'required|xss_clean');
 		$this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'required|valid_email|is_unique['.$tables['users'].'.email]');
-		$this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'required|xss_clean');
-		$this->form_validation->set_rules('password', $this->lang->line('create_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
-		$this->form_validation->set_rules('password_confirm', $this->lang->line('create_user_validation_password_confirm_label'), 'required');
+		$this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'required|xss_clean|min_length[12]|max_length[12]');
+		//$this->form_validation->set_rules('password', $this->lang->line('create_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
+		//$this->form_validation->set_rules('password_confirm', $this->lang->line('create_user_validation_password_confirm_label'), 'required');
 
 		if ($this->form_validation->run() == true)
 		{
 			$username = strtolower($this->input->post('first_name')) . '.' . strtolower($this->input->post('last_name'));
 			$email    = strtolower($this->input->post('email'));
-			$password = $this->input->post('password');
+			$password = $this->hmw->getParam('default_password');
 
 			$additional_data = array(
 				'first_name' => $this->input->post('first_name'),
 				'last_name'  => $this->input->post('last_name'),
-				'phone'      => $this->input->post('phone'),
-				'group'      => 'user'
-				
+				'phone'      => $this->input->post('phone')
 			);
 		}
-		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data))
+		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $this->input->post('groups'), $this->input->post('bus')))
 		{
+			if(!empty($this->input->post('welcome_email'))) {						
+				$email 				= array();
+				$email['to']		= strtolower($this->input->post('email'));
+				$email['subject']	= 'Welcome from Hank!';
+				$email['msg'] 		= $this->input->post('txtmessage');
+				$this->mmail->sendEmail($email);
+			}
+
 			//check to see if we are creating the user
 			//redirect them back to the admin page
 			$this->session->set_flashdata('message', $this->ion_auth->messages());
@@ -506,6 +567,7 @@ class Auth extends CI_Controller {
 				'type'  => 'text',
 				'value' => $this->form_validation->set_value('phone'),
 			);
+			/**
 			$this->data['password'] = array(
 				'name'  => 'password',
 				'id'    => 'password',
@@ -518,6 +580,17 @@ class Auth extends CI_Controller {
 				'type'  => 'password',
 				'value' => $this->form_validation->set_value('password_confirm'),
 			);
+			**/
+			$this->data['groups']	= $groups=$this->ion_auth->groups()->result_array();
+			$this->data['bus']		= $bus=$this->ion_auth->bus()->result_array();
+
+			$userinfo = $this->ion_auth->user()->row();
+			$groupinfo = $this->ion_auth_model->get_users_groups()->result();
+			
+			$this->data['current_user'] = $userinfo;
+			$this->data['groupinfo'] = $groupinfo;
+			
+			$this->data['welcome_email'] = $this->hmw->getParam('welcome_email');
 
 			$this->_render_page('auth/create_user', $this->data);
 		}

@@ -71,14 +71,23 @@ class Hmw {
 		$res_params = $CI->db->query($req_params);
 		return $res_params->result();	
 	}
+
+	public function sendSms($num, $msg) {
 		
-	public function sendEmail($param) {
-
-		require_once __DIR__.'/../libraries/mandrill/Mandrill.php'; //Not required with Composer
-		$mandrill = new Mandrill('OZe7-oEYxORoEOWEUHzM2g');
+		$CI = & get_instance(); 
+		$CI->load->library('mmail');
+		
+		$sms_user	= $this->getParam('ovh_sms_user'); 
+		$sms_pass	= $this->getParam('ovh_sms_pass'); 
+		$sms_nic	= $this->getParam('ovh_sms_nic'); 
+		
+		$sms = array();
+		$sms['to']			= "email2sms@ovh.net";
+		$sms['subject'] 	= $sms_nic.":".$sms_user.":".$sms_pass.":HANK:".$num.":::1";
+		$sms['msg'] 		= $msg;
+		$CI->mmail->sendEmail($sms);
 	}
-
-
+	
 	public function sendNotif($msg) {
 
 		$address	= $this->getParam('pushover_address');

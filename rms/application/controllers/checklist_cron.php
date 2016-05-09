@@ -31,13 +31,6 @@ class Checklist_cron extends CI_Controller {
 				$email['subject'] 	= $msg;
 				$email['msg'] 		= $msg;
 				$this->mmail->sendEmail($email);
-				
-				$sms = array();
-				$sms['to']			= "email2sms@ovh.net";
-				$sms['subject'] 	= "sms-dp131762-1:hanksms:gxistf23:HANK:+33647384930,+33650925448:::1";
-				$sms['msg'] 		= $email['subject'];
-				#$this->mmail->sendEmail($sms);
-				
 			}
 			return;
 		} else { 

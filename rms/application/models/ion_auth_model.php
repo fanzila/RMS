@@ -862,7 +862,7 @@ class Ion_auth_model extends CI_Model
 	 * @return bool
 	 * @author Mathew
 	 **/
-	public function register($username, $password, $email, $additional_data = array(), $groups = array())
+	public function register($username, $password, $email, $additional_data = array(), $groups = array(), $bus = array())
 	{
 		$this->trigger_events('pre_register');
 
@@ -892,7 +892,7 @@ class Ion_auth_model extends CI_Model
 			return FALSE;
 		}
 		
-		//capture default grouo details
+		//capture default group details
 		$default_group = $query->row();
 
 		// If username is taken, use username1 or username2, etc.
@@ -939,11 +939,6 @@ class Ion_auth_model extends CI_Model
 		$id = $this->db->insert_id();
 		
 		//add in groups array if it doesn't exits and stop adding into default group if default group ids are set
-		
-		//START HACK, adding to group below is not working so adding to group user (id = 2) by default
-		$this->add_to_group(2, $id);
-		//END HACK 
-		
 		if( isset($default_group->id) && empty($groups) ) 
 		{
 			$groups[] = $default_group->id;		
@@ -957,7 +952,16 @@ class Ion_auth_model extends CI_Model
 				$this->add_to_group($group, $id);
 			}
 		}
-
+		
+		if (!empty($bus))
+		{
+			//add to bus
+			foreach ($bus as $bu)
+			{
+				$this->add_to_bu($bu, $id);
+			}
+		}
+		
 		$this->trigger_events('post_register');
 
 		return (isset($id)) ? $id : FALSE;
