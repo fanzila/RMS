@@ -8,8 +8,6 @@
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
 
-<h1>People</h1>
-
 <? if(!empty($message)) { ?><div id="infoMessage" style="background-color: #d4e0d4; padding:20px; margin:20px;"><?php echo $message; ?></div><? } ?>
 
 <form id="tasks" name="tasks" method="post" action="/auth/extra">

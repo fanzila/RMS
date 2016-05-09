@@ -98,11 +98,13 @@ public function getStock() {
 	return $ret;
 }
 
-public function getSuppliers($order = null) {
+public function getSuppliers($order = null, $idsup = null) {
 	$CI =& get_instance();
 	$CI->load->library('hmw');
 	
-	$q = "SELECT * FROM suppliers WHERE active=1 AND deleted=0 ORDER BY `id` ASC";
+	$q = "SELECT * FROM suppliers WHERE active=1 AND deleted=0"; 
+	if(!empty($idsup)) $q .= " AND id = $idsup ";
+	$q .= " ORDER BY `id` ASC";
 	
 	if($order) $q = "SELECT s.id, s.name  FROM suppliers AS s LEFT JOIN ( SELECT date, user, status, supplier_id FROM orders WHERE status = 'sent' AND date IS NOT NULL) AS o ON o.supplier_id = s.id WHERE s.active=1 AND s.deleted=0 ORDER BY o.date DESC"; 
 	

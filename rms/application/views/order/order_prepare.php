@@ -21,7 +21,6 @@
 					?>
 					<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 						<li data-role="list-divider"><?=$suppliers[$supplier_id]['name']?></li>
-
 						<?
 						foreach ($pdt_list as $key => $pdt) { 
 							if(!empty($pdt['qtty'])) {  
@@ -39,11 +38,8 @@
 								<input type="hidden" name="<? echo $i."_PDT_PRIC_".$pdt['id']; ?>" value="<?=$pdt['price']?>">
 								<? $totalprice += $pdt['subtotalprice']; } ?>				 
 								<? } ?>
-
 								<li style="background-color:#f1f0f0;"></li>
-								<li>TOTAL PRIX: <?=$totalprice/1000?>€ H.T. | Franco: <?=$suppliers[$supplier_id]['carriage_paid']?>€ H.T. 
-									
-									
+								<li>TOTAL PRIX: <?=$totalprice/1000?>€ H.T. | Franco: <?=$suppliers[$supplier_id]['carriage_paid']?>€ H.T. 			
 								<?if($totalprice/1000 < $suppliers[$supplier_id]['carriage_paid']) { ?><font color="red"><b>ATTENTION FRANCO INFERIEUR!</b></font><? } ?> | Délais livraison: <?=$suppliers[$supplier_id]['delivery_days']?> | Paiement: <?=$suppliers[$supplier_id]['payment_type']?> <br />Contact : <?=$suppliers[$supplier_id]['contact_order_name']?> | Tel: <?=$suppliers[$supplier_id]['contact_order_tel']?> | Email: <?=$suppliers[$supplier_id]['contact_order_email']?> | Méthode commande: <?=$suppliers[$supplier_id]['order_method']?>
 								</li>
 								<li>

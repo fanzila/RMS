@@ -250,12 +250,10 @@ class Cashier {
 		$db		= new SQLite3($file);
 
 		switch($action) {
-
+			
 			case 'salesUpdate':
-
 			$this->syncSalesDb();
 			$this->syncArchivesDb();
-
 			break;
 
 			case 'cashfloat':
@@ -274,7 +272,20 @@ class Cashier {
 			$ret 	= ($res1['FLOAT1']+$res2['FLOAT2']+$res3['FLOAT3'])/1000;
 			return $ret;
 			break;
-
+			
+			case 'getLiveMovements':
+			$sql 	= "SELECT cm.DATE, u.NAME AS USERNAME, c.LASTNAME AS CLASTNAME, c.FIRSTNAME AS CFIRSTNAME,  cm.AMOUNT, pm.NAME AS PAYMENTNAME, cm.DESCRIPTION, cm.CUSTOMER  FROM CASHMOVEMENT AS cm 
+				LEFT JOIN USER AS u ON cm.USER = u.ID
+				LEFT JOIN PAYMENTMETHOD AS pm ON cm.METHOD = pm.ID
+				LEFT JOIN CUSTOMER AS c ON cm.CUSTOMER = c.ID";
+			$result = $db->query($sql);
+			$lines = array();
+			while($row=$result->fetchArray(SQLITE3_ASSOC)){
+				$lines[] = $row;
+			}
+			return $lines;
+			break;
+			
 			case 'updateUsers':
 			foreach ($CI->hmw->getUsers() as $key) {
 				$sql 	= "SELECT ID FROM USER WHERE lower(NAME)='".strtolower($key->username)."'";
@@ -297,7 +308,7 @@ class Cashier {
 			$r_mov = $CI->db->query($q_mov) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			return $r_mov->result_array();
 			break;
-
+			
 			case 'getUsers':
 			$dir	= $CI->hmw->getParam('pos_archive_dir');
 			$path	= $dir."/".$param['closing_file'];

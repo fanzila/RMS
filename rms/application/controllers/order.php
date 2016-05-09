@@ -358,6 +358,7 @@ class Order extends CI_Controller {
 			$idorder 			= $post[$i.'_IDORDER'];
 			$id					= $idorder.'_'.$post[$i.'_SUP'];
 			$user 				= $this->hmw->getUser($user->id);
+			$supinfo			= $this->product->getSuppliers(null, $post[$i.'_SUPID']);
 
 			$info['date']		= date('d/m/Y H:i');		
 			$info['id']			= $id;
@@ -373,7 +374,8 @@ class Order extends CI_Controller {
 			$info['totalprice'] = $post[$i.'_TOTALPRICE'];	
 			$info['userid'] 	= $user->id;	
 			$info['user'] 		= $user->username;
-			$info['user_tel'] 	= $user->phone;
+			$info['user_tel'] 	= $user->phone;			
+			$info['sup_tel'] 	= $supinfo[$post[$i.'_SUPID']]['contact_order_tel'];
 
 			$date_y = date('Y');
 			$date_m	= date('m');
@@ -390,7 +392,6 @@ class Order extends CI_Controller {
 
 			$data = array('info' => $info, 'products' => $pdt[$i]);
 			$html = $this->load->view('order/bdc', $data, true);
-			//pdf_create($html, 'filename');
 			$pdf = pdf_create($html, '', false);
 			write_file('orders/'.$date_y.'/'.$date_m.'/'.$id.'.pdf', $pdf);
 			$order[] = array('id' => $id, 'idorder' => $idorder, 'comt' => $info['comt'], 'user' => $user->username, 'userid' => $user->id, 'sup_name' => $info['sup_name'], 'sup_id' => $info['sup_id'], 'sup_email' => $info['sup_email'], 'cc_email' => $info['cc_email']);

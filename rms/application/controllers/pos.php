@@ -79,7 +79,8 @@ class Pos extends CI_Controller {
 		$data['title'] 			= 'Cashier reports';
 		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount');
 		$data['safe_tr'] 		= $this->cashier->calc('safe_current_tr_num');
-		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat');
+		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat');		
+		$data['live_movements'] = $this->cashier->posInfo('getLiveMovements');
 		$lines					= array();
 
 		$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file 
@@ -170,6 +171,7 @@ class Pos extends CI_Controller {
 				As tu bien cloture la caisse ? <br />
 				Si oui attends quelques minutes, la page de cloture va bientot s'afficher. <br />
 				Ou alors, tu as deja entre tes donnees.</h2>
+				Dernière cloture faite le : $archive_date
 				<h2><a href='/pos/'>Back</a></h2>"; 
 				exit();
 			}

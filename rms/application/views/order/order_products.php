@@ -101,7 +101,6 @@ $today = getdate();
 					checked = $('#add' + idl).is(':checked');
 					sum = 0;
 					if(checked) { sum = parseInt(pdt); }
-
 					$('#stock-' + idl).val(sum);
 					//$('#stock-' + idl).prop('disabled', ! $('#stock-' + idl).prop('disabled') );
 				}
@@ -114,14 +113,14 @@ $today = getdate();
 							// empty
 						} else {
 							//get name/id of filled elements
-							var elid = $(this).attr("name");
+							var elid = $(this).attr("name");							
 							//get price
 							var price = $("#price" + '-' + elid).val();
-							//get value 
-							var nb = $(this).val();
+							//get qtty
+							var nb = $("#pdt" + '-' + elid).val();
 							//get sub total
-							var sub = nb*price;
-							total = total + sub;
+							if(price) var sub = nb*price;
+							if(price) total = total + sub;
 						}
 						$( "#total" ).text( (Math.round(total*100)/100)/1000 );
 					});

@@ -16,7 +16,14 @@ body {
 .smallfont {
 	font-size: 0.8em;
 }
-
+.delivery_title {
+	font-size: 0.9em;
+}
+.delivery {
+	font-size: 0.7em;
+	padding-top: -10px;
+	text-align: justify;
+}
 </style>
 </head>
 <center><h2>BON DE COMMANDE<br />N°<?=$info['idorder']?></h1></center>
@@ -37,7 +44,9 @@ body {
 </td><td width="30px"></td><td style="border-left: 1px solid silver;" valign="top">
 <table class="smallfont" border="0" width="100%">
 	<tr><td>Date : <?=$info['date']?></td></tr>
-	<tr><td>Société : <?=$info['sup_name']?> - <a href="mailto:<?=$info['sup_email']?>"><?=$info['sup_email']?></a></td></tr>
+	<tr><td>Société : <?=$info['sup_name']?> <br /> 
+		Email: <a href="mailto:<?=$info['sup_email']?>"><?=$info['sup_email']?></a> <br />
+		Tel: <?=$info['sup_tel']?></td></tr>
 	<tr><td>Franco : <?=$info['franco']?></td></tr>
 	<?if(isset($info['dlv_comt'])) {?> <tr><td><?=$info['dlv_comt']?></td></tr> <? } ?>
 </table>
@@ -66,6 +75,15 @@ body {
 <? } ?>
 <tr><td class="table_bdc" align="left" colspan="5">Total H.T. : <?=$info['totalprice']/1000?>€</td></tr>
 </table>
+<span class="smallfont">Afin de faciliter votre paiement, merci de bien vouloir reporter ce numéro de BDC : <?=$info['idorder']?> sur vos factures et BL.</span>
+<p class="delivery_title"><b>Conditions de livraison</b><br />
+<b><font color="red">Informez votre transporteur</font></b></p>
+<p class="delivery">- Livrer uniquement dans les horaires et jours déterminés : <?=$info['dlv_info']?>.<br />
+- Le stationnement est délicat, mais possible sur les places de livraison, au coin de la rue ou en arrêt sur l'arrêt de bus (contactez-nous pour que nous venions vous aider pour ne pas quitter le camion). Interdiction de bloquer la rue, nous devons contrôler les marchandises.<br />
+- Toutes les marchandises sont forcément contrôlées sans exception  AVANT la signature du Bon de transport. Si le livreur ne peut ou ne veut pas attendre, cette mention sera inscrite sur le BDT. Nous n'inscrirons jamais les mentions inutiles "sous réserve de truc et machin..." etc.<br />
+- Merci de récupérer vos palettes, nous ne pouvons pas les stocker. Dans tous les cas, nous ne pouvons pas prendre en charge les frais de palette.<br />
+- Café offert à tous les livreurs sympa! :-) </p>
+
    <script type="text/php">
     if ( isset($pdf) ) { 
         $pdf->page_script('

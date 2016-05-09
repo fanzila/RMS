@@ -6,9 +6,16 @@
 	</div>
 
 	<div data-role="content" data-theme="a">
-		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=$safe_cash?>€ |  Safe TR num: <?=$safe_tr?></h4>
+		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=$safe_cash?>€ |  Safe TR num: <?=$safe_tr?> </h4>
+		<p>Daily Cashpad cash movements</p>
+		<ul data-role="listview" data-inset="true">
+		<? foreach ($live_movements as $lm):?>
+		<li>Date: <?=$lm['DATE']?> | Amount: <? $am = $lm['AMOUNT']/1000; echo $am."€"; ?> | User: <?=$lm['USERNAME']?> |  Description: <?=$lm['DESCRIPTION']?> | Method: <?=$lm['PAYMENTNAME']?> | Customer: <?=$lm['CFIRSTNAME']?> <?=$lm['CLASTNAME']?></li>
+		<?php endforeach; ?>
+		<? if(empty($live_movements)) { ?>No movement<? } ?>
+		</ul>
 		<h2>Movements</h2>
-
+		
 		<?php foreach ($lines as $m): ?>
 			<? $mov = '';
 			if($m['mov']['movement'] == 'safe_in' OR $m['mov']['movement'] == 'safe_out') $mov = 'safe';
@@ -28,11 +35,12 @@
 						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 							<tr style="background-color: #fbf19e;">
 								<td>Payment type</td>
-								<td>Montant user</td>
-								<?if($mov != 'safe') { ?><td>Montant Cashpad</td><? } ?>
-								<?if($mov != 'safe') { ?><td>Solde</td><? } ?>
+								<td>User amount</td>
+								<?if($mov != 'safe') { ?><td>Cashpad amount</td><? } ?>
+								<?if($mov != 'safe') { ?><td>Balance</td><? } ?>
 							</tr>
-							<?php foreach ($m['pay'] as $m2): ?>
+							<?php $total = 0; foreach ($m['pay'] as $m2): ?>
+								<? $total += $m2['amount_pos']; ?>
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
 								<tr>
 									<td><?=$m2['name']?></td>
@@ -42,6 +50,7 @@
 								</tr>						
 							<?php endforeach; ?>
 						</table>
+						<? if($mov == 'close') { ?><small>Total Cashpad amount: <?=$total?>€</small><? } ?>
 <? if($mov =='close') { ?>
 	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']; ?> 
 		<? if($check_amount < 0 ) { ?><p style="color : red; font: bold 16px Arial, Verdana, sans-serif;">ALERT! <?=$check_amount?>€ cash missing!</p>
