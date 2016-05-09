@@ -24,8 +24,6 @@ class Auth extends CI_Controller {
 		$this->load->library("hmw");
 		$this->load->library('mmail');
 		
-		$user = $this->ion_auth->user()->row();
-		
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
@@ -65,7 +63,7 @@ class Auth extends CI_Controller {
 				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
 			
-			$this->data['current_user'] = $user;
+			$this->data['current_user'] = $this->ion_auth->user()->row();
 			$this->_render_page('auth/extra', $this->data);
 		}
 	}
