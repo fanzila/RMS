@@ -20,6 +20,7 @@
 		<th><?php echo lang('index_email_th');?></th>
 		<th>Phone</th>
 		<th>BU</th>
+		<th>Group</th>
 		<th>SMS</th>
 		<th>Email</th>
 	</tr>
@@ -32,6 +33,11 @@
 			<td style="border:1px solid #ccc; padding:5px;">
 				<?php foreach ($user->bus as $bu):?>
 					<?=htmlspecialchars($bu->name)?><br />
+                <?php endforeach?>
+			</td>
+			<td style="border:1px solid #ccc; padding:5px;">
+				<?php foreach ($user->groups as $group):?>
+					<?=htmlspecialchars($group->name)?><br />
                 <?php endforeach?>
 			</td>
 			<td style="border:1px solid #ccc; padding:5px;"><input type="checkbox" name="sms-<?=$user->id?>" id="" class="" /></td>

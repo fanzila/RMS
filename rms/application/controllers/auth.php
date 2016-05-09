@@ -62,6 +62,7 @@ class Auth extends CI_Controller {
 			foreach ($this->data['users'] as $k => $user)
 			{
 				$this->data['users'][$k]->bus = $this->ion_auth->get_users_bus($user->id)->result();
+				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
 			
 			$this->data['current_user'] = $user;
@@ -94,8 +95,8 @@ class Auth extends CI_Controller {
 			$this->data['users'] = $this->ion_auth->users()->result();
 			foreach ($this->data['users'] as $k => $user)
 			{
-				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
-				$this->data['users'][$k]->bus = $this->ion_auth->get_users_bus($user->id)->result();
+				$this->data['users'][$k]->groups	= $this->ion_auth->get_users_groups($user->id)->result();
+				$this->data['users'][$k]->bus 		= $this->ion_auth->get_users_bus($user->id)->result();
 			}
 
 			$this->_render_page('auth/index', $this->data);
