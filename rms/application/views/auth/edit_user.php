@@ -39,6 +39,11 @@ echo form_open(uri_string(), $attributes);
       </p>
 
       <p>
+            Comment: <br />
+            <?php echo form_input($comment);?>
+      </p>
+
+      <p>
             <?php echo lang('edit_user_email_label', 'email');?> <br />
             <?php echo form_input($email);?>
       </p>

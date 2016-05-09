@@ -627,8 +627,9 @@ class Auth extends CI_Controller {
 		$this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'required|xss_clean');
 		$this->form_validation->set_rules('last_name', $this->lang->line('edit_user_validation_lname_label'), 'required|xss_clean');
 		$this->form_validation->set_rules('username', $this->lang->line('edit_user_validation_lname_label'), 'required|xss_clean');
-		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'required|xss_clean');
-		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'required|xss_clean');
+		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'xss_clean');
+		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'xss_clean');
+		$this->form_validation->set_rules('comment', 'Enter a valid comment', 'xss_clean');
 		$this->form_validation->set_rules('groups', $this->lang->line('edit_user_validation_groups_label'), 'xss_clean');
 		$this->form_validation->set_rules('bus', $this->lang->line('edit_user_validation_bus_label'), 'xss_clean');
 
@@ -655,6 +656,7 @@ class Auth extends CI_Controller {
 					'username'   => $this->input->post('username'),
 					'email'		 => $this->input->post('email'),
 					'phone'      => $this->input->post('phone'),
+					'comment'      => $this->input->post('comment')
 				);
 				
 				//update the password if it was posted
@@ -750,6 +752,12 @@ class Auth extends CI_Controller {
 			'id'    => 'phone',
 			'type'  => 'text',
 			'value' => $this->form_validation->set_value('phone', $user->phone),
+		);
+		$this->data['comment'] = array(
+			'name'  => 'comment',
+			'id'    => 'comment',
+			'type'  => 'text',
+			'value' => $this->form_validation->set_value('comment', $user->comment),
 		);
 		$this->data['password'] = array(
 			'name' => 'password',
