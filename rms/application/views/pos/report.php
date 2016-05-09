@@ -6,7 +6,7 @@
 	</div>
 
 	<div data-role="content" data-theme="a">
-		<h4>Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=$safe_cash?>€ |  Safe TR num: <?=$safe_tr?></h4>
+		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=$safe_cash?>€ |  Safe TR num: <?=$safe_tr?></h4>
 		<h2>Movements</h2>
 
 		<?php foreach ($lines as $m): ?>
