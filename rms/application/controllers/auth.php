@@ -524,7 +524,9 @@ class Auth extends CI_Controller {
 		}
 		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $this->input->post('groups'), $this->input->post('bus')))
 		{
-			if(!empty($this->input->post('welcome_email'))) {						
+			$welcome_email = $this->input->post('welcome_email');
+			
+			if(!empty($welcome_email)) {						
 				$email 				= array();
 				$email['to']		= strtolower($this->input->post('email'));
 				$email['subject']	= 'Welcome from Hank!';
