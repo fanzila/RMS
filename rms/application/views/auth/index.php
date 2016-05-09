@@ -20,6 +20,7 @@
 		<th><?php echo lang('index_lname_th');?></th>
 		<th><?php echo lang('index_email_th');?></th>
 		<th>Phone</th>
+		<th>Comment</th>
 		<? if($users['0']->groups['0']->level >= 2) { ?>
 		<th><?php echo lang('index_groups_th');?></th>
 		<th>BU</th>
@@ -37,6 +38,7 @@
             <td><?php echo htmlspecialchars($user->last_name,ENT_QUOTES,'UTF-8');?></td>
             <td><?php echo htmlspecialchars($user->email,ENT_QUOTES,'UTF-8');?></td>
 			<td><?php echo htmlspecialchars($user->phone,ENT_QUOTES,'UTF-8');?></td>
+			<td><?php echo htmlspecialchars($user->comment,ENT_QUOTES,'UTF-8');?></td>
 			<? if($users['0']->groups['0']->level >= 2) { ?>
 			<td>
 				<?php foreach ($user->groups as $group):?>

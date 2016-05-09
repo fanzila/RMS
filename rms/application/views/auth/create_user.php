@@ -36,6 +36,12 @@ echo form_open("auth/create_user", $attributes);
             <?php echo lang('create_user_phone_label', 'phone');?> ONLY this format: +336XXXXXXXX <br />
             <?php echo form_input($phone);?>
       </p>
+
+      <p>
+            Comments: <br />
+            <?php echo form_input($comment);?>
+      </p>
+
 	<? /**
       <p>
             <?php echo lang('create_user_password_label', 'password');?> <br />

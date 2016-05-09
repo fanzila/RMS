@@ -19,6 +19,7 @@
 		<th><?php echo 'Username';?></th>
 		<th><?php echo lang('index_email_th');?></th>
 		<th>Phone</th>
+		<th>Comment</th>
 		<th>BU</th>
 		<th>Group</th>
 		<th>SMS</th>
@@ -30,6 +31,7 @@
 			<td style="border:1px solid #ccc; padding:5px;"><?php echo htmlspecialchars($user->username,ENT_QUOTES,'UTF-8');?></td>
             <td style="border:1px solid #ccc; padding:5px;"><?php echo htmlspecialchars($user->email,ENT_QUOTES,'UTF-8');?></td>
 			<td style="border:1px solid #ccc; padding:5px;"><?php echo htmlspecialchars($user->phone,ENT_QUOTES,'UTF-8');?></td>
+			<td style="border:1px solid #ccc; padding:5px;"><?php echo htmlspecialchars($user->comment,ENT_QUOTES,'UTF-8');?></td>
 			<td style="border:1px solid #ccc; padding:5px;">
 				<?php foreach ($user->bus as $bu):?>
 					<?=htmlspecialchars($bu->name)?><br />
