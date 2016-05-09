@@ -24,6 +24,7 @@
 		<th>Email</th>
 	</tr>
 	<?php foreach ($users as $user):?>
+		<? if($user->active == 1) { ?>
 		<tr>
 			<td style="border:1px solid #ccc; padding:5px;"><?php echo htmlspecialchars($user->username,ENT_QUOTES,'UTF-8');?></td>
             <td style="border:1px solid #ccc; padding:5px;"><?php echo htmlspecialchars($user->email,ENT_QUOTES,'UTF-8');?></td>
@@ -36,6 +37,7 @@
 			<td style="border:1px solid #ccc; padding:5px;"><input type="checkbox" name="sms-<?=$user->id?>" id="" class="" /></td>
 			<td style="border:1px solid #ccc; padding:5px;"><input type="checkbox" name="email-<?=$user->id?>" id="" class="" /></td>
 		</tr>
+		<? } ?>
 	<?php endforeach;?>
 </table>
 <p>Message: </p>
