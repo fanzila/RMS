@@ -86,7 +86,7 @@ class Pos extends CI_Controller {
 		$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file 
 			FROM pos_movements AS pm
 			LEFT JOIN users AS u ON u.id = pm.id_user 
-			ORDER BY pm.`id` DESC LIMIT 50";
+			ORDER BY pm.`id` DESC LIMIT 500";
 
 		$r_pm = $this->db->query($q_pm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
