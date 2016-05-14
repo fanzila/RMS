@@ -24,6 +24,7 @@ class Admin extends CI_Controller {
 		parent::__construct();
 		$this->load->database();
 		$this->load->library('ion_auth');
+		$this->load->library('hmw');
 	}
 
 	public function index()
@@ -34,9 +35,16 @@ class Admin extends CI_Controller {
 			redirect('auth/login');
 		}
 		
-		
+		$change_bu = $this->input->post('bus');
+		if(!empty($change_bu)) { 
+			$bu_info = $this->hmw->getBus($change_bu);
+			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
+			$this->hmw->updateUserBu($change_bu, $this->session->all_userdata()['user_id']); 
+			$this->session->set_userdata($session_data); 
+		}
+
+		$bus_list = $this->hmw->getBus();
 		$user = $this->ion_auth->user()->row();
-		//print_r($user);
 		$user_groups = $this->ion_auth->get_users_groups()->result();
 		
 		$bal_req = "SELECT val FROM bank_balance";
@@ -51,6 +59,9 @@ class Admin extends CI_Controller {
 			'user_groups'		=> $user_groups[0],
 			'bank_balance'		=> $bal['val'],
 			'ca'				=> $ca,
+			'bus_list'			=> $bus_list,
+			'bu_name'			=> $this->session->all_userdata()['bu_name'],
+			'bu_id'				=> $this->session->all_userdata()['bu_id'],
 			'ticket'			=> '',
 			'last_ticket'		=> '',
 			'username'			=> $user->username

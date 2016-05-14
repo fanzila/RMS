@@ -20,6 +20,7 @@ $lang['account_creation_unsuccessful'] 	 	 = 'Unable to Create Account';
 $lang['account_creation_duplicate_email'] 	 = 'Email Already Used or Invalid';
 $lang['account_creation_duplicate_username'] = 'Username Already Used or Invalid';
 $lang['account_creation_missing_default_group'] = 'Default group is not set';
+$lang['account_creation_missing_default_bu'] = 'Default BU is not set';
 $lang['account_creation_invalid_default_group'] = 'Invalid default group name set';
 
 

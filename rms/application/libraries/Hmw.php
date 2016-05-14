@@ -63,6 +63,24 @@ class Hmw {
 		return $r[0];
 	}
 
+	public function getBus($id = null) 
+	{
+		$CI = & get_instance(); 
+		$CI->load->database();
+		$req = "SELECT * FROM bus";
+		if($id) $req .= " WHERE `id` = $id";
+		$res = $CI->db->query($req);
+		return $res->result();
+	}
+	
+	public function updateUserBu($id_bu, $id_user) 
+	{
+		$CI = & get_instance(); 
+		$CI->load->database();
+		if($id_user) $req = "UPDATE users SET current_bu_id = $id_bu WHERE id = $id_user";
+		$res = $CI->db->query($req);
+	}
+	
 	public function getUsers() 
 	{
 		$CI = & get_instance(); 

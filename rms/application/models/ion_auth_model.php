@@ -883,6 +883,11 @@ class Ion_auth_model extends CI_Model
 			$this->set_error('account_creation_missing_default_group');
 			return FALSE;
 		}
+		elseif ( !$this->config->item('default_bu', 'ion_auth') && empty($bus) ) 
+		{
+			$this->set_error('account_creation_missing_default_bu');
+			return FALSE;
+		}
 		
 		//check if the default set in config exists in database
 		$query = $this->where('name', $this->config->item('default_group', 'ion_auth'))->group();		
@@ -985,7 +990,7 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('extra_where');
 
-		$query = $this->db->select($this->identity_column . ', username, email, id, password, active, last_login')
+		$query = $this->db->select($this->identity_column . ', username, email, id, password, active, last_login, current_bu_id')
 		                  ->where($this->identity_column, $identity)
 		                  ->limit(1)
 		                  ->get($this->tables['users']);
@@ -1030,7 +1035,18 @@ class Ion_auth_model extends CI_Model
 
 				$this->trigger_events(array('post_login', 'post_login_successful'));
 				$this->set_message('login_successful');
-
+				
+				if(!empty($user->current_bu_id)) { 
+					$bus = $this->bus()->result();
+					foreach ($bus as $key) {
+						if($key->id == $user->current_bu_id) $bu_name = $key->name;
+					}
+					$session_data = array('bu_id'  => $user->current_bu_id, 'bu_name'  => $bu_name);
+				} else {
+					$user_bu_id = $this->get_users_bus($user->id)->result();
+					$session_data = array('bu_id'  => $user_bu_id[0]->id, 'bu_name'  => $user_bu_id[0]->name);	
+				}
+				$this->session->set_userdata($session_data);
 				return TRUE;
 			}
 		}

@@ -2,8 +2,19 @@
 <body>
 	<div data-role="page" data-theme="a">
 		<div data-role="header">
-			<h1>RMS Hank | <?=$username?> - <?=$user_groups->name?></h1>
-			<a href="/auth/logout" data-transition="slide" class="ui-btn-right" data-icon="power">Logout</a> 
+			<div class="ui-grid-b">
+				<div class="ui-block-a">
+					<form action="/" method="POST">
+						<select name="bus" class="ui-btn-left" onchange="this.form.submit()">
+						<? foreach ($bus_list as $bu) { ?>
+			  				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
+						<? } ?>
+						</select>
+					</form>
+				</div>
+				<div class="ui-block-b"><div data-role="header"><h1 style="width:400px; text-align:left">RMS Hank | <?=$bu_name?> | <?=$username?> - <?=$user_groups->name?></h1></div></div>
+				<div class="ui-block-c"><div data-role="header"><a href="/auth/logout" data-transition="slide" class="ui-btn-right" data-icon="power">Logout</a></div>
+			</div></div>
 		</div>
 		<div data-role="content" data-theme="a">
 			
@@ -61,8 +72,6 @@
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/">suppliersCategory</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">suppliers</a></li><? } ?>
 			<hr />
-			<li><a rel="external" data-ajax="false" href="http://intranet.hankrestaurant.com">Intranet (Wiki)</a></li>
-			<li><a rel="external" data-ajax="false" href="http://62.210.240.67/hank/public/videos/">Archives videos</a></li>
 			<li><a rel="external" data-ajax="false" href="/reporting/">Reporting CA pasteque (old)</a></li>
 		</ul>
 	</div><!-- /content -->
