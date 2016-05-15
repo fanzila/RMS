@@ -167,7 +167,8 @@ class Pos extends CI_Controller {
 				$data['archive_date'] = $archive_date;
 				$this->cashier->posInfo('updateUsers');
 			} else {
-				if(!empty($this->input->get('force'))) { 
+				$force = $this->input->get('force');
+				if(!empty($force)) { 
 					$data['archive_date'] = $archive_date;
 					$data['force'] = 1;
 					$this->cashier->posInfo('updateUsers');
