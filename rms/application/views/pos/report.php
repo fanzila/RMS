@@ -44,18 +44,18 @@
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
 								<tr>
 									<td><?=$m2['name']?></td>
-									<td><? if($m2['id'] != 12 AND $m2['id'] != 11) { echo $m2['amount_user']; if($m2['id'] == 3) { echo " TR"; } else { echo "€"; }  } else { echo "-"; } ?></td>
+									<td><? if($m2['id'] != 12 AND $m2['id'] != 11 AND $m2['id'] != 5) { echo $m2['amount_user']; if($m2['id'] == 3) { echo " TR"; } else { echo "€"; }  } else { echo "-"; } ?></td>
 									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 9) { echo $m2['amount_pos']."€"; } else { echo "-"; } ?></td><? } ?>
 									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 3 AND $m2['id'] != 1) { echo $m2['amount_pos']-$m2['amount_user']."€"; } else echo "-"; ?></td><? } ?>
 								</tr>						
 							<?php endforeach; ?>
 						</table>
 						<? if($mov == 'close') { ?><small>Total Cashpad amount: <?=$total?>€</small><? } ?>
-<? if($mov =='close') { ?>
+
 	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']; ?> 
 		<? if($check_amount < 0 ) { ?><p style="color : red; font: bold 16px Arial, Verdana, sans-serif;">ALERT! <?=$check_amount?>€ cash missing!</p>
 		<? } } ?>
-		
+<? if($mov =='close') { ?>		
 		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 			<tr style="background-color: #fbf19e;"><td colspan="6">POS Movements</td></tr>
 			<tr style="background-color: #fbf19e;">

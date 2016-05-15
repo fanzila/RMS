@@ -160,20 +160,28 @@ class Pos extends CI_Controller {
 			$qsid = "SELECT closing_id FROM pos_movements WHERE movement = 'close' AND closing_id = $d[seqid]";
 			$rsid = $this->db->query($qsid) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$osid = $rsid->result_object();
-
+			$data['force'] = 0;
+			
 			if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
 				$data['archive_file'] = $d['file'];
 				$data['archive_date'] = $archive_date;
 				$this->cashier->posInfo('updateUsers');
 			} else {
-				header("Refresh:20");
-				echo "<h2>Impossible de trouver une cloture.<br />
-				As tu bien cloture la caisse ? <br />
-				Si oui attends quelques minutes, la page de cloture va bientot s'afficher. <br />
-				Ou alors, tu as deja entre tes donnees.</h2>
-				Dernière cloture faite le : $archive_date
-				<h2><a href='/pos/'>Back</a></h2>"; 
-				exit();
+				if(!empty($this->input->get('force'))) { 
+					$data['archive_date'] = $archive_date;
+					$data['force'] = 1;
+					$this->cashier->posInfo('updateUsers');
+				} else {
+					header("Refresh:20");
+					echo "<h2>Impossible de trouver une cloture.<br />
+					As tu bien cloture la caisse ? <br />
+					Si oui attends quelques minutes, la page de cloture va bientot s'afficher. <br />
+					Ou alors, tu as deja entre tes donnees.</h2>
+					Dernière cloture faite le : $archive_date
+					<h2><a href='/pos/'>Retour</a></h2>
+					<p><small><a href='/pos/movement/close?force=1'>Voir l'interface</a></small></p>";
+					exit();
+				}
 			}
 		}
 
