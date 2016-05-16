@@ -1923,7 +1923,7 @@ class Ion_auth_model extends CI_Model
 			    'value'  => $salt,
 			    'expire' => $expire
 			));
-
+		
 			$this->trigger_events(array('post_remember_user', 'remember_user_successful'));
 			return TRUE;
 		}
@@ -1967,6 +1967,20 @@ class Ion_auth_model extends CI_Model
 			$this->update_last_login($user->id);
 
 			$this->set_session($user);
+			
+			//Set BU
+			if(!empty($user->current_bu_id)) { 
+				$bus = $this->bus()->result();
+				foreach ($bus as $key) {
+					if($key->id == $user->current_bu_id) $bu_name = $key->name;
+				}
+				$session_data = array('bu_id'  => $user->current_bu_id, 'bu_name'  => $bu_name);
+			} else {
+				$user_bu_id = $this->get_users_bus($user->id)->result();
+				$session_data = array('bu_id'  => $user_bu_id[0]->id, 'bu_name'  => $user_bu_id[0]->name);	
+			}
+			$this->session->set_userdata($session_data);
+			
 
 			//extend the users cookies if the option is enabled
 			if ($this->config->item('user_extend_on_login', 'ion_auth'))

@@ -54,7 +54,7 @@ class Admin extends CI_Controller {
 		$bal_ca = "SELECT * FROM turnover ORDER BY `date` DESC LIMIT 1";
 		$bal_ca = $this->db->query($bal_ca);
 		$ca = $bal_ca->row_array();
-		
+
 		$data = array(
 			'user_groups'		=> $user_groups[0],
 			'bank_balance'		=> $bal['val'],
