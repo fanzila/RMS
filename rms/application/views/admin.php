@@ -27,7 +27,7 @@
 			
 			if($l >= 2) { ?>
 			Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
-			<? } ?> | CA: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€ | Last ticket: <?=$date->format('Y-m-d H:i:s')?> | Num: <?=$ca['num']?>
+			| <? } ?> CA: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€ | Last ticket: <?=$date->format('Y-m-d H:i:s')?> | Num: <?=$ca['num']?>
 			
 			<ul data-role="listview" data-inset="true" data-filter="true">
 			<!-- Admin --> 
@@ -70,9 +70,10 @@
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsCategory/">productsCategory</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/products/">products</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/">suppliersCategory</a></li><? } ?>
-			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">suppliers</a></li><? } ?>
+			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">suppliers</a></li>
 			<hr />
 			<li><a rel="external" data-ajax="false" href="/reporting/">Reporting CA pasteque (old)</a></li>
+			<? } ?>
 		</ul>
 	</div><!-- /content -->
 	<br /><br />
