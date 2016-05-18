@@ -58,19 +58,19 @@ body {
 <br />
 <table width="100%">
 <tr>
-	<td class="table_bdc" align="center"><b>Designation</b></td>
+	<td class="table_bdc" align="center"><b>Désignation</b></td>
 	<td class="table_bdc" align="center"><b>Code Art.</b></td>
-	<td class="table_bdc" align="center"><b>Colisage</b></td>
-	<td class="table_bdc" align="center"><b>Qtte</b></td>
-	<td class="table_bdc" align="center"><b>Sous total prix unitaire H.T.</b></td>
+	<td class="table_bdc" align="center"><b>Quantité</b></td>
+	<td class="table_bdc" align="center"><font color="#7c7c7c"><b>Colisage</b></font></td>
+	<td class="table_bdc" align="center"><b>Sous total<br />prix unitaire H.T.</b></td>
 </tr>
 <? foreach ($products as $key => $var) { ?>
 <tr>
 	<td class="table_bdc"><?=$var['name']?> <? if($var['attribut'] > 0) { echo $var['attributname']; } ?></td>
-	<td class="table_bdc"><?=$var['codef']?></td>
-	<td class="table_bdc"><?=$var['packaging']?> <?=$var['unitname']?></td>
-	<td class="table_bdc"><?=$var['qtty']?></td>
-	<td class="table_bdc"><?=($var['pric']*$var['qtty'])/1000?>€</td>
+	<td class="table_bdc" align="center"><?=$var['codef']?></td>
+	<td class="table_bdc" align="center"><?=$var['qtty']?></td>
+	<td class="table_bdc" align="center"><font color="#7c7c7c"><?=$var['packaging']?> <?=$var['unitname']?></font></td>
+	<td class="table_bdc" align="center"><?=($var['pric']*$var['qtty'])/1000?>€</td>
 </tr>
 <? } ?>
 <tr><td class="table_bdc" align="left" colspan="5">Total H.T. : <?=$info['totalprice']/1000?>€</td></tr>
