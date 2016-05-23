@@ -17,9 +17,7 @@
 			</div></div>
 		</div>
 		<div data-role="content" data-theme="a">
-			
 			<?php 
-			
 			$last = $ca['last'];
 			$date = new DateTime($ca['last']);
 			$date->add(new DateInterval('PT01H'));
@@ -32,14 +30,14 @@
 			<ul data-role="listview" data-inset="true" data-filter="true">
 			<!-- Admin --> 
 			<?php if($l >= 2) { ?>
-			<li><a href="/video/">Cams</a></li> 
-			<li><a href="/video/index/1">Cams local</a></li>
+			<li><a href="/cameras/">Cams</a></li> 
+			<li><a href="/cameras/index/1">Cams local</a></li>
 			<?php if($l >= 3) { ?><!--<li><a rel="external" data-ajax="false" href="https://hmw.hankrestaurant.com/">Ajaxterm hank1</a></li> --><? } ?>
 			<hr />
 			<? } ?>
 			<li><a rel="external" data-ajax="false" href="/news">News</a></li> 
 			<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/">Shiftplanning</a></li>
-			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/pos/">Cashier</a></li><? } ?>
+			<li><a rel="external" data-ajax="false" href="/pos/">Cashier</a></li>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/posmessage/">Message caisse</a></li><? } ?>			
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://hank.recruiterbox.com/app/#candidates/overview">Recruiter Box (RB)</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://www.cashpad.net">Reporting Cashpad</a></li><? } ?>
@@ -48,15 +46,17 @@
 			<li><a rel="external" data-ajax="false" href="/reminder/">Reminder</a></li>
 			<li><a rel="external" data-ajax="false" href="/sensors/">Sensors</a></li>
 			<li><a rel="external" data-ajax="false" href="/order/">Order</a></li>
-			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="/auth/">Staff management</a></li><? } ?>
+			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/auth/">Staff management</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/auth/extra">Extra finder</a></li><? } ?>
-			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="/reminder_admin/">Reminder tasks management</a></li><? } ?>
+			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/reminder_admin/">Reminder tasks management</a></li>
 			<hr />
+			<? } ?>
 			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="http://drive.google.com/">Google Drive</a></li><? } ?>
 			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="http://trello.com">Trello</a></li><? } ?>
 			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="http://mail.hankrestaurant.com">Email Hank (mail@hankrestaurant.com)</a></li><? } ?>
-			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="http://dropbox.com/home">Dropbox</a></li><? } ?>
+			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="http://dropbox.com/home">Dropbox</a></li>
 			<hr />
+			<? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/cklChecklistTasks/">Checklists tasks management</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/cklChecklists/">Checklists management</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/rmdMeta/">Reminder task management</a></li><? } ?>

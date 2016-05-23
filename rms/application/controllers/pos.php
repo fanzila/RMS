@@ -145,7 +145,7 @@ class Pos extends CI_Controller {
 
 			//Get last archive
 			$d = $this->cashier->getClosureData();
-
+			
 			//Get date of this archive
 			$archive_date_ex = $this->cashier->getPosArchivesDatetime($d['file']);
 

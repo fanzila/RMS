@@ -63,11 +63,12 @@ class Hmw {
 		return $r[0];
 	}
 
-	public function getBus($id = null) 
+	public function getBus($id = null, $iduser = null) 
 	{
 		$CI = & get_instance(); 
 		$CI->load->database();
-		$req = "SELECT * FROM bus";
+		$req = "SELECT bus.id, bus.name, bus.country, bus.zip, bus.description FROM bus AS bus";
+		if($iduser) $req .= " JOIN users_bus AS ub ON ub.bu_id = bus.id WHERE ub.user_id = $iduser";
 		if($id) $req .= " WHERE `id` = $id";
 		$res = $CI->db->query($req);
 		return $res->result();

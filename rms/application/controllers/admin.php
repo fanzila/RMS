@@ -43,9 +43,9 @@ class Admin extends CI_Controller {
 			$this->session->set_userdata($session_data); 
 		}
 
-		$bus_list = $this->hmw->getBus();
 		$user = $this->ion_auth->user()->row();
 		$user_groups = $this->ion_auth->get_users_groups()->result();
+		$bus_list = $this->hmw->getBus(null, $user->id);
 		
 		$bal_req = "SELECT val FROM bank_balance";
 		$bal_res = $this->db->query($bal_req);
