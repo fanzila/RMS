@@ -63,6 +63,9 @@ class Auth extends CI_Controller {
 				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
 			
+			$this->data['username'] = $this->session->all_userdata()['identity'];
+			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			
 			$this->data['current_user'] = $this->ion_auth->user()->row();
 			$this->_render_page('auth/extra', $this->data);
 		}
@@ -97,6 +100,9 @@ class Auth extends CI_Controller {
 				$this->data['users'][$k]->bus 		= $this->ion_auth->get_users_bus($user->id)->result();
 			}
 
+			$this->data['username'] = $this->session->all_userdata()['identity'];
+			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			
 			$this->_render_page('auth/index', $this->data);
 		}
 	}
@@ -210,7 +216,9 @@ class Auth extends CI_Controller {
 				'type'  => 'hidden',
 				'value' => $user->id,
 			);
-
+			
+			$this->data['username'] = $this->session->all_userdata()['identity'];
+			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			//render
 			$this->_render_page('auth/change_password', $this->data);
 		}
@@ -421,7 +429,10 @@ class Auth extends CI_Controller {
 			// insert csrf check
 			$this->data['csrf'] = $this->_get_csrf_nonce();
 			$this->data['user'] = $this->ion_auth->user($id)->row();
-
+			
+			$this->data['username'] = $this->session->all_userdata()['identity'];
+			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			
 			$this->_render_page('auth/deactivate_user', $this->data);
 		}
 		else
@@ -462,6 +473,9 @@ class Auth extends CI_Controller {
 			$this->data['csrf'] = $this->_get_csrf_nonce();
 			$this->data['user'] = $this->ion_auth->user($id)->row();
 
+			$this->data['username'] = $this->session->all_userdata()['identity'];
+			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			
 			$this->_render_page('auth/delete_user', $this->data);
 		}
 		else
@@ -601,7 +615,10 @@ class Auth extends CI_Controller {
 			$this->data['groupinfo'] = $groupinfo;
 			
 			$this->data['welcome_email'] = $this->hmw->getParam('welcome_email');
-
+			
+			$this->data['username'] = $this->session->all_userdata()['identity'];
+			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			
 			$this->_render_page('auth/create_user', $this->data);
 		}
 	}
@@ -721,6 +738,8 @@ class Auth extends CI_Controller {
 		$this->data['currentGroups'] = $currentGroups;
 		$this->data['currentBus'] = $currentBus;
 		
+		$this->data['username2'] = $this->session->all_userdata()['identity'];
+		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
 		$this->data['first_name'] = array(
 			'name'  => 'first_name',
@@ -815,6 +834,10 @@ class Auth extends CI_Controller {
 				'type'  => 'text',
 				'value' => $this->form_validation->set_value('description')
 			);
+			
+			$this->data['username'] = $this->session->all_userdata()['identity'];
+			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			
 			$this->_render_page('auth/create_group', $this->data);
 		}
 	}
@@ -878,6 +901,9 @@ class Auth extends CI_Controller {
 			'value' => $this->form_validation->set_value('group_description', $group->description),
 		);
 
+		$this->data['username'] = $this->session->all_userdata()['identity'];
+		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+	
 		$this->_render_page('auth/edit_group', $this->data);
 	}
 

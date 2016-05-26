@@ -1,6 +1,6 @@
 <div data-role="page" data-theme="a">
 	<div data-role="header">
-		<h1>News</h1>
+		<h1>News | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 Recorded & sent!

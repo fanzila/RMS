@@ -24,7 +24,7 @@
 <div data-role="page" data-theme="a">
 	<div data-role="header">
 		<? if(!$keylogin) { ?><a href="/admin/" data-ajax="false" data-icon="home">Home</a><? } ?> 
-		<h1>Sensors</h1>
+		<h1>Sensors | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 <h3>Current temperature</h3>

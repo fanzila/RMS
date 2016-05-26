@@ -44,6 +44,9 @@ class Order extends CI_Controller {
 			'suppliers'    => $suppliers,
 			'freq'			=> $freq);
 	
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+		
 		$this->load->view('order/index',$data);
 	}
 
@@ -99,7 +102,9 @@ class Order extends CI_Controller {
 		$data = array(
 			'order'	=> $rec,
 			);
-
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+		
 		$this->load->view('order/order_prev',$data);
 	}
 
@@ -138,6 +143,9 @@ class Order extends CI_Controller {
 			'users'				=> $users
 			);
 
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+		
 		$this->load->view('order/order_products',$data);
 
 	}
@@ -171,6 +179,10 @@ class Order extends CI_Controller {
 			'suppliers' => $suppliers, 
 			'stock_update' => $stock_update, 
 			'maj' => $maj);
+		
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+			
 		$this->load->view('order/order_prepare',$data);
 	}
 
@@ -217,6 +229,9 @@ class Order extends CI_Controller {
 			$data = array('status' => 'NOK');	
 		}
 
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+		
 		$this->load->view('order/confirm',$data);
 	}
 
@@ -297,8 +312,10 @@ class Order extends CI_Controller {
 			}
 
 		}
-
+		
 		$data = array('disp' => $disp);
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
 		$this->load->view('order/order_sent', $data);
 
 	}
@@ -396,8 +413,12 @@ class Order extends CI_Controller {
 			write_file('orders/'.$date_y.'/'.$date_m.'/'.$id.'.pdf', $pdf);
 			$order[] = array('id' => $id, 'idorder' => $idorder, 'comt' => $info['comt'], 'user' => $user->username, 'userid' => $user->id, 'sup_name' => $info['sup_name'], 'sup_id' => $info['sup_id'], 'sup_email' => $info['sup_email'], 'cc_email' => $info['cc_email']);
 		}
-
+		
 		$data2 = array('order' => $order);
+
+		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data2['username'] = $this->session->all_userdata()['identity'];
+
 		$this->load->view('order/order_confirm', $data2);
 	}
 

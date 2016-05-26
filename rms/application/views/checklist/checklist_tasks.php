@@ -6,7 +6,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/checklist/" data-ajax="false" data-icon="home">Back</a>
-			<h1>Checklist Record</h1>
+			<h1>Checklist Record | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 
 		<div data-role="content">

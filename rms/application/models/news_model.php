@@ -26,11 +26,17 @@ class News_model extends CI_Model {
 
 	public function get_list($limit, $start)
 	{
-
-		$this->db->select('news.id, users.username, news.title, news.slug, news.text, news.date, news.id_user');
+		
+		$bu_id =  $this->session->all_userdata()['bu_id'];
+		
+		$this->db->select('news.id, users.username, news.title, news.slug, news.text, news.date, news.id_user, bus.name, bus.id');
+		$this->db->where('news_bus.id_bu', $bu_id);
 		$this->db->limit($limit, $start);
 		$this->db->order_by("news.id", "desc");
 		$this->db->join('users', 'users.id = news.id_user', 'left');
+		$this->db->join('news_bus', 'news.id = news_bus.id_news');
+		$this->db->join('bus', 'news_bus.id_bu = bus.id');
+		
 		$query = $this->db->get("news");
 
 		if ($query->num_rows() > 0) {
@@ -58,8 +64,19 @@ class News_model extends CI_Model {
 			'text' => $this->input->post('text'),
 			'id_user' => $id_user
 			);
-
 		$this->db->insert('news', $data);
+		$last_id = $this->db->insert_id();
+		
+		$bus = $this->input->post('bus');
+		
+		foreach ($bus as $row) {
+			$data2 = array(
+				'id_news' => $last_id, 
+				'id_bu' => $row
+				);
+			$this->db->insert('news_bus', $data2);
+		}
+	
 		return $this->db->insert_id();
 	}
 

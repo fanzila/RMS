@@ -50,6 +50,9 @@ class Checklist extends CI_Controller {
 			'keylogin'		=> $this->session->userdata('keylogin'),	
 			'checklists'	=> $checklists);
 
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+
 		$this->load->view('checklist/header');
 		$this->load->view('checklist/checklist',$data);
 		$this->load->view('checklist/footer');
@@ -70,6 +73,9 @@ class Checklist extends CI_Controller {
 		$data = array(
 			'checklists_rec'	=> $checklist_rec,
 			);
+
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
 
 		$this->load->view('checklist/header');
 		$this->load->view('checklist/checklist_prev',$data);
@@ -115,6 +121,9 @@ class Checklist extends CI_Controller {
 			'load' 					=> $load,
 			'users'					=> $users
 			);
+
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
 
 		$this->load->view('checklist/header');
 		$this->load->view('checklist/checklist_tasks',$data);

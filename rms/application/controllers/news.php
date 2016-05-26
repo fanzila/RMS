@@ -58,6 +58,8 @@ class News extends CI_Controller {
 		$data["results"] = $this->news_model->get_list($config["per_page"], $page);
 		$data["links"] = $this->pagination->create_links();
 
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		
 		$this->load->view('jq_header', $data);
 		$this->load->view('news/index', $data);
 		$this->load->view('jq_footer');
@@ -81,10 +83,17 @@ class News extends CI_Controller {
 
 		$user = $this->ion_auth->user()->row();
 
+		$bus_list = $this->hmw->getBus(null, $user->id);
+		
 		$this->load->helper('form');
+
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
 		$data['title']	= 'Create a news item';
 		$data['from']	= $user->username;
+		$data['bus_list']	= $bus_list;
+		$data['bu_id']	= $this->session->all_userdata()['bu_id'];
+		
 
 		if (!$this->input->post('title'))
 		{
@@ -99,12 +108,17 @@ class News extends CI_Controller {
 			$server_name = $this->hmw->getParam('server_name'); 
 			
 			$this->load->library('mmail');
-
-			$this->db->where('active', 1); 
+			$bus = $this->input->post('bus');
+			
+			$this->db->select('users.username, users.email, users.id');
+			$this->db->distinct('users.username');
+			$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+			$this->db->where('users.active', 1);
+			$this->db->where_in('users_bus.bu_id', $bus);
+			
 			$query = $this->db->get("users");
-
+			
 			foreach ($query->result() as $row) {
-				
 				$key 	= md5(microtime().rand());
 				$link 	= 'http://'.$server_name.'/news/confirm/'.$key;
 				
@@ -114,7 +128,7 @@ class News extends CI_Controller {
 					'id_news' => $news_id,
 					'status' => 'sent'
 					);
-
+				
 				$this->db->insert('news_confirm', $confi);
 
 				$email['from']		= 'news@hankrestaurant.com';
@@ -130,9 +144,12 @@ class News extends CI_Controller {
 
 				$email['msg'] = $msg;
 				
-				$this->mmail->sendEmail($email);
+				//$this->mmail->sendEmail($email);
 			}
 
+			$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$data['username'] = $this->session->all_userdata()['identity'];
+			
 			$data['title'] = 'News';
 			$this->load->view('jq_header', $data);
 			$this->load->view('news/success');

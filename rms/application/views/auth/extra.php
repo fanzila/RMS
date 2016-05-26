@@ -3,7 +3,7 @@
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/admin/" data-transition="slide" data-icon="home">Home</a>
-			<h1>Extra finder</h1>
+			<h1>Extra finder | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">

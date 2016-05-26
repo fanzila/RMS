@@ -12,7 +12,7 @@
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/reminder/" data-ajax="false" data-icon="home">Back</a>
-			<h1>Reminder logs</h1>
+			<h1>Reminder logs | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">			

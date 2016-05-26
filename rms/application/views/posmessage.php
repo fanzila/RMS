@@ -1,7 +1,7 @@
 <div data-role="page" data-theme="a">
 	<div data-role="header">
 	<a href="/admin/" data-ajax="false" data-icon="home">Home</a>
-		<h1>Message caisse</h1>
+		<h1>Message caisse | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 

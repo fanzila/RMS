@@ -4,7 +4,7 @@
 
 		<div data-role="header">
 			<a data-ajax="false" href="/order/" data-icon="home">Back</a>
-			<h1>Order Prepare</h1>
+			<h1>Order Prepare | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 
 		<div data-role="content">

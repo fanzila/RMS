@@ -23,6 +23,9 @@ class Sensors extends CI_Controller {
 		$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$info = $r->result_array();	
 		
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+		
 		$data['current'] 	= $info;
 		$data['title'] 		= 'Sensors';
 		$data['keylogin']	= $this->session->userdata('keylogin');

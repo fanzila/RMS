@@ -22,8 +22,9 @@ class Posmessage extends CI_Controller {
 		
 		$this->load->helper('form');
 		
-		$data['title'] = 'Message caisse';
-
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+		
 		$this->load->view('jq_header', $data);
 		$this->load->view('posmessage', $data);
 		$this->load->view('jq_footer');

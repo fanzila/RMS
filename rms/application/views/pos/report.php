@@ -1,8 +1,7 @@
 <div data-role="page" data-theme="a">
 	<div data-role="header">
-		<? if(!$keylogin) { ?><a href="/admin/" data-role="button" data-inline="true" data-ajax="false" data-icon="home">Home</a><? } ?>
 		<a href="/pos/" data-ajax="false" data-icon="home">Back</a>
-		<h1><?=$title?></h1>
+		<h1><?=$title?>  | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 
 	<div data-role="content" data-theme="a">

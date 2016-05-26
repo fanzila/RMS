@@ -75,6 +75,9 @@ class Reminder extends CI_Controller {
 			'view'		=> $view
 			);
 
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+		
 		$this->load->view('reminder/index',$data);
 	}
 	
@@ -88,6 +91,9 @@ class Reminder extends CI_Controller {
 		$data = array(
 			'tasks'		=> $tasks
 			);
+			
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
 			
 		$this->load->view('reminder/logs',$data);
 	}

@@ -6,7 +6,7 @@
 		<? } ?>
 		<div data-role="header">
 		<? if(!$keylogin) { ?><a href="/admin/" data-role="button" data-inline="true" data-ajax="false" data-icon="home">Home</a><? } ?>
-		<h1>Cashier</h1>
+		<h1>Cashier | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 		<ul data-role="listview" data-inset="true">

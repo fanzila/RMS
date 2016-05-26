@@ -14,7 +14,7 @@
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/admin/" data-ajax="false" data-icon="home">Home</a> <a href="/reminder_admin/index/1" data-ajax="false" data-icon="plus">Create</a>
-			<h1>Reminder Admin</h1>
+			<h1>Reminder Admin | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<? 

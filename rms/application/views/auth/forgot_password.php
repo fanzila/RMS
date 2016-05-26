@@ -3,7 +3,7 @@
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/admin/" data-transition="slide" data-icon="home">Back</a>
-			<h1>Users</h1>
+			<h1>Users | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 

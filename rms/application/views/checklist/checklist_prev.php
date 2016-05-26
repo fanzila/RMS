@@ -3,7 +3,7 @@
 
 		<div data-role="header">
 			<a href="/checklist/" data-ajax="false" data-icon="home">Home</a>
-			<h1>Checklist View Records</h1>
+			<h1>Checklist View Records | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 
 		<div data-role="content">

@@ -3,7 +3,7 @@
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/order/" data-ajax="false" data-icon="home">back</a>
-			<h1>Order Sent</h1>
+			<h1>Order Sent | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			Order(s) sent to : 

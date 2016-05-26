@@ -56,7 +56,9 @@ class Product_admin extends CI_Controller {
 			'products_unit' 	=> $products_unit,
 			'products_category' => $products_category
 			);
-
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
+		
 		$this->load->view('product/admin',$data);
 	}
 	
@@ -164,6 +166,8 @@ class Product_admin extends CI_Controller {
 			'products'			=> $products,
 			'mapping'			=> $mapping
 			);
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['username'] = $this->session->all_userdata()['identity'];
 			
 		$this->load->view('product/mapping',$data);
 	}

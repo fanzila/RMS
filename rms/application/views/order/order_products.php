@@ -5,7 +5,7 @@ $today = getdate();
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/order/" data-ajax="false" data-icon="home">Back</a>
-			<h1>Order <? if($load <= 0) { ?> <?=strtoupper($order_name)?> <? } ?></h1>
+			<h1>Order <? if($load <= 0) { ?> <?=strtoupper($order_name)?> <? } ?> | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">				

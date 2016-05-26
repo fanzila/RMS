@@ -3,7 +3,7 @@
 	<div id="orderpage" data-role="page">
 		<div data-role="header">
 			<? if(!$keylogin) { ?><a href="/admin/" data-ajax="false" data-icon="home">Home</a><? } ?>
-			<h1>Order</h1>
+			<h1>Order | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<?php if($user_groups->level >= 1) { ?>

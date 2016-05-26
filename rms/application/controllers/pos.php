@@ -23,6 +23,8 @@ class Pos extends CI_Controller {
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= 'Pos';
 		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount');
+		
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
 		$this->load->view('pos/header', $data);
 		$this->load->view('pos/index', $data);
@@ -51,6 +53,7 @@ class Pos extends CI_Controller {
 		$data['users'] = $users_res->result_array();
 
 		$data["keylogin"] = $this->session->userdata('keylogin');
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
 		$data['title']  	= 'Safe';
 
@@ -81,6 +84,7 @@ class Pos extends CI_Controller {
 		$data['safe_tr'] 		= $this->cashier->calc('safe_current_tr_num');
 		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat');		
 		$data['live_movements'] = $this->cashier->posInfo('getLiveMovements');
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
 
 		$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file 
@@ -127,6 +131,7 @@ class Pos extends CI_Controller {
 		$data['user_groups']	= $user_groups[0];
 		$data['mov']			= $mov;
 		$data['archive_file'] 	= null;
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
 		$data["keylogin"] = $this->session->userdata('keylogin');
 
@@ -202,6 +207,7 @@ class Pos extends CI_Controller {
 		$data['user_groups']	= $user_groups[0];
 		$data["keylogin"]		= $this->session->userdata('keylogin');
 		$data['title']			= 'Cashier';
+		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['mov']			= $this->input->post('mov');
 		$userpost 				= $this->input->post('user');
 		

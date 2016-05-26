@@ -16,7 +16,7 @@
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/order/" data-ajax="false" data-icon="home">Home</a>
-			<h1>Products mapping</h1>
+			<h1>Products mapping | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<? $i = 0; foreach ($products_pos as $line) { ?>
