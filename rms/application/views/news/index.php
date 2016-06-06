@@ -9,7 +9,7 @@
 		<? if(!empty($results)) { ?>
 		<? foreach ($results as $news_item): ?>
 			<?  
-		$get = "SELECT u.username,nc.status, nc.date_confirmed FROM news_confirm AS nc JOIN users AS u ON nc.id_user = u.id WHERE nc.id_news = $news_item->id";
+		$get = "SELECT u.username,nc.status, nc.date_confirmed FROM news_confirm AS nc JOIN users AS u ON nc.id_user = u.id WHERE nc.id_news = $news_item->news_id";
 		$res = $this->db->query($get) or die($this->mysqli->error);
 		$ret = $res->result_array();
 		?>

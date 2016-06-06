@@ -128,7 +128,7 @@ class News extends CI_Controller {
 					'id_news' => $news_id,
 					'status' => 'sent'
 					);
-				
+			
 				$this->db->insert('news_confirm', $confi);
 
 				$email['from']		= 'news@hankrestaurant.com';
@@ -144,7 +144,7 @@ class News extends CI_Controller {
 
 				$email['msg'] = $msg;
 				
-				//$this->mmail->sendEmail($email);
+				$this->mmail->sendEmail($email);
 			}
 
 			$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
