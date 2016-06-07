@@ -7,3 +7,5 @@ application/cache/*
 application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
+
+application/helpers/dompdf/lib/fonts/log.htm
