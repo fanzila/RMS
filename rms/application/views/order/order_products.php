@@ -18,7 +18,7 @@ $today = getdate();
 							<li>
 								<label for="pdt-<?=$line['id']?>"> <?=strtoupper($line['name'])?> - <span style="font-size:smaller"> <?=$line['supplier_name']?> - <?=$line['id']?>
 									<br /><b>Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?></b> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?>
-									<br />Colisage: <?=$line['packaging']?> <?=$line['unit_name']?> | Unit price: <?=$line['price']/1000?>€ | Ref. supplier: <?=$line['supplier_reference']?> | Comment: <?=$line['comment']?>
+									<br />Packaging: <?=$line['packaging']?> per <?=$line['unit_name']?> | Unit price: <?=$line['price']/1000?>€ | Ref. supplier: <?=$line['supplier_reference']?> | Comment: <?=$line['comment']?>
 								</span>
 							</label>
 							<input type="hidden" name="price-<?=$line['id']?>" id="price-<?=$line['id']?>" value="<?=$line['price']?>">
