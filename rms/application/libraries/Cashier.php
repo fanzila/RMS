@@ -8,7 +8,7 @@ class Cashier {
 		$current .= "$txt\r\n";
 		file_put_contents($file, $current);
 	}
-	 
+	
 	private function getSalesForProduct($id, $id_bu) {
 		$CI = & get_instance(); 
 		$CI->load->database();
@@ -143,7 +143,7 @@ class Cashier {
 			//RECEIPTITEMADDON
 			$result_receiptitemaddon = $db->query('SELECT * FROM ARCHIVEDRECEIPTITEMADDON');
 			while($row_receiptitemaddon=$result_receiptitemaddon->fetchArray(SQLITE3_ASSOC)){
-				$q_receiptitemaddon = "INSERT IGNORE INTO sales_receiptitemaddon SET id=".$row_receiptitemaddon['ID'].", receiptitem=".$row_receiptitemaddon['ARCHIVEDRECEIPTITEM'].", productaddon='".$row_receiptitemaddon['PRODUCTADDON']."', quantity=".$row_receiptitemaddon['QUANTITY']; 
+				$q_receiptitemaddon = "INSERT IGNORE INTO sales_receiptitemaddon SET id=".$row_receiptitemaddon['ID'].", receiptitem=".$row_receiptitemaddon['ARCHIVEDRECEIPTITEM'].", productaddon='".$row_receiptitemaddon['PRODUCTADDON']."', quantity=".$row_receiptitemaddon['QUANTITY'].", id_bu = $id_bu"; 
 				
 				$r_receiptitemaddon = $CI->db->query($q_receiptitemaddon) or die($this->db->_error_message());
 			}
