@@ -9,7 +9,7 @@ class Product {
 		if($id) $sqladd = " AND p.id = $id";
 		if($supplier_id != null) $sqladd .= " AND s.id = $supplier_id ";
 		if($term != null) $sqladd .= " AND p.name LIKE '%".$term."%' ";
-		if($active != null) $sqladd .= " AND p.active = 1 AND deleted = 0 ";
+		if($active != null) $sqladd .= " AND p.active = 1 AND p.deleted = 0 ";
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
 		
