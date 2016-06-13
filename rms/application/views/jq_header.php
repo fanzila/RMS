@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
 	<title>HANK - <?=$title?></title>
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="msapplication-tap-highlight" content="no" />
 	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />

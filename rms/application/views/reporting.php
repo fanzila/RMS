@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
 	<title>HANK reporting</title>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="msapplication-tap-highlight" content="no" />
+	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="/public/jqGrid/ui.jqgrid.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="/public/jqGrid/jquery-ui-custom.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="/public/jqGrid/ui.multiselect.css" />
-
 	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
 	<script src="/public/jqGrid/jquery-ui-custom.min.js" type="text/javascript"></script>
 	<script src="/public/jqGrid/jquery.layout.js" type="text/javascript"></script>

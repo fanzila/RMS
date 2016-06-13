@@ -11,7 +11,7 @@
 <p><?php echo lang('create_user_subheading');?></p>
 
 <div id="infoMessage"><?php echo $message;?></div>
-
+<h1 style="color:red">RAPPEL: FAIRE LA DPAE!</h1>
 <?php 
 $attributes = array('rel' => 'external', 'data-ajax' => 'false');
 echo form_open("auth/create_user", $attributes);
@@ -78,7 +78,7 @@ echo form_open("auth/create_user", $attributes);
 			Send welcome email message
 		</label>
 <textarea name="txtmessage"><?=$welcome_email?></textarea>
-		
+		<h1 style="color:red">RAPPEL: FAIRE LA DPAE!</h1>
       <p><?php echo form_submit('submit', lang('create_user_submit_btn'));?></p>
 
 <?php echo form_close();?>

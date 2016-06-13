@@ -10,7 +10,7 @@ class Rmd extends CI_Controller  {
 		
 	}
 	
-	public function getAllTasks()
+	public function getAllTasks($id_bu)
 	{
 		$CI =& get_instance();
 		
@@ -21,13 +21,14 @@ class Rmd extends CI_Controller  {
 		FROM rmd_tasks AS T
 		JOIN rmd_notif AS N ON N.`id_task` = T.`id`  
 		JOIN rmd_meta AS M ON M.`id_task` = T.`id` 
+		WHERE T.id_bu = $id_bu 
 		ORDER BY T.`id` ASC";
 		
 		$query	= $CI->db->query($sql);
 		return $query->result();
 	}
 			
-	public function getTasks($task_id = null, $view = null)
+	public function getTasks($task_id = null, $view = null, $id_bu)
 	{
 
 		$CI =& get_instance();
@@ -48,7 +49,7 @@ class Rmd extends CI_Controller  {
 		ROUND((UNIX_TIMESTAMP() - (UNIX_TIMESTAMP(`start`)+`repeat_interval`))/86400) AS overdue
 		FROM rmd_tasks AS T 
 		RIGHT JOIN `rmd_meta` AS M ON M.`id_task` = T.`id`
-		WHERE T.`active` = 1 ";
+		WHERE T.`active` = 1 AND T.`id_bu` = $id_bu ";
 		if($view != 'all') $sql .= "AND T.`id` NOT IN (SELECT id_task FROM rmd_log AS L WHERE DATE(L.`date`) = DATE(NOW()) GROUP BY L.`id_task`) "; 
 		if($task_id > 0) $sql .= "AND id_task = $task_id ";
 		
@@ -62,17 +63,9 @@ class Rmd extends CI_Controller  {
 		) )";
 
 		$query	= $CI->db->query($sql);
-
+		
 		return $query->result();
 	}
 	
-	public function getParam($param) 
-	{
-		$CI =& get_instance();
-		$req_params = "SELECT `val` FROM params WHERE `key` = '" . $param . "' LIMIT 1 ";
-		$res_params = $CI->db->query($req_params);
-		$r = $res_params->result();	
-		return $r[0]->val;
-	}
 }
 ?>

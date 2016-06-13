@@ -5,12 +5,12 @@
 	</div>
 	<? } ?>
 	<div data-role="header">
-		<a href="/pos/" data-ajax="false" data-icon="home">Back</a>
+		<a href="/webcashier/" data-ajax="false" data-icon="home">Back</a>
 		<h1><?=$title?>  | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 		<?if($mov == 'close') { ?><small>Closing date: <?=$archive_date?></small><? } ?>
-		<form id="pos" name="pos" method="post" action="/pos/save">
+		<form id="pos" name="pos" method="post" action="/webcashier/save">
 			<table border="0" cellpadding="5" width="100%">
 				<tr style="background-color: #dfdfdf;">
 					<td>Payment type</td>
@@ -51,7 +51,7 @@
 				<?
 			foreach ($users as $user) {
 				?>
-				<option value="<?=$user['id']?>"><?=$user['first_name']?> <?=$user['last_name']?></option>
+				<option value="<?=$user->id?>"><?=$user->first_name?> <?=$user->last_name?></option>
 				<? 
 			}
 			?>

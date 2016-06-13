@@ -62,7 +62,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 										<?
 										foreach ($users as $user) {
 											?>
-											<option value="<?=$user['id']?>" <? if(isset($form['user']) AND $form['user']==$user['id']) { ?> selected <? } ?>><?=$user['first_name']?> <?=$user['last_name']?></option>
+											<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?></option>
 											<? 
 										}
 										?>

@@ -10,14 +10,14 @@ class Posmessage extends CI_Controller {
 
 	public function index()
 	{
-		
+		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$data = array();
 		
 		if ($this->input->post('msg'))
 		{
 			$this->load->library('mmail');
 			$data['msgsent'] = $this->input->post('msg');
-			$this->hmw->sendNotif($this->input->post('msg'));	
+			$this->hmw->sendNotif($this->input->post('msg'), $id_bu);	
 		}
 		
 		$this->load->helper('form');

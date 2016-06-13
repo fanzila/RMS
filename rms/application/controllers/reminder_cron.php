@@ -1,14 +1,14 @@
 <?php 
 class Reminder_cron extends CI_Controller {
 
-	//cd /var/www/hank/HMW/hmw && php index.php reminder_cron index
+	//cd /var/www/hank/rms/rms && php index.php reminder_cron index 1
 
 	public function __construct()
 	{
 		parent::__construct();		
 	}
 
-	public function index()
+	public function index($id_bu)
 	{
 
 		if($this->input->is_cli_request()) {
@@ -18,7 +18,7 @@ class Reminder_cron extends CI_Controller {
 			$CI->load->library('hmw');
 			$CI->load->library('rmd');
 
-			$tasks = $CI->rmd->getTasks();
+			$tasks = $CI->rmd->getTasks(null, null, $id_bu);
 			foreach ($tasks as $row) {
 
 				$now			= time();
@@ -26,7 +26,7 @@ class Reminder_cron extends CI_Controller {
 				$notif_start	= 0;
 				$notif_end		= 999999999999;
 				$interval		= 0;
-				
+
 				if(isset($notif->id)) {
 					$notif_start	= strtotime(date('Y-m-d '.$notif->start));
 					$notif_end		= strtotime(date('Y-m-d '.$notif->end));
@@ -43,7 +43,7 @@ class Reminder_cron extends CI_Controller {
 						return false;
 					}
 					
-				$this->hmw->sendNotif($row->task ."\n http://".$CI->rmd->getParam('server_name')."/reminder/index/".$row->id);	
+				$this->hmw->sendNotif("Reminder: "$row->task, $id_bu);	
 				}
 			}
 

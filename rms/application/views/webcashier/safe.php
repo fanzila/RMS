@@ -1,11 +1,11 @@
 <div data-role="page" data-theme="a">
 	<div data-role="header">
-		<a href="/pos/" data-ajax="false" data-icon="home">Back</a>
+		<a href="/webcashier/" data-ajax="false" data-icon="home">Back</a>
 		<h1><?=$title?>  | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 
-		<form id="pos" name="pos" method="post" action="/pos/save">
+		<form id="pos" name="pos" method="post" action="/webcashier/save">
 
 			<div data-role="fieldcontain">
 				Movement: 

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
 	<title>HANK - Reminder</title>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="msapplication-tap-highlight" content="no" />
+	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
 	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
 	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
 	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
@@ -66,11 +68,12 @@
 						<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 							<option value="0">User</option>
 							<?
-						foreach ($users as $user) {
+							foreach ($users as $user) {
+								?>
+								<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?></option>
+								<? 
+							}
 							?>
-							<option value="<?=$user['id']?>" <? if(isset($form['user']) AND $form['user']==$user['id']) { ?> selected <? } ?>><?=$user['first_name']?> <?=$user['last_name']?></option>
-							<? 
-						}
 						?>
 					</select>
 				</li>

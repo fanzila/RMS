@@ -22,8 +22,10 @@
 					<?php if($user_groups->level >= 2) { ?>
 						<a href="/product_admin/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products admin</a>
 						<a href="/product_admin/mapping" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products mapping</a>
+						<?php if($user_groups->level >= 3) { ?>
 						<a href="/crud/suppliers/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Suplliers</a>
 						<a href="/crud/productsAttribut/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="a">Products attribut</a>
+						<? } ?>
 							
 						<ul id="autocomplete" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..." data-filter-theme="d"></ul>
 						<hr />

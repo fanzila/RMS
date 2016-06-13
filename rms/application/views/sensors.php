@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<title>HANK - <?=$title?></title>	
 	<meta charset="utf-8">
-	<title>HANK - <?=$title?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="msapplication-tap-highlight" content="no" />
 	<!-- <link class="include" rel="stylesheet" type="text/css" href="/public/jqplot/jquery.jqplot.css" /> 

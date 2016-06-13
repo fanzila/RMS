@@ -1,4 +1,5 @@
 <?php $title = "Admin Hank"; include('jq_header.php'); ?> 
+<?php $dev = false; if($_SERVER['SERVER_NAME'] == 'rms.dev') $dev = true; ?>
 <body>
 	<div data-role="page" data-theme="a">
 		<div data-role="header">
@@ -24,6 +25,7 @@
 			$l = $user_groups->level;
 			
 			if($l >= 2) { ?>
+				<?if($dev) { ?><div style="text-align: center;width:100%;background-color: #c3f59d;height:30px;border:2px solid #ccc;color:red">DEV MODE</div><br><? } ?>
 			Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
 			| <? } ?> CA: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€ | Last ticket: <?=$date->format('Y-m-d H:i:s')?> | Num: <?=$ca['num']?>
 			
@@ -37,7 +39,7 @@
 			<? } ?>
 			<li><a rel="external" data-ajax="false" href="/news">News</a></li> 
 			<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/">Shiftplanning</a></li>
-			<li><a rel="external" data-ajax="false" href="/pos/">Cashier</a></li>
+			<li><a rel="external" data-ajax="false" href="/webcashier/">Cashier</a></li>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/posmessage/">Message caisse</a></li><? } ?>			
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://hank.recruiterbox.com/app/#candidates/overview">Recruiter Box (RB)</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://www.cashpad.net">Reporting Cashpad</a></li><? } ?>
@@ -71,6 +73,7 @@
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/products/">products</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/">suppliersCategory</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">suppliers</a></li>
+			<li><a rel="external" data-ajax="false" href="/crud/suppliersBus/">suppliers BUS</a></li>
 			<hr />
 			<li><a rel="external" data-ajax="false" href="/reporting/">Reporting CA pasteque (old)</a></li>
 			<? } ?>

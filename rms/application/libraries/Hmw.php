@@ -73,7 +73,16 @@ class Hmw {
 		$res = $CI->db->query($req);
 		return $res->result();
 	}
-	
+
+	public function getBuInfo($id_bu) {
+		$CI = & get_instance(); 
+		//$CI->db->select('bus.id_pos_cash_method');
+		$CI->db->where('bus.id', $id_bu);
+		$query = $CI->db->get("bus");
+		$res = $query->result();
+		return $res[0];
+	}
+		
 	public function updateUserBu($id_bu, $id_user) 
 	{
 		$CI = & get_instance(); 
@@ -91,6 +100,20 @@ class Hmw {
 		return $res_params->result();	
 	}
 
+	public function getEmail($type, $id_bu)
+	{
+		$CI = & get_instance(); 
+		$CI->load->database();
+		
+		if($type == 'order') {
+			$req_params = "SELECT email_order FROM bus WHERE id = $id_bu";
+			$res_params = $CI->db->query($req_params);
+			$res = $res_params->result();
+			return $res[0]->email_order;
+		}
+		
+	}
+	
 	public function sendSms($num, $msg) {
 		
 		$CI = & get_instance(); 
@@ -107,19 +130,22 @@ class Hmw {
 		$CI->mmail->sendEmail($sms);
 	}
 	
-	public function sendNotif($msg) {
+	public function sendNotif($msg, $id_bu) {
 
 		$address	= $this->getParam('pushover_address');
 		$token		= $this->getParam('pushover_token');
 		$user		= $this->getParam('pushover_user');
-
+		$buinfo 	= $this->getBuInfo($id_bu);
+		$device		= $buinfo->pushover_device;
+		
 		curl_setopt_array(
 			$ch = curl_init(), array(
 				CURLOPT_URL => $address,
 				CURLOPT_POSTFIELDS => array(
 					"token" => $token,
 					"user" => $user,
-					"message" => $msg,
+					"device" => $device,
+					"message" => $msg
 					)
 				)
 			);

@@ -37,13 +37,14 @@ class Product_admin extends CI_Controller {
 			$product_id = $_GET['id_product']; 
 			$command = 'filter';
 		}
+		$id_bu			=  $this->session->all_userdata()['bu_id'];
 		
 		$supplier_id = '';
 		$postid = $this->input->post('supplier_id');
 		if($command == null && isset($postid)) $supplier_id = 1;
 		if($command == 'filter' && isset($postid)) $supplier_id = $this->input->post('supplier_id');
-		$products 			= $this->product->getProducts($product_id, $supplier_id, null);
-		$suppliers 			= $this->product->getSuppliers();
+		$products 			= $this->product->getProducts($product_id, $supplier_id, null, null, $id_bu);
+		$suppliers 			= $this->product->getSuppliers(null, null, $id_bu);
 		$products_unit 		= $this->product->getProductUnit();
 		$products_category 	= $this->product->getProductCategory();
 
@@ -123,9 +124,10 @@ class Product_admin extends CI_Controller {
 	public function save_mapping()
 	{		
 		$this->load->library('product');
-		$post = $this->input->post();
-		$tab = array();
-		$reponse = 'ok';
+		$post 			= $this->input->post();
+		$tab 			= array();
+		$reponse 		= 'ok';
+		$id_bu			=  $this->session->all_userdata()['bu_id'];
 		
 		foreach ($post as $key => $var) {
 			$ex 		= explode('_',$key);
@@ -144,7 +146,7 @@ class Product_admin extends CI_Controller {
 
 		foreach ($tab as $key) {
 			if(!empty($key['coef']) AND !empty($key['id_product'])) {	
-				$q = "INSERT INTO products_mapping SET id_pos = '$key[id_pos]', id_product='$key[id_product]', coef='$key[coef]'";	
+				$q = "INSERT INTO products_mapping SET id_pos = '$key[id_pos]', id_product='$key[id_product]', coef='$key[coef]', id_bu=$id_bu";	
 				$this->db->query($q) or die($this->mysqli->error);
 			}
 		}
@@ -157,12 +159,12 @@ class Product_admin extends CI_Controller {
 	public function mapping()
 	{		
 		$this->load->library('product');
-
+		$id_bu			=  $this->session->all_userdata()['bu_id'];
 		$products_pos	= $this->product->getPosProducts();
-		$products 		= $this->product->getProducts(null, null, 'p.name');
-		$mapping		= $this->product->getMapping();
+		$products 		= $this->product->getProducts(null, null, 'p.name', null, $id_bu);
+		$mapping		= $this->product->getMapping($id_bu);
 		$data = array(
-			'products_pos'			=> $products_pos,
+			'products_pos'		=> $products_pos,
 			'products'			=> $products,
 			'mapping'			=> $mapping
 			);

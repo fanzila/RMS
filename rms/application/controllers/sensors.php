@@ -13,11 +13,14 @@ class Sensors extends CI_Controller {
 	{
 		$this->hmw->keyLogin();
 		
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		
 		$q = "SELECT * FROM 
 		( SELECT st.id AS stid, st.id_sensor AS idsensor, st.date, st.temp, s.name, s.correction, sa.lastalarm  
 			FROM sensors_temp AS st 
 			LEFT JOIN sensors AS s ON st.id_sensor = s.id  
 			LEFT JOIN sensors_alarm AS sa ON sa.id_sensor = s.id 
+			WHERE s.id_bu = $id_bu
 			ORDER BY st.id DESC ) AS tmp_table GROUP BY idsensor";
 	
 		$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -34,7 +37,6 @@ class Sensors extends CI_Controller {
 	
 	public function record()
 	{
-
 		$data = json_decode($_POST['data']);
 		foreach ($data as $key => $val) {
 			$ex 	= explode("|",$val);
@@ -54,9 +56,7 @@ class Sensors extends CI_Controller {
 			}
 			
 			$q = "DELETE FROM sensors_temp WHERE date < DATE_ADD(NOW(), INTERVAL -10 DAY)";
-			$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			
-			//error_log($val);	
+			$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));	
 		}
 		
 	}

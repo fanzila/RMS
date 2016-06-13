@@ -30,6 +30,8 @@ class Reminder_admin extends CI_Controller {
 
 	public function save()
 	{		
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		
 		$data = $this->input->post();
 		$sqlt = "UPDATE ";
 		$sqle = " WHERE `id` = $data[id]";
@@ -42,7 +44,7 @@ class Reminder_admin extends CI_Controller {
 			$sqle = "";
 		}
 		
-		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority] $sqle";
+		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], id_bu = $id_bu $sqle ";
 		
 		$this->db->trans_start();
 		if (!$this->db->query($sql_tasks)) {
@@ -72,9 +74,10 @@ class Reminder_admin extends CI_Controller {
 	
 	public function index($create = null)
 	{		
+		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$this->load->library('rmd');
 
-		$rmd = $this->rmd->getAllTasks();
+		$rmd = $this->rmd->getAllTasks($id_bu);
 		$data = array(
 			'create'	=> $create,
 			'tasks'		=> $rmd

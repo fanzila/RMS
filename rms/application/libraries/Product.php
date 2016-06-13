@@ -2,7 +2,7 @@
 
 class Product {
 
-	public function getProducts($id = null, $supplier_id = null, $order = null, $term = null) {
+	public function getProducts($id = null, $supplier_id = null, $order = null, $term = null, $id_bu) {
 
 		$CI =& get_instance();
 		$sqladd = '';
@@ -12,7 +12,7 @@ class Product {
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
 		
-		$req = $CI->db->query("SELECT 
+		$q = "SELECT 
 			p.`id`, 
 			s.`id` AS supplier_id, 
 			p.supplier_reference, 
@@ -36,12 +36,14 @@ class Product {
 			u.username AS last_update_user_name
 			FROM products AS p 
 			JOIN suppliers AS s ON p.id_supplier = s.`id` 
-			JOIN products_unit AS puprc ON p.id_unit = puprc.`id` 
+			JOIN products_unit AS puprc ON p.id_unit = puprc.`id`
 			LEFT JOIN products_category AS pc on p.`id_category` = pc.`id` 
 			LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product 
 			LEFT JOIN users AS u ON ps.last_update_id_user = u.id
-			WHERE p.deleted=0 $sqladd 
-		ORDER BY $ordersql, p.id_supplier ASC LIMIT 10000") or die($this->mysqli->error);
+			WHERE p.deleted=0 $sqladd AND s.id_bu = $id_bu
+		ORDER BY $ordersql, p.id_supplier ASC LIMIT 10000";
+		
+		$req = $CI->db->query($q) or die($this->mysqli->error);
 
 	$ret = array();
 	foreach ($req->result_array() as $key) {
@@ -78,9 +80,9 @@ public function getAttributs() {
 	return $ret;
 }
 
-public function getMapping() {
+public function getMapping($id_bu) {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM products_mapping") or die($this->mysqli->error);
+	$req = $CI->db->query("SELECT * FROM products_mapping WHERE id_bu = $id_bu") or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;
@@ -88,9 +90,9 @@ public function getMapping() {
 	return $ret;
 }
 
-public function getStock() {
+public function getStock($id_bu) {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM products_stock") or die($this->mysqli->error);
+	$req = $CI->db->query("SELECT * FROM products_stock WHERE id_bu = $id_bu") or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id_product']] = $key;
@@ -98,20 +100,30 @@ public function getStock() {
 	return $ret;
 }
 
-public function getSuppliers($order = null, $idsup = null) {
+public function getSuppliers($order = null, $idsup = null, $id_bu = null) {
 	$CI =& get_instance();
 	$CI->load->library('hmw');
 	
-	$q = "SELECT * FROM suppliers WHERE active=1 AND deleted=0"; 
-	if(!empty($idsup)) $q .= " AND id = $idsup ";
-	$q .= " ORDER BY `id` ASC";
+	$select = "s.id as id, s.name, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info"; 
 	
-	if($order) $q = "SELECT s.id, s.name  FROM suppliers AS s LEFT JOIN ( SELECT date, user, status, supplier_id FROM orders WHERE status = 'sent' AND date IS NOT NULL) AS o ON o.supplier_id = s.id WHERE s.active=1 AND s.deleted=0 ORDER BY o.date DESC"; 
+	$q = "SELECT $select FROM suppliers AS s
+	WHERE active=1 
+	AND deleted=0
+	AND s.id_bu = $id_bu"; 
+	if(!empty($idsup)) $q .= " AND s.id = $idsup ";
+	$q .= " ORDER BY s.`id` ASC";
+	
+	if($order) $q = "SELECT $select  FROM suppliers AS s 
+	LEFT JOIN ( SELECT date, user, status, supplier_id FROM orders WHERE status = 'sent' AND date IS NOT NULL) AS o ON o.supplier_id = s.id  
+	WHERE s.active=1 
+	AND s.deleted=0 
+	AND s.id_bu = $id_bu 
+	ORDER BY o.date DESC"; 
 	
 	$req = $CI->db->query($q) or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
-		$reql = $CI->db->query("SELECT `date`, user FROM orders WHERE supplier_id = $key[id] AND status = 'sent' ORDER BY `date` DESC LIMIT 1") or die($this->mysqli->error);
+		$reql = $CI->db->query("SELECT `date`, user FROM orders WHERE supplier_id = $key[id] AND status = 'sent' AND id_bu = $id_bu ORDER BY `date` DESC LIMIT 1") or die($this->mysqli->error);
 		$rowl = $reql->result_array();
 		$ret[$key['id']] = $key;
 		if(isset($rowl[0]['date'])) {

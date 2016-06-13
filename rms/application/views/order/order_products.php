@@ -9,7 +9,7 @@ $today = getdate();
 		</div>
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">				
-				<form id="order" name="order" class="order" method="post" action="/order/prepareOrder/" onsubmit="return validateForm()" data-ajax="false">
+				<form onload="updateTotal()" id="order" name="order" class="order" method="post" action="/order/prepareOrder/" onsubmit="return validateForm()" data-ajax="false">
 					<ul data-filter="true" data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 						<?
 					foreach ($products as $line) {
@@ -97,15 +97,13 @@ $today = getdate();
 
 				function disableStock(idl) {
 					pdt = $('#pdt-' + idl).val();
-					//if(typeof stock !== 'undefined') { stock = 0; } 
 					checked = $('#add' + idl).is(':checked');
 					sum = 0;
 					if(checked) { sum = parseInt(pdt); }
 					$('#stock-' + idl).val(sum);
-					//$('#stock-' + idl).prop('disabled', ! $('#stock-' + idl).prop('disabled') );
 				}
-
-				$("form :input").change(function() {
+				
+				function updateTotal() {
 					var total = 0;
 					$(".order input[type='text']").each(function () {
 
@@ -124,9 +122,15 @@ $today = getdate();
 						}
 						$( "#total" ).text( (Math.round(total*100)/100)/1000 );
 					});
-
-
-
+				}
+				
+				$("form :input").change(function() {
+					updateTotal();
 				});
+				
+				$( document ).ready(function() {
+					updateTotal();
+				});
+				
 				</script>
 				<? include('jq_footer.php'); ?>

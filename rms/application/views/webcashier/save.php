@@ -6,7 +6,7 @@
 		<? } ?>
 	<div data-role="header">
 		<? if(!$keylogin) { ?><a href="/admin/" data-role="button" data-inline="true" data-ajax="false" data-icon="home">Home</a><? } ?>
-		<a href="/pos/" data-ajax="false" data-icon="home">Back</a>
+		<a href="/webcashier/" data-ajax="false" data-icon="home">Back</a>
 		<h1>POS  | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">

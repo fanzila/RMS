@@ -32,6 +32,8 @@ class Reminder extends CI_Controller {
 	{		
 		$this->load->library('rmd');
 
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+
 		$msg = null;
 		$form = $this->input->post();
 
@@ -61,11 +63,15 @@ class Reminder extends CI_Controller {
 
 		}
 
-		$users_req = "SELECT `id`, `first_name`, `last_name`  FROM users WHERE active=1 ORDER BY `first_name` ASC";
-		$users_res = $this->db->query($users_req) or die($this->mysqli->error);
-		$users = $users_res->result_array();
+		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->where('users.active', 1);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$query = $this->db->get("users");
+		$users = $query->result();
 
-		$rmd = $this->rmd->getTasks($task_id, $view);
+		$rmd = $this->rmd->getTasks($task_id, $view, $id_bu);
 
 		$data = array(
 			'tasks'		=> $rmd,
@@ -84,7 +90,9 @@ class Reminder extends CI_Controller {
 	public function log()
 	{
 		
-		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` ORDER BY l.`date` DESC LIMIT 100";
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		
+		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` WHERE t.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
 		
 		$res 	= $this->db->query($req) or die($this->mysqli->error);
 		$tasks 	= $res->result();

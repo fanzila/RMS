@@ -1,5 +1,5 @@
 <?php
-class Pos extends CI_Controller {
+class webCashier extends CI_Controller {
 
 	public function __construct()
 	{
@@ -15,20 +15,21 @@ class Pos extends CI_Controller {
 		$data = array();
 
 		$this->hmw->keyLogin();
+		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
 
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$data['username']		= $user->username;
 		$data['user_groups']	= $user_groups[0];
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
-		$data['title'] 			= 'Pos';
-		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount');
+		$data['title'] 			= 'Cashier';
+		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount', $id_bu);
 		
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
-		$this->load->view('pos/header', $data);
-		$this->load->view('pos/index', $data);
-		$this->load->view('pos/footer');
+		$this->load->view('webcashier/header', $data);
+		$this->load->view('webcashier/index', $data);
+		$this->load->view('webcashier/footer');
 	}
 
 	public function safe()
@@ -38,7 +39,7 @@ class Pos extends CI_Controller {
 		if ($group_info[0]->level < 2)
 		{
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/pos/');
+			redirect('/webcashier/');
 		}
 
 		$data = array();
@@ -46,20 +47,15 @@ class Pos extends CI_Controller {
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$data['username']		= $user->username;
-		$data['user_groups']	= $user_groups[0];
-
-		$users_req = "SELECT `id`, `first_name`, `last_name`  FROM users WHERE active=1 ORDER BY `first_name` ASC";
-		$users_res = $this->db->query($users_req) or die($this->mysqli->error);
-		$data['users'] = $users_res->result_array();
 
 		$data["keylogin"] = $this->session->userdata('keylogin');
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
 		$data['title']  	= 'Safe';
 
-		$this->load->view('pos/header', $data);
-		$this->load->view('pos/safe', $data);
-		$this->load->view('pos/footer');
+		$this->load->view('webcashier/header', $data);
+		$this->load->view('webcashier/safe', $data);
+		$this->load->view('webcashier/footer');
 	}
 
 	public function report()
@@ -69,10 +65,14 @@ class Pos extends CI_Controller {
 		if ($group_info[0]->level < 2)
 		{
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/pos/');
+			redirect('/webCashier/');
 		}
 
 		$data = array();
+
+		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
+		$param_pos_info 		= array();
+		$param_pos_info['id_bu'] = $id_bu;
 
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
@@ -80,16 +80,19 @@ class Pos extends CI_Controller {
 		$data['user_groups']	= $user_groups[0];
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= 'Cashier reports';
-		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount');
-		$data['safe_tr'] 		= $this->cashier->calc('safe_current_tr_num');
-		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat');		
-		$data['live_movements'] = $this->cashier->posInfo('getLiveMovements');
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount', $id_bu);
+		$data['safe_tr'] 		= $this->cashier->calc('safe_current_tr_num', $id_bu);
+		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat', $param_pos_info);		
+		$data['live_movements'] = $this->cashier->posInfo('getLiveMovements', $param_pos_info);
+		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
+		
+		
 
 		$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file 
 			FROM pos_movements AS pm
 			LEFT JOIN users AS u ON u.id = pm.id_user 
+			WHERE pm.id_bu = $id_bu
 			ORDER BY pm.`id` DESC LIMIT 500";
 
 		$r_pm = $this->db->query($q_pm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -98,6 +101,7 @@ class Pos extends CI_Controller {
 			$q_pp = "SELECT * FROM pos_payments AS pp 
 				JOIN pos_payments_type AS ppt ON pp.id_payment = ppt.id 
 				WHERE id_movement = ".$m['id']." 
+				AND ppt.id_bu = $id_bu 
 				ORDER BY  id_payment ASC";
 			$r_pp = $this->db->query($q_pp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$res_pp = $r_pp->result_array();
@@ -106,6 +110,7 @@ class Pos extends CI_Controller {
 				
 			if($m['movement'] == 'close') {
 				$param = array('closing_file' =>  $m['closing_file']);
+				$param['id_bu'] = $id_bu;
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
 				$lines[$m['id']]['cashmovements'] 	= $this->cashier->posInfo('getMovements', $param);
 			}
@@ -113,9 +118,9 @@ class Pos extends CI_Controller {
 
 		$data['lines'] = $lines;
 		
-		$this->load->view('pos/header', $data);
-		$this->load->view('pos/report', $data);
-		$this->load->view('pos/footer');
+		$this->load->view('webcashier/header', $data);
+		$this->load->view('webcashier/report', $data);
+		$this->load->view('webcashier/footer');
 	}
 
 	public function movement($mov)
@@ -131,25 +136,29 @@ class Pos extends CI_Controller {
 		$data['user_groups']	= $user_groups[0];
 		$data['mov']			= $mov;
 		$data['archive_file'] 	= null;
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-
-		$data["keylogin"] = $this->session->userdata('keylogin');
-
+		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
+		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= "Cashier - ".strtoupper($mov);
+		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
+		$param_pos_info 		= array();
 
-		$q = "SELECT * FROM pos_payments_type WHERE active = 1";
+		$q = "SELECT * FROM pos_payments_type WHERE active = 1 AND id_bu = $id_bu";
 		$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$data['payment'] = $r->result_object();
 
-		$users_req = "SELECT `id`, `first_name`, `last_name`  FROM users WHERE active=1 ORDER BY `first_name` ASC";
-		$users_res = $this->db->query($users_req) or die($this->mysqli->error);
-		$data['users'] = $users_res->result_array();
+		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->where('users.active', 1);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$query = $this->db->get("users");
+		$data['users'] = $query->result();
 
 		//trying to find POS closing archive
 		if($mov == 'close') {
-
+			
 			//Get last archive
-			$d = $this->cashier->getClosureData();
+			$d = $this->cashier->getClosureData(null, null, $id_bu);
 			
 			//Get date of this archive
 			$archive_date_ex = $this->cashier->getPosArchivesDatetime($d['file']);
@@ -162,21 +171,24 @@ class Pos extends CI_Controller {
 			if(empty($d['seqid'])) { echo "La derniere cloture semble vide, As tu cloture 2 fois la caisse ?"; exit(); }
 			
 			//check if this archive has already been used for closing
-			$qsid = "SELECT closing_id FROM pos_movements WHERE movement = 'close' AND closing_id = $d[seqid]";
+			$qsid = "SELECT closing_id FROM pos_movements WHERE movement = 'close' AND closing_id = $d[seqid] AND id_bu = $id_bu";
 			$rsid = $this->db->query($qsid) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$osid = $rsid->result_object();
 			$data['force'] = 0;
 			
+			$param_pos_info['id_bu'] = $id_bu;
+							
 			if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
 				$data['archive_file'] = $d['file'];
 				$data['archive_date'] = $archive_date;
-				$this->cashier->posInfo('updateUsers');
+				
+				$this->cashier->posInfo('updateUsers', $param_pos_info);
 			} else {
 				$force = $this->input->get('force');
 				if(!empty($force)) { 
 					$data['archive_date'] = $archive_date;
 					$data['force'] = 1;
-					$this->cashier->posInfo('updateUsers');
+					$this->cashier->posInfo('updateUsers', $param_pos_info);
 				} else {
 					header("Refresh:20");
 					echo "<h2>Impossible de trouver une cloture.<br />
@@ -184,16 +196,16 @@ class Pos extends CI_Controller {
 					Si oui attends quelques minutes, la page de cloture va bientot s'afficher. <br />
 					Ou alors, tu as deja entre tes donnees.</h2>
 					Dernière cloture faite le : $archive_date
-					<h2><a href='/pos/'>Retour</a></h2>
-					<p><small><a href='/pos/movement/close?force=1'>Voir l'interface</a></small></p>";
+					<h2><a href='/webcashier/'>Retour</a></h2>
+					<p><small><a href='/webcashier/movement/close?force=1'>Voir l'interface</a></small></p>";
 					exit();
 				}
 			}
 		}
 
-		$this->load->view('pos/header', $data);
-		$this->load->view('pos/movement', $data);
-		$this->load->view('pos/footer');
+		$this->load->view('webcashier/header', $data);
+		$this->load->view('webcashier/movement', $data);
+		$this->load->view('webcashier/footer');
 	}
 
 	public function save()
@@ -207,9 +219,12 @@ class Pos extends CI_Controller {
 		$data['user_groups']	= $user_groups[0];
 		$data["keylogin"]		= $this->session->userdata('keylogin');
 		$data['title']			= 'Cashier';
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$data['mov']			= $this->input->post('mov');
 		$userpost 				= $this->input->post('user');
+		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
+		$param_pos_info 		= array();
+		$param_pos_info['id_bu'] = $id_bu;
 		
 		if(empty($userpost)) { 
 			$userid = $user->id; 
@@ -217,7 +232,7 @@ class Pos extends CI_Controller {
 			$userid = $this->input->post('user');
 		}
 		
-		$qpm = "INSERT INTO pos_movements SET movement = '".$this->input->post('mov')."', id_user = ".$userid.", comment = '".addslashes($this->input->post('comment'))."', pos_cash_amount = ".$this->cashier->posInfo('cashfloat').", safe_cash_amount = ".$this->cashier->calc('safe_current_cash_amount').", safe_tr_num = ".$this->cashier->calc('safe_current_tr_num');
+		$qpm = "INSERT INTO pos_movements SET movement = '".$this->input->post('mov')."', id_user = ".$userid.", comment = '".addslashes($this->input->post('comment'))."', pos_cash_amount = ".$this->cashier->posInfo('cashfloat', $param_pos_info).", safe_cash_amount = ".$this->cashier->calc('safe_current_cash_amount', $id_bu).", safe_tr_num = ".$this->cashier->calc('safe_current_tr_num', $id_bu).", id_bu =".$id_bu;
 		$rpm = $this->db->query($qpm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$pmid = $this->db->insert_id();
 
@@ -242,7 +257,7 @@ class Pos extends CI_Controller {
 				if(!isset($val2['pos']) OR empty($val2['pos']) ) $val2['pos'] = 0;
 				$val2man = $this->cashier->clean_number($val2['man']);
 				if($this->input->post('mov') == 'safe_out') $val2man = -1 * abs($val2man);
-				$qpp = "INSERT INTO pos_payments SET id_payment = $idp, id_movement = $pmid, amount_pos = ".$this->cashier->clean_number($val2['pos']).", amount_user = ".$val2man; 
+				$qpp = "INSERT INTO pos_payments SET id_payment = $idp, id_movement = $pmid, amount_pos = ".$this->cashier->clean_number($val2['pos']).", amount_user = ".$val2man;
 				$rpp = $this->db->query($qpp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}
 			
@@ -254,15 +269,18 @@ class Pos extends CI_Controller {
 
 		$data['idtrans'] = $payid;
 
-		$this->load->view('pos/header', $data);
-		$this->load->view('pos/save', $data);
-		$this->load->view('pos/footer');
+		$this->load->view('webcashier/header', $data);
+		$this->load->view('webcashier/save', $data);
+		$this->load->view('webcashier/footer');
 	}
 
 	private function closing($file, $pmid)
 	{
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		
 		//Get archive info
-		$d = $this->cashier->getClosureData(null, $file);
+		$d = $this->cashier->getClosureData(null, $file, $id_bu);
+		
 
 		//fill pos_payments with closing data, update or create
 		foreach ($d['ca'] as $key => $val) {
@@ -277,7 +295,7 @@ class Pos extends CI_Controller {
 			}	
 		}
 
-		$qup = "UPDATE pos_movements SET closing_file = '".$file."', closing_id = $d[seqid] WHERE id = $pmid";
+		$qup = "UPDATE pos_movements SET closing_file = '".$file."', closing_id = $d[seqid] WHERE id = $pmid AND id_bu = $id_bu";
 		$rup = $this->db->query($qup) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 	}
 

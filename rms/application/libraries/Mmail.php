@@ -11,8 +11,8 @@ class Mmail {
 		
 		$config = array();
 		$config['charset'] = 'utf-8';
-		$config['from'] = 'www-data@hank1.isvtec.net';
-		$config['from_name'] = 'HMW';
+		$config['from'] = 'noreply@hankrestaurant.com';
+		$config['from_name'] = 'RMS';
 		if(isset($email['from'])) {
 		 	$config['from'] = $email['from'];
 			$config['from_name'] = $email['from_name'];
