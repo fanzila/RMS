@@ -30,11 +30,11 @@ class Crud extends CI_Controller {
     {
 	
 	
-		$this->grocery_crud->set_table('ckl_checklist_tasks');
+		$this->grocery_crud->set_table('checklist_tasks');
 		$this->grocery_crud->fields('id_checklist','name','comment','priority','active','order','day_week_num','day_month_num');
         $this->grocery_crud->required_fields('id_checklist','name','priority','active','order');
 		$this->grocery_crud->display_as('priority','Priority<br />(1=normal, 2=medium, 3=high)')->display_as('day_week_num','Number of the day-week<br />(0=Sunday, 1=Monday...)')->display_as('day_month_num','Number of the day-month <br />(1,2,3...28)')->display_as('id_checklist','Checklist');
-		$this->grocery_crud->set_relation('id_checklist','ckl_checklists','name');
+		$this->grocery_crud->set_relation('id_checklist','checklists','name');
 
         $output = $this->grocery_crud->render();
 
@@ -44,7 +44,7 @@ class Crud extends CI_Controller {
     public function cklChecklists()
     {
 		$this->grocery_crud->fields('id','name','active','order');
-        $this->grocery_crud->set_table('ckl_checklists');
+        $this->grocery_crud->set_table('checklists');
         $output = $this->grocery_crud->render();
  
 		$this->_example_output($output); 
