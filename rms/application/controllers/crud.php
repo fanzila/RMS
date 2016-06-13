@@ -73,7 +73,7 @@ class Crud extends CI_Controller {
 
     public function rmdTasks()
     {
-		$this->grocery_crud->columns('id','task', 'comment', 'active', 'priority');
+		$this->grocery_crud->columns('id','task', 'comment', 'active', 'priority', 'id_bu');
 		$this->grocery_crud->required_fields('task', 'prority', 'active');
         $this->grocery_crud->set_table('rmd_tasks');
         $output = $this->grocery_crud->render();
@@ -157,18 +157,8 @@ class Crud extends CI_Controller {
 
     public function suppliers()
     {
-		$this->grocery_crud->set_relation('id_category','suppliers_category','name');
+		$this->grocery_crud->set_relation('id_category','suppliers_category','name','id_bu');
         $this->grocery_crud->set_table('suppliers');
-        $output = $this->grocery_crud->render();
- 
-		$this->_example_output($output); 
-    }
-
-    public function suppliersBus()
-    {
-		$this->grocery_crud->set_relation('id_bu','bus','name');
-		$this->grocery_crud->set_relation('id_supplier','suppliers','name');
-        $this->grocery_crud->set_table('suppliers_bus');
         $output = $this->grocery_crud->render();
  
 		$this->_example_output($output); 
