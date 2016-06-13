@@ -2,13 +2,14 @@
 
 class Product {
 
-	public function getProducts($id = null, $supplier_id = null, $order = null, $term = null, $id_bu) {
+	public function getProducts($id = null, $supplier_id = null, $order = null, $term = null, $id_bu, $active = null) {
 
 		$CI =& get_instance();
 		$sqladd = '';
 		if($id) $sqladd = " AND p.id = $id";
 		if($supplier_id != null) $sqladd .= " AND s.id = $supplier_id ";
-		if($term != null) $sqladd .= " AND p.name LIKE '%".$term."%'";
+		if($term != null) $sqladd .= " AND p.name LIKE '%".$term."%' ";
+		if($active != null) $sqladd .= " AND p.active = 1 AND deleted = 0 ";
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
 		

@@ -140,7 +140,7 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 		$order_prev		= unserialize($order_rec->data);
 	}
 
-	$products	= $this->product->getProducts(null, $supplier_id, null, null, $id_bu);
+	$products	= $this->product->getProducts(null, $supplier_id, null, null, $id_bu, true);
 	$stock 		= $this->product->getStock($id_bu);
 	$attributs	= $this->product->getAttributs();
 
