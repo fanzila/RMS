@@ -6,8 +6,8 @@ class Hmw {
 	{
 		$CI = & get_instance(); 
 		$CI->load->database();
-		$req_params = "SELECT `val` FROM params WHERE `key` = '" . $param . "' LIMIT 1 ";
-		$res_params = $CI->db->query($req_params);
+		$CI->db->select('val')->from('params')->where('key')->limit(1);
+        $res_params = $CI->db->get();
 		$r = $res_params->result();	
 		return $r[0]->val;
 	}
@@ -57,8 +57,8 @@ class Hmw {
 	{
 		$CI = & get_instance(); 
 		$CI->load->database();
-		$req_params = "SELECT * FROM users WHERE `id` = " . $id . " LIMIT 1 ";
-		$res_params = $CI->db->query($req_params);
+		$CI->db->select('*')->from('users')->where('id', $id)->limit(1);
+        $res_params = $CI->db->get();
 		$r = $res_params->result();	
 		return $r[0];
 	}
@@ -67,10 +67,10 @@ class Hmw {
 	{
 		$CI = & get_instance(); 
 		$CI->load->database();
-		$req = "SELECT bus.id, bus.name, bus.country, bus.zip, bus.description FROM bus AS bus";
-		if($iduser) $req .= " JOIN users_bus AS ub ON ub.bu_id = bus.id WHERE ub.user_id = $iduser";
-		if($id) $req .= " WHERE `id` = $id";
-		$res = $CI->db->query($req);
+		$CI->db->select('bus.id, bus.name, bus.country, bus.zip, bus.description')->from('bus as bus');
+		if($iduser) $CI->db->join('users_bus as ub', 'ub.bu_id = bus.id')->where('ub.user_id', $iduser);
+		if($id) $CI->db->where('id', $id);
+		$res = $CI->db->get();
 		return $res->result();
 	}
 
@@ -95,8 +95,7 @@ class Hmw {
 	{
 		$CI = & get_instance(); 
 		$CI->load->database();
-		$req_params = "SELECT * FROM users WHERE active =1";
-		$res_params = $CI->db->query($req_params);
+		$res_params = $CI->db->get_where('users', array('id' => $id));
 		return $res_params->result();	
 	}
 
@@ -108,6 +107,9 @@ class Hmw {
 		if($type == 'order') {
 			$req_params = "SELECT email_order FROM bus WHERE id = $id_bu";
 			$res_params = $CI->db->query($req_params);
+			//Actuellement invérifiable :
+			//$CI->db->select('email_order');
+			//$res_params = $CI->db->get_where('bus', array('id', $id_bu));
 			$res = $res_params->result();
 			return $res[0]->email_order;
 		}

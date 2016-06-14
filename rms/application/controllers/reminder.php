@@ -43,16 +43,17 @@ class Reminder extends CI_Controller {
 
 				$ex = explode('_', $key);
 				if($ex[0] == 'task') {
-					$req_up 	= "UPDATE rmd_meta SET `start` = NOW() WHERE id_task = ". $ex[1]." AND ( repeat_year ='' AND repeat_month  ='' AND repeat_day  ='' AND repeat_week  ='' AND repeat_weekday  ='')";
+					$this->db->update('rmd_meta')->set('start', NOW())->where('id_task', $ex[1])->where('repeat_year', '')->where('repeat_month', '')->where('repeat_day', '')->where('repeat_week', '')->where('repeat_weekday', '');
+					$req_up = $this->db->get();
 					echo $req_up;
-					$req_ins	= "INSERT INTO rmd_log SET `id_user` = ".$form['user'].", `date` = NOW(), `id_task` = ".$ex[1];
 
 					if(!$this->db->query($req_up)) {
 						echo $this->db->error;
 						return false;
 					}
 
-					if(!$this->db->query($req_ins)) {
+					$this->db->insert('rmd_log')->set('id_user', $form['user'])->set('date', NOW())->set('id_task', $ex[1]);
+					if(!$this->db->get()) {
 						echo $this->db->error;
 						return false;
 					}
@@ -92,9 +93,8 @@ class Reminder extends CI_Controller {
 		
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
-		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` WHERE t.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
-		
-		$res 	= $this->db->query($req) or die($this->mysqli->error);
+		$this->db->select('l.date, t.task, u.username')->from('rmd_log as l')->join('users as u', 'u.id = l.id_user')->join('rmd_tasks as t', 't.id = l.id_task')->where('t.id_bu', $id_bu)->order_by('l.date desc')->limit(100);
+		$res 	= $this->db->get() or die($this->mysqli->error);
 		$tasks 	= $res->result();
 		$data = array(
 			'tasks'		=> $tasks

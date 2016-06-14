@@ -42,10 +42,9 @@ class Checklist extends CI_Controller {
 				}
 			}
 		}
-		$checklist_req = "SELECT `name`, `id` FROM checklists WHERE active=1 AND id_bu = $id_bu ORDER BY `order` ASC";
-		$checklist_res = $this->db->query($checklist_req);
+		$this->db->select('name, id')->from('checklists')->where('active',1)->where('id_bu', $id_bu)->order_by("order", "asc");
+		$checklist_res =  $this->db->get();
 		$checklists = $checklist_res->result_array();
-		
 		$data = array(
 			'msg'			=> $msg,
 			'keylogin'		=> $this->session->userdata('keylogin'),	
@@ -64,14 +63,9 @@ class Checklist extends CI_Controller {
 	{		
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
-		
-		$checklist_rec_req = "SELECT r.user, u.first_name AS first_name, u.last_name AS last_name, r.id AS lid, r.id_checklist, r.date, c.name 
-			FROM checklist_records AS r 
-			JOIN checklists AS c ON c.id = r.id_checklist 
-			JOIN users AS u ON r.user = u.id 
-			WHERE c.id_bu = $id_bu
-			ORDER BY r.date DESC LIMIT 50";
-		$checklist_rec_res = $this->db->query($checklist_rec_req) or die($this->mysqli->error);
+		$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users AS u', 'r.user = u.id')->where('c.id_bu', $id_bu)->order_by('r.date desc')->limit(50);
+		$checklist_rec_req = $this->db->get() or die($this->mysqli->error);
+		//$checklist_rec_res = $this->db->query($checklist_rec_req) or die($this->mysqli->error);
 		$checklist_rec = $checklist_rec_res->result_array();
 
 		$data = array(
@@ -95,26 +89,26 @@ class Checklist extends CI_Controller {
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
 		if($load > 0) {
-			$checklist_rec_req 	= "SELECT r.user, r.id AS rec_id, r.data, r.id_checklist, r.date, c.name FROM checklist_records AS r JOIN checklists AS c ON c.id = r.id_checklist WHERE r.id = $load";
-			$checklist_rec_res	= $this->db->query($checklist_rec_req) or die($this->mysqli->error);
+			$this->db->select('r.user, r.id as rec_id, r.data, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->where('r.id', $load);
+			$checklist_rec_res	= $this->db->get() or die($this->mysqli->error);
 			$checklist_rec		= $checklist_rec_res->row();
 			$form 				= unserialize($checklist_rec->data);
 			$id_ckl				= $form['id_checklist'];
 			$checklist_rec_id	= $checklist_rec->rec_id;
 		}
 
-		$checklist_req = "SELECT `name`, `id`  FROM checklists WHERE id = $id_ckl ORDER BY `order` ASC";
-		$checklist_res = $this->db->query($checklist_req);
+		$this->db->select('name, id')->from('checklists')->where('id', $id_ckl)->order_by('order asc');
+		$checklist_res = $this->db->get();
 		$checklists = $checklist_res->row();
 
-		if($id_ckl == 2 OR $id_ckl == 3 OR $id_ckl == 4) { 	
-			$checklist_task_req = "SELECT `name`, `id`, `comment`, `priority`, `day_month_num`, `day_week_num` FROM checklist_tasks WHERE active=1 AND id_checklist = $id_ckl ORDER BY `order` ASC";
-			$checklist_task_res = $this->db->query($checklist_task_req);
+		if($id_ckl == 2 OR $id_ckl == 3 OR $id_ckl == 4) {
+			$this->db->select('name, id, comment, priority, day_month_num, day_week_num')->from('checklist_tasks')->where('active', 1)->where('id_checklist', $id_ckl)->order_by('order asc');
+			$checklist_task_res = $this->db->get();
 			$checklist_tasks = $checklist_task_res->result_array();
 		}
 
-		$users_req = "SELECT `id`, `first_name`, `last_name`  FROM users WHERE active=1 ORDER BY `first_name` ASC";
-		$users_res = $this->db->query($users_req) or die($this->mysqli->error);
+		$this->db->select('id, first_name, last_name')->from('users')->where('active', 1)->order_by('first_name asc');
+		$users_res = $this->db->get() or die($this->mysqli->error);
 		$users = $users_res->result_array();
 		
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -166,19 +160,27 @@ class Checklist extends CI_Controller {
 		$query = $this->db->get("users");
 
 		if($checklist_rec_id > 0) {
-			$req = "UPDATE checklist_records SET `user` = '".$this->input->post('user')."', `date` = NOW(), `data` = '".$srl."' WHERE id = $checklist_rec_id";
+			$data = array(
+               'user' => $this->input->post('user'),
+               'date' => NOW(),
+               'data' => $srl
+            );
+			$this->db->update('checklist_records', $data)->where('id', $checklist_rec_id);
+
+			$req = $this->db->get();
 			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' UPDATED';
 
 		} else {
-			$req = "INSERT INTO checklist_records SET `user` = '".$this->input->post('user')."', `date` = NOW(), `id_checklist` = ".$this->input->post('id_checklist').", `data` = '".$srl."'";	
+			$this->db->insert('checklist_records')->set('user', $this->input->post('user'))->set('date', NOW())->set('id_checklist', $this->input->post('id_checklist'))->set('data', $srl);
+			$req = $this->db->get();
 			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' CREATED';
 		}	
 
 		$comment = false;
 		$msg = '';
 
-		$users_req = "SELECT `id`, `first_name`, `last_name`  FROM users WHERE id = ".$this->input->post('user');
-		$users_res = $this->db->query($users_req) or die($this->mysqli->error);
+		$this->db->select('id, first_name, last_name')->from('users')->where('id', $this->input->post('user'));
+		$users_res = $this->db->get() or die($this->mysqli->error);
 		$user = $users_res->result();
 
 		foreach ($this->input->post() as $key => $var) {
@@ -187,8 +189,8 @@ class Checklist extends CI_Controller {
 
 			if($line[0] == 'comment' AND !empty($var)) {
 
-				$checklist_task_req = "SELECT `name` FROM checklist_tasks WHERE id= ".$line[1];
-				$checklist_task_res = $this->db->query($checklist_task_req) or die($this->mysqli->error);
+				$this->db->select('name')->from('checklist_tasks')->where('id', $line[1]);
+				$checklist_task_res = $this->db->get();
 				$checklist_tasks = $checklist_task_res->result();
 
 				$comment = true;
@@ -211,7 +213,7 @@ class Checklist extends CI_Controller {
 			$this->mmail->sendEmail($email);
 		}
 		
-		if(!$this->db->query($req)) {
+		if(!($req)) {
 			echo $this->db->error;
 			return false;
 		}

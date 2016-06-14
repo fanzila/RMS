@@ -160,20 +160,18 @@ class News extends CI_Controller {
 	public function confirm($key = null) {
 
 		$this->load->library('mmail');
-
-		$get = "SELECT * FROM news_confirm JOIN users ON news_confirm.id_user = users.id WHERE `key` = '".$key."' LIMIT 1";
-		$res = $this->db->query($get) or die($this->mysqli->error);
+		$this->db->get_where('news_confirm', array('key' => $key))->join('users', 'news_confirm.id_user = users.id')->limit(1);
+		$res = $this->db->get() or die($this->mysqli->error);
 		$ret = $res->result_array();
 		$ip  = $_SERVER['REMOTE_ADDR'];
 		
-		if(isset($ret[0]['id'])) {		
-
-			$get_sup = "SELECT * FROM news WHERE `id` = '".$ret[0]['id_news']."' LIMIT 1";
-			$res_sup = $this->db->query($get_sup) or die($this->mysqli->error);
+		if(isset($ret[0]['id'])) {
+			$this->db->get_where('news', array('id' => $ret[0]['id_news']))->limit(1);
+			$res_sup = $this->db->get() or die($this->mysqli->error);
 			$ret_sup = $res_sup->result_array();
 
-			$req_conf = "UPDATE news_confirm SET `date_confirmed` = NOW(), `status` = 'confirmed', `IP`= '".$ip."' WHERE `key` = '".$key."'";
-			$this->db->query($req_conf)  or die($this->mysqli->error);
+			$this->db->update('news_confirm')->set('date_confirmed', NOW())->set('status', 'confirmed')->set('IP', $ip);
+			$this->db->get() or die($this->mysqli->error);
 			$data = array('status' => 'OK');
 
 			if($ret[0]['status'] != 'confirmed') {
