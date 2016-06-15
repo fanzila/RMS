@@ -16,17 +16,8 @@ class Cashier {
 		$debug = false;
 		
 		//get sales product
-		$q_sp = "SELECT sri.quantity AS quantity, sr.period_id as period_id, sri.product AS product
-			FROM sales_receipt AS sr
-			JOIN sales_receiptitem AS sri ON sri.receipt = sr.`id`
-			WHERE sri.product = '".$id."'
-			AND sr.id_bu = $id_bu
-			AND sr.done = 0 
-			AND sr.date_closed != '0000-00-00' 
-			AND sr.canceled = 0";
-			
-			
-		$r_sp = $CI->db->query($q_sp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$CI->db->select('sri.quantity as quantity', 'sr.period_id as period_id', 'sri.product as product')->from('sales_receipt as sr')->join('sales_receiptitem as sri', 'sri.receipt = sr.id')->where('sri.product', $id)->where('sr.id_bu', $id_bu)->where('sr.done', 0)->where('sr.date_closed' !=0000-00-00)->where('sr.canceled', 0);
+		$r_sp = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_sp = $r_sp->result_array();
 		
 		foreach ($row_sp as $key) {
@@ -35,19 +26,9 @@ class Cashier {
 		}
 
 		//get productaddon
-		$q_spa = "SELECT sria.quantity AS quantity, sr.period_id as period_id, sp.id_pos AS product 
-		FROM sales_productaddon AS spa
-			JOIN sales_receiptitemaddon AS sria ON sria.productaddon = spa.id_pos
-			JOIN sales_receiptitem AS sri ON sri.id = sria.receiptitem
-			JOIN sales_receipt AS sr ON sr.`id` = sri.receipt
-			JOIN sales_product AS sp ON sp.id_pos = spa.id_pos_product
-			WHERE spa.id_pos_product = '".$id."'
-			AND sr.done = 0 
-			AND sr.id_bu = $id_bu
-			AND sr.date_closed != '0000-00-00' 
-			AND sr.canceled = 0";
+		$CI->db->select('sria.quantity as quantity', 'sr.period_id as period_id', 'sp.id_pos as product')->from('sales_productaddon as spa')->join('sales_receiptitemaddon AS sria', 'sria.productaddon = spa.id_pos')->join('sales_receiptitem AS sri', 'sri.id = sria.receiptitem')->join('sales_receipt as sr', 'sr.id = sri.receipt')->join('sales_product as sp', 'sp.id_pos = spa.id_pos_product')->where('spa.id_pos_product', $id)->where('sr.done', 0)->where('sr.id_bu', $id_bu)->where('sr.date_closed' !=0000-00-00)->where('sr.canceled', 0);
 
-		$r_spa = $CI->db->query($q_spa) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$r_spa = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_spa = $r_spa->result_array();
 		foreach ($row_spa as $keya) {
 			$qtty += 1*($keya['quantity']); 
@@ -63,8 +44,10 @@ class Cashier {
 		$CI->load->database();
 		$debug = false;
 		
-		$q_pos_pdt = "SELECT * FROM sales_product WHERE deleted=0 AND id_bu = $id_bu";
-		$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$CI->db->SELECT('*')->from('sales_product')->where('deleted', 0)->where('id_bu', $id_bu);
+		$r_pos_pdt = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		//$q_pos_pdt = "SELECT * FROM sales_product WHERE deleted=0 AND id_bu = $id_bu";
+		//$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$res_pos_pdt = $r_pos_pdt->result_array();
 
 		$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message())); 
@@ -76,19 +59,24 @@ class Cashier {
 				$this->debugFile(@date('Y-m-d H:i:s')." - Found $sales sales for $pos_pdt[name] for BU: $id_bu"); 
 			}
 			
-			$q_mapping = "SELECT coef, id_product  FROM products_mapping WHERE id_pos=$pos_pdt[id] AND id_bu = $id_bu";
-			$r_mapping = $CI->db->query($q_mapping) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$CI->db->select('coef', 'id_product')->from('products_mapping')->where('id_pos', $pos_pdt[id])->where('id_bu', $id_bu);
+			$r_mapping = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$res_mapping = $r_mapping->result_array();
 
 			foreach ($res_mapping as $mapping) {	
-				if($sales > 0) {		
-					$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product] AND id_bu = $id_bu") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				if($sales > 0) {
+					$CI->db->set('qtty', qtty-($sales*$mapping[coef]))->set('last_update_pos', NOW())->where('id_product', $mapping[id_product])->where('id_bu', $id_bu);
+					$CI->db->update('products_stock', array('qtty', 'last_update_pos'));
+					$CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 					if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']." for BU: $id_bu");
 				}
 			}
 		}
-
-		$CI->db->query("UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' AND id_bu = $id_bu") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$CI->db->set('done', 1)->where('date_closed' !=0000-00-00)->where('id_bu', $id_bu);
+		$CI->db->update('sales_receipt', 'done');
+		$CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		//$query = "UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' AND id_bu = $id_bu";
+		//$CI->db->query($query) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
         $CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' && COMMIT for BU: $id_bu"); 
 	}
@@ -99,8 +87,8 @@ class Cashier {
 		$CI->load->database();
 
 		//get pos_archives 
-		$q_archives = "SELECT * FROM pos_archives WHERE id_bu = $id_bu";
-		$r_archives = $CI->db->query($q_archives) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$CI->db->select('*')->from('pos_archives')->where('id_bu', $id_bu);
+		$r_archives = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$o_archives = $r_archives->result_array();
 		$ret = array();
 		foreach ($o_archives as $line) {
@@ -367,8 +355,13 @@ class Cashier {
 		switch($action) {
 
 			case 'safe_current_cash_amount':
-			$q = "SELECT SUM(amount_user) AS amount FROM pos_payments AS pp JOIN pos_movements AS pm ON pp.id_movement = pm.id WHERE pm.movement IN ('safe_in','safe_out') AND pp.id_payment = 1 AND pm.id_bu = $id_bu";
-			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$CI->db->select('SUM(amount_user) as amount')
+			->from('pos_payments as pp')
+			->join('pos_movements as pm', 'pp.id_movement = pm.id')
+			->where_in('pm.movement', array('safe_in','safe_out'))
+			->where('pp.id_payment', 1)
+			->where('pm.id_bu', $id_bu);
+			$r = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o = $r->result_object();
 			$ret = $o[0]->amount;
 			if(empty($ret)) $ret = 0;
@@ -376,8 +369,8 @@ class Cashier {
 			break;
 			
 			case 'safe_current_tr_num':
-			$q = "SELECT SUM(amount_user) AS amount FROM pos_payments AS pp JOIN pos_movements AS pm ON pp.id_movement = pm.id WHERE pm.movement IN ('safe_in','safe_out') AND pp.id_payment = 3 AND pm.id_bu = $id_bu";
-			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$CI->db->select('SUM(amount_user) as amount')->from('pos_payments as pp')->join('pos_movements as pm', 'pp.id_movement = pm.id')->where_in('pm.movement', array('safe_in','safe_out'))->where('pp.id_payment', 3)->where('pm.id_bu', $id_bu);
+			$r = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o = $r->result_object();
 			$ret = $o[0]->amount;
 			if(empty($ret)) $ret = 0;
@@ -505,8 +498,13 @@ class Cashier {
 		$CI = & get_instance(); 
 		$CI->load->database();
 
-		$req = "SELECT `name`,`id` FROM pos_payments_type WHERE pos_id= '".$id."' AND id_bu = $id_bu LIMIT 1";
-		$res = $CI->db->query($req) or die($this->mysqli->error);
+		$CI->db->select('name','id')
+		->from('pos_payments_type')
+		->where('pos_id', $id)
+		->where('id_bu', $id_bu)
+		->limit(1);
+
+		$res = $CI->db->get() or die($this->mysqli->error);
 		$ret = $res->result_array();
 		return $ret[0];
 	}
