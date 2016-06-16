@@ -88,9 +88,14 @@ class webCashier extends CI_Controller {
 		$lines					= array();
 		
 		
+	/*	$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file 
+			FROM pos_movements AS pm
+			LEFT JOIN users AS u ON u.id = pm.id_user 
+			WHERE pm.id_bu = $id_bu
+			ORDER BY pm.`id` DESC LIMIT 500";*/
 
 		$this->db->select('pm.date', 'pm.id', 'u.username', 'pm.comment', 'pm.movement', 'pm.pos_cash_amount', 'pm.safe_cash_amount', 'pm.safe_tr_num', 'pm.closing_file')->from('pos_movements as pm')->join('users as u', 'u.id = pm.id_user', 'left')->where('pm.id_bu', $id_bu)->order_by('pm.id desc')->limit(500);
-		$r_pm = $this->db->query($q_pm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 		foreach ($r_pm->result_array() as $key_pm => $m) {
 			/*$q_pp = "SELECT * FROM pos_payments AS pp 

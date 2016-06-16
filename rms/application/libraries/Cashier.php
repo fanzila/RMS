@@ -146,8 +146,12 @@ class Cashier {
 			}
 		}
 		//update pos_archive
-		$q_archives = "INSERT INTO pos_archives SET file ='".$file."', id_bu = $id_bu";
-		$r_archives = $CI->db->query($q_archives) or die($this->db->_error_message());
+		$CI->db->set('file', $file)->set('id_bu', $id_bu);
+		$CI->db->insert('pos_archives');
+		$r_archives = $CI->db->get() or die($this->db->_error_message());
+
+		//$q_archives = "INSERT INTO pos_archives SET file ='".$file."', id_bu = $id_bu";
+		//$r_archives = $CI->db->query($q_archives) or die($this->db->_error_message());
 
 
 	}
@@ -310,14 +314,16 @@ class Cashier {
 			break;
 			
 			case 'getMovements':
-			$q_mov = "SELECT sc.`date`, u.`username`, sc.`user`, sc.amount, sc.method, sc.description, sc.customer, ppt.`name` AS method_name, sc2.`firstname` AS customer_first_name, sc2.`lastname` AS customer_last_name 
+			$CI->db->select('sc.date', 'u.username', 'sc.user', 'sc.amount', 'sc.method', 'sc.description', 'sc.customer', 'ppt.name as method_name', 'sc2.firstname as customer_first_name', 'sc2.lastname as customer_last_name')->from('sales_cashmovements as sc')->join('users_pos as up','up.id_pos = sc.user','left')->join('users as u','u.id = up.id_user','left')->join('pos_payments_type as ppt','ppt.pos_id = sc.method','left')->join('sales_customers AS sc2','sc2.pos_id = sc.customer','left')->where('archive', $param[closing_file])->where('up.id_bu', $param[id_bu]);
+			$r_mov = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			/*$q_mov = "SELECT sc.`date`, u.`username`, sc.`user`, sc.amount, sc.method, sc.description, sc.customer, ppt.`name` AS method_name, sc2.`firstname` AS customer_first_name, sc2.`lastname` AS customer_last_name 
 				FROM sales_cashmovements AS sc 
 				LEFT JOIN users_pos AS up ON up.id_pos = sc.user
 				LEFT JOIN users AS u ON u.id = up.id_user 
 				LEFT JOIN pos_payments_type AS ppt ON ppt.pos_id = sc.method 
 				LEFT JOIN sales_customers AS sc2 ON sc2.pos_id = sc.customer
-				WHERE archive = '".$param['closing_file']."' AND up.id_bu = ".$param['id_bu'];
-			$r_mov = $CI->db->query($q_mov) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				WHERE archive = '".$param['closing_file']."' AND up.id_bu = ".$param['id_bu'];*/
+			//$r_mov = $CI->db->query($q_mov) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			return $r_mov->result_array();
 			break;
 			
@@ -330,10 +336,12 @@ class Cashier {
 			$result = $dbar->query($sqlar);
 			$res 	= array();
 			while($row=$result->fetchArray(SQLITE3_ASSOC)){
-				$q = "SELECT username FROM users AS u 
+				$CI->db->select('username')->from('users as u')->join('users_pos as up','u.id = up.id_user','left')->where('up.id_pos', $row[USER]);
+				$r = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				/*$q = "SELECT username FROM users AS u 
 				LEFT JOIN users_pos AS up ON u.id = up.id_user
-				WHERE up.id_pos = '".$row['USER']."'";
-				$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				WHERE up.id_pos = '".$row['USER']."'";*/
+				//$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				$o = $r->result_array();
 				if($o) { 
 					$res[] = $o['0']['username']; 

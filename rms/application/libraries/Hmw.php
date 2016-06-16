@@ -57,7 +57,7 @@ class Hmw {
 	{
 		$CI = & get_instance(); 
 		$CI->load->database();
-		$CI->db->select('*')->from('users')->where('id', $id)->limit(1);
+		$CI->db->select('*')->from('users')->where('id', $id)->limit(1);//Pose problème avec Product.php :function getSuppliers
         $res_params = $CI->db->get();
 		$r = $res_params->result();	
 		return $r[0];
@@ -87,7 +87,13 @@ class Hmw {
 	{
 		$CI = & get_instance(); 
 		$CI->load->database();
-		if($id_user) $req = "UPDATE users SET current_bu_id = $id_bu WHERE id = $id_user";
+		if($id_user){
+			$req = "UPDATE users SET current_bu_id = $id_bu WHERE id = $id_user";
+			//Actuellement invérifiable :
+			//$CI->db->set('current_bu_id', $id_bu)->where('id', $id_user);
+			//$CI->db->update('users');
+			}
+		//$res = $CI->db->get();
 		$res = $CI->db->query($req);
 	}
 	

@@ -65,7 +65,6 @@ class Checklist extends CI_Controller {
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users AS u', 'r.user = u.id')->where('c.id_bu', $id_bu)->order_by('r.date desc')->limit(50);
 		$checklist_rec_req = $this->db->get() or die($this->mysqli->error);
-		//$checklist_rec_res = $this->db->query($checklist_rec_req) or die($this->mysqli->error);
 		$checklist_rec = $checklist_rec_res->result_array();
 
 		$data = array(
