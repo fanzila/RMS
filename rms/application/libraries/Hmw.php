@@ -6,7 +6,7 @@ class Hmw {
 	{
 		$CI = & get_instance(); 
 		$CI->load->database();
-		$CI->db->select('val')->from('params')->where('key')->limit(1);
+		$CI->db->select('val')->from('params')->where('key', $param)->limit(1);
         $res_params = $CI->db->get();
 		$r = $res_params->result();	
 		return $r[0]->val;

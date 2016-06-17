@@ -20,15 +20,13 @@ class Sensors extends CI_Controller {
 			LEFT JOIN sensors AS s ON st.id_sensor = s.id  
 			LEFT JOIN sensors_alarm AS sa ON sa.id_sensor = s.id 
 			WHERE s.id_bu = $id_bu
-			ORDER BY st.id DESC ) AS tmp_table")->group_by(idsensor);
+			ORDER BY st.id DESC ) AS tmp_table")->group_by('idsensor');
 		$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$info = $r->result_array();	
-		
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-		
 		$data['current'] 	= $info;
-		$data['title'] 		= 'Sensors';
+		$data['title'] 	= 'Sensors';
 		$data['keylogin']	= $this->session->userdata('keylogin');
 		$this->load->view('sensors', $data);
 	}
@@ -52,11 +50,11 @@ class Sensors extends CI_Controller {
 				error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
 				exit();
 			}
-			$datebis = "INTERVAL-10 DAY";
-			$this->db->where('date <', date_add(now(), $datebis));
-			//$this->db->delete('sensors_temp');
-			$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));*/
 			$q = "DELETE FROM sensors_temp WHERE date < DATE_ADD(NOW(), INTERVAL -10 DAY)";
+			//$query = $this->db->where('date <', "DATE_ADD(NOW(), INTERVAL -9 DAY)");
+			//$query = $this->db->delete('sensors_temp');
+			//$query = $this->db->delete('sensors_temp', 'date < DATE_ADD(NOW(), INTERVAL -10 DAY)');
+			//$r = $query->result() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));	
 			$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));	
 		}
 		
@@ -64,3 +62,18 @@ class Sensors extends CI_Controller {
 
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
