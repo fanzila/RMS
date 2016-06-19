@@ -160,7 +160,8 @@ class Hmw {
 		$CI->load->library('hmw');
 		$CI->load->library('session');	
 
-		$getkey = $CI->input->get('keylogin');
+		$getkey	= $CI->input->get('keylogin');
+		$id_bu	= $CI->input->get('id_bu');
 
 		if(!empty($getkey)) {
 			$keyl = $this->getParam('keylogin');
@@ -168,7 +169,7 @@ class Hmw {
 				
 				$user = $this->getParam('keylogin_user');
 				$pass = $this->getParam('keylogin_pass');
-				$newdata = array('keylogin'  => TRUE);
+				$newdata = array('keylogin'  => TRUE, 'id_bu' => $id_bu);
 				$CI->session->set_userdata($newdata);
 				
 				$CI->ion_auth->login($user, $pass, true);

@@ -418,6 +418,7 @@ public function confirmOrder() {
 
 		$info['company_info']	= $getBuInfo->delivery_header;
 		$info['delivery_info']	= $getBuInfo->delivery_info;
+		$info['email_order']	= $getBuInfo->email_order;
 
 		$date_y = date('Y');
 		$date_m	= date('m');

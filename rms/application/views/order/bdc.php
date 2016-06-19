@@ -33,8 +33,8 @@ body {
 <table class="smallfont" border="0" width="100%">
 	<tr><td><?=nl2br($info['company_info'])?></td></tr>
 	<tr><td>Horaire de livraison : <?=$info['dlv_info']?></td></tr>
-	<tr><td>Contact Hank pour cette commande : <?=$info['user']?></td></tr>
-	<tr><td><a href="mailto:order-fr75arch@hankrestaurant.com">order-fr75arch@hankrestaurant.com</a> - Tel : <a href="phone:"><?=$info['user_tel']?></a></td></tr>
+	<tr><td>Contact pour cette commande : <?=$info['user']?></td></tr>
+	<tr><td><a href="mailto:<?=$info['email_order']?>"><?=$info['email_order']?></a> - Tel : <a href="phone:"><?=$info['user_tel']?></a></td></tr>
 </table>
 </td><td width="30px"></td><td style="border-left: 1px solid silver;" valign="top">
 <table class="smallfont" border="0" width="100%">
