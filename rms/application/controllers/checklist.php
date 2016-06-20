@@ -122,6 +122,7 @@ class Checklist extends CI_Controller {
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
 		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
 		
@@ -162,7 +163,7 @@ class Checklist extends CI_Controller {
 		$this->db->where('users.active', 1);
 		$this->db->where_in('users_groups.group_id', array(1,4));
 		$this->db->where('users_bus.bu_id', $id_bu);
-		
+		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 
 		if($checklist_rec_id > 0) {

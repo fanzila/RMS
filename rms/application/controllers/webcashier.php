@@ -151,6 +151,7 @@ class webCashier extends CI_Controller {
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
 		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('users.username', 'asc'); 
 		$query = $this->db->get("users");
 		$data['users'] = $query->result();
 
