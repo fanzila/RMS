@@ -173,7 +173,7 @@ class webCashier extends CI_Controller {
 			if(empty($d['seqid'])) { echo "La derniere cloture semble vide, As tu cloture 2 fois la caisse ?"; exit(); }
 			
 			//check if this archive has already been used for closing
-			$this->db->select('closing_id')->from('pos_movements')->where('movement', 'close')->where('closing_id', $d[seqid])->where('id_bu', $id_bu);
+			$this->db->select('closing_id')->from('pos_movements')->where('movement', 'close')->where('closing_id', $d['seqid'])->where('id_bu', $id_bu);
 			$rsid = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$osid = $rsid->result_object();
 			$data['force'] = 0;
@@ -235,8 +235,8 @@ class webCashier extends CI_Controller {
 		}
 
 		$this->db->set('movement', $this->input->post('mov'))->set('id_user', $userid)->set('comment', addslashes($this->input->post('comment')))->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))->set('id_bu', $id_bu);
-		$this->db->insert('pos_movements', $setdata);
-		$rpm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$this->db->insert('pos_movements');
+		$rpm = $this->db->get('pos_movements') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$pmid = $this->db->insert_id();
 
 		$payid = date('y-m-d/').$pmid;
@@ -262,7 +262,7 @@ class webCashier extends CI_Controller {
 				if($this->input->post('mov') == 'safe_out') $val2man = -1 * abs($val2man);
 				$this->db->set('id_payment', $idp)->set('id_movement', $pmid)->set('amount_pos', $this->cashier->clean_number($val2['pos']))->set('amount_user', $val2man);
 				$this->db->insert('pos_payments');
-				$rpp = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				$rpp = $this->db->get('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}
 			
 		}
