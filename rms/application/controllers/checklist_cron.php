@@ -52,10 +52,9 @@ class Checklist_cron extends CI_Controller {
 				foreach ($query->result() as $row) {
 					$email['to']	= $row->email;	
 					$this->mmail->sendEmail($email);
+					
 				}
-				
 				$this->hmw->sendNotif($msg, $id_bu);
-				
 			}
 			return;
 		} else { 
