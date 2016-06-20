@@ -43,8 +43,9 @@ class Reminder extends CI_Controller {
 
 				$ex = explode('_', $key);
 				if($ex[0] == 'task') {
-					$this->db->update('rmd_meta')->set('start', NOW())->where('id_task', $ex[1])->where('repeat_year', '')->where('repeat_month', '')->where('repeat_day', '')->where('repeat_week', '')->where('repeat_weekday', '');
-					$req_up = $this->db->get();
+					$this->db->set('start', NOW())->where('id_task', $ex[1])->where('repeat_year', '')->where('repeat_month', '')->where('repeat_day', '')->where('repeat_week', '')->where('repeat_weekday', '');
+					$this->db->update('rmd_meta');
+					$req_up = $this->db->get('rmd_meta');
 					echo $req_up;
 
 					if(!$this->db->query($req_up)) {
@@ -52,8 +53,10 @@ class Reminder extends CI_Controller {
 						return false;
 					}
 
-					$this->db->insert('rmd_log')->set('id_user', $form['user'])->set('date', NOW())->set('id_task', $ex[1]);
-					if(!$this->db->get()) {
+					$this->db->set('id_user', $form['user'])->set('date', NOW())->set('id_task', $ex[1]);
+					$this->db->insert('rmd_log');
+					$req_up = $this->db->get('rmd_log');
+					if(!$req_up) {
 						echo $this->db->error;
 						return false;
 					}

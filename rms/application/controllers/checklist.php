@@ -170,8 +170,9 @@ class Checklist extends CI_Controller {
 			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' UPDATED';
 
 		} else {
-			$this->db->insert('checklist_records')->set('user', $this->input->post('user'))->set('date', NOW())->set('id_checklist', $this->input->post('id_checklist'))->set('data', $srl);
-			$req = $this->db->get();
+			$this->db->set('user', $this->input->post('user'))->set('date', NOW())->set('id_checklist', $this->input->post('id_checklist'))->set('data', $srl);
+			$this->db->insert('checklist_records');
+			$req = $this->db->get('checklist_records');
 			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' CREATED';
 		}	
 

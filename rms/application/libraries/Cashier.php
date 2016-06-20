@@ -506,7 +506,7 @@ class Cashier {
 		$CI = & get_instance(); 
 		$CI->load->database();
 
-		$CI->db->select('name','id')
+		$CI->db->select('name, id')
 		->from('pos_payments_type')
 		->where('pos_id', $id)
 		->where('id_bu', $id_bu)
