@@ -2,26 +2,25 @@
 
 class Product {
 
-	public function getProducts($id = null, $supplier_id = null, $order = null, $term = null, $id_bu) {
+
+public function getProducts($id = null, $supplier_id = null, $order = null, $term = null) {
+
 		$CI =& get_instance();
-		$CI->db->select('p.id, s.id as supplier_id, p.supplier_reference, pc.name as category_name, p.name as name, s.name as supplier_name, p.price, p.active, p.id_category, puprc.name as unit_name, p.id_unit as id_unit, p.packaging as packaging, p.freq_inventory, p.comment, ps.mini as stock_mini, ps.max as stock_max, ps.qtty as stock_qtty, ps.warning as stock_warning, ps.last_update_user as last_update_user, ps.last_update_pos as last_update_pos, u.username as last_update_user_name')
-		->from('products as p')
-		->join('suppliers as s', 'p.id_supplier = s.id')
-		->join('products_unit as puprc', 'p.id_unit = puprc.id')
-		->join('products_category as pc', 'p.id_category = pc.id', 'left')
-		->join('products_stock as ps', 'p.id= ps.id_product', 'left')
-		->join('users as u', 'ps.last_update_id_user = u.id', 'left')
-		->where('p.deleted', 0);
-		if($id) $CI->db->where('p.id', $id);
-		if($supplier_id != null) $CI->db->where('s.id', $supplier_id);
-		if($term != null) $CI->db->like('p.name', $term, 'both');
-		$CI->db->where('s.id_bu', $id_bu);
-		if($order){
-			$CI->db->order_by('p.id_supplier asc, ".$order."')->limit(10000);
-		}else{
-			$CI->db->order_by('p.active desc, p.id_supplier asc')->limit(10000);	
+		$sqladd = '';
+		$CI->db->select('p.id, s.id as supplier_id, p.supplier_reference, pc.name AS category_name, p.name AS name, s.name AS supplier_name, p.price, p.active, p.id_category, puprc.name AS unit_name, p.id_unit AS id_unit, p.packaging AS packaging, p.freq_inventory, p.comment, ps.mini AS stock_mini, ps.max AS stock_max, ps.qtty AS stock_qtty, ps.warning AS stock_warning, ps.last_update_user AS last_update_user, ps.last_update_pos AS last_update_pos, u.username AS last_update_user_name')->from('products AS p')->join('suppliers AS s', 'p.id_supplier = s.id')->join('products_unit AS puprc', 'p.id_unit = puprc.id')->join('products_category AS pc','p.id_category = pc.id','left')->join('products_stock AS ps','p.id= ps.id_product','left')->join('users AS u','ps.last_update_id_user = u.id','left');
+		if($id) $sqladd = $CI->db->where('p.deleted', 0)->where('p.id', $id);
+		if($supplier_id != null) $CI->db->where('p.deleted', 0)->where('s.id', $supplier_id);
+		if($term != null){
+			$array = array('p.name' => $term);
+			$CI->db->where('p.deleted', 0)->like($array);
 		}
+
+		$ordersql = "p.`active` DESC"; 
+		if($order) $ordersql = $order; 
+
+		$CI->db->order_by("$ordersql, p.id_supplier ASC")->limit(10000);
 		$req = $CI->db->get() or die($this->mysqli->error);
+
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;
@@ -51,10 +50,8 @@ public function getAttributName($id) {
 
 public function getAttributs() {
 	$CI =& get_instance();
-	//bug avec la fonction getProducts
-	//$CI->db->select('*')->from('products_attribut');
-	//$req = $CI->db->get() or die($this->mysqli->error);
-	$req = $CI->db->query("SELECT * FROM products_attribut") or die($this->mysqli->error);
+	$CI->db->from('products_attribut');
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;
@@ -75,10 +72,8 @@ public function getMapping($id_bu) {
 
 public function getStock($id_bu) {
 	$CI =& get_instance();
-	//bug avec la fonction getProducts
-	//$CI->db->select('*')->from('products_stock')->where('id_bu', $id_bu);
-	//$req = $CI->db->get() or die($this->mysqli->error);
-	$req = $CI->db->query("SELECT * FROM products_stock WHERE id_bu = $id_bu") or die($this->mysqli->error);
+	$CI->db->select('*')->from('products_stock')->where('id_bu', $id_bu);
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id_product']] = $key;

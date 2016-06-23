@@ -170,7 +170,7 @@ class News extends CI_Controller {
 			$res_sup = $this->db->get() or die($this->mysqli->error);
 			$ret_sup = $res_sup->result_array();
 
-			$this->db->update('news_confirm')->set('date_confirmed', NOW())->set('status', 'confirmed')->set('IP', $ip);
+			$this->db->update('news_confirm')->set('date_confirmed', "NOW()", FALSE)->set('status', 'confirmed')->set('IP', $ip);
 			$this->db->get() or die($this->mysqli->error);
 			$data = array('status' => 'OK');
 

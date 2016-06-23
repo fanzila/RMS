@@ -68,52 +68,39 @@ class Product_admin extends CI_Controller {
 
 		$this->load->library('ion_auth');
 		$data = $this->input->post();
-		$sqlt = "UPDATE ";
-		$sqle = " WHERE `id` = $data[id]";
 		$reponse = 'ok';
-
-		if($data['id'] == 'create') {
-			$sqlt = "INSERT INTO ";
-			$sqle = "";
-
-		}
 
 		if(empty($data['id'])) exit();
 
 		$price = $data['price']*1000;
-
-		$sql = "$sqlt products SET
-			name = '".addslashes($data['name'])."',
-			id_supplier = '".$data['id_supplier']."',
-			price = '".$price."',
-			id_unit = '".$data['id_unit']."',
-			packaging = '".$data['packaging']."',
-			id_category = '".$data['id_category']."',
-			active = '".$data['active']."',
-			freq_inventory = '".$data['freq_inventory']."',
-			supplier_reference = '".$data['supplier_reference']."',
-			comment = '".addslashes($data['comment'])."'
-			$sqle";
-
-		$req = $this->db->query($sql) or die($this->mysqli->error);
+		$this->db->set('name', addslashes($data['name']))->set('id_supplier', $data['id_supplier'])->set('price', $price)->set('id_unit', $data['id_unit'])->set('packaging', $data['packaging'])->set('id_category', $data['id_category'])->set('active', $data['active'])->set('freq_inventory', $data['freq_inventory'])->set('supplier_reference', $data['supplier_reference'])->set('comment', addslashes($data['comment']));
+		
+		if($data['id'] == 'create') {
+			$this->db->insert('products') or die($this->mysqli->error);
+			$sqle = "";
+		}else{
+			$this->db->where('id', $data['id']);
+			$this->db->update('products') or die($this->mysqli->error);
+		}
 		if($data['id'] == 'create') $new_id = $this->db->insert_id();
 		
 			$user = $this->ion_auth->user()->row();
 			
 			if($data['id'] == 'create') $id_product = $new_id;
 			if($data['id'] != 'create') $id_product = $data['id'];
-			
-			$sqlins = "INSERT INTO products_stock SET id_product = $id_product, warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW()";
-
 			if($data['id'] == 'create') {
-				$this->db->query($sqlins) or die($this->mysqli->error);		
+				$this->db->set('id_product', $id_product)->set('warning', $data['stock_warning'])->set('mini', $data['stock_mini'])->set('max', $data['stock_max'])->set('qtty', $data['stock_qtty'])->set('last_update_id_user', $user->id)->set('last_update_user', "NOW()", FALSE);
+				$this->db->insert('products_stock') or die($this->mysqli->error);		
 			} else {
-				$reqs = $this->db->query("SELECT * FROM products_stock WHERE `id_product` = $data[id]") or die($this->mysqli->error);
+				$this->db->from('products_stock')->where('id_product', $data['id']);
+				$reqs = $this->db->get() or die($this->mysqli->error);
 				$rets = $reqs->result_array();
 				if(empty($rets)) {
-					$this->db->query($sqlins) or die($this->mysqli->error);
+					$this->db->set('id_product', $id_product)->set('warning', $data['stock_warning'])->set('mini', $data['stock_mini'])->set('max', $data['stock_max'])->set('qtty', $data['stock_qtty'])->set('last_update_id_user', $user->id)->set('last_update_user', "NOW()", FALSE);
+					$this->db->insert('products_stock') or die($this->mysqli->error);
 				} else {
-					$this->db->query("UPDATE products_stock SET warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW() WHERE id_product = $id_product") or die($this->mysqli->error);
+					$this->db->set('warning', $data['stock_warning'])->set('mini', $data['stock_mini'])->set('max', $data['stock_max'])->set('qtty', $data['stock_qtty'])->set('last_update_id_user', $user->id)->set('last_update_user', "NOW()", FALSE)->where('id_product', $id_product);
+					$this->db->update('products_stock') or die($this->mysqli->error);
 				}
 		}
 
@@ -139,18 +126,22 @@ class Product_admin extends CI_Controller {
 			if($type == 'coef') $tab[$x]['coef'] = $var;	
 		}
 
-		$this->db->query("BEGIN") or die($this->mysqli->error);
+		$this->db->trans_begin() or die($this->mysqli->error);
 		foreach ($tab as $key) {
-			$this->db->query("DELETE FROM products_mapping WHERE id_pos = '$key[id_pos]'") or die($this->mysqli->error);
+			$this->db->where('id_pos', $key['id_pos']);
+			$this->db->delete('products_mapping') or die($this->mysqli->error);
 		}
 
 		foreach ($tab as $key) {
-			if(!empty($key['coef']) AND !empty($key['id_product'])) {	
-				$q = "INSERT INTO products_mapping SET id_pos = '$key[id_pos]', id_product='$key[id_product]', coef='$key[coef]', id_bu=$id_bu";	
-				$this->db->query($q) or die($this->mysqli->error);
+			if(!empty($key['coef']) AND !empty($key['id_product'])) {
+				$this->db->set('id_pos', $key['id_pos'])
+					->set('id_product', $key['id_product'])
+					->set('coef',$key['coef'])
+					->set('id_bu', $id_bu);	
+				$this->db->insert('products_mapping') or die($this->mysqli->error);
 			}
 		}
-		$this->db->query("COMMIT") or die($this->mysqli->error);
+		$this->db->trans_commit() or die($this->mysqli->error);
 		
 		echo json_encode(['reponse' => $reponse]);
 		exit();

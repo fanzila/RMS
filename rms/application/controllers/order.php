@@ -60,7 +60,19 @@ class Order extends CI_Controller {
 			$q = strtolower($_GET['q']);
 
 			$row_set = array();
-			$q = "SELECT 
+			$this->db->select("SELECT 
+				p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, p.packaging AS packaging, puprc.name AS unitname
+				FROM products AS p 
+				JOIN suppliers AS s ON p.id_supplier = s.`id` 
+				JOIN products_unit AS puprc ON p.id_unit = puprc.`id` 
+				LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product");
+			$this->db->like('p.name', 'LOWER('%$q%')', FALSE);
+			$this->db->where('p.deleted', 0);
+			$this->db->where('p.active', 1);
+			$this->db->where('ps.id_bu', $id_bu);
+			$this->db->order_by('p.name asc')->limit(100);
+			$query = $this->db->get() or die($this->mysqli->error);
+			/*$q = "SELECT 
 				p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, p.packaging AS packaging, puprc.name AS unitname
 				FROM products AS p 
 				JOIN suppliers AS s ON p.id_supplier = s.`id` 
@@ -70,16 +82,16 @@ class Order extends CI_Controller {
 			AND p.deleted = 0 
 			AND p.active = 1 
 			AND ps.id_bu = $id_bu
-			ORDER BY p.name ASC LIMIT 100";
-		$query = $this->db->query($q) or die($this->mysqli->error);
-		if($query->num_rows() > 0){
-			foreach ($query->result_array() as $row){
-				$row_set[] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']."|||".$row['packaging']; 
+			ORDER BY p.name ASC LIMIT 100";*/
+			//$query = $this->db->query($q) or die($this->mysqli->error);
+			if($query->num_rows() > 0){
+				foreach ($query->result_array() as $row){
+					$row_set[] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']."|||".$row['packaging']; 
+				}
 			}
+			echo $_GET['callback']."(".json_encode($row_set).");";	
 		}
-		echo $_GET['callback']."(".json_encode($row_set).");";	
 	}
-}
 
 //cd /var/www/hank/rms/rms && php index.php order cliUpdateSales 1
 public function cliUpdateSales($id_bu) {
@@ -104,14 +116,14 @@ public function previousOrders()
 	$this->hmw->keyLogin();
 	$id_bu =  $this->session->all_userdata()['bu_id'];
 
-	$rec_req = "SELECT r.user, u.first_name AS first_name, u.last_name AS last_name, r.id AS lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, c.status AS confirm, s.name AS supplier_name
-		FROM orders AS r 
-		JOIN users AS u ON r.user = u.id 
-		LEFT JOIN suppliers AS s ON s.id = r.supplier_id
-		LEFT JOIN orders_confirm AS c ON r.idorder = c.idorder
-		WHERE r.id_bu = $id_bu
-		ORDER BY r.date DESC LIMIT 300";
-	$rec_res = $this->db->query($rec_req) or die($this->mysqli->error);
+	$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, c.status as confirm, s.name as supplier_name');
+	$this->db->from('orders as r');
+	$this->db->join('users as u', 'r.user = u.id');
+	$this->db->join('suppliers as s','s.id = r.supplier_id','left');
+	$this->db->join('orders_confirm as c','r.idorder = c.idorder','left');
+	$this->db->where('r.id_bu', $id_bu);
+	$this->db->order_by('r.date desc')->limit(300);
+	$rec_res = $this->db->get() or die($this->mysqli->error);
 	$rec = $rec_res->result_array();
 
 	$data = array(
@@ -134,8 +146,8 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 	$freq = $this->freq();
 
 	if($load > 0) {
-		$order_rec_req 	= "SELECT r.user, r.id AS rec_id, r.data, r.date FROM orders AS r WHERE r.idorder = $load AND id_bu = $id_bu";
-		$order_rec_res	= $this->db->query($order_rec_req) or die($this->mysqli->error);
+		$this->db->select('r.user, r.id as rec_id, r.data, r.date')->from('orders as r')->where('r.idorder', $load)->where('id_bu', $id_bu);
+		$order_rec_res	= $this->db->get() or die($this->mysqli->error);
 		$order_rec		= $order_rec_res->row();
 		$order_prev		= unserialize($order_rec->data);
 	}
@@ -200,19 +212,18 @@ public function prepareOrder() {
 }
 
 public function confirm($key = null) {
-
 	$this->load->library('mmail');
 	$this->load->library('hmw');
 
-	$get = "SELECT * FROM orders_confirm WHERE `key` = '".$key."' LIMIT 1";
-	$res = $this->db->query($get) or die($this->mysqli->error);
+	$this->db->from('orders_confirm')->where('key', $key)->limit(1);
+	$res = $this->db->get() or die($this->mysqli->error);
 	$ret = $res->result_array();
 	$ip  = $_SERVER['REMOTE_ADDR'];
 
 	if(isset($ret[0]['id'])) {		
 
-		$get_sup = "SELECT * FROM orders AS o LEFT JOIN suppliers AS s ON s.`id` = o.`supplier_id` WHERE `idorder` = '".$ret[0]['idorder']."' LIMIT 1";
-		$res_sup = $this->db->query($get_sup) or die($this->mysqli->error);
+		$this->db->from('orders as o')->join('suppliers as s','s.id = o.supplier_id','left')->where('idorder', $ret[0][idorder])->limit(1);
+		$res_sup = $this->db->get() or die($this->mysqli->error);
 		$ret_sup = $res_sup->result_array();
 
 		$fcomment = $this->input->post('scomment');
@@ -225,8 +236,12 @@ public function confirm($key = null) {
 			$scomment = stripslashes($ret[0]['comment']);
 		}
 
-		$req_conf = "UPDATE orders_confirm SET `date_confirmed` = NOW(), `status` = 'confirmed', `comment`= '".mysql_real_escape_string(addslashes($scomment))."', `IP`= '".$ip."' WHERE `key` = '".$key."'";
-		$this->db->query($req_conf)  or die($this->mysqli->error);
+		$this->db->set('date_confirmed', "NOW()", FALSE);
+		$this->db->set('status', "confirmed");
+		$this->db->set('comment', mysql_real_escape_string(addslashes($scomment)));
+		$this->db->set('IP', $ip);
+		$this->db->where('key', $key);
+		$this->db->update('orders_confirm')  or die($this->mysqli->error);
 		$data = array('status' => 'OK', 'key' => $key, 'scomment' => $scomment);
 
 		if($ret[0]['status'] != 'confirmed' OR ($ret[0]['status'] == 'confirmed' AND !empty($scomment) ) ) {
@@ -321,8 +336,9 @@ public function sendOrder() {
 			$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK - ".$var['user']."\nEmail : $order_email \n Tel : $user->phone";
 
 			$this->mmail->sendEmail($email);
-			$req = "UPDATE orders SET `status` = 'sent', `date` = NOW() WHERE `idorder` = ".$var['idorder']." ORDER BY `date` DESC LIMIT 1";
-			$this->db->query($req);
+			$this->db->set('status', 'sent')->set('date', "NOW()", FALSE);
+			$this->db->where('idorder', $var['idorder'])->order_by('date desc')->limit(1);
+			$this->db->update('orders');
 
 			$req_conf = "INSERT INTO orders_confirm SET `date_sent` = NOW(), `key` = '$key', `idorder` = ".$var['idorder'].", `status` = 'sent' ON DUPLICATE KEY UPDATE `date_sent` = NOW(), `key` = '$key'";
 			$this->db->query($req_conf);
@@ -528,8 +544,12 @@ private function groupOrder($data, $id_bu)
 		}
 		//serialize and insert into db
 		$srl = serialize($total[$supplier_id]);
-		$req = "INSERT INTO orders SET `data` = '".addslashes($srl)."', `idorder` = '".addslashes($idorder)."', supplier_id = '$supplier_id', user='".$user->id."', id_bu = $id_bu";
-		$this->db->query($req);		
+		$this->db->set('data', $srl);
+		$this->db->set('idorder', $idorder);
+		$this->db->set('supplier_id', $supplier_id);
+		$this->db->set('user', $user->id);
+		$this->db->set('id_bu', $id_bu);
+		$this->db->insert('orders');	
 	}
 	return $total;
 }

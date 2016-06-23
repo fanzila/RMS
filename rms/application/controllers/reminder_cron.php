@@ -35,10 +35,10 @@ class Reminder_cron extends CI_Controller {
 					$interval 		= $notif_last+$notif_interval;
 				}
 				
-				if($notif_start <= $now && $notif_end > $now && $interval < $now) {   
-					$req_up 	= "UPDATE rmd_notif SET `last` = NOW() WHERE id_task = $row->id";
+				if($notif_start <= $now && $notif_end > $now && $interval < $now) {
+					$this->db->set('last', "NOW()", FALSE)->where('id_task', $row->id);
 
-					if(!$this->db->query($req_up)) {
+					if(!$this->db->update('rmd_notif')) {
 						echo $this->db->error;
 						return false;
 					}
@@ -56,8 +56,8 @@ class Reminder_cron extends CI_Controller {
 
 	}
 	private function getNotif($id) {
-		$req = "SELECT * FROM rmd_notif WHERE id_task = $id LIMIT 1";
-		$res = $this->db->query($req);
+		$this->db->from('rmd_notif')->where('id_task', $id)->limit(1);
+		$res = $this->db->get();
 		$r = $res->result();
 		if(!empty($r[0])) return $r[0];
 		return false; 

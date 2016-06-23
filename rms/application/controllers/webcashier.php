@@ -86,25 +86,16 @@ class webCashier extends CI_Controller {
 		$data['live_movements'] = $this->cashier->posInfo('getLiveMovements', $param_pos_info);
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
-		
-		
-	/*	$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file 
-			FROM pos_movements AS pm
-			LEFT JOIN users AS u ON u.id = pm.id_user 
-			WHERE pm.id_bu = $id_bu
-			ORDER BY pm.`id` DESC LIMIT 500";*/
 
 		$this->db->select('pm.date', 'pm.id', 'u.username', 'pm.comment', 'pm.movement', 'pm.pos_cash_amount', 'pm.safe_cash_amount', 'pm.safe_tr_num', 'pm.closing_file')->from('pos_movements as pm')->join('users as u', 'u.id = pm.id_user', 'left')->where('pm.id_bu', $id_bu)->order_by('pm.id desc')->limit(500);
 		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 		foreach ($r_pm->result_array() as $key_pm => $m) {
-			/*$q_pp = "SELECT * FROM pos_payments AS pp 
-				JOIN pos_payments_type AS ppt ON pp.id_payment = ppt.id 
-				WHERE id_movement = ".$m['id']." 
-				AND ppt.id_bu = $id_bu 
-				ORDER BY  id_payment ASC";//*/
-			$this->db->select('*')->from('pos_payments as pp')->join('pos_payments_type as ppt', 'pp.id_payment = ppt.id')->where('id_movement', $m['id'])->where('ppt.id_bu', $id_bu)->order_by('id_payment ASC');
-			//$r_pp = $this->db->query($q_pp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$this->db->from('pos_payments as pp')
+				->join('pos_payments_type as ppt', 'pp.id_payment = ppt.id')
+				->where('id_movement', $m['id'])
+				->where('ppt.id_bu', $id_bu)
+				->order_by('id_payment asc');
 			$r_pp = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$res_pp = $r_pp->result_array();
 			$lines[$m['id']]['mov'] = $m;

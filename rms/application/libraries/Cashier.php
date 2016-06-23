@@ -44,13 +44,11 @@ class Cashier {
 		$CI->load->database();
 		$debug = false;
 		
-		$CI->db->SELECT('*')->from('sales_product')->where('deleted', 0)->where('id_bu', $id_bu);
+		$CI->db->from('sales_product')->where('deleted', 0)->where('id_bu', $id_bu);
 		$r_pos_pdt = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		//$q_pos_pdt = "SELECT * FROM sales_product WHERE deleted=0 AND id_bu = $id_bu";
-		//$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$res_pos_pdt = $r_pos_pdt->result_array();
 
-		$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message())); 
+		$CI->db->trans_begin() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message())); 
 
 		foreach ($res_pos_pdt as $pos_pdt) {
 			
@@ -65,7 +63,7 @@ class Cashier {
 
 			foreach ($res_mapping as $mapping) {	
 				if($sales > 0) {
-					$CI->db->set('qtty', qtty-($sales*$mapping[coef]))->set('last_update_pos', NOW())->where('id_product', $mapping[id_product])->where('id_bu', $id_bu);
+					$CI->db->set('qtty', qtty-($sales*$mapping[coef]))->set('last_update_pos', "NOW()", FALSE)->where('id_product', $mapping[id_product])->where('id_bu', $id_bu);
 					$CI->db->update('products_stock', array('qtty', 'last_update_pos'));
 					$CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 					if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']." for BU: $id_bu");
@@ -73,11 +71,8 @@ class Cashier {
 			}
 		}
 		$CI->db->set('done', 1)->where('date_closed' !=0000-00-00)->where('id_bu', $id_bu);
-		$CI->db->update('sales_receipt', 'done');
-		$CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		//$query = "UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' AND id_bu = $id_bu";
-		//$CI->db->query($query) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-        $CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$CI->db->update('sales_receipt', 'done') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+        $CI->db->trans_commit() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' && COMMIT for BU: $id_bu"); 
 	}
 
@@ -314,7 +309,14 @@ class Cashier {
 			break;
 			
 			case 'getMovements':
-			$CI->db->select('sc.date', 'u.username', 'sc.user', 'sc.amount', 'sc.method', 'sc.description', 'sc.customer', 'ppt.name as method_name', 'sc2.firstname as customer_first_name', 'sc2.lastname as customer_last_name')->from('sales_cashmovements as sc')->join('users_pos as up','up.id_pos = sc.user','left')->join('users as u','u.id = up.id_user','left')->join('pos_payments_type as ppt','ppt.pos_id = sc.method','left')->join('sales_customers AS sc2','sc2.pos_id = sc.customer','left')->where('archive', $param[closing_file])->where('up.id_bu', $param[id_bu]);
+			$CI->db->select('sc.date, u.username, sc.user, sc.amount, sc.method, sc.description, sc.customer, ppt.name as method_name, sc2.firstname as customer_first_name, sc2.lastname as customer_last_name')
+				->from('sales_cashmovements as sc')
+				->join('users_pos as up','up.id_pos = sc.user','left')
+				->join('users as u','u.id = up.id_user','left')
+				->join('pos_payments_type as ppt','ppt.pos_id = sc.method','left')
+				->join('sales_customers AS sc2','sc2.pos_id = sc.customer','left')
+				->where('archive', $param[closing_file])
+				->where('up.id_bu', $param[id_bu]);
 			$r_mov = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			/*$q_mov = "SELECT sc.`date`, u.`username`, sc.`user`, sc.amount, sc.method, sc.description, sc.customer, ppt.`name` AS method_name, sc2.`firstname` AS customer_first_name, sc2.`lastname` AS customer_last_name 
 				FROM sales_cashmovements AS sc 
@@ -322,7 +324,7 @@ class Cashier {
 				LEFT JOIN users AS u ON u.id = up.id_user 
 				LEFT JOIN pos_payments_type AS ppt ON ppt.pos_id = sc.method 
 				LEFT JOIN sales_customers AS sc2 ON sc2.pos_id = sc.customer
-				WHERE archive = '".$param['closing_file']."' AND up.id_bu = ".$param['id_bu'];*/
+				WHERE archive = '".$param['closing_file']."' AND up.id_bu = ".$param['id_bu'];//*/
 			//$r_mov = $CI->db->query($q_mov) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			return $r_mov->result_array();
 			break;
@@ -410,7 +412,7 @@ class Cashier {
 		$sql = "select SUM(AMOUNT) AS SUM, METHOD from ARCHIVEDRECEIPTPAYMENT AS rp GROUP BY rp.METHOD";
 		$result = $db->query($sql);
 		$row = array(); 
-		$i = 0; 
+		$i = 0;
 
 		while($res = $result->fetchArray(SQLITE3_ASSOC)) { 
 			if(!isset($res['SUM'])) continue; 

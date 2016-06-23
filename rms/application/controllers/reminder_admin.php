@@ -29,7 +29,90 @@ class Reminder_admin extends CI_Controller {
 	}
 
 	public function save()
-	{		
+	{
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		
+		$data = $this->input->post();
+		$sqlt = "UPDATE ";
+		$sqle = " WHERE `id` = $data[id]";
+		$sqln = " WHERE id_task = $data[id]";
+		$reponse = 'ok';
+		
+		if($data['id'] == 'create') {
+			$sqlt = "INSERT INTO ";
+			$sqle = "";
+		}
+		
+		
+		$this->db->trans_start();/*----------------------------------------------*/				
+		$this->db->set('task', $data[task])
+			->set('comment', $data[comment])
+			->set('active', $data[active])
+			->set('priority', $data[priority])
+			->set('id_bu', $id_bu);
+		if($data['id'] == 'create') {
+			$sql_tasks = $this->db->insert('rmd_tasks');
+		}else{
+			$this->db->where('id', $data[id]);
+			$sql_tasks = $this->db->update('rmd_tasks');
+		}
+		if (!$sql_tasks) {
+			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+		}		
+
+		if($data['id'] == 'create') {
+			$data['id'] = $this->db->insert_id();
+
+			$this->db->set('start', $data['nstart'])
+				->set('end', $data['nend'])
+				->set('interval', $data['ninterval'])
+				->set('last', $data['nlast'])
+				->set('id_task', $data[id]);
+			$sql_notif = $this->db->insert('rmd_notif');
+
+			$this->db->set('start', $data['mstart'])
+				->set('repeat_interval', $data['repeat_interval'])
+				->set('repeat_year', $data['repeat_year'])
+				->set('repeat_month', $data['repeat_month'])
+				->set('repeat_day', $data['repeat_day'])
+				->set('repeat_week', $data['repeat_week'])
+				->set('repeat_weekday', $data['repeat_weekday'])
+				->set('id_task', $data[id]);
+			$sql_meta = $this->db->insert('rmd_meta');
+
+		}else{
+			$this->db->set('start', $data['nstart'])
+				->set('end', $data['nend'])
+				->set('interval', $data['ninterval'])
+				->set('last', $data['nlast'])
+				->where('id_task', $data[id]);
+			$sql_notif = $this->db->update('rmd_notif');
+
+			$this->db->set('start', $data['mstart'])
+				->set('repeat_interval', $data['repeat_interval'])
+				->set('repeat_year', $data['repeat_year'])
+				->set('repeat_month', $data['repeat_month'])
+				->set('repeat_day', $data['repeat_day'])
+				->set('repeat_week', $data['repeat_week'])
+				->set('repeat_weekday', $data['repeat_weekday'])
+				->where('id_task', $data[id]);
+			$sql_meta = $this->db->update('rmd_meta');
+		}	
+
+		if (!$sql_notif) {
+			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+		}
+		
+		if (!$sql_meta) {
+			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+		}
+		$this->db->trans_complete();/*----------------------------------------------*/
+
+		echo json_encode(['reponse' => $reponse]);
+	}//*/
+
+	/*public function save()
+	{
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
 		$data = $this->input->post();
@@ -70,7 +153,7 @@ class Reminder_admin extends CI_Controller {
 		$this->db->trans_complete();
 		
 		echo json_encode(['reponse' => $reponse]);
-	}
+	}//*/
 	
 	public function index($create = null)
 	{		

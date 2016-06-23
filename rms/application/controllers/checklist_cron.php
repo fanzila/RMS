@@ -25,15 +25,6 @@ class Checklist_cron extends CI_Controller {
 			$info = $query->result();
 			
 			$msg = "WARINING! ".$info[0]->bname." No ".$info[0]->cname." checklist have been created!";
-
-/*			$sql 	= "SELECT DATE(`date`) FROM checklist_records AS cr 
-			LEFT JOIN checklists AS c ON c.id = cr.id_checklist 
-			WHERE DATE(`date`) = DATE(NOW()) 
-			AND cr.id_checklist = $id 
-			AND c.id_bu = $id_bu";
-			$query	= $this->db->query($sql);
-			$res 	= $query->result();
-*/
 			$this->db->select("DATE(date)")->from('checklist_records as cr')
 			->join('checklists as c','c.id = cr.id_checklist','left')
 			->where("DATE(`date`) = DATE(NOW())")

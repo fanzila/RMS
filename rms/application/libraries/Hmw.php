@@ -88,13 +88,9 @@ class Hmw {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		if($id_user){
-			$req = "UPDATE users SET current_bu_id = $id_bu WHERE id = $id_user";
-			//Actuellement invérifiable :
-			//$CI->db->set('current_bu_id', $id_bu)->where('id', $id_user);
-			//$CI->db->update('users');
-			}
-		//$res = $CI->db->get();
-		$res = $CI->db->query($req);
+			$CI->db->set('current_bu_id', $id_bu)->where('id', $id_user);
+			$CI->db->update('users');
+		}
 	}
 	
 	public function getUsers() 
@@ -111,11 +107,8 @@ class Hmw {
 		$CI->load->database();
 		
 		if($type == 'order') {
-			$req_params = "SELECT email_order FROM bus WHERE id = $id_bu";
-			$res_params = $CI->db->query($req_params);
-			//Actuellement invérifiable :
-			//$CI->db->select('email_order');
-			//$res_params = $CI->db->get_where('bus', array('id', $id_bu));
+			$CI->db->select('email_order')->from('bus')->where('id', $id_bu);
+			$res_params = $CI->db->get();
 			$res = $res_params->result();
 			return $res[0]->email_order;
 		}

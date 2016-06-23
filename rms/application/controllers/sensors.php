@@ -50,12 +50,8 @@ class Sensors extends CI_Controller {
 				error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
 				exit();
 			}
-			$q = "DELETE FROM sensors_temp WHERE date < DATE_ADD(NOW(), INTERVAL -10 DAY)";
-			//$query = $this->db->where('date <', "DATE_ADD(NOW(), INTERVAL -9 DAY)");
-			//$query = $this->db->delete('sensors_temp');
-			//$query = $this->db->delete('sensors_temp', 'date < DATE_ADD(NOW(), INTERVAL -10 DAY)');
-			//$r = $query->result() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));	
-			$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));	
+			$this->db->where("date < DATE_ADD(NOW(), INTERVAL -10 DAY)");
+			$r = $this->db->delete('sensors_temp') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		}
 		
 	}

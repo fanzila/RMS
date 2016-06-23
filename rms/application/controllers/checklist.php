@@ -42,7 +42,7 @@ class Checklist extends CI_Controller {
 				}
 			}
 		}
-		$this->db->select('name, id')->from('checklists')->where('active',1)->where('id_bu', $id_bu)->order_by("order", "asc");
+		$this->db->select('name, id')->from('checklists')->where('active',1)->where('id_bu', $id_bu)->order_by('order asc');
 		$checklist_res =  $this->db->get();
 		$checklists = $checklist_res->result_array();
 		$data = array(
@@ -63,8 +63,8 @@ class Checklist extends CI_Controller {
 	{		
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
-		$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users AS u', 'r.user = u.id')->where('c.id_bu', $id_bu)->order_by('r.date desc')->limit(50);
-		$checklist_rec_req = $this->db->get() or die($this->mysqli->error);
+		$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users as u', 'r.user = u.id')->where('c.id_bu', $id_bu)->order_by('r.date desc')->limit(50);
+		$checklist_rec_res = $this->db->get() or die($this->mysqli->error);
 		$checklist_rec = $checklist_rec_res->result_array();
 
 		$data = array(
@@ -159,26 +159,23 @@ class Checklist extends CI_Controller {
 		$query = $this->db->get("users");
 
 		if($checklist_rec_id > 0) {
-			$data = array(
-               'user' => $this->input->post('user'),
-               'date' => NOW(),
-               'data' => $srl
-            );
-			$this->db->update('checklist_records', $data)->where('id', $checklist_rec_id);
-
-			$req = $this->db->get();
+			$this->db->set('user', $this->input->post('user'));
+			$this->db->set('data', $srl);
+			$this->db->set('date', 'NOW()', FALSE);
+			$req = $this->db->update('checklist_records')->where('id', $checklist_rec_id);
 			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' UPDATED';
 
 		} else {
-			$this->db->set('user', $this->input->post('user'))->set('date', NOW())->set('id_checklist', $this->input->post('id_checklist'))->set('data', $srl);
-			$this->db->insert('checklist_records');
-			$req = $this->db->get('checklist_records');
+			$this->db->set('user', $this->input->post('user'));
+			$this->db->set('id_checklist', $this->input->post('id_checklist'));
+			$this->db->set('data', $srl);
+			$this->db->set('date', 'NOW()', FALSE);
+			$req = $this->db->insert('checklist_records');
 			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' CREATED';
 		}	
 
 		$comment = false;
 		$msg = '';
-
 		$this->db->select('id, first_name, last_name')->from('users')->where('id', $this->input->post('user'));
 		$users_res = $this->db->get() or die($this->mysqli->error);
 		$user = $users_res->result();
@@ -190,7 +187,7 @@ class Checklist extends CI_Controller {
 			if($line[0] == 'comment' AND !empty($var)) {
 
 				$this->db->select('name')->from('checklist_tasks')->where('id', $line[1]);
-				$checklist_task_res = $this->db->get();
+				$checklist_task_res = $this->db->get() or die($this->mysqli->error);
 				$checklist_tasks = $checklist_task_res->result();
 
 				$comment = true;
@@ -213,7 +210,7 @@ class Checklist extends CI_Controller {
 			$this->mmail->sendEmail($email);
 		}
 		
-		if(!($req)) {
+		if(!$req) {
 			echo $this->db->error;
 			return false;
 		}
