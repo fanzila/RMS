@@ -87,23 +87,23 @@ class webCashier extends CI_Controller {
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
 		
+		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file')
+			->from('pos_movements as pm')
+			->join('users as u', 'u.id = pm.id_user', 'left')
+			->where('pm.id_bu', $id_bu)
+			->order_by('pm.id desc')
+			->limit(500);
+		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		
-
-		$q_pm = "SELECT pm.`date`, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file 
-			FROM pos_movements AS pm
-			LEFT JOIN users AS u ON u.id = pm.id_user 
-			WHERE pm.id_bu = $id_bu
-			ORDER BY pm.`id` DESC LIMIT 500";
-
-		$r_pm = $this->db->query($q_pm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-
-		foreach ($r_pm->result_array() as $key_pm => $m) {
-			$q_pp = "SELECT * FROM pos_payments AS pp 
-				JOIN pos_payments_type AS ppt ON pp.id_payment = ppt.id 
-				WHERE id_movement = ".$m['id']." 
-				AND ppt.id_bu = $id_bu 
-				ORDER BY  id_payment ASC";
-			$r_pp = $this->db->query($q_pp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$res_pm = $r_pm->result_array();
+		
+		foreach ($res_pm as $key_pm => $m) {
+			$this->db->from('pos_payments as pp')
+					->join('pos_payments_type as ppt', 'pp.id_payment = ppt.id')
+					->where('id_movement', $m['id'])
+					->where('ppt.id_bu', $id_bu)
+					->order_by('id_payment asc');
+			$r_pp = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$res_pp = $r_pp->result_array();
 			$lines[$m['id']]['mov'] = $m;
 			$lines[$m['id']]['pay'] = $res_pp;
@@ -142,8 +142,8 @@ class webCashier extends CI_Controller {
 		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
 		$param_pos_info 		= array();
 
-		$q = "SELECT * FROM pos_payments_type WHERE active = 1 AND id_bu = $id_bu";
-		$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$this->db->select('*')->from('pos_payments_type')->where('active',1)->where('id_bu', $id_bu);
+		$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$data['payment'] = $r->result_object();
 
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -172,9 +172,8 @@ class webCashier extends CI_Controller {
 			if(empty($d['seqid'])) { echo "La derniere cloture semble vide, As tu cloture 2 fois la caisse ?"; exit(); }
 			
 			//check if this archive has already been used for closing
-			$qsid = "SELECT closing_id FROM pos_movements WHERE movement = 'close' AND closing_id = $d[seqid] AND id_bu = $id_bu";
-			$rsid = $this->db->query($qsid) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			$osid = $rsid->result_object();
+			$this->db->select('closing_id')->from('pos_movements')->where('movement', 'close')->where('closing_id', $d['seqid'])->where('id_bu', $id_bu);
+			$rsid = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));$osid = $rsid->result_object();
 			$data['force'] = 0;
 			
 			$param_pos_info['id_bu'] = $id_bu;
@@ -233,8 +232,8 @@ class webCashier extends CI_Controller {
 			$userid = $this->input->post('user');
 		}
 		
-		$qpm = "INSERT INTO pos_movements SET movement = '".$this->input->post('mov')."', id_user = ".$userid.", comment = '".addslashes($this->input->post('comment'))."', pos_cash_amount = ".$this->cashier->posInfo('cashfloat', $param_pos_info).", safe_cash_amount = ".$this->cashier->calc('safe_current_cash_amount', $id_bu).", safe_tr_num = ".$this->cashier->calc('safe_current_tr_num', $id_bu).", id_bu =".$id_bu;
-		$rpm = $this->db->query($qpm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$this->db->set('movement', $this->input->post('mov'))->set('id_user', $userid)->set('comment', addslashes($this->input->post('comment')))->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))->set('id_bu', $id_bu);
+		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
 		$payid = date('y-m-d/').$pmid;
@@ -258,10 +257,10 @@ class webCashier extends CI_Controller {
 				if(!isset($val2['pos']) OR empty($val2['pos']) ) $val2['pos'] = 0;
 				$val2man = $this->cashier->clean_number($val2['man']);
 				if($this->input->post('mov') == 'safe_out') $val2man = -1 * abs($val2man);
-				$qpp = "INSERT INTO pos_payments SET id_payment = $idp, id_movement = $pmid, amount_pos = ".$this->cashier->clean_number($val2['pos']).", amount_user = ".$val2man;
-				$rpp = $this->db->query($qpp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				$this->db->set('id_payment', $idp)->set('id_movement', $pmid)->set('amount_pos', $this->cashier->clean_number($val2['pos']))->set('amount_user', $val2man);
+				$this->db->insert('pos_payments');
+				$rpp = $this->db->get('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}
-			
 		}
 
 		if($this->input->post('mov') == 'close') {
@@ -279,6 +278,9 @@ class webCashier extends CI_Controller {
 	{
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
+		if(empty($file)) exit('Error: empty archive file');
+		if(empty($pmid)) exit('Error: empty movement id');
+		 
 		//Get archive info
 		$d = $this->cashier->getClosureData(null, $file, $id_bu);
 		
@@ -286,18 +288,18 @@ class webCashier extends CI_Controller {
 		//fill pos_payments with closing data, update or create
 		foreach ($d['ca'] as $key => $val) {
 
-			$qpm = "UPDATE pos_payments SET amount_pos = $val[SUM] WHERE id_movement = $pmid AND id_payment = $val[IDMETHOD]";
-			$rup = $this->db->query($qpm) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$this->db->set('amount_pos', $val['SUM'])->where('id_movement', $pmid)->where('id_payment', $val['IDMETHOD']);
+			$this->db->update('pos_payments');
 			$af  = $this->db->affected_rows();
 
 			if(empty($af)) {
-				$qpmi = "INSERT INTO pos_payments SET amount_pos = $val[SUM], id_movement = $pmid, id_payment = $val[IDMETHOD]";
-				$rupi = $this->db->query($qpmi) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				$this->db->set('amount_pos', $val['SUM'])->set('id_movement', $pmid)->set('id_payment', $val['IDMETHOD']);
+				$this->db->insert('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}	
 		}
 
-		$qup = "UPDATE pos_movements SET closing_file = '".$file."', closing_id = $d[seqid] WHERE id = $pmid AND id_bu = $id_bu";
-		$rup = $this->db->query($qup) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$this->db->set('closing_file', $file)->set('closing_id', $d['seqid'])->where('id', $pmid)->where('id_bu', $id_bu);
+		$this->db->update('pos_movements') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 	}
 
 }

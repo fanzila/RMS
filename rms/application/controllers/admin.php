@@ -47,12 +47,12 @@ class Admin extends CI_Controller {
 		$user_groups = $this->ion_auth->get_users_groups()->result();
 		$bus_list = $this->hmw->getBus(null, $user->id);
 		
-		$bal_req = "SELECT val FROM bank_balance";
-		$bal_res = $this->db->query($bal_req);
+		$this->db->select('val')->from('bank_balance');
+		$bal_res = $this->db->get();
 		$bal = $bal_res->row_array();
 		
-		$bal_ca = "SELECT * FROM turnover ORDER BY `date` DESC LIMIT 1";
-		$bal_ca = $this->db->query($bal_ca);
+		$this->db->from('turnover')->order_by('date desc')->limit(1);
+	 	$bal_ca = $this->db->get();
 		$ca = $bal_ca->row_array();
 
 		$data = array(

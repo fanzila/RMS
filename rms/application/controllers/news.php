@@ -161,32 +161,23 @@ class News extends CI_Controller {
 
 		$this->load->library('mmail');
 
-		$get = "SELECT * FROM news_confirm JOIN users ON news_confirm.id_user = users.id WHERE `key` = '".$key."' LIMIT 1";
-		$res = $this->db->query($get) or die($this->mysqli->error);
+		$this->db->join('users', 'news_confirm.id_user = users.id');
+		$this->db->limit(1) or die($this->mysqli->error);				
+		$res = $this->db->get_where('news_confirm', array('key' => $key));
 		$ret = $res->result_array();
 		$ip  = $_SERVER['REMOTE_ADDR'];
 		
-		if(isset($ret[0]['id'])) {		
-
-			$get_sup = "SELECT * FROM news WHERE `id` = '".$ret[0]['id_news']."' LIMIT 1";
-			$res_sup = $this->db->query($get_sup) or die($this->mysqli->error);
+		if(isset($ret[0]['id'])) {
+			$res_sup = $this->db->get_where('news', array('id' => $ret[0]['id_news'])) or die($this->mysqli->error);
 			$ret_sup = $res_sup->result_array();
-
-			$req_conf = "UPDATE news_confirm SET `date_confirmed` = NOW(), `status` = 'confirmed', `IP`= '".$ip."' WHERE `key` = '".$key."'";
-			$this->db->query($req_conf)  or die($this->mysqli->error);
+			
+			$this->db->set('date_confirmed', "NOW()")
+			->set('status', 'confirmed')
+			->set('IP', $ip)
+			->where('key', $key);
+			$this->db->update('news_confirm') or die($this->mysqli->error);
+			
 			$data = array('status' => 'OK');
-
-			if($ret[0]['status'] != 'confirmed') {
-				$email['from']		= 'checklist@hankrestaurant.com';
-				$email['from_name']	= 'HANK';
-				$email['to']		= 'checklist@hankrestaurant.com';
-				$email['subject'] 	= "Confirmation de lecture de ".$ret[0]['username'].", News: ".$ret_sup[0]['slug'];
-				$email['replyto'] 	= "checklist@hankrestaurant.com";
-				$email['msg'] 		= "Bonjour, la news : ".$ret_sup[0]['slug']." à été lu par ".$ret[0]['username'].".";
-				$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK\n";
-
-				//$this->mmail->sendEmail($email);
-			}
 		} else {
 			$data = array('status' => 'NOK');	
 		}

@@ -6,45 +6,21 @@ class Product {
 
 		$CI =& get_instance();
 		$sqladd = '';
-		if($id) $sqladd = " AND p.id = $id";
-		if($supplier_id != null) $sqladd .= " AND s.id = $supplier_id ";
-		if($term != null) $sqladd .= " AND p.name LIKE '%".$term."%' ";
-		if($active != null) $sqladd .= " AND p.active = 1 AND p.deleted = 0 ";
+		
+		$CI->db->select('p.id, s.id as supplier_id, p.supplier_reference, pc.name AS category_name, p.name AS name, s.name AS supplier_name, p.price, p.active, p.id_category, puprc.name AS unit_name, p.id_unit AS id_unit, p.packaging AS packaging, p.freq_inventory, p.comment, ps.mini AS stock_mini, ps.max AS stock_max, ps.qtty AS stock_qtty, ps.warning AS stock_warning, ps.last_update_user AS last_update_user, ps.last_update_pos AS last_update_pos, u.username AS last_update_user_name')->from('products AS p')->join('suppliers AS s', 'p.id_supplier = s.id')->join('products_unit AS puprc', 'p.id_unit = puprc.id')->join('products_category AS pc','p.id_category = pc.id','left')->join('products_stock AS ps','p.id= ps.id_product','left')->join('users AS u','ps.last_update_id_user = u.id','left');
+		if($id) $sqladd = $CI->db->where('p.deleted', 0)->where('p.id', $id);
+		if($supplier_id != null) $CI->db->where('p.deleted', 0)->where('s.id', $supplier_id);
+		if($term != null){
+			$array = array('p.name' => $term);
+			$CI->db->where('p.deleted', 0)->like($array);
+		}
+	
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
 		
-		$q = "SELECT 
-			p.`id`, 
-			s.`id` AS supplier_id, 
-			p.supplier_reference, 
-			pc.name AS category_name, 
-			p.name AS name, 
-			s.name AS supplier_name, 
-			p.price, 
-			p.active,
-			p.id_category,
-			puprc.name AS unit_name, 
-			p.id_unit AS id_unit,
-			p.packaging AS packaging,
-			p.freq_inventory, 
-			p.comment, 
-			ps.mini AS stock_mini, 
-			ps.max AS stock_max, 
-			ps.qtty AS stock_qtty, 
-			ps.warning AS stock_warning,
-			ps.last_update_user AS last_update_user,
-			ps.last_update_pos AS last_update_pos,
-			u.username AS last_update_user_name
-			FROM products AS p 
-			JOIN suppliers AS s ON p.id_supplier = s.`id` 
-			JOIN products_unit AS puprc ON p.id_unit = puprc.`id`
-			LEFT JOIN products_category AS pc on p.`id_category` = pc.`id` 
-			LEFT JOIN products_stock AS ps ON p.`id`= ps.id_product 
-			LEFT JOIN users AS u ON ps.last_update_id_user = u.id
-			WHERE p.deleted=0 $sqladd AND s.id_bu = $id_bu
-		ORDER BY $ordersql, p.id_supplier ASC LIMIT 10000";
-		
-		$req = $CI->db->query($q) or die($this->mysqli->error);
+
+		$CI->db->order_by("$ordersql, p.id_supplier ASC")->limit(10000);
+		$req = $CI->db->get() or die($this->mysqli->error);
 
 	$ret = array();
 	foreach ($req->result_array() as $key) {
@@ -56,7 +32,8 @@ class Product {
 
 public function getPosProducts() {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM sales_product WHERE deleted = 0") or die($this->mysqli->error);
+	$CI->db->select('*')->from('sales_product')->where('deleted', 0);
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;
@@ -66,14 +43,16 @@ public function getPosProducts() {
 
 public function getAttributName($id) {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT name FROM products_attribut WHERE id = $id LIMIT 1") or die($this->mysqli->error);
+	$CI->db->select('name')->from('products_attribut')->where('id', $id)->limit(1);
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = $req->result_array();
 	return $ret[0]['name'];
 }
 
 public function getAttributs() {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM products_attribut") or die($this->mysqli->error);
+	$CI->db->from('products_attribut');
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;
@@ -83,7 +62,8 @@ public function getAttributs() {
 
 public function getMapping($id_bu) {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM products_mapping WHERE id_bu = $id_bu") or die($this->mysqli->error);
+	$CI->db->select('*')->from('products_mapping')->where('id_bu', $id_bu);
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;
@@ -93,7 +73,8 @@ public function getMapping($id_bu) {
 
 public function getStock($id_bu) {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM products_stock WHERE id_bu = $id_bu") or die($this->mysqli->error);
+	$CI->db->select('*')->from('products_stock')->where('id_bu', $id_bu);
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id_product']] = $key;
@@ -104,27 +85,31 @@ public function getStock($id_bu) {
 public function getSuppliers($order = null, $idsup = null, $id_bu = null) {
 	$CI =& get_instance();
 	$CI->load->library('hmw');
-	
-	$select = "s.id as id, s.name, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info"; 
-	
-	$q = "SELECT $select FROM suppliers AS s
-	WHERE active=1 
-	AND deleted=0
-	AND s.id_bu = $id_bu"; 
-	if(!empty($idsup)) $q .= " AND s.id = $idsup ";
-	$q .= " ORDER BY s.`id` ASC";
-	
-	if($order) $q = "SELECT $select  FROM suppliers AS s 
-	LEFT JOIN ( SELECT date, user, status, supplier_id FROM orders WHERE status = 'sent' AND date IS NOT NULL) AS o ON o.supplier_id = s.id  
-	WHERE s.active=1 
-	AND s.deleted=0 
-	AND s.id_bu = $id_bu 
-	ORDER BY o.date DESC"; 
-	
-	$req = $CI->db->query($q) or die($this->mysqli->error);
+
+	if($order) {
+		$CI->db->select('s.id as id, s.name, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info')
+		->from('suppliers as s')
+		->join('(SELECT date, user, status, supplier_id FROM orders WHERE status = "sent" AND date IS NOT null) as o','o.supplier_id = s.id','left')
+		->where('s.active', 1)
+		->where('s.deleted', 0)
+		->where('s.id_bu', $id_bu)
+		->order_by('o.date desc');
+	} else {
+		$CI->db->select('s.id as id, s.name, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info')
+	 	->from('suppliers as s')
+	 	->where('active', 1)
+	 	->where('deleted', 0)
+	 	->where('s.id_bu', $id_bu);
+	 
+	 if(!empty($idsup)) $CI->db->where('s.id', $idsup);
+	 $CI->db->order_by('s.id asc');
+	 }
+	 $req = $CI->db->get() or die($this->mysqli->error);
+
 	$ret = array();
 	foreach ($req->result_array() as $key) {
-		$reql = $CI->db->query("SELECT `date`, user FROM orders WHERE supplier_id = $key[id] AND status = 'sent' AND id_bu = $id_bu ORDER BY `date` DESC LIMIT 1") or die($this->mysqli->error);
+		$CI->db->select('date, user')->from('orders')->where('supplier_id', $key["id"])->where('status', 'sent')->where('id_bu', $id_bu)->order_by('date desc')->limit(1);
+		$reql = $CI->db->get() or die($this->mysqli->error);
 		$rowl = $reql->result_array();
 		$ret[$key['id']] = $key;
 		if(isset($rowl[0]['date'])) {
@@ -143,7 +128,8 @@ public function getSuppliers($order = null, $idsup = null, $id_bu = null) {
 
 public function getProductUnit() {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM products_unit") or die($this->mysqli->error);
+	$CI->db->select('*')->from('products_unit');
+ 	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;
@@ -153,7 +139,8 @@ public function getProductUnit() {
 
 public function getProductCategory() {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM products_category WHERE active=1 AND deleted=0 ORDER BY `id` ASC") or die($this->mysqli->error);
+	$CI->db->select('*')->from('products_category')->where('active', 1)->where('deleted', 0)->order_by('id asc');
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;
@@ -163,7 +150,8 @@ public function getProductCategory() {
 
 public function getSupplierCategory() {
 	$CI =& get_instance();
-	$req = $CI->db->query("SELECT * FROM suppliers_category WHERE active=1 AND deleted=0 ORDER BY `id` ASC") or die($this->mysqli->error);
+	$CI->db->select('*')->from('suppliers_category')->where('active', 1)->where('deleted', 0)->order_by('id asc');
+	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
 		$ret[$key['id']] = $key;

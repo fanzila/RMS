@@ -16,10 +16,10 @@ class Sensors_cron extends CI_Controller {
 	{
 
 		if($this->input->is_cli_request()) {
-			$q = "SELECT * FROM `sensors_alarm` AS sa
-			JOIN sensors AS s ON s.id = sa.id_sensor
-			WHERE s.id_bu = $id_bu";
-			$r = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$this->db->from('sensors_alarm as sa')
+					->join('sensors as s', 's.id = sa.id_sensor')
+					->where('s.id_bu', $id_bu);
+			$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$info = $r->result_array();
 
 			foreach ($info as $key => $val) {
@@ -29,17 +29,18 @@ class Sensors_cron extends CI_Controller {
 				$max    = $val['max'];
 				$min    = $val['min'];
 
-				$qs = "SELECT st.`temp`, st.`date`, s.`name`, s.`correction` AS correction FROM sensors_temp AS st
-					JOIN sensors AS s ON st.id_sensor = s.id
-					JOIN sensors_alarm AS sa ON sa.id_sensor = s.id
-					WHERE st.id_sensor = $val[id_sensor]
-					AND s.id_bu = $id_bu
-					AND CAST(st.`date` AS DATE) = CAST(NOW() AS DATE)
-					AND sa.lastalarm <= DATE_ADD(NOW(), INTERVAL -600 SECOND)
-					AND CAST(NOW() AS TIME) BETWEEN CAST('08:00:00' AS TIME) AND CAST('23:30:00' AS TIME)
-					ORDER BY `date` DESC LIMIT 1";
-
-				$rs = $this->db->query($qs) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				$this->db->select('st.temp, st.date, s.name, s.correction as correction')
+					->from('sensors_temp as st')
+					->join('sensors as s', 'st.id_sensor = s.id')
+					->join('sensors_alarm as sa', 'sa.id_sensor = s.id')
+					->where('st.id_sensor', $val['id_sensor'])
+					->where('s.id_bu', $id_bu)
+					->where("CAST(st.`date` AS DATE) = CAST(NOW() AS DATE)")
+					->where("sa.lastalarm <= DATE_ADD(NOW(), INTERVAL -600 SECOND)")
+					->where("CAST(NOW() AS TIME) BETWEEN CAST('08:00:00' AS TIME) AND CAST('23:30:00' AS TIME)")
+					->order_by('date desc')->limit(1);
+				$rs = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				
 				$is = $rs->result();
 
 				if(!empty($is)) {
@@ -73,9 +74,8 @@ The temperature should be max: ".$max."° and min: ".$min."°";
 							$email['to']	= $row->email;	
 							$this->mmail->sendEmail($email);
 						}
-						$qu = "UPDATE sensors_alarm SET lastalarm = NOW() WHERE id_sensor = ".$val['id_sensor'];
-						$ru = $this->db->query($qu) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));	
-
+						$this->db->set('lastalarm', "NOW()", FALSE)->where('id_sensor', $val['id_sensor']);
+						$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 					}
 				}
 			}

@@ -38,8 +38,8 @@ class Cameras extends CI_Controller {
 
 		$url = array();
 
-		$req = "SELECT * FROM cameras WHERE id_bu = ".$this->session->userdata('bu_id');
-		$res = $this->db->query($req);
+		$this->db->from('cameras')->where('id_bu', $this->session->userdata('bu_id'));
+		$res = $this->db->get();
 		$row = $res->result();
 		$i = 1;
 		foreach ($row as $key => $var) {

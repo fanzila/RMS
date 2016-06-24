@@ -9,9 +9,9 @@
 		<? if(!empty($results)) { ?>
 		<? foreach ($results as $news_item): ?>
 			<?  
-		$get = "SELECT u.username,nc.status, nc.date_confirmed FROM news_confirm AS nc JOIN users AS u ON nc.id_user = u.id WHERE nc.id_news = $news_item->news_id";
-		$res = $this->db->query($get) or die($this->mysqli->error);
-		$ret = $res->result_array();
+			$this->db->select('u.username, nc.status, nc.date_confirmed')->from('news_confirm as nc')->join('users as u', 'nc.id_user = u.id')->where('nc.id_news', $news_item->news_id);
+			$res = $this->db->get() or die($this->mysqli->error);
+			$ret = $res->result_array();
 		?>
 		<li data-role="list-divider"><?php echo $news_item->title; ?> - <?php echo $news_item->date; ?> | <?php echo $news_item->username; ?> | <?php echo $news_item->name; ?> | 
 			<a href="#popupBasic_<?=$news_item->id?>" data-rel="popup">View confirmations</a>
