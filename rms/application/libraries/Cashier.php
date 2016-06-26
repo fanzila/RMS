@@ -16,7 +16,7 @@ class Cashier {
 		$debug = false;
 		
 		//get sales product
-		$CI->db->select('sri.quantity as quantity', 'sr.period_id as period_id', 'sri.product as product')->from('sales_receipt as sr')->join('sales_receiptitem as sri', 'sri.receipt = sr.id')->where('sri.product', $id)->where('sr.id_bu', $id_bu)->where('sr.done', 0)->where('sr.date_closed' !=0000-00-00)->where('sr.canceled', 0);
+		$CI->db->select('sri.quantity as quantity', 'sr.period_id as period_id', 'sri.product as product')->from('sales_receipt as sr')->join('sales_receiptitem as sri', 'sri.receipt = sr.id')->where('sri.product', $id)->where('sr.id_bu', $id_bu)->where('sr.done', 0)->where('sr.date_closed' != '0000-00-00')->where('sr.canceled', 0);
 		$r_sp = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 		$row_sp = $r_sp->result_array();
