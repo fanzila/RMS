@@ -64,7 +64,7 @@ class Cashier {
 
 			foreach ($res_mapping as $mapping) {	
 				if($sales > 0) {
-				 	$CI->db->set('qtty', qtty-($sales*$mapping[coef]))->set('last_update_pos', "NOW()", FALSE)->where('id_product', $mapping[id_product])->where('id_bu', $id_bu);
+				 	$CI->db->set('qtty', qtty-($sales*$mapping['coef']))->set('last_update_pos', "NOW()", FALSE)->where('id_product', $mapping['id_product'])->where('id_bu', $id_bu);
 					$CI->db->update('products_stock', array('qtty', 'last_update_pos'));
 					$CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			
