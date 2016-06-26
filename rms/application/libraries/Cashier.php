@@ -16,7 +16,7 @@ class Cashier {
 		$debug = false;
 		
 		//get sales product
-		$CI->db->select('sri.quantity as quantity', 'sr.period_id as period_id', 'sri.product as product')->from('sales_receipt as sr')->join('sales_receiptitem as sri', 'sri.receipt = sr.id')->where('sri.product', $id)->where('sr.id_bu', $id_bu)->where('sr.done', 0)->where('sr.date_closed' != '0000-00-00')->where('sr.canceled', 0);
+		$CI->db->select('sri.quantity as quantity', 'sr.period_id as period_id', 'sri.product as product')->from('sales_receipt as sr')->join('sales_receiptitem as sri', 'sri.receipt = sr.id')->where('sri.product', $id)->where('sr.id_bu', $id_bu)->where('sr.done', 0)->where('sr.date_closed !=', '0000-00-00')->where('sr.canceled', 0);
 		$r_sp = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 		$row_sp = $r_sp->result_array();
@@ -27,7 +27,7 @@ class Cashier {
 		}
 
 		//get productaddon
-		$CI->db->select('sria.quantity as quantity', 'sr.period_id as period_id', 'sp.id_pos as product')->from('sales_productaddon as spa')->join('sales_receiptitemaddon AS sria', 'sria.productaddon = spa.id_pos')->join('sales_receiptitem AS sri', 'sri.id = sria.receiptitem')->join('sales_receipt as sr', 'sr.id = sri.receipt')->join('sales_product as sp', 'sp.id_pos = spa.id_pos_product')->where('spa.id_pos_product', $id)->where('sr.done', 0)->where('sr.id_bu', $id_bu)->where('sr.date_closed' !=0000-00-00)->where('sr.canceled', 0);
+		$CI->db->select('sria.quantity as quantity', 'sr.period_id as period_id', 'sp.id_pos as product')->from('sales_productaddon as spa')->join('sales_receiptitemaddon AS sria', 'sria.productaddon = spa.id_pos')->join('sales_receiptitem AS sri', 'sri.id = sria.receiptitem')->join('sales_receipt as sr', 'sr.id = sri.receipt')->join('sales_product as sp', 'sp.id_pos = spa.id_pos_product')->where('spa.id_pos_product', $id)->where('sr.done', 0)->where('sr.id_bu', $id_bu)->where('sr.date_closed  != ','0000-00-00')->where('sr.canceled', 0);
 		
 		$r_spa = $CI->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_spa = $r_spa->result_array();
@@ -73,7 +73,7 @@ class Cashier {
 			}
 		}
 
-		$CI->db->set('done', 1)->where('date_closed' !=0000-00-00)->where('id_bu', $id_bu);
+		$CI->db->set('done', 1)->where('date_closed !=', '0000-00-00')->where('id_bu', $id_bu);
 		$CI->db->update('sales_receipt', 'done') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$CI->db->trans_commit() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' && COMMIT for BU: $id_bu"); 
