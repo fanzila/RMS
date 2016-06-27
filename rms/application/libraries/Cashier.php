@@ -284,11 +284,15 @@ class Cashier {
 			
 			$result_la = $db->query("select DATE_CREATED as la FROM RECEIPT ORDER BY DATE_CREATED DESC LIMIT 1");
 			$res['la'] = $result_la ->fetchArray(SQLITE3_ASSOC);
+
+			$date = new DateTime($res['la']['la']);
+			$date->add(new DateInterval('PT1H'));
+			$time_la = $date->format('Y-m-d H:i:s');
 			
 			$result_ct = $db->query("select count(*) AS ct FROM RECEIPT");
 			$res['ct'] = $result_ct ->fetchArray(SQLITE3_ASSOC);
 			
-			$resu = $CI->db->query("UPDATE turnover SET last='".$res['la']['la']."', num='".$res['ct']['ct']."', amount='".$res['to']['SUM(AMOUNT_PAID)']."', id_bu = $param[id_bu]");
+			$resu = $CI->db->query("UPDATE turnover SET last='".$time_la."', num='".$res['ct']['ct']."', amount='".$res['to']['SUM(AMOUNT_PAID)']."', id_bu = $param[id_bu]");
 			break;
 			
 			case 'getMovements':

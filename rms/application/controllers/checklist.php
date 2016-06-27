@@ -22,15 +22,16 @@ class Checklist extends CI_Controller {
 	{
 
 		parent::__construct();
-		$this->load->library('hmw');		
-		$this->hmw->keyLogin();
+		$this->load->library('hmw');
+		$this->load->library('mmail');
+		$this->load->database();
 	}
 
 	public function index()
 	{
-		$this->load->database();
+		$this->hmw->keyLogin();
 		$id_bu = $this->session->all_userdata()['bu_id'];
-		
+
 		$msg = null;
 		$form = $this->input->post();
 		if(isset($form)) {
@@ -45,7 +46,7 @@ class Checklist extends CI_Controller {
 		$this->db->select('name, id')->from('checklists')->where('active',1)->where('id_bu', $id_bu)->order_by('order asc');
 		$checklist_res =  $this->db->get();
 		$checklists = $checklist_res->result_array();
-		
+
 		$data = array(
 			'msg'			=> $msg,
 			'keylogin'		=> $this->session->userdata('keylogin'),	
@@ -57,12 +58,13 @@ class Checklist extends CI_Controller {
 		$this->load->view('checklist/header');
 		$this->load->view('checklist/checklist',$data);
 		$this->load->view('checklist/footer');
-		
+
 	}
 
 	public function viewCklPreviousTasks()
 	{		
 
+		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
 
@@ -80,12 +82,12 @@ class Checklist extends CI_Controller {
 		$this->load->view('checklist/header');
 		$this->load->view('checklist/checklist_prev',$data);
 		$this->load->view('checklist/footer');
-		
+
 	}
 
 	public function viewCklTasks($id_ckl, $load = null)
 	{		
-
+		$this->hmw->keyLogin();
 		$form = null;
 		$checklist_rec_id = null;
 		$id_bu =  $this->session->all_userdata()['bu_id'];
@@ -100,19 +102,19 @@ class Checklist extends CI_Controller {
 		}
 
 		$this->db->select('name, id')->from('checklists')->where('id', $id_ckl)->order_by('order asc');
-	 	$checklist_res = $this->db->get();
+		$checklist_res = $this->db->get();
 		$checklists = $checklist_res->row();
 
 		if($id_ckl == 2 OR $id_ckl == 3 OR $id_ckl == 4) {
 			$this->db->select('name, id, comment, priority, day_month_num, day_week_num')->from('checklist_tasks')->where('active', 1)->where('id_checklist', $id_ckl)->order_by('order asc');
-		 	$checklist_task_res = $this->db->get();
+			$checklist_task_res = $this->db->get();
 			$checklist_tasks = $checklist_task_res->result_array();
 		}
 
 		$this->db->select('id, first_name, last_name')->from('users')->where('active', 1)->order_by('first_name asc');
 		$users_res = $this->db->get() or die($this->mysqli->error);
 		$users = $users_res->result_array();
-		
+
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
@@ -121,7 +123,7 @@ class Checklist extends CI_Controller {
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
-		
+
 		$data = array(
 			'checklists'			=> $checklist_tasks,
 			'checklists_name'		=> $checklists->name,
@@ -142,12 +144,11 @@ class Checklist extends CI_Controller {
 
 	private function saveTasks() {
 
-		$this->load->library('mmail');
 		$srl = serialize($this->input->post());
 		$checklist_rec_id = $this->input->post('checklist_rec_id');
 		$checklist_name = $this->input->post('checklist_name');
 		$bu_name =  $this->session->all_userdata()['bu_name'];
-		
+
 		$date = date('Y-m-d H:i:s'); 
 
 		//get checklist BU, then manager2 + admin email of this BU
@@ -209,17 +210,71 @@ class Checklist extends CI_Controller {
 
 
 		$email['msg'] = $msg;
-		
+
 		foreach ($query->result() as $row) {
 			$email['to']	= $row->email;	
 			$this->mmail->sendEmail($email);
 		}
-		
+
 		if(!$req) {
 			echo $this->db->error;
 			return false;
 		}
 		return true;
+	}
+
+	//20 12 * * * cd /var/www/hank/rms/rms && php index.php checklist clicCheck 3 1 > /dev/null 2>&1
+	//30 23 * * * cd /var/www/hank/rms/rms && php index.php checklist clicCheck 4 1 > /dev/null 2>&1
+	public function clicCheck($id, $id_bu)
+	{
+
+		if($this->input->is_cli_request()) {
+
+			$this->db->select('checklists.name AS cname, bus.name AS bname');
+			$this->db->join('bus', 'checklists.id_bu = bus.id', 'left');
+			$this->db->where('checklists.id', $id);
+			$this->db->where('checklists.id_bu', $id_bu);
+			$query = $this->db->get("checklists");
+			$info = $query->result();
+
+			$msg = "WARINING! ".$info[0]->bname." No ".$info[0]->cname." checklist have been created!";
+
+			$this->db->select("DATE(date)")->from('checklist_records as cr')
+				->join('checklists as c','c.id = cr.id_checklist','left')
+				->where("DATE(`date`) = DATE(NOW())")
+				->where('cr.id_checklist', $id)
+				->where('c.id_bu', $id_bu);
+			$query	= $this->db->get();
+			$res 	= $query->result();
+
+			if(empty($res)) {	
+
+				//get checklist BU, then manager2 + admin email of this BU
+				$this->db->select('users.username, users.email, users.id');
+				$this->db->distinct('users.username');
+				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+				$this->db->join('users_groups', 'users.id = users_groups.user_id');
+				$this->db->where('users.active', 1);
+				$this->db->where_in('users_groups.group_id', array(1,4));
+				$this->db->where('users_bus.bu_id', $id_bu);
+				$query = $this->db->get("users");
+
+				$email['subject'] 	= $msg;
+				$email['msg'] 		= $msg;
+
+				foreach ($query->result() as $row) {
+					$email['to']	= $row->email;	
+					$this->mmail->sendEmail($email);
+				}
+				$this->hmw->sendNotif($msg, $id_bu);
+			}
+			return;
+		} else { 
+			echo "Access refused.";
+			return; 
+		}
+
+
 	}
 
 }
