@@ -13,7 +13,7 @@ class Cashier {
 		$CI->load->database();
 		$qtty = 0;
 		$debug = false;
-		
+
 		//get sales product
 		$q_sp = "SELECT sri.quantity AS quantity, sr.period_id as period_id, sri.product AS product
 			FROM sales_receipt AS sr
@@ -23,7 +23,6 @@ class Cashier {
 			AND sr.done = 0 
 			AND sr.date_closed != '0000-00-00' 
 			AND sr.canceled = 0";
-			
 			
 		$r_sp = $CI->db->query($q_sp) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$row_sp = $r_sp->result_array();
@@ -276,6 +275,20 @@ class Cashier {
 					$resu = $CI->db->query($sqlu);
 				}
 			}
+			break;
+			
+			case 'updateTurnover':
+			$res 	= array();
+			$result_to = $db->query("select SUM(AMOUNT_PAID) FROM RECEIPT");
+			$res['to'] = $result_to ->fetchArray(SQLITE3_ASSOC);
+			
+			$result_la = $db->query("select DATE_CREATED as la FROM RECEIPT ORDER BY DATE_CREATED DESC LIMIT 1");
+			$res['la'] = $result_la ->fetchArray(SQLITE3_ASSOC);
+			
+			$result_ct = $db->query("select count(*) AS ct FROM RECEIPT");
+			$res['ct'] = $result_ct ->fetchArray(SQLITE3_ASSOC);
+			
+			$resu = $CI->db->query("UPDATE turnover SET last='".$res['la']['la']."', num='".$res['ct']['ct']."', amount='".$res['to']['SUM(AMOUNT_PAID)']."', id_bu = $param[id_bu]");
 			break;
 			
 			case 'getMovements':

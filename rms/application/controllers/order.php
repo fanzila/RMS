@@ -88,6 +88,7 @@ public function cliUpdateSales($id_bu) {
 		$param['id_bu'] = $id_bu;
 		if($this->input->is_cli_request()) {
 			$this->load->library("cashier");
+			$this->cashier->posInfo('updateTurnover', $param);	
 			$this->cashier->posInfo('salesUpdate', $param);	
 			$this->cashier->updateStock($id_bu);
 		} else { 
