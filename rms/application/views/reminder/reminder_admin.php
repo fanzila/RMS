@@ -15,14 +15,14 @@
 <body>
 	<div data-role="page">
 		<div data-role="header">
-			<a href="/admin/" data-ajax="false" data-icon="home">Home</a> <a href="/reminder_admin/index/1" data-ajax="false" data-icon="plus">Create</a>
+			<a href="/admin/" data-ajax="false" data-icon="home">Home</a> <a href="/reminder/admin/1" data-ajax="false" data-icon="plus">Create</a>
 			<h1>Reminder Admin | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<? 
 			if($create) {
 			?>
-									<form id="task" name="task" method="post" action="/reminder_admin/save">
+									<form id="task" name="task" method="post" action="/reminder/adminSave">
 										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 											<tr><td colspan="2" style="background-color: #fbf19e;">Task info</td></tr>
 											<tr>
@@ -184,7 +184,7 @@
 					<h2>ID: <?=$line->tid?> | <?=$line->ttask?></h2>
 					<ul data-role="listview" data-theme="d" data-divider-theme="d">
 						<li>
-							<form id="task<?=$line->tid?>" name="task<?=$line->tid?>" method="post" action="/reminder_admin/save">
+							<form id="task<?=$line->tid?>" name="task<?=$line->tid?>" method="post" action="/reminder/adminSave">
 								<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 									<tr><td colspan="2" style="background-color: #fbf19e;">Task info</td></tr>
 									<tr>

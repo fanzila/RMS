@@ -50,7 +50,7 @@
 			<li><a rel="external" data-ajax="false" href="/order/">Order</a></li>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/auth/">Staff management</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/auth/extra">Extra finder</a></li><? } ?>
-			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/reminder_admin/">Reminder tasks management</a></li>
+			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/reminder/admin">Reminder tasks management</a></li>
 			<hr />
 			<? } ?>
 			<?php if($l >= 1) { ?><li><a rel="external" data-ajax="false" href="http://drive.google.com/">Google Drive</a></li><? } ?>
