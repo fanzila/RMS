@@ -341,7 +341,7 @@ class Cashier {
 			$o = $r->result_object();
 			$ret = $o[0]->amount;
 			if(empty($ret)) $ret = 0;
-			return $ret;
+			return number_format($ret,  2, '.', ' ');
 			break;
 			
 			case 'safe_current_tr_num':
@@ -352,6 +352,13 @@ class Cashier {
 			if(empty($ret)) $ret = 0;
 			return $ret;
 			break;
+			
+			case 'current_monthly_turnover':
+			$q = "select SUM(amount_total) AS amount from sales_receipt WHERE (date_closed BETWEEN '".date('Y-m')."-01 00:00:00' AND '".date('Y-m-d')." 23:00:00') AND canceled != 1 AND id_bu = $id_bu";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_object();
+			$ret = number_format($o[0]->amount/1000,  2, '.', ' ');
+			return $ret."€";
 		}
 	}
 	//cd /var/www/hank/HMW/hmw && php index.php pos getClosureData

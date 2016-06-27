@@ -82,6 +82,7 @@ class webCashier extends CI_Controller {
 		$data['title'] 			= 'Cashier reports';
 		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount', $id_bu);
 		$data['safe_tr'] 		= $this->cashier->calc('safe_current_tr_num', $id_bu);
+		$data['monthly_to']		= $this->cashier->calc('current_monthly_turnover', $id_bu);
 		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat', $param_pos_info);		
 		$data['live_movements'] = $this->cashier->posInfo('getLiveMovements', $param_pos_info);
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];

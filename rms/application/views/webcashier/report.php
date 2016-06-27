@@ -5,7 +5,7 @@
 	</div>
 
 	<div data-role="content" data-theme="a">
-		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=$safe_cash?>€ |  Safe TR num: <?=$safe_tr?> </h4>
+		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=$safe_cash?>€ |  Safe TR num: <?=$safe_tr?> | Monthly TO: <?=$monthly_to?></h4>
 		<p>Daily Cashpad cash movements</p>
 		<ul data-role="listview" data-inset="true">
 		<? foreach ($live_movements as $lm):?>
