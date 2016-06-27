@@ -24,14 +24,17 @@ class Reminder extends CI_Controller {
 		parent::__construct();
 
 		$this->load->library('email');
+		$this->load->database();
+		$this->load->library('ion_auth');
 		$this->load->library('hmw');
-		$this->hmw->keyLogin();
+		$this->load->library('rmd');
+		
 	}
 
 	public function index($task_id = null, $view = null)
 	{		
-		$this->load->library('rmd');
-
+	
+		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
 		$msg = null;
@@ -90,7 +93,7 @@ class Reminder extends CI_Controller {
 	
 	public function log()
 	{
-		
+		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
 		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` WHERE t.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
@@ -105,5 +108,56 @@ class Reminder extends CI_Controller {
 		$data['username'] = $this->session->all_userdata()['identity'];
 			
 		$this->load->view('reminder/logs',$data);
+	}
+	
+	//cd /var/www/hank/rms/rms && php index.php reminder cliNotify 1
+	public function cliNotify($id_bu)
+	{
+		if($this->input->is_cli_request()) {
+
+			$tasks = $this->rmd->getTasks(null, null, $id_bu);
+			foreach ($tasks as $row) {
+
+				$now			= time();
+				$notif			= $this->getNotif($row->id);
+				$notif_start	= 0;
+				$notif_end		= 999999999999;
+				$interval		= 0;
+
+				if(isset($notif->id)) {
+					
+					
+					$notif_start	= strtotime(date('Y-m-d '.$notif->start));
+					$notif_end		= strtotime(date('Y-m-d '.$notif->end));
+					$notif_interval = $notif->interval;
+					$notif_last		= strtotime($notif->last);
+					$interval 		= $notif_last+$notif_interval;
+				}
+				
+				if($notif_start <= $now && $notif_end > $now && $interval < $now) {
+					$this->db->set('last', "NOW()", FALSE)->where('id_task', $row->id);
+					if(!$this->db->update('rmd_notif')) {
+						echo $this->db->error;
+						return false;
+					}
+				$this->hmw->sendNotif("Reminder: ".$row->task, $id_bu);	
+				
+				}
+			}
+
+			return;
+		} else { 
+			echo "Access refused.";
+			return; 
+		}
+
+
+	}
+	private function getNotif($id) {
+		$req = "SELECT * FROM rmd_notif WHERE id_task = $id LIMIT 1";
+		$res = $this->db->query($req);
+		$r = $res->result();
+		if(!empty($r[0])) return $r[0];
+		return false;
 	}
 }
