@@ -86,7 +86,7 @@ class Reminder_admin extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('reminder_admin',$data);
+		$this->load->view('reminder/reminder_admin',$data);
 	}
 
 }
