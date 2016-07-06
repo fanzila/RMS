@@ -5,7 +5,7 @@
 	</div>
 
 	<div data-role="content" data-theme="a">
-		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=$safe_cash?>€ |  Safe TR num: <?=$safe_tr?> | Monthly TO: <?=$monthly_to?></h4>
+		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=number_format($safe_cash,  2, '.', ' ')?>€ |  Safe TR num: <?=$safe_tr?> | Monthly TO: <?=number_format($monthly_to,  2, '.', ' ')?>€</h4>
 		<p>Daily Cashpad cash movements</p>
 		<ul data-role="listview" data-inset="true">
 		<? foreach ($live_movements as $lm):?>
@@ -29,7 +29,7 @@
 						<h3>Date: <?=$m['mov']['date']?></h3>
 						<h3>User: <?=$m['mov']['username']?> </h3>
 						<p>Comments: <?=$m['mov']['comment']?></p>
-						<p>Cashpad cash: <?=$m['mov']['pos_cash_amount']?>€ | Safe cash: <?=$m['mov']['safe_cash_amount']?>€ | Safe TR num: <?=$m['mov']['safe_tr_num']?></p>
+						<p>Cashpad cash: <?=$m['mov']['pos_cash_amount']?>€ | Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_num']?></p>
 			
 						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 							<tr style="background-color: #fbf19e;">

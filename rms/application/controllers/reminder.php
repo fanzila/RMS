@@ -47,7 +47,6 @@ class Reminder extends CI_Controller {
 				$ex = explode('_', $key);
 				if($ex[0] == 'task') {
 					$req_up 	= "UPDATE rmd_meta SET `start` = NOW() WHERE id_task = ". $ex[1]." AND ( repeat_year ='' AND repeat_month  ='' AND repeat_day  ='' AND repeat_week  ='' AND repeat_weekday  ='')";
-					echo $req_up;
 					$req_ins	= "INSERT INTO rmd_log SET `id_user` = ".$form['user'].", `date` = NOW(), `id_task` = ".$ex[1];
 
 					if(!$this->db->query($req_up)) {
@@ -93,7 +92,19 @@ class Reminder extends CI_Controller {
 	
 	public function log()
 	{
-		$this->hmw->keyLogin();
+
+		if (!$this->ion_auth->logged_in())
+		{
+			redirect('auth/login');
+		}
+
+		$group_info = $this->ion_auth_model->get_users_groups()->result();
+		if ($group_info[0]->level < 2)
+		{
+			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
+			redirect('/admin/');
+		}
+		
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
 		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` WHERE t.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
@@ -111,7 +122,19 @@ class Reminder extends CI_Controller {
 	}
 
 	public function adminSave()
-	{		
+	{	
+		if (!$this->ion_auth->logged_in())
+		{
+			redirect('auth/login');
+		}
+
+		$group_info = $this->ion_auth_model->get_users_groups()->result();
+		if ($group_info[0]->level < 2)
+		{
+			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
+			redirect('/admin/');
+		}
+			
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
 		$data = $this->input->post();
@@ -156,6 +179,7 @@ class Reminder extends CI_Controller {
 	
 	public function admin($create = null)
 	{		
+		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$this->load->library('rmd');
 

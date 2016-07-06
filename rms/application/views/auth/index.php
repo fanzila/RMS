@@ -11,7 +11,11 @@
 
 <h1>Staff</h1>
 
-<div id="infoMessage"><?php echo $message; ?></div>
+<?if($message) { ?>
+	<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
+		<li style="background-color: #e8ffb9;"><?=$message?></li>
+	</ul>
+<? } ?>
 
 <table cellpadding=0 cellspacing=10>
 	<tr>
