@@ -249,9 +249,6 @@ public function confirm($key = null) {
 		$data = array('status' => 'NOK');	
 	}
 
-	$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-	$data['username'] = $this->session->all_userdata()['identity'];
-
 	$this->load->view('order/confirm',$data);
 }
 
