@@ -45,6 +45,7 @@
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://www.cashpad.net">Reporting Cashpad</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://secure.tiime.fr">Tiime (compta)</a></li><? } ?>
 			<li><a rel="external" data-ajax="false" href="/checklist/">Checklist</a></li>
+			<li><a rel="external" data-ajax="false" href="/reduction/">Reduction</a></li>
 			<li><a rel="external" data-ajax="false" href="/reminder/">Reminder</a></li>
 			<li><a rel="external" data-ajax="false" href="/sensors/">Sensors</a></li>
 			<li><a rel="external" data-ajax="false" href="/order/">Order</a></li>
@@ -71,6 +72,7 @@
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsStock/">productsStock</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsCategory/">productsCategory</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/products/">products</a></li><? } ?>
+			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/reduction/">reductions</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/">suppliersCategory</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">suppliers</a></li>
 			<hr />
