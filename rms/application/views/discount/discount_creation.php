@@ -24,7 +24,7 @@
 				echo form_open("discount/save", $attributes);?>
 					<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 						<tr>
-							<td colspan="2" style="background-color: #fbf19e;">Reduction information :
+							<td colspan="2" style="background-color: #fbf19e;">Discount information :
 							</td>
 						</tr>
 						<tr>
@@ -84,7 +84,7 @@
 											}
 										}
 									}).done(function(data) {
-											//OK
+											window.location = /discount/;
 									    }).fail(function(data) {
 									    	alert('WARNING! ERROR at saving!');
 									    });

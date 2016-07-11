@@ -165,11 +165,11 @@ class Crud extends CI_Controller {
 		$this->_example_output($output); 
     }
     
-    public function reduction()
+    public function discount()
     {
         $this->grocery_crud->columns('id', 'nature', 'date','id_user', 'id_bu');
         $this->grocery_crud->required_fields('id','nature','id_user','date');
-        $this->grocery_crud->set_table('reduc_tasks');
+        $this->grocery_crud->set_table('discount');
         $output = $this->grocery_crud->render();
  
         $this->_example_output($output); 
