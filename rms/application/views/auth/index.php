@@ -17,24 +17,28 @@
 	</ul>
 <? } ?>
 
-<table cellpadding=0 cellspacing=10>
-	<tr>
-		<th><?php echo 'Username';?></th>
-		<th><?php echo lang('index_fname_th');?></th>
-		<th><?php echo lang('index_lname_th');?></th>
-		<th><?php echo lang('index_email_th');?></th>
-		<th>Phone</th>
-		<th>Comment</th>
-		<? if($users['0']->groups['0']->level >= 2) { ?>
-		<th><?php echo lang('index_groups_th');?></th>
-		<th>BU</th>
-		<? if($users['0']->groups['0']->level >= 3) { ?>
-		<th><?php echo lang('index_status_th');?> | Delete</th>
-		<? } ?>
-		<th><?php echo lang('index_action_th');?></th>
-		<? } ?>
-	</tr>
-	<?php foreach ($users as $user):?>
+
+<table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
+	<thead>
+		<tr class="ui-bar-d">
+			<th>Username</th>
+			<th data-priority="1"><?php echo lang('index_fname_th');?></th>
+			<th data-priority="3"><?php echo lang('index_lname_th');?></th>
+			<th data-priority="4"><?php echo lang('index_email_th');?></th>
+			<th data-priority="5">Phone</th>
+			<th data-priority="6">Comment</th>
+				<? if($users['0']->groups['0']->level >= 2) { ?>
+			<th><?php echo lang('index_groups_th');?></th>
+			<th>BU</th>
+				<? if($users['0']->groups['0']->level >= 3) { ?>
+			<th data-priority="6"><?php echo lang('index_status_th');?> | Delete</th>
+				<? } ?>
+			<th data-priority="5"><?php echo lang('index_action_th');?></th>
+				<? } ?>
+		</tr>
+	</thead>
+	<tbody>
+		<?php foreach ($users as $user):?>
 		<? $bgcolor = ""; if($user->active == 0) $bgcolor = "#aaaaaa"; ?>
 		<tr style="background-color: <?=$bgcolor?>">
 			<td><?php echo htmlspecialchars($user->username,ENT_QUOTES,'UTF-8');?></td>
@@ -60,6 +64,7 @@
 			<? } ?>
 		</tr>
 	<?php endforeach;?>
+	</tbody>
 </table>
 
 	</div><!-- /content -->

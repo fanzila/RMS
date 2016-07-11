@@ -28,18 +28,28 @@
 	</div>
 	<div data-role="content" data-theme="a">
 <h3>Current temperature</h3>
-<table style='padding:10px;'>
-	<tr><td style='padding:6px; border: 3px solid silver;' width='30%'>Device</td><td style='padding:6px; border: 3px solid silver;' width='10%'>Temp</td><td width='30%' style='padding:6px; border: 3px solid silver;'>Last check</td><td width='30%' style='padding:6px; border: 3px solid silver;'>Last alarm</td></tr>
-<? 
-foreach ($current as $key => $val) { ?>
-	<tr>
-		<td style='padding:6px; border: 1px solid silver;'><?=$val['name']?></td>
-		<td style='padding:6px; border: 1px solid silver;'><?=$val['temp']+$val['correction']?></td>
-		<td style='padding:6px; border: 1px solid silver;'><?=$val['date']?></td>
-		<td style='padding:6px; border: 1px solid silver;'><?=$val['lastalarm']?></td>
-	</tr>
-<? } ?>
+
+<table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
+		<thead>
+			<tr class="ui-bar-d">
+				<th>Device</th>
+				<th>Temp</th>
+				<th data-priority="1">Last check</th>
+				<th data-priority="3">Last alarm</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?foreach ($current as $key => $val) { ?>
+				<tr>
+					<td><?=$val['name']?></td>
+					<td><?=$val['temp']+$val['correction']?></td>
+					<td><?=$val['date']?></td>
+					<td><?=$val['lastalarm']?></td>
+				</tr>
+			<? } ?>
+		</tbody>
 </table>
+
 <!--
 <hr>
 <h3>Last 12h</h3>

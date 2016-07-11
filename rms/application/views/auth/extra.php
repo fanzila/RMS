@@ -11,19 +11,20 @@
 <? if(!empty($message)) { ?><div id="infoMessage" style="background-color: #d4e0d4; padding:20px; margin:20px;"><?php echo $message; ?></div><? } ?>
 
 <form id="tasks" name="tasks" method="post" action="/auth/extra">
-	
-<table cellpadding="0">
-	<tr>
-		<th><?php echo 'Username';?></th>
-		<th><?php echo lang('index_email_th');?></th>
-		<th>Phone</th>
-		<th>Comment</th>
+<table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
+	<thead>
+		<th>Username</th>
+		<th data-priority="5"><?php echo lang('index_email_th');?></th>
+		<th data-priority="4">Phone</th>
+		<th data-priority="3">Comment</th>
 		<th>BU</th>
 		<th>Group</th>
 		<th>SMS</th>
 		<th>Email</th>
-	</tr>
-	<?php foreach ($users as $user):?>
+		</tr>
+	</thead>
+	<tbody>
+		<?php foreach ($users as $user):?>
 		<? if($user->active == 1) { ?>
 		<tr>
 			<td style="border:1px solid #ccc; padding:5px;"><?php echo htmlspecialchars($user->username,ENT_QUOTES,'UTF-8');?></td>
@@ -45,6 +46,7 @@
 		</tr>
 		<? } ?>
 	<?php endforeach;?>
+	</tbody>
 </table>
 <p>Message: </p>
 <textarea name="txtmessage">Hello! Je cherche quelqu'un/e pour le/s shift/s suivant/s :
