@@ -11,9 +11,9 @@
 <? if(!empty($message)) { ?><div id="infoMessage" style="background-color: #d4e0d4; padding:20px; margin:20px;"><?php echo $message; ?></div><? } ?>
 
 <form id="tasks" name="tasks" method="post" action="/auth/extra">
-<table data-role="table" id="table-custom-2" data-mode="columntoggle" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-btn-text="Hide/Unhide" data-column-popup-theme="a">
+<table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
 	<thead>
-		<th><?php echo 'Username';?></th>
+		<th>Username</th>
 		<th data-priority="5"><?php echo lang('index_email_th');?></th>
 		<th data-priority="4">Phone</th>
 		<th data-priority="3">Comment</th>

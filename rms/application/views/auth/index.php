@@ -18,7 +18,7 @@
 <? } ?>
 
 
-<table data-role="table" id="table-custom-2" data-mode="columntoggle" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-btn-text="Hide/Unhide" data-column-popup-theme="a">
+<table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
 	<thead>
 		<tr class="ui-bar-d">
 			<th>Username</th>
