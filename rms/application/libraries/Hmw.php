@@ -90,7 +90,6 @@ class Hmw {
 			$CI->db->set('current_bu_id', $id_bu)->where('id', $id_user);
 		 	$CI->db->update('users');
 		}
-		$res = $CI->db->query($req);
 	}
 	
 	public function getUsers() 
