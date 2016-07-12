@@ -37,7 +37,9 @@ class Discount extends CI_Controller {
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
 		$msg = null;
-		
+		if($task_id=="create") {
+				$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
+		}
 
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');

@@ -21,6 +21,11 @@
 			if(!$create)?>
 				<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
 					<ul>
+			<?		if($msg) { ?>
+			<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
+				<?=$msg?> Thanks! Have A Nice Karma!"
+			</div>
+		<? } ?>
 						<li style="list-style-type: none;">
 							<? if($view != 'all') { ?><input type="button" rel="external" data-inline="true" data-theme="a" data-ajax="false" name="view" onClick="javascript:location.href='/discount/index/view/all'" value="All discounts"><? } ?>
 							<? if($view == 'all') { ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/discount/'" value="Today's discounts"><? } ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/discount/log'" value="Log">

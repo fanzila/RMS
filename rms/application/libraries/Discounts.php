@@ -36,7 +36,7 @@ class Discounts extends CI_Controller  {
 			->from('discount as T')
 			->where('T.deleted', 0)
 			->where('T.id_bu', $id_bu);
-		if($task_id > 0) $CI->db->where('id_task', $task_id);
+		if($task_id > 0) $CI->db->where('id', $task_id);
 		
 		if($view != 'all') $CI->db->where("DATE(T.date) = DATE(NOW())");
 		
