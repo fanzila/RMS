@@ -32,7 +32,8 @@
 					</thead>
 					<tbody>
 						<?php foreach ($discounts as $line):?>
-						<tr>
+						<? $bgcolor = ""; if($line->used == "yes") $bgcolor = "#aaaaaa"; ?>
+						<tr style="background-color: <?=$bgcolor?>">
 							<td><?=$line->id_discount?></td>
 							<td><?=$line->event_type?></td>
 							<td><?=$line->date?></td>

@@ -16,7 +16,7 @@ class Discounts extends CI_Controller  {
 	{
 		$CI =& get_instance();
 		
-		$CI->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel')
+		$CI->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
 			->from('discount as T')
 			->where('T.id_bu', $id_bu)
 			->where('T.deleted', 0)
@@ -32,7 +32,7 @@ class Discounts extends CI_Controller  {
 		
 		date_default_timezone_set('Europe/Paris');
 
-		$CI->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel')
+		$CI->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
 			->from('discount as T')
 			->where('T.deleted', 0)
 			->where('T.id_bu', $id_bu);

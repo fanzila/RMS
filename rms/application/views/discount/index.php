@@ -36,6 +36,7 @@
 							<ul data-role="listview" data-inset="true" data-filter="true">
 						<?}
 						foreach ($discount as $line) {
+							if($line->tused == "no"){
 							$bkg_color	= '';
 							$font_color = "#4a7b50";	?>
 						<div data-role="collapsible">
@@ -63,6 +64,13 @@
 														</option>
 													<? } ?>
 												?></select>
+												</td>
+												<td>
+													<label for="used" id="label">Use it: (yes or no)</label>
+													<select id="used" name="used">
+														<option value="no">No</option>
+														<option value="yes">Yes</option>
+													</select>
 												</td>
 											</tr>
 										</table>
@@ -119,7 +127,7 @@
 								</li>
 							</ul>
 						</div>
-						<?} ?>
+						<?} }?>
 						</ul>
 						</ul>
 				</div><!-- /theme -->

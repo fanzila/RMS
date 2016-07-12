@@ -72,7 +72,7 @@ class Discount extends CI_Controller {
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
-		$req 	= "SELECT l.`date`,l.`nature`,u.`username`, l.`id_discount`, l.`event_type`  FROM discount_log l JOIN `users` u ON u.id = l.`id_user` WHERE l.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
+		$req 	= "SELECT l.`date`,l.`nature`,u.`username`, l.`id_discount`, l.`event_type`, l.`used`  FROM discount_log l JOIN `users` u ON u.id = l.`id_user` WHERE l.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
 		
 		$res 	= $this->db->query($req) or die($this->mysqli->error);
 		$discounts 	= $res->result();
@@ -92,9 +92,9 @@ class Discount extends CI_Controller {
 		
 		$data = $this->input->post();
 		$sqlt = "UPDATE ";
-		$sqle = " WHERE id = $data[id]";
+		$sqle = ", used = '$data[used]' WHERE id = $data[id]";
 		$sqln = " WHERE id_discount = $data[id]";
-		$event= ", event_type = 'update'";
+		$event= ", event_type = 'update', used = '$data[used]'";
 		$reponse = 'ok';
 						
 		if($data['id'] == 'create') {
