@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>HANK - Reduction</title>
+	<title>HANK - Discount</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="msapplication-tap-highlight" content="no" />
@@ -14,42 +14,44 @@
 <body>
 	<div data-role="page">
 		<div data-role="header">
-			<a href="/admin/" data-ajax="false" data-icon="home">Home</a> <a href="/reduction/creation/1" data-ajax="false" data-icon="plus">Create</a>
-			<h1>Reduction | <?=$bu_name?> | <?=$username?></h1>
+			<a href="/admin/" data-ajax="false" data-icon="home">Home</a> <a href="/discount/creation/1" data-ajax="false" data-icon="plus">Create</a>
+			<h1>Discount | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 			<div data-role="content"><?
 			if(!$create)?>
 				<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
 					<ul>
+			<?		if($msg) { ?>
+			<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
+				<?=$msg?> Thanks! Have A Nice Karma!"
+			</div>
+		<? } ?>
 						<li style="list-style-type: none;">
-							<? if($view != 'all') { ?><input type="button" rel="external" data-inline="true" data-theme="a" data-ajax="false" name="view" onClick="javascript:location.href='/reduction/index/view/all'" value="All reductions"><? } ?>
-							<? if($view == 'all') { ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/reduction/'" value="Today's reductions"><? } ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/reduction/log'" value="Log">
+							<? if($view != 'all') { ?><input type="button" rel="external" data-inline="true" data-theme="a" data-ajax="false" name="view" onClick="javascript:location.href='/discount/index/view/all'" value="All discounts"><? } ?>
+							<? if($view == 'all') { ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/discount/'" value="Today's discounts"><? } ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/discount/log'" value="Log">
 						</li>
-						<? if(empty($reduc)) { ?>
-						<br />Great! No reduction today!<br /><br /> 	
+						<? if(empty($discount)) { ?>
+						<br />Great! No discount today!<br /><br /> 	
 						<? }else{ ?>
 							<ul data-role="listview" data-inset="true" data-filter="true">
 						<?}
-						foreach ($reduc as $line) {
+						foreach ($discount as $line) {
 							$bkg_color	= '';
 							$font_color = "#4a7b50";	?>
 						<div data-role="collapsible">
 							<h2><?=$line->tnature?> | <font size="2" color="<?=$font_color?>"><i>last modification : <?=date($line->tdate);?></i></h2>
 							<ul data-role="listview" data-theme="d" data-divider-theme="d">
 								<li>
-									<!--?$attributes = array('id' => "reduc=".$line->tid, 'name' => "reduc=".$line->tid);
-									echo form_open("reduction/save", $attributes);?-->
-									<form id="reduc<?=$line->tid?>" name="reduc<?=$line->tid?>" method="post" action="/reduction/save">
+									<form id="discount<?=$line->tid?>" name="discount<?=$line->tid?>" method="post" action="/discount/save">
 										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 											<tr>
 												<td colspan="2" style="background-color: #fbf19e;">
-													Reduction Info :
+													Discount Info :
 												</td>
 											</tr>
 											<tr>
 												<td>
-													<label for="nature-<?=$line->tid?>" id="label-<?=$line->tid?>">Actual Nature : <?=stripslashes($line->tnature)?><br/>New Nature :</label>
-													<input id="nature-<?=$line->tid?>" type="text" name="nature" value="">
+													<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>">
 												</td>
 											</tr>
 											<tr>
@@ -73,7 +75,7 @@
 									<script>
 										$(document).ready(function() {
 
-											var $form = $('#reduc<?=$line->tid?>');
+											var $form = $('#discount<?=$line->tid?>');
 
 											$('#sub<?=$line->tid?>').on('click', function() {
 												$form.trigger('submit');
@@ -86,7 +88,7 @@
 												var user = $('#user-<?=$line->tid?>').val();
 
 												if(nature == '') {
-													alert('Please fill reduction nature');
+													alert('Please fill discount nature');
 												} else if(user == 0){
 													alert('Please indicate who you are.');
 												}else {
@@ -125,6 +127,6 @@
 	</div><!-- /page -->
 	<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
 	<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
-	<script src="/public/reduc.js" type="text/javascript"></script>
+	<script src="/public/discount.js" type="text/javascript"></script>
 </body>
 </html>

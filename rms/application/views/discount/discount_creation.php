@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>HANK - Reduction Admin</title>
+	<title>HANK - Discount Creation tool</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="msapplication-tap-highlight" content="no" />
@@ -14,17 +14,17 @@
 <body>
 	<div data-role="page">
 		<div data-role="header">
-			<a href="/admin/" data-ajax="false" data-icon="home">Home</a><a href="/reduction/" data-ajax="false" data-icon="back">Back</a>
-			<h1>Reduction Creation tool | <?=$bu_name?> | <?=$username?></h1>
+			<a href="/admin/" data-ajax="false" data-icon="home">Home</a><a href="/discount/" data-ajax="false" data-icon="back">Back</a>
+			<h1>Discount Creation tool | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content"><?
 			if($create) {
 			?>
-				<?$attributes = array('id' => "reduc", 'name' => "reduc");
-				echo form_open("reduction/save", $attributes);?>
+				<?$attributes = array('id' => "discount", 'name' => "discount");
+				echo form_open("discount/save", $attributes);?>
 					<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 						<tr>
-							<td colspan="2" style="background-color: #fbf19e;">Reduction information :
+							<td colspan="2" style="background-color: #fbf19e;">Discount information :
 							</td>
 						</tr>
 						<tr>
@@ -54,7 +54,7 @@
 						<script>
 						$(document).ready(function() {
 
-							var $form = $('#reduc');
+							var $form = $('#discount');
 
 							$('#sub').on('click', function() {
 								$form.trigger('submit');
@@ -67,7 +67,7 @@
 								var user = $('#user').val();
 
 								if(nature == '') {
-									alert('Please fill reduction nature.');
+									alert('Please fill discount nature.');
 								} else if(user == 0){
 									alert('Please indicate who you are.');
 								}else {
@@ -78,13 +78,13 @@
 										dataType: 'json',
 										success: function(json) {
 											if(json.reponse == 'ok') {
-												alert('Saved!');
+												//alert('Saved!');
 											} else {
 												alert('WARNING! ERROR at saving : '+ json.reponse);
 											}
 										}
 									}).done(function(data) {
-											//OK
+											window.location = "/discount/index/create";
 									    }).fail(function(data) {
 									    	alert('WARNING! ERROR at saving!');
 									    });
@@ -99,6 +99,6 @@
 			</div><!-- /page -->
 			<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
 			<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
-			<script src="/public/reduc.js" type="text/javascript"></script>
+			<script src="/public/discount.js" type="text/javascript"></script>
 		</body>
 		</html>

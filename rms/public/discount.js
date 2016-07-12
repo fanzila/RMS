@@ -1,6 +1,6 @@
 function validator() {
 	
-	var validator = $( "#reduc" ).validate({	
+	var validator = $( "#discount" ).validate({	
 		submitHandler: function(form) {	
 		},
 		errorClass: "form-invalid",
@@ -33,7 +33,7 @@ function validator() {
 	if(errors < 1) {
 		$("div.error").hide();
 		if(window.confirm('Do you swear on your honor that you really have done the things that you\'re signing on ?')) {
-			document.reduc.submit();
+			document.discount.submit();
 		}
 	}
 }

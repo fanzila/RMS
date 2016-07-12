@@ -45,10 +45,10 @@
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://www.cashpad.net">Reporting Cashpad</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="https://secure.tiime.fr">Tiime (compta)</a></li><? } ?>
 			<li><a rel="external" data-ajax="false" href="/checklist/">Checklist</a></li>
-			<li><a rel="external" data-ajax="false" href="/reduction/">Reduction</a></li>
+			<li><a rel="external" data-ajax="false" href="/discount/">Discount</a></li>
+			<li><a rel="external" data-ajax="false" href="/order/">Order</a></li>
 			<li><a rel="external" data-ajax="false" href="/reminder/">Reminder</a></li>
 			<li><a rel="external" data-ajax="false" href="/sensors/">Sensors</a></li>
-			<li><a rel="external" data-ajax="false" href="/order/">Order</a></li>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/auth/">Staff management</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/auth/extra">Extra finder</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/reminder/admin">Reminder tasks management</a></li>
@@ -62,19 +62,19 @@
 			<? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/cklChecklistTasks/">Checklists tasks management</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/cklChecklists/">Checklists management</a></li><? } ?>
+			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/discount/">Discounts</a></li><? } ?>
+			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/products/">Products</a></li><? } ?>
+			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsUnit/">ProductsUnit</a></li><? } ?>
+			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsStock/">ProductsStock</a></li><? } ?>
+			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsCategory/">ProductsCategory</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/rmdMeta/">Reminder task management</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/rmdNotif/">Reminder notification management</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/rmdTasks/">Reminder management</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/sensors/">Sensors management</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/sensorsAlarm/">Sensors alarm management</a></li><? } ?>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/sensors/">Sensors management</a></li><? } ?>
-			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsUnit/">productsUnit</a></li><? } ?>
-			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsStock/">productsStock</a></li><? } ?>
-			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/productsCategory/">productsCategory</a></li><? } ?>
-			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/products/">products</a></li><? } ?>
-			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/reduction/">reductions</a></li><? } ?>
-			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/">suppliersCategory</a></li><? } ?>
-			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">suppliers</a></li>
+			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">Suppliers</a></li>
+			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/">SuppliersCategory</a></li><? } ?>
 			<hr />
 			<li><a rel="external" data-ajax="false" href="/reporting/">Reporting CA pasteque (old)</a></li>
 			<? } ?>

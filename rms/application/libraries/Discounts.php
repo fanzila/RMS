@@ -1,6 +1,6 @@
 <?php
 
-class Reduc extends CI_Controller  {
+class Discounts extends CI_Controller  {
 
 	public function __construct()
 	{
@@ -17,7 +17,7 @@ class Reduc extends CI_Controller  {
 		$CI =& get_instance();
 		
 		$CI->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel')
-			->from('reduc_tasks as T')
+			->from('discount as T')
 			->where('T.id_bu', $id_bu)
 			->where('T.deleted', 0)
 			->order_by('T.date desc');
@@ -33,10 +33,10 @@ class Reduc extends CI_Controller  {
 		date_default_timezone_set('Europe/Paris');
 
 		$CI->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel')
-			->from('reduc_tasks as T')
+			->from('discount as T')
 			->where('T.deleted', 0)
 			->where('T.id_bu', $id_bu);
-		if($task_id > 0) $CI->db->where('id_task', $task_id);
+		if($task_id > 0) $CI->db->where('id', $task_id);
 		
 		if($view != 'all') $CI->db->where("DATE(T.date) = DATE(NOW())");
 		

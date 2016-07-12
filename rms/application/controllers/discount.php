@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Reduction extends CI_Controller {
+class Discount extends CI_Controller {
 
 	/**
 	* Index Page for this controller.
@@ -27,7 +27,7 @@ class Reduction extends CI_Controller {
 		$this->load->database();
 		$this->load->library('ion_auth');
 		$this->load->library('hmw');
-		$this->load->library('reduc');
+		$this->load->library('discounts');
 		
 	}
 
@@ -37,7 +37,9 @@ class Reduction extends CI_Controller {
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
 		$msg = null;
-		
+		if($task_id=="create") {
+				$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
+		}
 
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
@@ -48,10 +50,10 @@ class Reduction extends CI_Controller {
 		$query = $this->db->get("users");
 		$users = $query->result();
 
-		$reduc = $this->reduc->getPromo($task_id, $view, $id_bu);
+		$discount = $this->discounts->getPromo($task_id, $view, $id_bu);
 
 		$data = array(
-			'reduc'		=> $reduc,
+			'discount'		=> $discount,
 			'create'	=> 0,
 			'users'		=> $users,
 			'msg'		=> $msg,
@@ -62,7 +64,7 @@ class Reduction extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('reduction/index',$data);
+		$this->load->view('discount/index',$data);
 	}
 	
 	public function log()
@@ -70,18 +72,18 @@ class Reduction extends CI_Controller {
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
-		$req 	= "SELECT l.`date`,l.`nature`,u.`username`, l.`id_reduc`, l.`event_type`  FROM reduc_log l JOIN `users` u ON u.id = l.`id_user` WHERE l.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
+		$req 	= "SELECT l.`date`,l.`nature`,u.`username`, l.`id_discount`, l.`event_type`  FROM discount_log l JOIN `users` u ON u.id = l.`id_user` WHERE l.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
 		
 		$res 	= $this->db->query($req) or die($this->mysqli->error);
-		$reducs 	= $res->result();
+		$discounts 	= $res->result();
 		$data = array(
-			'reducs'	=> $reducs
+			'discounts'	=> $discounts
 			);
 			
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 			
-		$this->load->view('reduction/logs',$data);
+		$this->load->view('discount/logs',$data);
 	}
 
 	public function save()
@@ -91,8 +93,8 @@ class Reduction extends CI_Controller {
 		$data = $this->input->post();
 		$sqlt = "UPDATE ";
 		$sqle = " WHERE id = $data[id]";
-		$sqln = " WHERE id_reduc = $data[id]";
-		$event= 1;
+		$sqln = " WHERE id_discount = $data[id]";
+		$event= ", event_type = 'update'";
 		$reponse = 'ok';
 						
 		if($data['id'] == 'create') {
@@ -100,17 +102,17 @@ class Reduction extends CI_Controller {
 			$sqle = "";
 		}
 
-		$sql_tasks = "$sqlt reduc_tasks SET `nature` = '".addslashes($data['nature'])."', id_user = $data[user], `date` = NOW(), id_bu = $id_bu $sqle ";
+		$sql_tasks = "$sqlt discount SET `nature` = '".addslashes($data['nature'])."', id_user = $data[user], `date` = NOW(), id_bu = $id_bu $sqle ";
 		$this->db->trans_start();
 			if (!$this->db->query($sql_tasks)) {
 				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}			
 			if($data['id'] == 'create') { 	
 				$data['id'] = $this->db->insert_id();
-				$sqln = " , id_reduc = $data[id]";
-				$event = 0;
+				$sqln = " , id_discount = $data[id]";
+				$event = "";
 			}
-			$sql_log = "INSERT INTO reduc_log SET `id_reduc` = '".$data['id']."', `id_user` = '".$data['user']."', `nature` = '".$data['nature']."', event_type = $event, id_bu = $id_bu, `date` = NOW()";
+			$sql_log = "INSERT INTO discount_log SET `id_discount` = '".$data['id']."', `id_user` = '".$data['user']."', `nature` = '".$data['nature']."', id_bu = $id_bu, `date` = NOW() $event";
 			if(!$this->db->query($sql_log)) {
 				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
@@ -122,7 +124,6 @@ class Reduction extends CI_Controller {
 	public function creation($create = null)
 	{		
 		$id_bu =  $this->session->all_userdata()['bu_id'];
-		$this->load->library('reduc');
 
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
@@ -133,16 +134,16 @@ class Reduction extends CI_Controller {
 		$query = $this->db->get("users");
 		$users = $query->result();
 
-		$reduc = $this->reduc->getAllPromo($id_bu);
+		$discount = $this->discounts->getAllPromo($id_bu);
 		$data = array(
 			'create'	=> $create,
 			'users'		=> $users,
-			'reduc'		=> $reduc
+			'discount'		=> $discount
 			);
 		
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('reduction/reduction_creation',$data);
+		$this->load->view('discount/discount_creation',$data);
 	}
 }
