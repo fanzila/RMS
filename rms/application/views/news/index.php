@@ -9,7 +9,7 @@
 		<? if(!empty($results)) { ?>
 		<? foreach ($results as $news_item): ?>
 			<?  
-			$this->db->select('u.username, nc.status, nc.date_confirmed')->from('news_confirm as nc')->join('users as u', 'nc.id_user = u.id')->where('nc.id_news', $news_item->news_id);
+			$this->db->select('u.username, nc.status, nc.date_confirmed, ne.id')->from('news_confirm as nc')->join('users as u', 'nc.id_user = u.id')->join('news as ne', 'nc.id_news = ne.id')->where('nc.id_news', $news_item->news_id);
 			$res = $this->db->get() or die($this->mysqli->error);
 			$ret = $res->result_array();
 		?>
