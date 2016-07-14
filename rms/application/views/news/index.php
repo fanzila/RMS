@@ -1,61 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>HANK - <?=$title?></title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="msapplication-tap-highlight" content="no" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
-	
-	<script type="text/javascript" src="/public/tinymce/tinymce.min.js"></script>
-	
-	<script type="text/javascript">
-        tinymce.init({
-            selector: "#text",
-		    plugins: "textcolor hr fullscreen",
-		    toolbar: "forecolor backcolor fullscreen",
-			removed_menuitems: 'newdocument'
-        });
-		
-    </script>
-
-	<style>
-
+<style>
 .ui-btn-icon-notext,
 .ui-header button.ui-btn.ui-btn-icon-notext,
 .ui-footer button.ui-btn.ui-btn-icon-notext {
-	padding: 0;
-	width: 1.75em;
-	height: 1.75em;
-	text-indent: -9999px;
 	white-space: normal !important;
 }
 .ui-checkbox .ui-btn,
 .ui-radio .ui-btn {
-	margin: 0;
-	text-align: left;
 	white-space: normal; /* normal + ellipsis doesn't work on label. Issue #1419. */
-	z-index: 2;
 }
 /* We set the rules for the span as well to fix an issue on Chrome with text-overflow ellipsis for the button in combination with text-align center. */
 .ui-select .ui-btn > span:not(.ui-li-count) {
-	display: block;
-	text-overflow: ellipsis;
-	overflow: hidden !important;
 	white-space: normal;
 }
 .ui-listview > .ui-li-static,
 .ui-listview > .ui-li-divider,
 .ui-listview > li > a.ui-btn {
-	margin: 0;
-	display: block;
-	position: relative;
-	text-align: left;
-	text-overflow: ellipsis;
-	overflow: hidden;
 	white-space: normal;
 }
 .ui-listview > li h1,
@@ -64,39 +23,15 @@
 .ui-listview > li h4,
 .ui-listview > li h5,
 .ui-listview > li h6 {
-	font-size: 1em;
-	font-weight: bold;
-	display: block;
-	margin: .45em 0;
-	text-overflow: ellipsis;
-	overflow: hidden;
 	white-space: normal;
 }
 .ui-listview > li p {
-	font-size: .75em;
-	font-weight: normal;
-	display: block;
-	margin: .6em 0;
-	text-overflow: ellipsis;
-	overflow: hidden;
 	white-space: normal;
 }
 .ui-slider-switch .ui-slider-label {
-	position: absolute;
-	text-align: center;
-	width: 100%;
-	overflow: hidden;
-	font-size: 16px;
-	top: 0;
-	line-height: 2;
-	min-height: 100%;
 	white-space: normal;
-	cursor: pointer;
 }
-
-
-	</style>
-</head>
+</style>
 <div data-role="page" data-theme="a">
 	<div data-role="header">
 		<? if(!$keylogin) { ?><a href="/admin/" data-role="button" data-inline="true" data-ajax="false" data-icon="home">Home</a><? } ?>

@@ -1,58 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>HANK - Discount</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="msapplication-tap-highlight" content="no" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
-	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
-</head>
 <body>
-	<div data-role="page">
+		<div data-role="page">
 		<div data-role="header">
 			<a href="/admin/" data-ajax="false" data-icon="home">Home</a> <a href="/discount/creation/1" data-ajax="false" data-icon="plus">Create</a>
-			<h1>Discount | <?=$bu_name?> | <?=$username?></h1>
+			<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
 		</div>
-			<div data-role="content"><?
-			if(!$create)?>
-				<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
-			<?		if($msg) { ?>
+		<div data-role="content"><?
+	if(!$create)?>
+	<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
+		<?		if($msg) { ?>
 			<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
 				<?=$msg?> Thanks! Have A Nice Karma!"
 			</div>
-		<? } ?>
-						<li style="list-style-type: none;">
-							<? if($view != 'all') { ?><input type="button" rel="external" data-inline="true" data-theme="a" data-ajax="false" name="view" onClick="javascript:location.href='/discount/index/view/all'" value="All discounts"><? } ?>
-							<? if($view == 'all') { ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/discount/'" value="Today's discounts"><? } ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/discount/log'" value="Log">
-						</li>
-						<? if(empty($discount)) { ?>
-						<br />Great! No discount today!<br /><br /> 	
-						<? }else{ ?>
-							<ul data-role="" data-inset="false" data-filter="true" data-filter-placeholder="Filter discounts">
+			<? } ?>
+			<li style="list-style-type: none;">
+				<input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/discount/log'" value="Log">
+			</li>
+			<? if(empty($discount)) { ?>
+				<br />Great! No discount today!<br /><br /> 	
+				<? } else { ?>
+					<ul data-role="" data-inset="false" data-filter="true" data-filter-placeholder="Filter discounts">
 						<?}
-						foreach ($discount as $line) {
-							if($line->tused == "no"){
+					foreach ($discount as $line) {
+						if($line->tused == false){
 							$bkg_color	= '';
 							$font_color = "#4a7b50";	?>
-						<div data-role="collapsible">
-							<h2><?=$line->tnature?> | <font size="2" color="<?=$font_color?>"><i>last modification : <?=date($line->tdate);?></i></font></h2>
-							
-									<form id="discount<?=$line->tid?>" name="discount<?=$line->tid?>" method="post" action="/discount/save">
-										Discount Info :
-										<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>">
-										<select style="background-color:#a1ff7c" id="used-<?=$line->tid?>" name="used" data-inline="true" data-theme="a" required>
-											<option value="no">Use it? : No</option>
-											<option value="yes">Use it? : Yes</option>
-										</select>
-										<select style="background-color:#a1ff7c" name="user" id="user-<?=$line->tid?>" data-inline="true" data-theme="a" required>
-											<option value="0">User</option>
-											<?foreach ($users as $user) {?>
-												<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
-												</option>
+							<li>
+								<div data-role="collapsible">
+								<h4><?=$line->tclient?> | <?=$line->tnature?> | <font size="2" color="<?=$font_color?>"><i>last modification : <?=date($line->tdate);?></i></font></h4>
+
+								<form id="discount<?=$line->tid?>" name="discount<?=$line->tid?>" method="post" action="/discount/save">
+									<label for="client-<?=$line->tid?>" id="label">Client:</label>
+									<input id="client-<?=$line->tid?>" type="text" name="client" value="<?=stripslashes($line->tclient)?>">
+
+									<label for="nature-<?=$line->tid?>" id="label">Nature:</label>
+									<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>">
+
+									<select style="background-color:#a1ff7c" id="used-<?=$line->tid?>" name="used" data-inline="true" data-theme="a" required>
+										<option value="0">Used: NO</option>
+										<option value="1" selected>Used: YES</option>
+									</select>
+									<select style="background-color:#a1ff7c" name="user" id="user-<?=$line->tid?>" data-inline="true" data-theme="a" required>
+										<option value="0">User</option>
+										<?foreach ($users as $user) {?>
+											<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
+											</option>
 											<? } ?>
 										</select>
 
@@ -62,58 +53,57 @@
 
 									</form>
 									<script>
-										$(document).ready(function() {
+									$(document).ready(function() {
 
-											var $form = $('#discount<?=$line->tid?>');
+										var $form = $('#discount<?=$line->tid?>');
 
-											$('#sub<?=$line->tid?>').on('click', function() {
-												$form.trigger('submit');
-												return false;
-											});
-
-											$form.on('submit', function() {
-												
-												var nature = $('#nature-<?=$line->tid?>').val();
-												var user = $('#user-<?=$line->tid?>').val();
-												var used = $('#used-<?=$line->tid?>').val();
-
-												if(nature == '') {
-													alert('Please fill discount nature');
-												} else if(user == 0){
-													alert('Please indicate who you are.');
-												}else {
-													$.ajax({
-														url: $(this).attr('action'),
-														type: $(this).attr('method'),
-														data: $(this).serialize(),
-														dataType: 'json',
-														success: function(json) {
-															if(json.reponse == 'ok') {
-																alert('Saved!');
-															} else {
-																alert('WARNING! ERROR at saving : '+ json.reponse);
-															}
-														}
-													}).done(function(data) {
-														location.reload(true);
-													    }).fail(function(data) {
-													    	alert('WARNING! ERROR at saving!');
-													    });
-												}
-												return false;
-											});
+										$('#sub<?=$line->tid?>').on('click', function() {
+											$form.trigger('submit');
+											return false;
 										});
+
+										$form.on('submit', function() {
+
+											var nature = $('#nature-<?=$line->tid?>').val();
+											var client = $('#client-<?=$line->tid?>').val();
+											var user = $('#user-<?=$line->tid?>').val();
+											var used = $('#used-<?=$line->tid?>').val();
+
+											if(nature == '') {
+												alert('Please fill discount nature.');
+											} else if(client == ''){
+												alert('Please fill discount client.');
+											} else if(user == 0){
+												alert('Please indicate who you are.');
+											}else {
+												$.ajax({
+													url: $(this).attr('action'),
+													type: $(this).attr('method'),
+													data: $(this).serialize(),
+													dataType: 'json',
+													success: function(json) {
+														if(json.reponse == 'ok') {
+															alert('Saved!');
+														} else {
+															alert('WARNING! ERROR at saving : '+ json.reponse);
+														}
+													}
+												}).done(function(data) {
+													location.reload(true);
+												}).fail(function(data) {
+													alert('WARNING! ERROR at saving!');
+												});
+											}
+											return false;
+										});
+									});
 
 									</script>
 
-						</div>
-						<?} }?>
-						</ul>
-				</div><!-- /theme -->
-		</div><!-- /content -->
-	</div><!-- /page -->
-	<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
-	<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
-	<script src="/public/discount.js" type="text/javascript"></script>
-</body>
-</html>
+								</div>
+							</li>
+								<?} }?>
+							</ul>
+						</div><!-- /theme -->
+					</div><!-- /content -->
+				</div><!-- /page -->

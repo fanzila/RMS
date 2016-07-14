@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>HANK - Discount</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="msapplication-tap-highlight" content="no" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
-</head>
 <body>
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/discount/" data-ajax="false" data-icon="back">Back</a>
-			<h1>Discount logs | <?=$bu_name?> | <?=$username?></h1>
+			<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
@@ -27,20 +15,22 @@
 						<th>Event</th>
 						<th>date</th>
 						<th>User</th>
+						<th>Client</th>
 						<th>Nature</th>
 						<th>Used?</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php foreach ($discounts as $line):?>
-						<? $bgcolor = ""; if($line->used == "yes") $bgcolor = "#aaaaaa"; ?>
+						<? $bgcolor = ""; if($line->used == true) $bgcolor = "#eeeeee"; ?>
 						<tr style="background-color: <?=$bgcolor?>">
 							<td>ID <?=$line->id_discount?></td>
 							<td><?=$line->event_type?></td>
 							<td><?=$line->date?></td>
 							<td><?=$line->username?></td>
+							<td><?=$line->client?></td>
 							<td><?=$line->nature?></td>
-							<td><?=$line->used?></td>
+							<td><? if($line->used) { echo "YES"; } else { echo "NO"; } ?></td>
 						</tr>
 					<?php endforeach;?>
 					</tbody>
@@ -50,9 +40,3 @@
 			</div><!-- /theme -->
 		</div><!-- /content -->
 	</div><!-- /page -->
-	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
-	<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
-	<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
-	<script src="/public/rmd.js" type="text/javascript"></script>
-</body>
-</html>
