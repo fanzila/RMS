@@ -72,7 +72,7 @@ class Discount extends CI_Controller {
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
-		$req 	= "SELECT l.`date`,l.`nature`,u.`username`, l.`id_discount`, l.`event_type`  FROM discount_log l JOIN `users` u ON u.id = l.`id_user` WHERE l.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
+		$req 	= "SELECT l.`date`,l.`nature`,u.`username`, l.`id_discount`, l.`event_type`, l.`used`  FROM discount_log l JOIN `users` u ON u.id = l.`id_user` WHERE l.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
 		
 		$res 	= $this->db->query($req) or die($this->mysqli->error);
 		$discounts 	= $res->result();
@@ -91,26 +91,33 @@ class Discount extends CI_Controller {
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
 		$data = $this->input->post();
-		$sqlt = "UPDATE ";
-		$sqle = " WHERE id = $data[id]";
+		
 		$sqln = " WHERE id_discount = $data[id]";
-		$event= ", event_type = 'update'";
 		$reponse = 'ok';
 						
 		if($data['id'] == 'create') {
 			$sqlt = "INSERT INTO ";
 			$sqle = "";
+		}else{
+			$sqlt = "UPDATE ";
+			$sqle = ", used = '$data[used]' WHERE id = $data[id]";
 		}
 
 		$sql_tasks = "$sqlt discount SET `nature` = '".addslashes($data['nature'])."', id_user = $data[user], `date` = NOW(), id_bu = $id_bu $sqle ";
 		$this->db->trans_start();
 			if (!$this->db->query($sql_tasks)) {
 				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-			}			
-			if($data['id'] == 'create') { 	
+			}
+			if($data['id'] == 'create') {	
 				$data['id'] = $this->db->insert_id();
 				$sqln = " , id_discount = $data[id]";
 				$event = "";
+			}else{
+				$event= ", event_type = 'update', used = '$data[used]'";
+				$sql_used = "UPDATE discount_log SET `used` = '$data[used]' WHERE id_bu = $id_bu AND id_discount = '".$data['id']."'";
+				if(!$this->db->query($sql_used)) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
 			}
 			$sql_log = "INSERT INTO discount_log SET `id_discount` = '".$data['id']."', `id_user` = '".$data['user']."', `nature` = '".$data['nature']."', id_bu = $id_bu, `date` = NOW() $event";
 			if(!$this->db->query($sql_log)) {

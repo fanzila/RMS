@@ -20,7 +20,6 @@
 			<div data-role="content"><?
 			if(!$create)?>
 				<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
-					<ul>
 			<?		if($msg) { ?>
 			<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
 				<?=$msg?> Thanks! Have A Nice Karma!"
@@ -33,39 +32,29 @@
 						<? if(empty($discount)) { ?>
 						<br />Great! No discount today!<br /><br /> 	
 						<? }else{ ?>
-							<ul data-role="listview" data-inset="true" data-filter="true">
+							<ul data-role="" data-inset="false" data-filter="true" data-filter-placeholder="Filter discounts">
 						<?}
 						foreach ($discount as $line) {
+							if($line->tused == "no"){
 							$bkg_color	= '';
 							$font_color = "#4a7b50";	?>
 						<div data-role="collapsible">
-							<h2><?=$line->tnature?> | <font size="2" color="<?=$font_color?>"><i>last modification : <?=date($line->tdate);?></i></h2>
-							<ul data-role="listview" data-theme="d" data-divider-theme="d">
-								<li>
+							<h2><?=$line->tnature?> | <font size="2" color="<?=$font_color?>"><i>last modification : <?=date($line->tdate);?></i></font></h2>
+							
 									<form id="discount<?=$line->tid?>" name="discount<?=$line->tid?>" method="post" action="/discount/save">
-										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-											<tr>
-												<td colspan="2" style="background-color: #fbf19e;">
-													Discount Info :
-												</td>
-											</tr>
-											<tr>
-												<td>
-													<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>">
-												</td>
-											</tr>
-											<tr>
-												<td>
-												<select style="background-color:#a1ff7c" name="user" id="user-<?=$line->tid?>" data-inline="true" data-theme="a" required>
-													<option value="0">User</option>
-													<?foreach ($users as $user) {?>
-														<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
-														</option>
-													<? } ?>
-												?></select>
-												</td>
-											</tr>
-										</table>
+										Discount Info :
+										<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>">
+										<select style="background-color:#a1ff7c" id="used-<?=$line->tid?>" name="used" data-inline="true" data-theme="a" required>
+											<option value="no">Use it? : No</option>
+											<option value="yes">Use it? : Yes</option>
+										</select>
+										<select style="background-color:#a1ff7c" name="user" id="user-<?=$line->tid?>" data-inline="true" data-theme="a" required>
+											<option value="0">User</option>
+											<?foreach ($users as $user) {?>
+												<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
+												</option>
+											<? } ?>
+										</select>
 
 										<input type="hidden" name="id" value="<?=$line->tid?>">
 										<?$attributes = array('id' => "sub=".$line->tid, 'name' => "submit");
@@ -86,6 +75,7 @@
 												
 												var nature = $('#nature-<?=$line->tid?>').val();
 												var user = $('#user-<?=$line->tid?>').val();
+												var used = $('#used-<?=$line->tid?>').val();
 
 												if(nature == '') {
 													alert('Please fill discount nature');
@@ -105,7 +95,7 @@
 															}
 														}
 													}).done(function(data) {
-															//OK
+														location.reload(true);
 													    }).fail(function(data) {
 													    	alert('WARNING! ERROR at saving!');
 													    });
@@ -116,11 +106,8 @@
 
 									</script>
 
-								</li>
-							</ul>
 						</div>
-						<?} ?>
-						</ul>
+						<?} }?>
 						</ul>
 				</div><!-- /theme -->
 		</div><!-- /content -->

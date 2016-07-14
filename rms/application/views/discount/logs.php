@@ -21,15 +21,32 @@
 			<? if(empty($discounts)) { ?>
 			<br />Nothing done so far...<br />
 			<? } ?>	
-				<ul data-role="listview" data-inset="true" data-filter="true">
-				<?
-					foreach ($discounts as $line) {	
-				?>
-					<li>
-						<label> ID : <?=$line->id_discount?> | <?=$line->event_type?> | <?=$line->date?> | <?=$line->username?> | <?=$line->nature?></label>
-					</li>
-					<? } ?>
-				</ul>
+				<table data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
+					<thead>
+						<th></th>
+						<th>Event</th>
+						<th>date</th>
+						<th>User</th>
+						<th>Nature</th>
+						<th>Used?</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($discounts as $line):?>
+						<? $bgcolor = ""; if($line->used == "yes") $bgcolor = "#aaaaaa"; ?>
+						<tr style="background-color: <?=$bgcolor?>">
+							<td>ID <?=$line->id_discount?></td>
+							<td><?=$line->event_type?></td>
+							<td><?=$line->date?></td>
+							<td><?=$line->username?></td>
+							<td><?=$line->nature?></td>
+							<td><?=$line->used?></td>
+						</tr>
+					<?php endforeach;?>
+					</tbody>
+				</table>
+
+				
 			</div><!-- /theme -->
 		</div><!-- /content -->
 	</div><!-- /page -->
