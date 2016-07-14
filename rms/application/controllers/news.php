@@ -23,7 +23,7 @@ class News extends CI_Controller {
 
 		$data['title'] = $data['news_item']['title'];
 
-		$this->load->view('jq_header', $data);
+		//$this->load->view('jq_header', $data);
 		$this->load->view('news/view', $data);
 		$this->load->view('jq_footer');
 	}
