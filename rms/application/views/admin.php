@@ -34,7 +34,6 @@
 			<?php if($l >= 2) { ?>
 			<li><a href="/cameras/">Cams</a></li>
 			<?php if($l >= 3) { ?><!--<li><a rel="external" data-ajax="false" href="https://hmw.hankrestaurant.com/">Ajaxterm hank1</a></li> --><? } ?>
-			<hr />
 			<? } ?>
 			<li><a rel="external" data-ajax="false" href="/news">News</a></li> 
 			<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/">Shiftplanning</a></li>
@@ -74,7 +73,6 @@
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/sensors/">Sensors management</a></li><? } ?>
 			<?php if($l >= 2) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliers/">Suppliers</a></li>
 			<?php if($l >= 3) { ?><li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/">SuppliersCategory</a></li><? } ?>
-			<hr />
 			<li><a rel="external" data-ajax="false" href="/reporting/">Reporting CA pasteque (old)</a></li>
 			<? } ?>
 		</ul>
