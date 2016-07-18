@@ -24,7 +24,7 @@
 						if($line->tused == false){
 							$bkg_color	= '';
 							$font_color = "#4a7b50";	?>
-							<li>
+							
 								<div data-role="collapsible">
 								<h4><?=$line->tclient?> | <?=$line->tnature?> | <font size="2" color="<?=$font_color?>"><i>last modification : <?=date($line->tdate);?></i></font></h4>
 
@@ -101,7 +101,7 @@
 									</script>
 
 								</div>
-							</li>
+							
 								<?} }?>
 							</ul>
 						</div><!-- /theme -->
