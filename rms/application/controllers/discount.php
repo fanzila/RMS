@@ -83,10 +83,13 @@ class Discount extends CI_Controller {
 	{
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
-		
-		$req 	= "SELECT l.`date`,l.`client`, l.`nature`,u.`username`, l.`id_discount`, l.`event_type`, l.`used`  FROM discount_log l JOIN `users` u ON u.id = l.`id_user` WHERE l.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
-		
-		$res 	= $this->db->query($req) or die($this->mysqli->error);
+		$this->db->select('l.date, l.client, l.nature,u.username, l.id_discount, l.event_type, l.used')
+			->from('discount_log as l')
+			->join('users as u', 'u.id = l.id_user')
+			->where('l.id_bu', $id_bu)
+			->order_by('l.date desc')
+			->limit(100);
+		$res 	= $this->db->get() or die($this->mysqli->error);
 		$discounts 	= $res->result();
 		$data = array(
 			'discounts'	=> $discounts
@@ -106,35 +109,43 @@ class Discount extends CI_Controller {
 		$id_bu =  $this->session->all_userdata()['bu_id'];		
 		$data = $this->input->post();
 		
-		$sqln = " WHERE id_discount = $data[id]";
 		$reponse = 'ok';
-						
-		if($data['id'] == 'create') {
-			$sqlt = "INSERT INTO ";
-			$sqle = "";
-		} else {
-			$sqlt = "UPDATE ";
-			$sqle = ", used = '$data[used]' WHERE id = $data[id]";
-		}
+		$this->db->set('nature', $data['nature']);
+		$this->db->set('client', $data['client']);
+		$this->db->set('id_user', $data['user']);
+		$this->db->set('date', date('Y-m-d H:i:s'));
+		$this->db->set('id_bu', $id_bu);
 
-		$sql_tasks = "$sqlt discount SET `nature` = '".addslashes($data['nature'])."', `client` = '".addslashes($data['client'])."', id_user = $data[user], `date` = NOW(), id_bu = $id_bu $sqle ";
 		$this->db->trans_start();
-			if (!$this->db->query($sql_tasks)) {
-				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-			}
-			if($data['id'] == 'create') {	
-				$data['id'] = $this->db->insert_id();
-				$sqln = " , id_discount = $data[id]";
-				$event = "";
-			}else{
-				$event= ", event_type = 'update', used = '$data[used]'";
-				$sql_used = "UPDATE discount_log SET `used` = '$data[used]' WHERE id_bu = $id_bu AND id_discount = '".$data['id']."'";
-				if(!$this->db->query($sql_used)) {
+			if($data['id'] == 'create') {
+				if(!$this->db->insert('discount')) {
 					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}
+				$data['id'] = $this->db->insert_id();
+			} else {
+				$this->db->set('used', $data['used']);
+				$this->db->where('id', $data['id']);
+				if (!$this->db->update('discount')) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+					$this->db->set('used', $data['used']);
+				$this->db->where('id_bu', $id_bu);
+				$this->db->where('id_discount', $data['id']);
+				if(!$this->db->update('discount_log')) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+				$this->db->set('event_type', "update");
+				$this->db->set('used', $data['used']);
 			}
-			$sql_log = "INSERT INTO discount_log SET `id_discount` = '".$data['id']."', `id_user` = '".$data['user']."', `nature` = '".$data['nature']."', `client` = '".$data['client']."', id_bu = $id_bu, `date` = NOW() $event";
-			if(!$this->db->query($sql_log)) {
+
+			$this->db->set('id_discount', $data['id']);
+			$this->db->set('id_user', $data['user']);
+			$this->db->set('nature', $data['nature']);
+			$this->db->set('client', $data['client']);
+			$this->db->set('id_bu', $id_bu);
+			$this->db->set('date', date('Y-m-d H:i:s'));
+			
+			if(!$this->db->insert('discount_log')) {
 				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
 		$this->db->trans_complete();
