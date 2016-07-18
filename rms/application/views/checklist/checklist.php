@@ -4,15 +4,12 @@
 			<? if(!$keylogin) { ?><a href="/admin/" data-ajax="false" data-icon="home">Home</a><? } ?>
 			<h1>Checklist | <?=$bu_name?> | <?=$username?></h1>
 		</div>
-		
-		<?if($msg) { ?>
-			<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
-				<?=$msg?> Thanks! Have A Nice Karma!"
-			</div>
-		<? } ?>
-		
 		<div data-role="content">
-			
+			<?if($msg) { ?>
+				<div style="background-color: #d6f0d6; height:60px;" class="ui-body ui-body-a">	
+					<br /><?=$msg?> Thanks! Have A Nice Karma!"
+				</div>			
+			<? } ?>
 			<ul data-role="listview" data-inset="true" data-filter="true">
 						<?
 					foreach ($checklists as $var) {
