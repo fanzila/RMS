@@ -12,6 +12,8 @@
 	
 	<script type="text/javascript" src="/public/tinymce/tinymce.min.js"></script>
 	
+	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
+  
 	<script type="text/javascript">
         tinymce.init({
             selector: "#text",
