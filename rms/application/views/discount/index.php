@@ -1,7 +1,7 @@
 <body>
 		<div data-role="page">
 		<div data-role="header">
-			<a href="/admin/" data-ajax="false" data-icon="home">Home</a> <a href="/discount/creation/1" data-ajax="false" data-icon="plus">Create</a>
+			<? if(!$keylogin) { ?><a href="/admin/" data-ajax="false" data-icon="home">Home</a><?}?> <a href="/discount/creation/1" data-ajax="false" data-icon="plus">Create</a>
 			<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content"><?
@@ -26,18 +26,21 @@
 							$font_color = "#4a7b50";	?>
 							
 								<div data-role="collapsible">
-								<h4><?=$line->tclient?> | <?=$line->tnature?> | <font size="2" color="<?=$font_color?>"><i>last modification : <?=date($line->tdate);?></i></font></h4>
+								<h4><?=$line->tclient?> | <?=$line->treason?> | <?=$line->tnature?> | <font size="2" color="<?=$font_color?>"><i>last modification : <?=date($line->tdate);?></i></font></h4>
 
 								<form id="discount<?=$line->tid?>" name="discount<?=$line->tid?>" method="post" action="/discount/save">
 									<label for="client-<?=$line->tid?>" id="label">Client:</label>
 									<input id="client-<?=$line->tid?>" type="text" name="client" value="<?=stripslashes($line->tclient)?>">
+									
+									<label for="reason-<?=$line->tid?>" id="label">Reason:</label>
+									<input id="reason-<?=$line->tid?>" type="text" name="reason" value="<?=stripslashes($line->treason)?>">
 
 									<label for="nature-<?=$line->tid?>" id="label">Nature:</label>
 									<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>">
 
 									<select style="background-color:#a1ff7c" id="used-<?=$line->tid?>" name="used" data-inline="true" data-theme="a" required>
-										<option value="0">Used: NO</option>
-										<option value="1" selected>Used: YES</option>
+										<option value="0">Utiliser : NON</option>
+										<option value="1" selected>Utiliser : OUI</option>
 									</select>
 									<select style="background-color:#a1ff7c" name="user" id="user-<?=$line->tid?>" data-inline="true" data-theme="a" required>
 										<option value="0">User</option>
@@ -68,11 +71,14 @@
 											var client = $('#client-<?=$line->tid?>').val();
 											var user = $('#user-<?=$line->tid?>').val();
 											var used = $('#used-<?=$line->tid?>').val();
+											var reason = $('#reason-<?=$line->tid?>').val();
 
 											if(nature == '') {
 												alert('Please fill discount nature.');
 											} else if(client == ''){
 												alert('Please fill discount client.');
+											} else if(reason == ''){
+												alert('Please fill discount reason.');
 											} else if(user == 0){
 												alert('Please indicate who you are.');
 											}else {
