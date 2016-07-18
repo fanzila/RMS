@@ -54,8 +54,11 @@
 
 								var nature = $('#nature').val();
 								var user = $('#user').val();
+								var client = $('#client').val();
 
-								if(nature == '') {
+								if(client == '') {
+									alert('Please fill discount client.');
+								} else if(nature == '') {
 									alert('Please fill discount nature.');
 								} else if(user == 0){
 									alert('Please indicate who you are.');
