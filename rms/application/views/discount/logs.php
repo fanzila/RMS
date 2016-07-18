@@ -17,6 +17,7 @@
 						<th>User</th>
 						<th>Client</th>
 						<th>Nature</th>
+						<th>Reason</th>
 						<th>Used?</th>
 						</tr>
 					</thead>
@@ -30,6 +31,7 @@
 							<td><?=$line->username?></td>
 							<td><?=$line->client?></td>
 							<td><?=$line->nature?></td>
+							<td><?=$line->reason?></td>
 							<td><? if($line->used) { echo "YES"; } else { echo "NO"; } ?></td>
 						</tr>
 					<?php endforeach;?>

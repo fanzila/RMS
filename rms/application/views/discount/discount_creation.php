@@ -18,6 +18,8 @@
 							<td>
 								<label for="client" id="label">Client:</label>
 								<input id="client" type="text" name="client" value="">
+								<label for="reason" id="label">Reason:</label>
+								<input id="reason" type="text" name="reason" value="">
 								<label for="nature" id="label">Nature:</label>
 								<input id="nature" type="text" name="nature" value="">
 							</td>
@@ -55,9 +57,12 @@
 								var nature = $('#nature').val();
 								var user = $('#user').val();
 								var client = $('#client').val();
+								var reason = $('#reason').val();
 
 								if(client == '') {
 									alert('Please fill discount client.');
+								} else if(reason == '') {
+									alert('Please fill discount reason.');
 								} else if(nature == '') {
 									alert('Please fill discount nature.');
 								} else if(user == 0){

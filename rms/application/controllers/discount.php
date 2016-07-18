@@ -53,7 +53,7 @@ class Discount extends CI_Controller {
 
 		date_default_timezone_set('Europe/Paris');
 
-		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
+		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
 			->from('discount as T')
 			->where('T.deleted', 0)
 			->where('T.id_bu', $id_bu);
@@ -83,7 +83,7 @@ class Discount extends CI_Controller {
 	{
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
-		$this->db->select('l.date, l.client, l.nature,u.username, l.id_discount, l.event_type, l.used')
+		$this->db->select('l.date, l.client, l.reason, l.nature, u.username, l.id_discount, l.event_type, l.used')
 			->from('discount_log as l')
 			->join('users as u', 'u.id = l.id_user')
 			->where('l.id_bu', $id_bu)
@@ -112,6 +112,7 @@ class Discount extends CI_Controller {
 		$reponse = 'ok';
 		$this->db->set('nature', $data['nature']);
 		$this->db->set('client', $data['client']);
+		$this->db->set('reason', $data['reason']);
 		$this->db->set('id_user', $data['user']);
 		$this->db->set('date', date('Y-m-d H:i:s'));
 		$this->db->set('id_bu', $id_bu);
@@ -142,6 +143,7 @@ class Discount extends CI_Controller {
 			$this->db->set('id_user', $data['user']);
 			$this->db->set('nature', $data['nature']);
 			$this->db->set('client', $data['client']);
+			$this->db->set('reason', $data['reason']);
 			$this->db->set('id_bu', $id_bu);
 			$this->db->set('date', date('Y-m-d H:i:s'));
 			
