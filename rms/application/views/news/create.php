@@ -17,7 +17,7 @@
 			<?php echo validation_errors(); ?>
 
 		<?php 
-		$attributes = array('name' => 'news', 'id' => 'news');
+		$attributes = array('name' => 'news', 'id' => 'news', 'data-ajax' => 'false');
 		echo form_open('news/create', $attributes); ?>	
 
 		<label for="title">Title</label>

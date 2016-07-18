@@ -42,7 +42,6 @@ class Admin extends CI_Controller {
 			$this->hmw->updateUserBu($change_bu, $this->session->all_userdata()['user_id']); 
 			$this->session->set_userdata($session_data); 
 		}
-
 		$user = $this->ion_auth->user()->row();
 		$user_groups = $this->ion_auth->get_users_groups()->result();
 		$bus_list = $this->hmw->getBus(null, $user->id);

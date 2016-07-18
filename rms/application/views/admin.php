@@ -32,8 +32,7 @@
 			<ul data-role="listview" data-inset="true" data-filter="true">
 			<!-- Admin --> 
 			<?php if($l >= 2) { ?>
-			<li><a href="/cameras/">Cams</a></li> 
-			<li><a href="/cameras/index/1">Cams local</a></li>
+			<li><a href="/cameras/">Cams</a></li>
 			<?php if($l >= 3) { ?><!--<li><a rel="external" data-ajax="false" href="https://hmw.hankrestaurant.com/">Ajaxterm hank1</a></li> --><? } ?>
 			<hr />
 			<? } ?>

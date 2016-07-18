@@ -23,7 +23,7 @@ class News extends CI_Controller {
 
 		$data['title'] = $data['news_item']['title'];
 
-		//$this->load->view('jq_header', $data);
+		$this->load->view('jq_header', $data);
 		$this->load->view('news/view', $data);
 		$this->load->view('jq_footer');
 	}
@@ -113,15 +113,17 @@ class News extends CI_Controller {
 			$this->db->select('users.username, users.email, users.id');
 			$this->db->distinct('users.username');
 			$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+			$this->db->join('users_groups', 'users.id = users_groups.user_id', 'left');
+			$this->db->join('groups', 'groups.id = users_groups.group_id', 'left');
 			$this->db->where('users.active', 1);
-			$this->db->where_in('users_bus.bu_id', $bus);
-			
+			$this->db->where('groups.name !=', 'extra');			
+			$this->db->where_in('users_bus.bu_id', $bus);			
 			$query = $this->db->get("users");
 			
 			foreach ($query->result() as $row) {
 				$key 	= md5(microtime().rand());
 				$link 	= 'http://'.$server_name.'/news/confirm/'.$key;
-				
+				print_r($row);
 				$confi = array(
 					'key' => $key,
 					'id_user' => $row->id,
@@ -146,7 +148,7 @@ class News extends CI_Controller {
 				
 				$this->mmail->sendEmail($email);
 			}
-
+			
 			$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			$data['username'] = $this->session->all_userdata()['identity'];
 			

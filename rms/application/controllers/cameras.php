@@ -18,7 +18,7 @@ class Cameras extends CI_Controller {
 	* @see http://codeigniter.com/user_guide/general/urls.html
 	*/
 
-	public function index($local = null)
+	public function index()
 	{		
 		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 		header("Cache-Control: post-check=0, pre-check=0", false);
@@ -47,12 +47,20 @@ class Cameras extends CI_Controller {
 		$res = $this->db->get();
 		$row = $res->result();
 		$i = 1;
+		
+		$local 		= false;
+		$ip 		= $this->input->ip_address();
+		$id_bu 		= $this->session->all_userdata()['bu_id'];
+		$buinfo 	= $this->hmw->getBuInfo($id_bu);
+		$current_ip = $buinfo->net_ip;
+		if($ip == $current_ip) $local = true;
+
 		foreach ($row as $key => $var) {
 			$url['cam'.$i] = $var->adress;
 			if($local) $url['cam'.$i] = $var->adress_local;
 			$i++;	
 		}
-
+		
 		$session_data['cam'] = $url;
 		$this->session->set_userdata($session_data);
 		
