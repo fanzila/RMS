@@ -73,29 +73,33 @@ class Discount extends CI_Controller {
 		$query	= $this->db->get();
 		$discount = $query->result();
 
-		/* GENERIC Recuperations des infos utiles au paneau lateral*/
-		$user = $this->ion_auth->user()->row();
-		$user_groups = $this->ion_auth->get_users_groups()->result();
-		$bus_list = $this->hmw->getBus(null, $user->id);
-
 		$data = array(
-			'bus_list'	=> $bus_list,//GENERIC
-			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
-			'userlevel' => $user_groups[0]->level,//GENERIC
 			'discount'	=> $discount,
 			'create'	=> 0,
 			'users'		=> $users,
-			'msg'		=> $msg,
-			'keylogin'	=> $this->session->userdata('keylogin')
+			'msg'		=> $msg
 			);
-
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-		$header['title'] = "Discount";
-		
-		$this->load->view('jq_header_pre', $header);
+
+		/* GENERIC Recuperations des infos utiles au paneau lateral*/
+		$user = $this->ion_auth->user()->row();
+		$bus_list = $this->hmw->getBus(null, $user->id);
+		$user_groups = $this->ion_auth->get_users_groups()->result();
+		$header_pre = array(
+			'title' 	=> "Discount"
+			);
+		$header_post = array(
+			'bus_list'	=> $bus_list,//GENERIC
+			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
+			'userlevel' => $user_groups[0]->level,//GENERIC
+			'keylogin'	=> $this->session->userdata('keylogin'),//GENERIC
+			'index'		=> 1
+			);
+
+		$this->load->view('jq_header_pre', $header_pre);
 		$this->load->view('discount/jq_header_spe');
-		$this->load->view('jq_header_post');
+		$this->load->view('jq_header_post', $header_post);
 		$this->load->view('discount/index',$data);
 		$this->load->view('jq_footer');
 	}
@@ -113,16 +117,29 @@ class Discount extends CI_Controller {
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$discounts 	= $res->result();
 		$data = array(
-			'discounts'	=> $discounts
+			'discounts'	=> $discounts,
+			'bu_name' 	=> $this->session->all_userdata()['bu_name'],
+			'username' 	=> $this->session->all_userdata()['identity']
 			);
-			
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
-		$header['title'] = "Discount log";
-		
-		$this->load->view('jq_header_pre', $header);
+
+		/* GENERIC Recuperations des infos utiles au paneau lateral*/
+		$user = $this->ion_auth->user()->row();
+		$bus_list = $this->hmw->getBus(null, $user->id);
+		$user_groups = $this->ion_auth->get_users_groups()->result();
+		$header_pre = array(
+			'title' 	=> "Discount log"
+			);
+		$header_post = array(
+			'bus_list'	=> $bus_list,//GENERIC
+			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
+			'userlevel' => $user_groups[0]->level,//GENERIC
+			'keylogin'	=> $this->session->userdata('keylogin'),//GENERIC
+			'index'		=> 0
+			);
+
+		$this->load->view('jq_header_pre', $header_pre);
 		$this->load->view('discount/jq_header_spe');
-		$this->load->view('jq_header_post');
+		$this->load->view('jq_header_post', $header_post);
 		$this->load->view('discount/logs',$data);
 		$this->load->view('jq_footer');
 	}
@@ -202,16 +219,30 @@ class Discount extends CI_Controller {
 		$data = array(
 			'create'	=> $create,
 			'users'		=> $users,
-			'discount'		=> $discount
+			'discount'	=> $discount
 			);
 		
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-		$header['title'] = "Discount create";
+		
+		/* GENERIC Recuperations des infos utiles au paneau lateral*/
+		$user = $this->ion_auth->user()->row();
+		$bus_list = $this->hmw->getBus(null, $user->id);
+		$user_groups = $this->ion_auth->get_users_groups()->result();
+		$header_pre = array(
+			'title' 	=> "Discount create"
+			);
+		$header_post = array(
+			'bus_list'	=> $bus_list,//GENERIC
+			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
+			'userlevel' => $user_groups[0]->level,//GENERIC
+			'keylogin'	=> $this->session->userdata('keylogin'),//GENERIC
+			'index'		=> 0
+			);
 
-		$this->load->view('jq_header_pre', $header);
+		$this->load->view('jq_header_pre', $header_pre);
 		$this->load->view('discount/jq_header_spe');
-		$this->load->view('jq_header_post');
+		$this->load->view('jq_header_post', $header_post);
 		$this->load->view('discount/discount_creation',$data);
 		$this->load->view('jq_footer');
 	}

@@ -1,6 +1,3 @@
-<body>
-	<div data-role="page">
-		<div data-role="header">
 			<a href="/discount/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
 			<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
 		</div>
