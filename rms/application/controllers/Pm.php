@@ -170,7 +170,8 @@ class Pm extends CI_Controller {
 		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data2['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('jq_header', $data2);
+		$this->load->view('jq_header_pre', $data2);
+		$this->load->view('jq_header_post');
 		$this->load->view('pm/menu');
 		$this->load->view('pm/details', $data);
 		$this->load->view('jq_footer');
@@ -225,7 +226,8 @@ class Pm extends CI_Controller {
 		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data2['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('jq_header', $data2);
+		$this->load->view('jq_header_pre', $data2);
+		$this->load->view('jq_header_post');
 		$this->load->view('pm/menu');
 		$this->load->view('pm/list', $data);
 		$this->load->view('jq_footer');
@@ -321,7 +323,8 @@ class Pm extends CI_Controller {
 		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data2['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('jq_header', $data2);
+		$this->load->view('jq_header_pre', $data2);
+		$this->load->view('jq_header_post');
 		$this->load->view('pm/menu');
 		$this->load->view('pm/compose', $data);
 		$this->load->view('jq_footer');

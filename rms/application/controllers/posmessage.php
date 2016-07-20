@@ -25,7 +25,8 @@ class Posmessage extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('jq_header', $data);
+		$this->load->view('jq_header_pre', $data);
+		$this->load->view('jq_header_post');
 		$this->load->view('posmessage', $data);
 		$this->load->view('jq_footer');
 	}
