@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
 	
 	<script type="text/javascript" src="/public/tinymce/tinymce.min.js"></script>
+	<script type="text/javascript" src="/public/droid2/js/nativedroid2.js"></script>
 	
 	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
   
@@ -22,6 +23,16 @@
 			removed_menuitems: 'newdocument'
         });
 		
+    </script>
+    
+   
+	<link rel="stylesheet" href="/public/droid2/vendor/waves/waves.min.css" />
+	<link rel="stylesheet" href="/public/droid2/vendor/wow/animate.css" />
+	<link rel="stylesheet" href="/public/droid2/css/nativedroid2.css" />
+
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     </script>
 
 </head>

@@ -29,8 +29,10 @@ class Discount extends CI_Controller {
 		$this->load->library('hmw');
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
-		
 	}
+public function leftpanel(){
+		$this->load->view('adminpanel.html');
+}
 
 	public function index($task_id = null)
 	{
@@ -56,6 +58,7 @@ class Discount extends CI_Controller {
 		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
 			->from('discount as T')
 			->where('T.deleted', 0)
+			->where('T.used', 0)
 			->where('T.id_bu', $id_bu);
 		if($task_id > 0) $this->db->where('id', $task_id);
 		$this->db->order_by('T.date desc');

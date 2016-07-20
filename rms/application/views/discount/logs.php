@@ -1,7 +1,7 @@
 <body>
 	<div data-role="page">
 		<div data-role="header">
-			<a href="/discount/" data-ajax="false" data-icon="back">Back</a>
+			<a href="/discount/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
 			<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
@@ -9,7 +9,7 @@
 			<? if(empty($discounts)) { ?>
 			<br />Nothing done so far...<br />
 			<? } ?>	
-				<table data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
+				<table data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter discounts">
 					<thead>
 						<th></th>
 						<th>Event</th>
