@@ -30,17 +30,22 @@ class News extends CI_Controller {
 
 	public function index()
 	{
-
-		$data = array();
+		/* GENERIC changement de Bu */
+		$change_bu = $this->input->post('bus');
+		if(!empty($change_bu)) { 
+			$bu_info = $this->hmw->getBus($change_bu);
+			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
+			$this->hmw->updateUserBu($change_bu, $this->session->all_userdata()['user_id']); 
+			$this->session->set_userdata($session_data); 
+		}
 		
 		$this->hmw->keyLogin();
 		
+		/* GENERIC Recuperations des infos utiles au paneau lateral*/
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
-		$data['username']		= $user->username;
-		$data['user_groups']	= $user_groups[0];
-
-		$data['title'] 			= 'News';
+		$bus_list = $this->hmw->getBus(null, $user->id);
+				
 		$config = array();
 		$config["base_url"] = base_url() . "news/index";
 		$config["total_rows"] = $this->news_model->record_count();
@@ -52,14 +57,20 @@ class News extends CI_Controller {
 		$this->pagination->initialize($config);
 
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-
-		$data["keylogin"] = $this->session->userdata('keylogin');
-
-		$data["results"] = $this->news_model->get_list($config["per_page"], $page);
-		$data["links"] = $this->pagination->create_links();
-
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		
+		$data = array(
+			'username'	=> $user->username,
+			'user_groups'	=> $user_groups[0],
+			
+			'title'		=> 'News',
+			'keylogin'	=> $this->session->userdata('keylogin'),
+			'results'		=> $this->news_model->get_list($config["per_page"], $page),
+			'links'		=> $this->pagination->create_links(),
+			'bu_name'		=> $this->session->all_userdata()['bu_name'],
+			'bus_list'	=> $bus_list,//GENERIC
+			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
+			'userlevel' 	=> $user_groups[0]->level,//GENERIC
+			);
 		$this->load->view('jq_header', $data);
 		$this->load->view('news/index', $data);
 		$this->load->view('jq_footer');

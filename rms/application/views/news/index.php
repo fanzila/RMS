@@ -33,10 +33,11 @@
 }
 </style>
 <div data-role="page" data-theme="a">
-	<div data-role="header">
-		<? if(!$keylogin) { ?><a href="/admin/" data-role="button" data-inline="true" data-ajax="false" data-icon="home">Home</a><? } ?>
-		<h1>News | <?=$bu_name?> | <?=$username?></h1>
-		<?php if($user_groups->level >= 2) { ?><a href="/news/create" data-role="button" data-inline="true"  data-ajax="false" data-icon="plus">Create</a><? } ?>
+	<?php include('adminpanel.html'); ?>
+	<div data-role="header" data-position="fixed" class="wow fadeIn">
+		<? if(!$keylogin) { ?><a href="#adminpanel" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-menu"></i></a><?}?>
+		<?php if($user_groups->level >= 2) { ?><a href="/news/create/" class="ui-btn ui-btn-right" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a><? } ?>
+		<h1 class="wow fadeIn" data-wow-delay='0.4s'><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 		<ul data-role="listview" data-inset="true" data-filter="true">	

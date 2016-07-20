@@ -65,8 +65,10 @@ class Admin extends CI_Controller {
 			'last_ticket'		=> '',
 			'username'			=> $user->username
 		);
-			
 		
+		$header['title'] = "Admin Hank";
+		
+		$this->load->view('jq_header', $header);
 		$this->load->view('admin', $data);
 	}
 

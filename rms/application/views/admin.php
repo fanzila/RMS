@@ -1,4 +1,3 @@
-<?php $title = "Admin Hank"; include('jq_header.php'); ?> 
 <?php $dev = false; if($_SERVER['SERVER_NAME'] == 'rms.dev') $dev = true; ?>
 <body>
 	<div data-role="page" data-theme="a">
