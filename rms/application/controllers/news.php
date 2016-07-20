@@ -24,6 +24,7 @@ class News extends CI_Controller {
 		$header['title'] = $data['news_item']['title'];
 
 		$this->load->view('jq_header_pre', $header);
+		$this->load->view('news/jq_header_spe');
 		$this->load->view('jq_header_post');
 		$this->load->view('news/view', $data);
 		$this->load->view('jq_footer');
@@ -74,6 +75,7 @@ class News extends CI_Controller {
 			'userlevel' 	=> $user_groups[0]->level,//GENERIC
 			);
 		$this->load->view('jq_header_pre', $header);
+		$this->load->view('news/jq_header_spe');
 		$this->load->view('jq_header_post');
 		$this->load->view('news/index', $data);
 		$this->load->view('jq_footer');
@@ -112,6 +114,7 @@ class News extends CI_Controller {
 		if (!$this->input->post('title'))
 		{
 			$this->load->view('jq_header_pre', $data);
+			$this->load->view('news/jq_header_spe');
 			$this->load->view('jq_header_post');
 			$this->load->view('news/create');
 			$this->load->view('jq_footer');
@@ -169,6 +172,7 @@ class News extends CI_Controller {
 			
 			$data['title'] = 'News';
 			$this->load->view('jq_header_pre', $data);
+			$this->load->view('news/jq_header_spe');
 			$this->load->view('jq_header_post');
 			$this->load->view('news/success');
 			$this->load->view('jq_footer');

@@ -24,18 +24,3 @@
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.0/css/font-awesome.min.css" />
 	
 	<script type="text/javascript" src="/public/droid2/js/nativedroid2.js"></script>
-	
-	<!--Nécessaire à discount-->
-	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
-	
-	<!--Nécessaire à news-->
-	<script type="text/javascript" src="/public/tinymce/tinymce.min.js"></script>
-	<script type="text/javascript">
-		tinymce.init({
-			selector: "#text",
-			plugins: "textcolor hr fullscreen",
-			toolbar: "forecolor backcolor fullscreen",
-			removed_menuitems: 'newdocument'
-		});
-    </script>
-

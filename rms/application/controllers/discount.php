@@ -94,6 +94,7 @@ class Discount extends CI_Controller {
 		$header['title'] = "Discount";
 		
 		$this->load->view('jq_header_pre', $header);
+		$this->load->view('discount/jq_header_spe');
 		$this->load->view('jq_header_post');
 		$this->load->view('discount/index',$data);
 		$this->load->view('jq_footer');
@@ -120,6 +121,7 @@ class Discount extends CI_Controller {
 		$header['title'] = "Discount log";
 		
 		$this->load->view('jq_header_pre', $header);
+		$this->load->view('discount/jq_header_spe');
 		$this->load->view('jq_header_post');
 		$this->load->view('discount/logs',$data);
 		$this->load->view('jq_footer');
@@ -208,6 +210,7 @@ class Discount extends CI_Controller {
 		$header['title'] = "Discount create";
 
 		$this->load->view('jq_header_pre', $header);
+		$this->load->view('discount/jq_header_spe');
 		$this->load->view('jq_header_post');
 		$this->load->view('discount/discount_creation',$data);
 		$this->load->view('jq_footer');
