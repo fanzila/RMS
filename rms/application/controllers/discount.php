@@ -30,20 +30,28 @@ class Discount extends CI_Controller {
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
 	}
-public function leftpanel(){
-		$this->load->view('adminpanel.html');
-}
 
 	public function index($task_id = null)
 	{
+		/* GENERIC changement de Bu */
+		$change_bu = $this->input->post('bus');
+		if(!empty($change_bu)) { 
+			$bu_info = $this->hmw->getBus($change_bu);
+			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
+			$this->hmw->updateUserBu($change_bu, $this->session->all_userdata()['user_id']); 
+			$this->session->set_userdata($session_data); 
+		}
+
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
+		/* SPECIFIC Creation d'un message si fonction create utilisee */
 		$msg = null;
 		if($task_id=="create") {
 				$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
 		}
 
+		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
@@ -53,8 +61,8 @@ public function leftpanel(){
 		$query = $this->db->get("users");
 		$users = $query->result();
 
+		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-
 		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
 			->from('discount as T')
 			->where('T.deleted', 0)
@@ -65,7 +73,15 @@ public function leftpanel(){
 		$query	= $this->db->get();
 		$discount = $query->result();
 
+		/* GENERIC Recuperations des infos utiles au paneau lateral*/
+		$user = $this->ion_auth->user()->row();
+		$user_groups = $this->ion_auth->get_users_groups()->result();
+		$bus_list = $this->hmw->getBus(null, $user->id);
+
 		$data = array(
+			'bus_list'	=> $bus_list,//GENERIC
+			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
+			'userlevel' => $user_groups[0]->level,//GENERIC
 			'discount'	=> $discount,
 			'create'	=> 0,
 			'users'		=> $users,

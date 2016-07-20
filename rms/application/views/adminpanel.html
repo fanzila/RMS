@@ -1,0 +1,85 @@
+			<!-- panel left -->
+			<div data-role="panel" id="adminpanel" data-display="overlay" data-position-fixed="true" >
+				<div data-role="header" data-position="fixed" class="wow fadeIn">
+					<? if(!$keylogin) { ?><a href="/admin/" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-home"></i></a><?}?>
+					<!--<h1 class="wow fadeIn"><?=$bu_name?></h1>-->
+						<form action="#" method="POST">
+							<select name="bus" class="ui-btn" onchange="this.form.submit()">
+							<? foreach ($bus_list as $bu) { ?>
+				  				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
+							<? } ?>
+							</select>
+						</form>
+				</div>
+				<br/>
+				<br/>
+				<div data-role="collapsible-set" data-inset="false">
+					<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+						<h3>Staff</h3>
+						<ul data-role="listview" data-inset="false" data-icon="false">
+				
+						<li><a rel="external" data-ajax="false" href="/news"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li> 
+						<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/"><i class="zmdi zmdi-calendar zmd-fw"></i> Shiftplanning</a></li>
+						<li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li>
+						<li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li>
+						<li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li>
+						<li><a rel="external" data-ajax="false" href="/order/"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li>
+						<li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li>
+						<li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li>
+						</ul>
+					</div>
+					<? if($userlevel >= 1){?>
+						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+							<h3>Manager</h3>
+							<ul data-role="listview" data-icon="false">
+								<li><a rel="external" data-ajax="false" href="http://drive.google.com/"><i class="fa fa-google"></i> Google Drive</a></li>
+								<li><a rel="external" data-ajax="false" href="http://trello.com"><i class="fa fa-trello"></i> Trello</a></li>
+								<li><a rel="external" data-ajax="false" href="http://mail.hankrestaurant.com"><i class="fa fa-envelope"></i> Email Hank</a></li>
+								<li><a rel="external" data-ajax="false" href="http://dropbox.com/home"><i class="fa fa-dropbox"></i> Dropbox</a></li>
+								<?if($userlevel >= 2){?>
+									<hr />
+									<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
+									<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>		
+									<li><a rel="external" data-ajax="false" href="https://hank.recruiterbox.com/app/#candidates/overview"><i class="zmdi zmdi-arrow-out zmd-fw"></i> Recruiter Box (RB)</a></li>
+									<li><a rel="external" data-ajax="false" href="https://www.cashpad.net"><i class="zmdi zmdi-money zmd-fw"></i> Reporting Cashpad</a></li>
+									<li><a rel="external" data-ajax="false" href="https://secure.tiime.fr"><i class="zmdi zmdi-arrow-out zmd-fw"></i> Tiime (compta)</a></li>
+									<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff management</a></li>
+									<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
+									<li><a rel="external" data-ajax="false" href="/crud/cklChecklistTasks/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklists tasks management</a></li>
+									<li><a rel="external" data-ajax="false" href="/crud/suppliers/"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Suppliers</a></li>
+								<?}?>
+							</ul>
+						</div>
+					<?}?>
+					<?if($userlevel >= 3){?>
+						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+							<h3>Admin</h3>
+							<ul data-role="listview" data-icon="false">
+								<li><a rel="external" data-ajax="false" href="/reminder/admin">Reminder tasks management</a></li>
+
+								<li><a rel="external" data-ajax="false" href="/crud/cklChecklists/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Checklists management</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/discount/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Discounts</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/products/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/productsUnit/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsUnit</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/productsStock/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsStock</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/productsCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products Category</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/rmdMeta/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder task management</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/rmdNotif/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder notification management</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/rmdTasks/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder management</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/sensorsAlarm/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors alarm management</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
+							</ul>
+						</div>
+					<?}?>
+				</div>
+				<hr>
+				<div data-role="collapsible" data-inset="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+					<h3>Nice to Know</h3>
+					<ul data-role="listview" data-icon="false">
+						<li><a class="ui-disabled" data-ajax='false' href="/info/credits.html">Credits &amp; License</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- /panel left -->

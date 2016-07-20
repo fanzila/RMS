@@ -9,7 +9,8 @@
 	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
 	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
 	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
-	
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.0/css/font-awesome.min.css" />
+
 	<script type="text/javascript" src="/public/tinymce/tinymce.min.js"></script>
 	<script type="text/javascript" src="/public/droid2/js/nativedroid2.js"></script>
 	
