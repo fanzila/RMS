@@ -209,7 +209,8 @@ class Hmw {
 
 		$headers = array(
 			'header_pre'	=> array(
-				'title' => $title
+				'title' => $title,
+				'bu_id'	=> $bu_id
 				),
 			'header_post'	=> array(
 				'bu_id'			=> $bu_id,

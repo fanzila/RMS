@@ -17,8 +17,11 @@
 	<link rel="stylesheet" href="/public/droid2/vendor/waves/waves.min.css" />
 	
 	<!--Doit pouvoir être modulé selon la Bu-->
-	<link rel="stylesheet" href="/public/droid2/css/nativedroid2.css" />
-	
+	<?if($bu_id==1){?>
+		<link rel="stylesheet" href="/public/droid2/css/yellownativedroid2.css" />
+	<?}else if($bu_id==2){?>
+		<link rel="stylesheet" href="/public/droid2/css/rednativedroid2.css" />
+	<?}?>
 	<!--A remplacer par une bu en local-->
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.0/css/font-awesome.min.css" />
 	

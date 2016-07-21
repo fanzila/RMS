@@ -1,13 +1,13 @@
 		<a href="/discount/creation/1/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 		</div>
 
-		<div role="main" class="ui-content wow fadeIn" data-inset="false" data-wow-delay="0.2s">
+		<div role="main" class="ui-content wow fadeIn" data-inset="false">
 
 			<div data-role="content">
 				<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
 					
 					<div class="row">
-						<a href="/discount/log/" class="ui-btn ui-btn-raised">Log</a>
+						<a href="/discount/log/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Log</a>
 					</div>
 					<br/>
 					<?if($msg) { ?>
@@ -27,13 +27,13 @@
 										<h4><i class="zmdi zmdi-account"></i> <?=$line->tclient?>   <i class="zmdi zmdi-money-off"></i> <?=$line->tnature?>   <font size="2" color="<?=$font_color?>"><i class="zmdi zmdi-alarm-check"> <?=date($line->tdate);?></i></font></h4>
 										<form id="discount<?=$line->tid?>" name="discount<?=$line->tid?>" method="post" action="/discount/save">
 											<label for="client-<?=$line->tid?>" id="label">Client:</label>
-											<input id="client-<?=$line->tid?>" type="text" name="client" value="<?=stripslashes($line->tclient)?>">
+											<input id="client-<?=$line->tid?>" type="text" name="client" value="<?=stripslashes($line->tclient)?>" data-clear-btn="true">
 											
 											<label for="reason-<?=$line->tid?>" id="label">Reason:</label>
-											<input id="reason-<?=$line->tid?>" type="text" name="reason" value="<?=stripslashes($line->treason)?>">
+											<input id="reason-<?=$line->tid?>" type="text" name="reason" value="<?=stripslashes($line->treason)?>" data-clear-btn="true">
 
 											<label for="nature-<?=$line->tid?>" id="label">Nature:</label>
-											<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>">
+											<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>" data-clear-btn="true">
 
 											<select style="background-color:#a1ff7c" id="used-<?=$line->tid?>" name="used" data-inline="true" data-theme="a" required>
 												<option value="0">Utiliser : NON</option>
