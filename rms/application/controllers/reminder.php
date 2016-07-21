@@ -32,7 +32,8 @@ class Reminder extends CI_Controller {
 	}
 
 	public function index($task_id = null, $view = null)
-	{		
+	{
+		$this->hmw->changeBu();// GENERIC changement de Bu
 	
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
@@ -87,7 +88,12 @@ class Reminder extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
+		$headers = $this->hmw->headerVars(1, "/reminder/", "Reminder");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('reminder/jq_header_spe');
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('reminder/index',$data);
+		$this->load->view('jq_footer');
 	}
 	
 	public function log()
@@ -117,8 +123,13 @@ class Reminder extends CI_Controller {
 			
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-			
+		
+		$headers = $this->hmw->headerVars(0, "/reminder/", "Reminder");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('reminder/jq_header_spe');
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('reminder/logs',$data);
+		$this->load->view('jq_footer');
 	}
 
 	public function adminSave()
