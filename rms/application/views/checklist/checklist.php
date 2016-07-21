@@ -1,8 +1,3 @@
-	<body>
-	<div data-role="page">
-		<div data-role="header">
-			<? if(!$keylogin) { ?><a href="/admin/" data-ajax="false" data-icon="home">Home</a><? } ?>
-			<h1>Checklist | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<?if($msg) { ?>
@@ -10,7 +5,7 @@
 					<br /><?=$msg?> Thanks! Have A Nice Karma!"
 				</div>			
 			<? } ?>
-			<ul data-role="listview" data-inset="true" data-filter="true">
+			<ul data-role="listview" data-inset="true">
 						<?
 					foreach ($checklists as $var) {
 						?>
