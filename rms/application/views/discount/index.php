@@ -3,9 +3,11 @@
 		?php include('adminpanel.html'); ?>
 
 		<div data-role="header" data-position="fixed" class="wow fadeIn">
-			<a href="#adminpanel" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-menu"></i></a>-->
+			<a href="#adminpanel" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-menu"></i></a>
 			<a href="/discount/creation/1/" class="ui-btn ui-btn-right" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 			<h1 class="wow fadeIn" data-wow-delay='0.4s'><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
+		</div>-->
+		<a href="/discount/creation/1/" class="ui-btn ui-btn-right" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 		</div>
 
 		<div role="main" class="ui-content wow fadeIn" data-inset="false" data-wow-delay="0.2s">

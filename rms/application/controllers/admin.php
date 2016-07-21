@@ -68,8 +68,7 @@ class Admin extends CI_Controller {
 		
 		$header['title'] = "Admin Hank";
 		
-		$this->load->view('jq_header_pre', $header);
-		$this->load->view('jq_header_post');
+		$this->load->view('jq_header', $header);
 		$this->load->view('admin', $data);
 	}
 

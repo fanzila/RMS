@@ -184,5 +184,47 @@ class Hmw {
 		}
 	}
 
+	public function changeBu() {
+		$CI = & get_instance();
+		$change_bu = $CI->input->post('bus');
+		if(!empty($change_bu)) {
+			$bu_info = $CI->hmw->getBus($change_bu);
+			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
+			$CI->hmw->updateUserBu($change_bu, $CI->session->all_userdata()['user_id']); 
+			$CI->session->set_userdata($session_data);
+		}
+	}
+
+	public function headerVars($index, $indexlocation, $title){
+		$CI = & get_instance();
+
+		$user		= $CI->ion_auth->user()->row();
+		$bus_list	= $CI->hmw->getBus(null, $user->id);
+		$user_groups = $CI->ion_auth->get_users_groups()->result();
+
+		$bu_id		= $CI->session->all_userdata()['bu_id'];
+		$keylogin 	= $CI->session->userdata('keylogin');
+		$bu_name	= $CI->session->all_userdata()['bu_name'];
+		$username	= $CI->session->all_userdata()['identity'];
+
+		$headers = array(
+			'header_pre'	=> array(
+				'title' => $title
+				),
+			'header_post'	=> array(
+				'bu_id'			=> $bu_id,
+				'bu_name'		=> $bu_name,
+				'bus_list'		=> $bus_list,
+				'index'			=> $index,
+				'keylogin'		=> $keylogin,
+				'indexlocation'	=> $indexlocation,
+				'title'			=> $title,
+				'userlevel' 	=> $user_groups[0]->level,
+				'username'		=> $username
+				)
+			);
+		return $headers;
+	}
+
 }
 ?>

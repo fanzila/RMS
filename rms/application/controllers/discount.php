@@ -33,14 +33,7 @@ class Discount extends CI_Controller {
 
 	public function index($task_id = null)
 	{
-		/* GENERIC changement de Bu */
-		$change_bu = $this->input->post('bus');
-		if(!empty($change_bu)) { 
-			$bu_info = $this->hmw->getBus($change_bu);
-			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
-			$this->hmw->updateUserBu($change_bu, $this->session->all_userdata()['user_id']); 
-			$this->session->set_userdata($session_data); 
-		}
+		$this->hmw->changeBu();// GENERIC changement de Bu
 
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
@@ -82,24 +75,10 @@ class Discount extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		/* GENERIC Recuperations des infos utiles au paneau lateral*/
-		$user = $this->ion_auth->user()->row();
-		$bus_list = $this->hmw->getBus(null, $user->id);
-		$user_groups = $this->ion_auth->get_users_groups()->result();
-		$header_pre = array(
-			'title' 	=> "Discount"
-			);
-		$header_post = array(
-			'bus_list'	=> $bus_list,//GENERIC
-			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
-			'userlevel' => $user_groups[0]->level,//GENERIC
-			'keylogin'	=> $this->session->userdata('keylogin'),//GENERIC
-			'index'		=> 1
-			);
-
-		$this->load->view('jq_header_pre', $header_pre);
+	 	$headers = $this->hmw->headerVars(1, "discount", "Discount");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('discount/jq_header_spe');
-		$this->load->view('jq_header_post', $header_post);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/index',$data);
 		$this->load->view('jq_footer');
 	}
@@ -122,24 +101,11 @@ class Discount extends CI_Controller {
 			'username' 	=> $this->session->all_userdata()['identity']
 			);
 
-		/* GENERIC Recuperations des infos utiles au paneau lateral*/
-		$user = $this->ion_auth->user()->row();
-		$bus_list = $this->hmw->getBus(null, $user->id);
-		$user_groups = $this->ion_auth->get_users_groups()->result();
-		$header_pre = array(
-			'title' 	=> "Discount log"
-			);
-		$header_post = array(
-			'bus_list'	=> $bus_list,//GENERIC
-			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
-			'userlevel' => $user_groups[0]->level,//GENERIC
-			'keylogin'	=> $this->session->userdata('keylogin'),//GENERIC
-			'index'		=> 0
-			);
-
-		$this->load->view('jq_header_pre', $header_pre);
+		
+	 	$headers = $this->hmw->headerVars(0, "discount", "Discount Log");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('discount/jq_header_spe');
-		$this->load->view('jq_header_post', $header_post);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/logs',$data);
 		$this->load->view('jq_footer');
 	}
@@ -225,24 +191,10 @@ class Discount extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		/* GENERIC Recuperations des infos utiles au paneau lateral*/
-		$user = $this->ion_auth->user()->row();
-		$bus_list = $this->hmw->getBus(null, $user->id);
-		$user_groups = $this->ion_auth->get_users_groups()->result();
-		$header_pre = array(
-			'title' 	=> "Discount create"
-			);
-		$header_post = array(
-			'bus_list'	=> $bus_list,//GENERIC
-			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
-			'userlevel' => $user_groups[0]->level,//GENERIC
-			'keylogin'	=> $this->session->userdata('keylogin'),//GENERIC
-			'index'		=> 0
-			);
-
-		$this->load->view('jq_header_pre', $header_pre);
+		$headers = $this->hmw->headerVars(0, "discount", "Discount create");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('discount/jq_header_spe');
-		$this->load->view('jq_header_post', $header_post);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/discount_creation',$data);
 		$this->load->view('jq_footer');
 	}

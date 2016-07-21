@@ -7,4 +7,17 @@
 		<div data-role="header" data-position="fixed" class="wow fadeIn">
 			<?php if($index==1){?>
 				<a href="#adminpanel" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-menu"></i></a>
+				<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
+				<!--Partie Spé à ajouter-->
+			<?}else if($index==2){?>
+				<form action="#" method="POST">
+					<select name="bus" class="ui-btn" onchange="this.form.submit()">
+					<? foreach ($bus_list as $bu) { ?>
+		  				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
+					<? } ?>
+					</select>
+				</form>
+			<?}else{?>
+				<a href="/<?=$indexlocation?>/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
+				<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
 			<?}?>

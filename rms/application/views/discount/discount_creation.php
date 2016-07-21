@@ -1,6 +1,6 @@
-			<a href="/discount/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
+		<!--	<a href="/discount/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
 			<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
-		</div>
+		--></div>
 		<div data-role="content"><?
 			if($create) {
 			?>

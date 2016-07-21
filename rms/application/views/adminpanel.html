@@ -2,7 +2,6 @@
 			<div data-role="panel" id="adminpanel" data-display="overlay" data-position-fixed="true" >
 				<div data-role="header" data-position="fixed" class="wow fadeIn">
 					<? if(!$keylogin) { ?><a href="/admin/" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-home"></i></a><?}?>
-					<!--<h1 class="wow fadeIn"><?=$bu_name?></h1>-->
 						<form action="#" method="POST">
 							<select name="bus" class="ui-btn" onchange="this.form.submit()">
 							<? foreach ($bus_list as $bu) { ?>
