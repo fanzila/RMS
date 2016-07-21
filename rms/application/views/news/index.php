@@ -1,5 +1,4 @@
-		<?php if($user_groups->level >= 2) { ?><a href="/news/create/" class="ui-btn ui-btn-right" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a><? } ?>
-		<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
+		<?php if($user_groups->level >= 2) { ?><a href="/news/create/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a><? } ?>
 	</div>
 	<div data-role="content" data-theme="a">
 		<ul data-role="listview" data-inset="true" data-filter="true">	

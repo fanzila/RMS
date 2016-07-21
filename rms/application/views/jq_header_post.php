@@ -18,6 +18,6 @@
 					</select>
 				</form>
 			<?}else{?>
-				<a href="/<?=$indexlocation?>/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
+				<a class="ui-btn ui-btn-left" rel="external" data-ajax="false" href="<?=$indexlocation?>"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
 				<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
 			<?}?>

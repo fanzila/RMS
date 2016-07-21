@@ -32,14 +32,7 @@ class News extends CI_Controller {
 
 	public function index()
 	{
-		/* GENERIC changement de Bu */
-		$change_bu = $this->input->post('bus');
-		if(!empty($change_bu)) { 
-			$bu_info = $this->hmw->getBus($change_bu);
-			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
-			$this->hmw->updateUserBu($change_bu, $this->session->all_userdata()['user_id']); 
-			$this->session->set_userdata($session_data); 
-		}
+		$this->hmw->changeBu();// GENERIC changement de Bu
 		
 		$this->hmw->keyLogin();
 		
@@ -70,24 +63,10 @@ class News extends CI_Controller {
 			'bu_name'		=> $this->session->all_userdata()['bu_name']
 			);
 
-		/* GENERIC Recuperations des infos utiles au paneau lateral*/
-		$user = $this->ion_auth->user()->row();
-		$bus_list = $this->hmw->getBus(null, $user->id);
-		$user_groups = $this->ion_auth->get_users_groups()->result();
-		$header_pre = array(
-			'title' 	=> "Discount"
-			);
-		$header_post = array(
-			'bus_list'	=> $bus_list,//GENERIC
-			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
-			'userlevel' => $user_groups[0]->level,//GENERIC
-			'keylogin'	=> $this->session->userdata('keylogin'),//GENERIC
-			'index'		=> 1
-			);
-
-		$this->load->view('jq_header_pre', $header_pre);
+		$headers = $this->hmw->headerVars(1, "/news/index/", "News");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('news/jq_header_spe');
-		$this->load->view('jq_header_post', $header_post);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('news/index',$data);
 		$this->load->view('jq_footer');
 	}
@@ -113,34 +92,14 @@ class News extends CI_Controller {
 		$bus_list = $this->hmw->getBus(null, $user->id);
 		
 		$this->load->helper('form');
-
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-
-		$data['title']	= 'Create a news item';
-		$data['from']	= $user->username;
-		$data['bus_list']	= $bus_list;
-		$data['bu_id']	= $this->session->all_userdata()['bu_id'];
 		
-		/* GENERIC Recuperations des infos utiles au paneau lateral*/
-		$user = $this->ion_auth->user()->row();
-		$bus_list = $this->hmw->getBus(null, $user->id);
-		$user_groups = $this->ion_auth->get_users_groups()->result();
-		$header_pre = array(
-			'title' 	=> "News"
-			);
-		$header_post = array(
-			'bus_list'	=> $bus_list,//GENERIC
-			'bu_id'		=> $this->session->all_userdata()['bu_id'],//GENERIC
-			'userlevel' => $user_groups[0]->level,//GENERIC
-			'keylogin'	=> $this->session->userdata('keylogin'),//GENERIC
-			'index'		=> 0
-			);
+		$headers = $this->hmw->headerVars(0, "/news/index/", "Create News");
 
 		if (!$this->input->post('title'))
 		{
-			$this->load->view('jq_header_pre', $data);
+			$this->load->view('jq_header_pre', $headers['header_post']);
 			$this->load->view('news/jq_header_spe');
-			$this->load->view('jq_header_post', $header_post);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('news/create');
 			$this->load->view('jq_footer');
 		}
@@ -191,14 +150,11 @@ class News extends CI_Controller {
 				
 				$this->mmail->sendEmail($email);
 			}
-			
-			$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-			$data['username'] = $this->session->all_userdata()['identity'];
 
-			$this->load->view('jq_header_pre', $header_pre);
+			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('news/jq_header_spe');
-			$this->load->view('jq_header_post', $header_post);
-			$this->load->view('news/success',$data);
+			$this->load->view('jq_header_post', $headers['header_post']);
+			$this->load->view('news/success');
 			$this->load->view('jq_footer');
 		}
 	}

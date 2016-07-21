@@ -23,3 +23,5 @@
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.0/css/font-awesome.min.css" />
 	
 	<script type="text/javascript" src="/public/droid2/js/nativedroid2.js"></script>
+	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
+	<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>

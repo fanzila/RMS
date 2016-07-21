@@ -1,12 +1,3 @@
-<div data-role="page" data-theme="a">
-<? if($keylogin) { ?>	
-	<div data-role="header">
-&nbsp;&nbsp;&nbsp;
-	</div>
-	<? } ?>
-	<div data-role="header">
-		<a href="/webcashier/" data-ajax="false" data-icon="home">Back</a>
-		<h1><?=$title?>  | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 		<?if($mov == 'close') { ?><small>Closing date: <?=$archive_date?></small><? } ?>

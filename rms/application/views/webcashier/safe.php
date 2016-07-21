@@ -1,7 +1,3 @@
-<div data-role="page" data-theme="a">
-	<div data-role="header">
-		<a href="/webcashier/" data-ajax="false" data-icon="home">Back</a>
-		<h1><?=$title?>  | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 

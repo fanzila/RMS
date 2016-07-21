@@ -11,7 +11,8 @@ class webCashier extends CI_Controller {
 
 	public function index()
 	{		
-		
+		$this->hmw->changeBu();// GENERIC changement de Bu
+
 		$data = array();
 
 		$this->hmw->keyLogin();
@@ -27,9 +28,11 @@ class webCashier extends CI_Controller {
 		
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
-		$this->load->view('webcashier/header', $data);
-		$this->load->view('webcashier/index', $data);
-		$this->load->view('webcashier/footer');
+		$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('webcashier/index',$data);
+		$this->load->view('jq_footer');
 	}
 
 	public function safe()
@@ -53,9 +56,11 @@ class webCashier extends CI_Controller {
 
 		$data['title']  	= 'Safe';
 
-		$this->load->view('webcashier/header', $data);
-		$this->load->view('webcashier/safe', $data);
-		$this->load->view('webcashier/footer');
+		$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - SAFE");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('webcashier/safe',$data);
+		$this->load->view('jq_footer');
 	}
 
 	public function report()
@@ -118,10 +123,11 @@ class webCashier extends CI_Controller {
 		}
 
 		$data['lines'] = $lines;
-		
-		$this->load->view('webcashier/header', $data);
-		$this->load->view('webcashier/report', $data);
-		$this->load->view('webcashier/footer');
+		$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - REPORT");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('webcashier/report',$data);
+		$this->load->view('jq_footer');
 	}
 
 	public function movement($mov)
@@ -203,10 +209,11 @@ class webCashier extends CI_Controller {
 				}
 			}
 		}
-
-		$this->load->view('webcashier/header', $data);
-		$this->load->view('webcashier/movement', $data);
-		$this->load->view('webcashier/footer');
+		$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('webcashier/movement',$data);
+		$this->load->view('jq_footer');
 	}
 
 	public function save()

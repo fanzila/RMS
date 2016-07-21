@@ -1,5 +1,4 @@
 		<a href="/news/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
-		<h1>Create news from : <?=$from?> and for : <?=$bu_name?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 		<script>

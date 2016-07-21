@@ -75,9 +75,8 @@ class Discount extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-	 	$headers = $this->hmw->headerVars(1, "discount", "Discount");
+	 	$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('discount/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/index',$data);
 		$this->load->view('jq_footer');
@@ -102,9 +101,8 @@ class Discount extends CI_Controller {
 			);
 
 		
-	 	$headers = $this->hmw->headerVars(0, "discount", "Discount Log");
+	 	$headers = $this->hmw->headerVars(0, "/discount/", "Discount Log");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('discount/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/logs',$data);
 		$this->load->view('jq_footer');
@@ -191,9 +189,8 @@ class Discount extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		$headers = $this->hmw->headerVars(0, "discount", "Discount create");
+		$headers = $this->hmw->headerVars(0, "/discount/", "Discount create");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('discount/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/discount_creation',$data);
 		$this->load->view('jq_footer');
