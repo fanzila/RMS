@@ -36,7 +36,8 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 								$comment = 'comment-'.$line['id'];
 									if($load == null OR ($load > 0 || $line['id'] > 0)) {
 								if($line['priority'] == 3) $bkg_color = "#ffcabf";
-								if($line['priority'] == 2) $bkg_color = "#ffdfa6"; 
+								if($line['priority'] == 2) $bkg_color = "#ffdfa6";
+								if($line['priority'] == 1) $bkg_color = "#e0e0e0";
 								?>
 								
 								
@@ -46,7 +47,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 									<div data-role="fieldcontain">
 										<label style="font-size:smaller" for="comment-<?=$line['id']?>">Comments</label>
 										<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment-<?=$line['id']?>"
-										name="comment-<?=$line['id']?>" value="<? if(isset($comment) && isset($form['comment-'.$line['id']])) echo nl2br($form['comment-'.$line['id']]); ?>">
+										name="comment-<?=$line['id']?>" value="<? if(isset($comment) && isset($form['comment-'.$line['id']])) echo nl2br($form['comment-'.$line['id']]); ?>"  data-clear-btn="true" />
 									</div>
 								
 								<? } } ?>

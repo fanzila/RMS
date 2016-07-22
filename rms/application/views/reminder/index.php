@@ -19,10 +19,9 @@
 							foreach ($tasks as $line) {	
 								$bkg_color	= '';
 								$font_color = ''; 
-
-								if($line->priority == 3) $bkg_color = "#ff5035";
-								if($line->priority == 2) $bkg_color = "#ff8c35";
-								if($line->priority == 1) $bkg_color = "#cccccc";
+								if($line->priority == 3) $bkg_color = "#ffcabf";
+								if($line->priority == 2) $bkg_color = "#ffdfa6";
+								if($line->priority == 1) $bkg_color = "#e0e0e0";
 
 								$overdue = null;
 								if(($line->overdue > 0) && empty($line->repeat_year) && empty($line->repeat_month) && empty($line->repeat_day) && empty($line->repeat_week) && empty($line->repeat_weekday)) {

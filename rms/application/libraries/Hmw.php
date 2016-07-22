@@ -207,19 +207,30 @@ class Hmw {
 		$bu_name	= $CI->session->all_userdata()['bu_name'];
 		$username	= $CI->session->all_userdata()['identity'];
 
+		$CI->db->select('val')->from('bank_balance');
+		$bal_res = $CI->db->get();
+		$bal = $bal_res->row_array();
+
+		$CI->db->from('turnover')->order_by('date desc')->limit(1);
+	 	$bal_ca = $CI->db->get();
+		$ca = $bal_ca->row_array();
+
 		$headers = array(
 			'header_pre'	=> array(
 				'title' => $title,
 				'bu_id'	=> $bu_id
 				),
 			'header_post'	=> array(
+				'bank_balance'	=> $bal['val'],
 				'bu_id'			=> $bu_id,
 				'bu_name'		=> $bu_name,
 				'bus_list'		=> $bus_list,
+				'ca'			=> $ca,
 				'index'			=> $index,
 				'keylogin'		=> $keylogin,
 				'indexlocation'	=> $indexlocation,
 				'title'			=> $title,
+				'groupname' 	=> $user_groups[0]->name,
 				'userlevel' 	=> $user_groups[0]->level,
 				'username'		=> $username
 				)

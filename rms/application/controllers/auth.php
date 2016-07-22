@@ -8,6 +8,7 @@ class Auth extends CI_Controller {
 		$this->load->library('ion_auth');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
+		$this->load->library('hmw');
 	
 		$this->load->database();
 
@@ -20,7 +21,8 @@ class Auth extends CI_Controller {
 	//redirect if needed, otherwise display the user list
 	function extra()
 	{
-		
+		$this->hmw->changeBu();// GENERIC changement de Bu
+
 		$this->load->library("hmw");
 		$this->load->library('mmail');
 		
@@ -67,13 +69,19 @@ class Auth extends CI_Controller {
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
 			$this->data['current_user'] = $this->ion_auth->user()->row();
+			
+			$headers = $this->hmw->headerVars(1, "/auth/extra/", "Extra finder");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/extra', $this->data);
+			$this->load->view('jq_footer');
 		}
 	}
 	
 	//redirect if needed, otherwise display the user list
 	function index()
 	{
+		$this->hmw->changeBu();// GENERIC changement de Bu
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		
@@ -103,7 +111,11 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(1, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/index', $this->data);
+			$this->load->view('jq_footer');
 		}
 	}
 
@@ -129,7 +141,7 @@ class Auth extends CI_Controller {
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				//redirect('/', 'refresh');
 				//set BU
-				redirect('/admin/');
+				redirect('/news');
 			}
 			else
 			{
@@ -619,7 +631,11 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/create_user', $this->data);
+			$this->load->view('jq_footer');
 		}
 	}
 
@@ -788,7 +804,11 @@ class Auth extends CI_Controller {
 			'type' => 'password'
 		);
 
+		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->_render_page('auth/edit_user', $this->data);
+		$this->load->view('jq_footer');
 	}
 
 	// create a new group

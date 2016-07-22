@@ -1,9 +1,3 @@
-<? $title = "Users"; include('jq_header.php'); ?> 
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/auth/" data-transition="slide" data-icon="home">Home</a>
-			<h1>Users | <?=$bu_name?> | <?=$username2?></h1>
 		</div>
 		<div data-role="content">
 
@@ -14,10 +8,14 @@
 
 
 <?php 
+$theme = ' data-clear-btn="true" /';
 $attributes = array('rel' => 'external', 'data-ajax' => 'false');
 echo form_open(uri_string(), $attributes);
 ?>
+<div class="row">
 
+          <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="box">
 	  <p>
       		<?php echo 'Username';?> <br />
       		<?php echo form_input($username);?>
@@ -57,7 +55,9 @@ echo form_open(uri_string(), $attributes);
             <?php echo lang('edit_user_password_confirm_label', 'password_confirm');?><br />
             <?php echo form_input($password_confirm);?>
       </p>
-
+      </div></div>
+<div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="box">
       <?php if ($this->ion_auth->is_admin()): ?>
 
           <h3><?php echo lang('edit_user_groups_heading');?></h3>
@@ -104,10 +104,9 @@ echo form_open(uri_string(), $attributes);
       <?php echo form_hidden($csrf); ?>
 
       <p><?php echo form_submit('submit', lang('edit_user_submit_btn'));?></p>
-
+</div></div>
 <?php echo form_close();?>
 	</div><!-- /content -->
 	<br /><br />
 	<div id="view"></div>
 </div><!-- /page -->
-<? include('jq_footer.php'); ?>

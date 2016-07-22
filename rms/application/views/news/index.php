@@ -62,3 +62,8 @@
 	white-space: normal;
 }
 </style>
+<script type="text/javascript">
+		$(document).on('pagebeforeshow', '', function(){       
+    $( "#adminpanel" ).panel( "open");
+});
+	</script>

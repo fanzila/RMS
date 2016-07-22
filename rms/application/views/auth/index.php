@@ -1,11 +1,5 @@
-<? $title = "Users"; include('jq_header.php'); ?> 
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/admin/" data-transition="slide" data-icon="home">Home</a>
 			<?php if($users['0']->groups['0']->level >= 2) {?>
-				<a href="/auth/create_user" data-transition="slide" data-icon="plus">Create user</a><? } ?>
-			<h1>Users | <?=$bu_name?> | <?=$username?></h1>
+				<a href="/auth/create_user/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a><? } ?>
 		</div>
 		<div data-role="content">
 
@@ -71,4 +65,3 @@
 	<br /><br />
 	<div id="view"></div>
 </div><!-- /page -->
-<? include('jq_footer.php'); ?>

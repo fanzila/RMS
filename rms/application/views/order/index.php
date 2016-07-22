@@ -1,5 +1,5 @@
 		</div>
-		<div data-role="content">
+		<div data-role="content" data-theme="a">
 			<?php if($user_groups->level >= 1) { ?>
 
 				<ul data-role="listview" data-inset="true" data-filter="false">

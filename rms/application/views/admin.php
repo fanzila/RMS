@@ -2,8 +2,11 @@
 <body>
 	<div data-role="page" data-theme="a">
 		<div data-role="header">
-			<div class="ui-grid-b">
-				<div class="ui-block-a">
+			<a href="/auth/logout/" class="ui-btn ui-btn-left" rel="external" data-ajax="false"><i class="zmdi zmdi-power-off zmd-2x"></i></a>
+		<h1>
+			<div class="row">
+				<div class="col-xs">
+					<div class="box">
 					<form action="/" method="POST">
 						<select name="bus" class="ui-btn-left" onchange="this.form.submit()">
 						<? foreach ($bus_list as $bu) { ?>
@@ -11,10 +14,17 @@
 						<? } ?>
 						</select>
 					</form>
+					</div>
 				</div>
-				<div class="ui-block-b"><div data-role="header"><h1 style="width:400px; text-align:left">RMS Hank | <?=$bu_name?> | <?=$username?> - <?=$user_groups->name?></h1></div></div>
-				<div class="ui-block-c"><div data-role="header"><a href="/auth/logout" data-transition="slide" class="ui-btn-right" data-icon="power">Logout</a></div>
-			</div></div>
+				<div class="col-xs">
+					<div>
+						RMS Hank | <?=$bu_name?> | <?=$username?> - <?=$user_groups->name?>
+					</div>
+				</div>
+				<div class="col-xs">
+				</div>
+			</div>
+			</h1>
 		</div>
 		<div data-role="content" data-theme="a">
 			<?php 

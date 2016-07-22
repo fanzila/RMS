@@ -52,6 +52,7 @@ class Order extends CI_Controller {
 
 	 	$headers = $this->hmw->headerVars(1, "/order/", "Order");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('order/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/index',$data);
 		$this->load->view('jq_footer');
@@ -163,10 +164,14 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 		'attributs'			=> $attributs,
 		'load' 				=> $load
 		);
-
+	if($load <= 0) { 
+		$title	= "Order ".strtoupper($data['order_name']);
+	}
 	$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	$data['username'] = $this->session->all_userdata()['identity'];
 
+	//$headers = $this->hmw->headerVars(0, "/order/", $title);
+	
 	$this->load->view('order/order_products',$data);
 
 }
