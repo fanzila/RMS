@@ -1911,9 +1911,6 @@ class Ion_auth_model extends CI_Model
 			{
 				$expire = $this->config->item('user_expire', 'ion_auth');
 			}
-
-			$grp = $this->ion_auth->get_users_groups()->result();
-			if($grp[0]->level == 3) $expire = (60*60*24*365*2);
 			
 			set_cookie(array(
 			    'name'   => $this->config->item('identity_cookie_name', 'ion_auth'),

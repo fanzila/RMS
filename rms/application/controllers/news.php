@@ -123,7 +123,6 @@ class News extends CI_Controller {
 			foreach ($query->result() as $row) {
 				$key 	= md5(microtime().rand());
 				$link 	= 'http://'.$server_name.'/news/confirm/'.$key;
-				print_r($row);
 				$confi = array(
 					'key' => $key,
 					'id_user' => $row->id,

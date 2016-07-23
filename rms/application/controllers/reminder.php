@@ -93,18 +93,7 @@ class Reminder extends CI_Controller {
 	public function log()
 	{
 
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
-
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 2)
-		{
-			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/admin/');
-		}
-		
+		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
 		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` WHERE t.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
