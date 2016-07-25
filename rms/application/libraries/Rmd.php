@@ -7,6 +7,8 @@ class Rmd extends CI_Controller  {
 		parent::__construct();
 		$CI =& get_instance();
 		$CI->load->database();
+		$CI->load->library('ion_auth');
+		$CI->load->library('hmw');
 		
 	}
 	

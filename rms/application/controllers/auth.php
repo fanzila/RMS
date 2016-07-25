@@ -141,7 +141,7 @@ class Auth extends CI_Controller {
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				//redirect('/', 'refresh');
 				//set BU
-				redirect('/news');
+				redirect('/news/index/1/');
 			}
 			else
 			{
@@ -181,7 +181,7 @@ class Auth extends CI_Controller {
 
 		//redirect them to the login page
 		$this->session->set_flashdata('message', $this->ion_auth->messages());
-		redirect('/admin/');
+		redirect('/news/');
 	}
 
 	//change password
@@ -275,7 +275,13 @@ class Auth extends CI_Controller {
 
 			//set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+
+			$headers = $this->hmw->headerVars(0, "/news/", "Forgot your password?");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/forgot_password', $this->data);
+			$this->load->view('jq_footer');
+
 		}
 		else
 		{
@@ -445,7 +451,12 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/deactivate_user', $this->data);
+			$this->load->view('jq_footer');
+
 		}
 		else
 		{
@@ -488,7 +499,11 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/delete_user', $this->data);
+			$this->load->view('jq_footer');
 		}
 		else
 		{
@@ -563,7 +578,7 @@ class Auth extends CI_Controller {
 			}
 
 			//check to see if we are creating the user
-			//redirect them back to the admin page
+			//redirect them back to the news page
 			$this->session->set_flashdata('message', $this->ion_auth->messages());
 			redirect("auth", 'refresh');
 		}

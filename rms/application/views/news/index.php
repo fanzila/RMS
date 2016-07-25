@@ -62,8 +62,11 @@
 	white-space: normal;
 }
 </style>
+
+<?if($login==1){?>
 <script type="text/javascript">
 		$(document).on('pagebeforeshow', '', function(){       
     $( "#adminpanel" ).panel( "open");
 });
 	</script>
+<?}?>

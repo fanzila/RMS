@@ -22,7 +22,7 @@ class Crud extends CI_Controller {
 		if ($group_info[0]->level < 1)
 		{
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/admin/');
+			redirect('/news/');
 		}
 	}
 

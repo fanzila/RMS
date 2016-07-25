@@ -12,19 +12,27 @@
 			<?}?>
 			<?if($index==1){?>
 				<a href="#adminpanel" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-menu"></i></a>
-				<h1><div class="row">
-					<div class="col-xs-2">
-						<div class="box"><?=$title?></div>
+				<h1>
+					<div class="row">
+						<div class="col-xs">
+							<div class="box"><?=$title?></div>
+						</div>
+						<div class="col-xs">
+							<div class="box"><?=$bu_name?> | <?=$username?></div>
+						</div>
+						<div class="col-xs-1">
+							<div class="box"></div>
+						</div>
 					</div>
-				</div>
 				</h1>
+
 <!--<h1>?=$title?> | ?=$bu_name?> | ?=$username?></h1>
 				<!--Partie Spé à ajouter-->
 			<?}else if($index==2){?>
 				<form action="#" method="POST">
 					<select name="bus" class="ui-btn" onchange="this.form.submit()">
 					<? foreach ($bus_list as $bu) { ?>
-		  				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
+		  				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?> | <?=$username?></option>
 					<? } ?>
 					</select>
 				</form>
@@ -36,7 +44,7 @@
 						<div class="box"><?=$title?></div>
 					</div>
 					<div class="col-xs">
-						<div class="box"><?=$bu_name?></div>
+						<div class="box"><?=$bu_name?> | <?=$username?></div>
 					</div>
 					<div class="col-xs-1">
 						<div class="box"></div>

@@ -4,6 +4,7 @@ class News extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->database();
 		$this->load->model('news_model');
 		$this->load->helper('url_helper');
 		$this->load->library("pagination");
@@ -30,8 +31,12 @@ class News extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
-	public function index()
+	public function index($login=null)
 	{
+		if (!$this->ion_auth->logged_in())
+		{
+			redirect('auth/login');
+		}
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		
 		$this->hmw->keyLogin();
@@ -60,7 +65,8 @@ class News extends CI_Controller {
 			'keylogin'	=> $this->session->userdata('keylogin'),
 			'results'		=> $this->news_model->get_list($config["per_page"], $page),
 			'links'		=> $this->pagination->create_links(),
-			'bu_name'		=> $this->session->all_userdata()['bu_name']
+			'bu_name'		=> $this->session->all_userdata()['bu_name'],
+			'login'		=> $login
 			);
 
 		$headers = $this->hmw->headerVars(1, "/news/index/", "News");
@@ -84,7 +90,7 @@ class News extends CI_Controller {
 		if ($group_info[0]->level < 1)
 		{
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/admin/');
+			redirect('/news/');
 		}
 
 		$user = $this->ion_auth->user()->row();

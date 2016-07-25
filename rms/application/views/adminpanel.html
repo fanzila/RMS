@@ -12,13 +12,12 @@
 				</div>
 				<br/>
 				<br/>
-
 				<div data-role="collapsible-set" data-inset="false">
-					<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+					<div data-role="collapsible" <? if($userlevel == 0){?>data-collapsed="false"<?}?> data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 						<h3>Staff</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
 				
-						<li><a rel="external" data-ajax="false" href="/news"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li> 
+						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li> 
 						<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/"><i class="zmdi zmdi-calendar zmd-fw"></i> Shiftplanning</a></li>
 						<li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li>
 						<li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li>
@@ -46,7 +45,7 @@
 						</div>
 					<?}?>
 					<? if($userlevel >= 2){?>
-						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+						<div data-role="collapsible" <? if($userlevel == 2){?>data-collapsed="false"<?}?> data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 							<h3>Managers</h3>
 							<ul data-role="listview" data-icon="false">
 								<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
@@ -84,32 +83,32 @@
 					<div>
 						<hr>
 					</div>
-					<div data-role="collapsible" data-collapsed="false" data-inset="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
-						<h3>Nice to Know</h3>
-						<div>
-							<?$date = new DateTime($ca['last']);
-							$date->add(new DateInterval('PT01H'));?>
-							<?if($userlevel >= 2) { ?>
-								Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
-								<br/>
-							<? } ?>
-							CA: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€
+				</div>
+				<div data-role="collapsible" data-collapsed="false" data-inset="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+					<h3>Nice to Know</h3>
+					<div>
+						<?$date = new DateTime($ca['last']);
+						$date->add(new DateInterval('PT01H'));?>
+						<?if($userlevel >= 2) { ?>
+							Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
 							<br/>
-							Last ticket: <?=$date->format('Y-m-d H:i:s')?>
-							<br/>
-							Num: <?=$ca['num']?>
-						</div>
-						<hr>
-						<div>
-							You're log as <?=$username?>
-							<br/>
-							Your group is <?=$groupname?>
-						</div>
-					<hr>
-						<ul data-role="listview" data-icon="false">
-							<li><a class="ui-disabled" data-ajax='false' href="/info/credits.html">[TODO] Credits &amp; License</a></li>
-						</ul>
+						<? } ?>
+						CA: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€
+						<br/>
+						Last ticket: <?=$date->format('Y-m-d H:i:s')?>
+						<br/>
+						Num: <?=$ca['num']?>
 					</div>
+					<hr>
+					<div>
+						You're log as <?=$username?>
+						<br/>
+						Your group is <?=$groupname?>
+					</div>
+				<hr>
+					<ul data-role="listview" data-icon="false">
+						<li><a class="ui-disabled" data-ajax='false' href="/info/credits.html">[TODO] Credits &amp; License</a></li>
+					</ul>
 				</div>
 			</div>
 			<!-- /panel left -->

@@ -108,7 +108,7 @@ class Reminder extends CI_Controller {
 		if ($group_info[0]->level < 2)
 		{
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/admin/');
+			redirect('/news/');
 		}
 		
 		$id_bu =  $this->session->all_userdata()['bu_id'];
@@ -191,7 +191,12 @@ class Reminder extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
+		$headers = $this->hmw->headerVars(1, "/reminder/admin", "Reminder admin");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('reminder/jq_header_spe');
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('reminder/reminder_admin',$data);
+		$this->load->view('jq_footer');
 	}
 	
 	//cd /var/www/hank/rms/rms && php index.php reminder cliNotify 1
