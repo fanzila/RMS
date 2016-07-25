@@ -98,18 +98,7 @@ class Reminder extends CI_Controller {
 	
 	public function log()
 	{
-
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
-
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 2)
-		{
-			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/news/');
-		}
+		$this->hmw->keyLogin();
 		
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
