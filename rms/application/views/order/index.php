@@ -15,29 +15,29 @@
 					<div class="row">
 					    <div class="col-xs">
 					        <div class="box">
-								<a href="/order/previousOrders" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="search" data-mini="true" data-theme="b">Log</a>
+								<a href="/order/previousOrders/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Log</a>
 					        </div>
 					    </div>
 						<?php if($user_groups->level >= 2) { ?>
 						    <div class="col-xs">
 						        <div class="box">
-									<a href="/product_admin/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="b">Products admin</a>
+						        	<a href="/product_admin/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products admin</a>
 						        </div>
 						    </div>
 						    <div class="col-xs">
 						        <div class="box">
-									<a href="/product_admin/mapping" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="b">Products mapping</a>
+						        	<a href="/product_admin/mapping/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products mapping</a>
 						        </div>
 						    </div>
 							<?php if($user_groups->level >= 3) { ?>
 							    <div class="col-xs">
 							        <div class="box">
-							        	<a href="/crud/suppliers/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="b">Suplliers</a>
+							        	<a href="/crud/suppliers/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Suppliers</a>
 							        </div>
 							    </div>
 							    <div class="col-xs">
 							        <div class="box">
-							        	<a href="/crud/productsAttribut/" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="edit" data-mini="true" data-theme="b">Products attribut</a>
+							        	<a href="/crud/productsAttribut/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products attribut</a>
 							        </div>
 							    </div>
 						

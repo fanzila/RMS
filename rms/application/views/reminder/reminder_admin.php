@@ -1,22 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>HANK - Reminder Admin</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="msapplication-tap-highlight" content="no" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
-	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
-	
-</head>
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/admin/" data-ajax="false" data-icon="home">Home</a> <a href="/reminder/admin/1" data-ajax="false" data-icon="plus">Create</a>
-			<h1>Reminder Admin | <?=$bu_name?> | <?=$username?></h1>
+			<a href="/reminder/admin/1/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 		</div>
 		<div data-role="content">
 			<? 
@@ -341,8 +323,3 @@
 					<? } } ?>
 				</div><!-- /content -->
 			</div><!-- /page -->
-			<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
-			<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
-			<script src="/public/rmd.js" type="text/javascript"></script>
-		</body>
-		</html>

@@ -168,6 +168,7 @@ class Reminder extends CI_Controller {
 	public function admin($create = null)
 	{		
 		$this->hmw->keyLogin();
+		$this->hmw->changeBu();// GENERIC changement de Bu
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$this->load->library('rmd');
 
