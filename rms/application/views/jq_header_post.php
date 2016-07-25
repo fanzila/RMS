@@ -25,9 +25,6 @@
 						</div>
 					</div>
 				</h1>
-
-<!--<h1>?=$title?> | ?=$bu_name?> | ?=$username?></h1>
-				<!--Partie Spé à ajouter-->
 			<?}else if($index==2){?>
 				<form action="#" method="POST">
 					<select name="bus" class="ui-btn" onchange="this.form.submit()">
@@ -51,5 +48,4 @@
 					</div>
 				</div>
 					</h1>
-				<!--<h1>?=$title?> | ?=$bu_name?></h1>-->
 			<?}?>

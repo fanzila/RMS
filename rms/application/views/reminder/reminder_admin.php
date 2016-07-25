@@ -145,7 +145,7 @@
 																}
 															}
 														}).done(function(data) {
-																//OK
+																window.location = "/reminder/admin/";
 														    }).fail(function(data) {
 														    	alert('WARNING! ERROR at saving!');
 														    });
@@ -307,7 +307,7 @@
 													}
 												}
 											}).done(function(data) {
-													//OK
+													location.reload(true);
 											    }).fail(function(data) {
 											    	alert('WARNING! ERROR at saving!');
 											    });
