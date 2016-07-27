@@ -169,9 +169,13 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 	$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	$data['username'] = $this->session->all_userdata()['identity'];
 
-	//$headers = $this->hmw->headerVars(0, "/order/", $title);
-	
+	$headers = $this->hmw->headerVars(0, "/order/", $title);
+	$this->load->view('jq_header_pre', $headers['header_pre']);
+	$this->load->view('jq_header_post', $headers['header_post']);
 	$this->load->view('order/order_products',$data);
+	$this->load->view('jq_footer');
+
+	//$this->load->view('order/order_products',$data);
 
 }
 

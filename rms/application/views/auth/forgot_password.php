@@ -2,8 +2,8 @@
 <body>
 	<div data-role="page">
 		<div data-role="header">
-			<a href="/admin/" data-transition="slide" data-icon="home">Back</a>
-			<h1>Users | <?=$bu_name?> | <?=$username?></h1>
+			<a href="/news" data-icon="home"></a>
+			<h1>Forgot your pass?
 		</div>
 		<div data-role="content">
 

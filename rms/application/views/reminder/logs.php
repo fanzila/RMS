@@ -9,7 +9,7 @@
 					foreach ($tasks as $line) {	
 				?>
 					<li>
-						<label> <?=$line->date?> - <?=$line->username?> - <?=$line->task?></label>
+						 <p><?=$line->date?> - <?=$line->username?> - <?=$line->task?></p>
 					</li>
 					<? } ?>
 				</ul>

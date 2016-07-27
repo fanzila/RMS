@@ -113,7 +113,7 @@ class Reminder extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		$headers = $this->hmw->headerVars(0, "/reminder/", "Reminder");
+		$headers = $this->hmw->headerVars(0, "/reminder/", "Reminder Log");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('reminder/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);

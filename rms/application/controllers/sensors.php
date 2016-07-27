@@ -34,7 +34,7 @@ class Sensors extends CI_Controller {
 		$data['title'] 		= 'Sensors';
 		$data['keylogin']	= $this->session->userdata('keylogin');
 
-		$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
+		$headers = $this->hmw->headerVars(1, "/", "Sensors");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('sensors', $data);

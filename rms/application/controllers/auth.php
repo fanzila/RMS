@@ -276,11 +276,9 @@ class Auth extends CI_Controller {
 			//set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
-			$headers = $this->hmw->headerVars(0, "/news/", "Forgot your password?");
-			$this->load->view('jq_header_pre', $headers['header_pre']);
-			$this->load->view('jq_header_post', $headers['header_post']);
+			$headers = $this->hmw->headerVars(0, "/", "Forgot your password?");
 			$this->_render_page('auth/forgot_password', $this->data);
-			$this->load->view('jq_footer');
+			$this->load->view('auth/jq_footer');
 
 		}
 		else
@@ -592,30 +590,35 @@ class Auth extends CI_Controller {
 				'name'  => 'first_name',
 				'id'    => 'first_name',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('first_name'),
 			);
 			$this->data['last_name'] = array(
 				'name'  => 'last_name',
 				'id'    => 'last_name',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('last_name'),
 			);
 			$this->data['email'] = array(
 				'name'  => 'email',
 				'id'    => 'email',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('email'),
 			);
 			$this->data['phone'] = array(
 				'name'  => 'phone',
 				'id'    => 'phone',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('phone'),
 			);
 			$this->data['comment'] = array(
 				'name'  => 'comment',
 				'id'    => 'comment',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('comment'),
 			);
 			/**
@@ -623,12 +626,14 @@ class Auth extends CI_Controller {
 				'name'  => 'password',
 				'id'    => 'password',
 				'type'  => 'password',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('password'),
 			);
 			$this->data['password_confirm'] = array(
 				'name'  => 'password_confirm',
 				'id'    => 'password_confirm',
 				'type'  => 'password',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('password_confirm'),
 			);
 			**/
@@ -776,46 +781,54 @@ class Auth extends CI_Controller {
 			'name'  => 'first_name',
 			'id'    => 'first_name',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('first_name', $user->first_name),
 		);
 		$this->data['last_name'] = array(
 			'name'  => 'last_name',
 			'id'    => 'last_name',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('last_name', $user->last_name),
 		);
 		$this->data['username'] = array(
 			'name'  => 'username',
 			'id'    => 'username',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('username', $user->username),
 		);
 		$this->data['email'] = array(
 			'name'  => 'email',
 			'id'    => 'email',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('email', $user->email),
 		);
 		$this->data['phone'] = array(
 			'name'  => 'phone',
 			'id'    => 'phone',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('phone', $user->phone),
 		);
 		$this->data['comment'] = array(
 			'name'  => 'comment',
 			'id'    => 'comment',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('comment', $user->comment),
 		);
 		$this->data['password'] = array(
 			'name' => 'password',
 			'id'   => 'password',
+			'data-clear-btn' => "true",
 			'type' => 'password'
 		);
 		$this->data['password_confirm'] = array(
 			'name' => 'password_confirm',
 			'id'   => 'password_confirm',
+			'data-clear-btn' => "true",
 			'type' => 'password'
 		);
 

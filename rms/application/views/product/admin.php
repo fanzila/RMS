@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<?/*<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
@@ -16,7 +16,8 @@
 	<div data-role="page">
 		<div data-role="header">
 			<a href="/order/" data-ajax="false" data-icon="home">Back</a> <a href="/product_admin/index/create" data-ajax="false" data-icon="plus">Add</a>
-			<h1>Products admin | <?=$bu_name?> | <?=$username?></h1>
+			<h1>Products admin | <?=$bu_name?> | <?=$username?></h1>*/?>
+			<a href="/product_admin/index/create" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 		</div>
 		<div data-role="content">
 			<? if($command != 'create') { ?>
@@ -31,7 +32,7 @@
 						</select>
 						</div>
 						<div class="ui-block-b">
-						<input type="submit" name="submit" value="filter" data-mini="true" data-ajax="false">
+						<input type="submit" name="submit" value="filter" data-mini="true" data-ajax="false" data-clear-btn="true" />
 					</div>
 				</form>
 				</fieldset>
@@ -56,7 +57,7 @@
 								<td><small>Ref. supplier</small></td>
 							</tr>
 							<tr>
-								<td><input type="text" name="name" id="name-<?=$line['id']?>" value="<?=stripslashes($line['name'])?>"  data-mini="true"></td>
+								<td><input type="text" name="name" id="name-<?=$line['id']?>" value="<?=stripslashes($line['name'])?>"  data-mini="true" data-clear-btn="true" /></td>
 								<td>
 									<select id="id_supplier<?=$line['id']?>" name="id_supplier"  data-mini="true">
 										<? foreach ($suppliers as $sup) { ?>
@@ -64,8 +65,8 @@
 											<? } ?>
 										</select>
 									</td>
-									<td><input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>"  data-mini="true"></td>
-									<td><input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" data-mini="true"></td>
+									<td><input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>"  data-mini="true" data-clear-btn="true" /></td>
+									<td><input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" data-mini="true" data-clear-btn="true" /></td>
 									<td>
 										<select id="id_unit<?=$line['id']?>" name="id_unit"  data-mini="true">
 											<? foreach ($products_unit as $pack_unit) { ?>
@@ -93,7 +94,7 @@
 															<option value="low" <? if($line['freq_inventory'] =='low') { echo "selected"; } ?>>low</option>
 														</select>
 													</td>
-													<td><input type="text" name="supplier_reference" value="<?=$line['supplier_reference']?>"  data-mini="true"></td>
+													<td><input type="text" name="supplier_reference" value="<?=$line['supplier_reference']?>"  data-mini="true" data-clear-btn="true" /></td>
 												</tr>
 												<tr>
 													<td><small>Stock qtty</small></td>
@@ -106,16 +107,16 @@
 													<td></td>		
 												</tr>
 												<tr>
-													<td><input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=round($line['stock_qtty'],2)?>"  data-mini="true"></td>
-													<td><input type="text" id="stock_warning-<?=$line['id']?>" name="stock_warning" value="<?=$line['stock_warning']?>"  data-mini="true"></td>
-													<td><input type="text" id="stock_mini-<?=$line['id']?>" name="stock_mini" value="<?=$line['stock_mini']?>"  data-mini="true"></td>
-													<td><input type="text" id="stock_max-<?=$line['id']?>" name="stock_max" value="<?=$line['stock_max']?>"  data-mini="true"></td>
+													<td><input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=round($line['stock_qtty'],2)?>"  data-mini="true" data-clear-btn="true" /></td>
+													<td><input type="text" id="stock_warning-<?=$line['id']?>" name="stock_warning" value="<?=$line['stock_warning']?>"  data-mini="true" data-clear-btn="true" /></td>
+													<td><input type="text" id="stock_mini-<?=$line['id']?>" name="stock_mini" value="<?=$line['stock_mini']?>"  data-mini="true" data-clear-btn="true" /></td>
+													<td><input type="text" id="stock_max-<?=$line['id']?>" name="stock_max" value="<?=$line['stock_max']?>"  data-mini="true" data-clear-btn="true" /></td>
 													<td valign="top"><small><?=$line['last_update_user']?> <br /><?=$line['last_update_user_name']?></small></td>
 													<td valign="top"><small><?=$line['last_update_pos']?></small></td>
-													<td colspan="2"><input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true"></td>
-													<td><input type="submit" id="sub<?=$line['id']?>" onclick="validate(<?=$line['id']?>)" name="submit" value="Save" data-mini="true"></td>		
+													<td colspan="2"><input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true" data-clear-btn="true" /></td>
+													<td><input type="submit" id="sub<?=$line['id']?>" onclick="validate(<?=$line['id']?>)" name="submit" value="Save" data-mini="true" data-clear-btn="true" /></td>		
 												</tr>
-												<input type="hidden" name="id" value="<?=$line['id']?>">
+												<input type="hidden" name="id" value="<?=$line['id']?>" data-clear-btn="true" />
 											</table>
 										</form>
 									</li>
@@ -141,7 +142,7 @@
 											<td><small>Ref. supplier</small></td>
 										</tr>
 											<tr>
-												<td><input type="text" name="name" id="name-1" data-mini="true"></td>
+												<td><input type="text" name="name" id="name-1" data-mini="true" data-clear-btn="true" /></td>
 												<td>
 													<select id="id_supplier" name="id_supplier"  data-mini="true">
 														<option value="0"></option>
@@ -150,8 +151,8 @@
 															<? } ?>
 														</select>
 													</td>
-													<td><input type="text" name="price" id="price-1" value="0"  data-mini="true"></td>
-													<td><input type="text" name="packaging" id="packaging-1" data-mini="true"></td>
+													<td><input type="text" name="price" id="price-1" value="0"  data-mini="true" data-clear-btn="true" /></td>
+													<td><input type="text" name="packaging" id="packaging-1" data-mini="true" data-clear-btn="true" /></td>
 													<td>
 														<select id="id_unit" name="id_unit"  data-mini="true">
 															<? foreach ($products_unit as $id_unit) { ?>
@@ -180,7 +181,7 @@
 																			<option value="low">low</option>
 																		</select>
 																	</td>
-																	<td><input type="text" name="supplier_reference" value=""  data-mini="true"></td>
+																	<td><input type="text" name="supplier_reference" value=""  data-mini="true" data-clear-btn="true" /></td>
 																</tr>
 																<tr>
 																	
@@ -192,12 +193,12 @@
 																	<td></td>	
 																</tr>
 																<tr>
-																	<td><input type="text" id="stock_qtty-1" name="stock_qtty" value=""  data-mini="true"></td>
-																	<td><input type="text" id="stock_warning-1" name="stock_warning" value=""  data-mini="true"></td>
-																	<td><input type="text" id="stock_mini-1" name="stock_mini" value=""  data-mini="true"></td>
-																	<td><input type="text" id="stock_max-1" name="stock_max" value=""  data-mini="true"></td>
-																	<td colspan="4"><input type="text" name="comment" data-mini="true"></td>
-																	<td><input type="submit" id="sub1" onclick="validate(1)" name="submit" value="Save" data-mini="true"></td>		
+																	<td><input type="text" id="stock_qtty-1" name="stock_qtty" value=""  data-mini="true" data-clear-btn="true" /></td>
+																	<td><input type="text" id="stock_warning-1" name="stock_warning" value=""  data-mini="true" data-clear-btn="true" /></td>
+																	<td><input type="text" id="stock_mini-1" name="stock_mini" value=""  data-mini="true" data-clear-btn="true" /></td>
+																	<td><input type="text" id="stock_max-1" name="stock_max" value=""  data-mini="true" data-clear-btn="true" /></td>
+																	<td colspan="4"><input type="text" name="comment" data-mini="true" data-clear-btn="true" /></td>
+																	<td><input type="submit" id="sub1" onclick="validate(1)" name="submit" value="Save" data-mini="true" data-clear-btn="true" /></td>		
 																</tr>
 																<input type="hidden" name="id" value="create">
 															</table>
@@ -207,7 +208,6 @@
 													<? } ?>
 												</div><!-- /content -->
 											</div><!-- /page -->
-											<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
 											<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
 											<script src="/public/rmd.js" type="text/javascript"></script>
 
@@ -284,5 +284,5 @@
 											}
 											</script>
 
-										</body>
-										</html>
+										<?/*</body>
+										</html>*/?>

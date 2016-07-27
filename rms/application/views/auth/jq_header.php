@@ -18,4 +18,5 @@
 	
 	<!--Doit pouvoir être modulé selon la Bu-->
 	<link rel="stylesheet" href="/public/droid2/css/nativedroid2.css" />
+	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
 </head>
