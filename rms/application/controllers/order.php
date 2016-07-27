@@ -63,8 +63,8 @@ class Order extends CI_Controller {
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
-		if (isset($_GET['q'])){
-			$q = strtolower($_GET['q']);
+		if (isset($_POST['q'])){
+			$q = strtolower($_POST['q']);
 			$row_set = array();
 			$this->db->select('p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, p.packaging AS packaging, puprc.name AS unitname')
 			 	->from('products AS p')
@@ -82,7 +82,7 @@ class Order extends CI_Controller {
 				$row_set[] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']."|||".$row['packaging']; 
 			}
 		}
-		echo $_GET['callback']."(".json_encode($row_set).");";	
+		echo $_POST['callback']."(".json_encode($row_set).");";	
 	}
 }
 
@@ -165,10 +165,12 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 		);
 	if($load <= 0) { 
 		$title	= "Order ".strtoupper($data['order_name']);
+	}else{
+		$title = "Order n°".$load;
 	}
 	$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	$data['username'] = $this->session->all_userdata()['identity'];
-
+	
 	$headers = $this->hmw->headerVars(0, "/order/", $title);
 	$this->load->view('jq_header_pre', $headers['header_pre']);
 	$this->load->view('jq_header_post', $headers['header_post']);
@@ -214,7 +216,11 @@ public function prepareOrder() {
 	$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	$data['username'] = $this->session->all_userdata()['identity'];
 
+	$headers = $this->hmw->headerVars(0, "/order/", "Order Prepare");
+	$this->load->view('jq_header_pre', $headers['header_pre']);
+	$this->load->view('jq_header_post', $headers['header_post']);
 	$this->load->view('order/order_prepare',$data);
+	$this->load->view('jq_footer');
 }
 
 public function confirm($key = null) {
@@ -355,7 +361,11 @@ public function sendOrder() {
 	$data = array('disp' => $disp);
 	$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	$data['username'] = $this->session->all_userdata()['identity'];
+	$headers = $this->hmw->headerVars(0, "/order/", "Order Sent");
+	$this->load->view('jq_header_pre', $headers['header_pre']);
+	$this->load->view('jq_header_post', $headers['header_post']);
 	$this->load->view('order/order_sent', $data);
+	$this->load->view('jq_footer');
 
 }
 
@@ -465,7 +475,11 @@ public function confirmOrder() {
 	$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	$data2['username'] = $this->session->all_userdata()['identity'];
 
+	$headers = $this->hmw->headerVars(0, "/order/", "Order Confirm");
+	$this->load->view('jq_header_pre', $headers['header_pre']);
+	$this->load->view('jq_header_post', $headers['header_post']);
 	$this->load->view('order/order_confirm', $data2);
+	$this->load->view('jq_footer');
 }
 
 private function freq()
