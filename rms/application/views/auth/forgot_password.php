@@ -1,9 +1,3 @@
-<? $title = "Users"; include('jq_header.php'); ?> 
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/news" data-icon="home"></a>
-			<h1>Forgot your pass?
 		</div>
 		<div data-role="content">
 
@@ -27,4 +21,3 @@ echo form_open("auth/forgot_password", $attributes);?>
 	<br /><br />
 	<div id="view"></div>
 </div><!-- /page -->
-<? include('jq_footer.php'); ?>

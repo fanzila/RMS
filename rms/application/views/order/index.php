@@ -45,7 +45,7 @@
 						</div>
 						<br/>
 
-						<ul id="autocomplete" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..."></ul>
+						<ul id="autocomplete" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..." data-filter-theme="d"></ul>
 						<hr />
 						<ul data-role="listview" data-inset="true" data-filter="true">
 							<li data-role="list-divider">SUPPLIERS</li>

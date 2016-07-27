@@ -276,9 +276,12 @@ class Auth extends CI_Controller {
 			//set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
-			$headers = $this->hmw->headerVars(0, "/", "Forgot your password?");
+			$headers = $this->hmw->headerVars(-1, "/", "Forgot your password?");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/forgot_password', $this->data);
-			$this->load->view('auth/jq_footer');
+			//$this->load->view('auth/jq_footer');
+			$this->load->view('jq_footer');
 
 		}
 		else

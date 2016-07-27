@@ -63,8 +63,8 @@ class Order extends CI_Controller {
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
-		if (isset($_POST['q'])){
-			$q = strtolower($_POST['q']);
+		if (isset($_GET['q'])){
+			$q = strtolower($_GET['q']);
 			$row_set = array();
 			$this->db->select('p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, p.packaging AS packaging, puprc.name AS unitname')
 			 	->from('products AS p')
@@ -82,7 +82,7 @@ class Order extends CI_Controller {
 				$row_set[] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']."|||".$row['packaging']; 
 			}
 		}
-		echo $_POST['callback']."(".json_encode($row_set).");";	
+		echo $_GET['callback']."(".json_encode($row_set).");";	
 	}
 }
 
