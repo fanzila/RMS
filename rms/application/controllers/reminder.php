@@ -27,14 +27,13 @@ class Reminder extends CI_Controller {
 		$this->load->database();
 		$this->load->library('ion_auth');
 		$this->load->library('hmw');
-		$this->load->library('rmd');
 		
 	}
 
 	public function index($task_id = null, $view = null)
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
-	
+		$this->load->library('rmd');
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
@@ -76,7 +75,6 @@ class Reminder extends CI_Controller {
 		$users = $query->result();
 
 		$rmd = $this->rmd->getTasks($task_id, $view, $id_bu);
-
 		$data = array(
 			'tasks'		=> $rmd,
 			'users'		=> $users,
@@ -196,6 +194,7 @@ class Reminder extends CI_Controller {
 	//cd /var/www/hank/rms/rms && php index.php reminder cliNotify 1
 	public function cliNotify($id_bu)
 	{
+		$this->load->library('rmd');
 		if($this->input->is_cli_request()) {
 
 			$tasks = $this->rmd->getTasks(null, null, $id_bu);
