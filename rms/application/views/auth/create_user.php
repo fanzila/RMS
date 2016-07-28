@@ -87,12 +87,12 @@ echo form_open("auth/create_user", $attributes);
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="box"> 
           <textarea name="txtmessage"><?=$welcome_email?></textarea>
-          <h1 style="color:red">RAPPEL: FAIRE LA DPAE!</h1>
-          <p><?php echo form_submit('submit', lang('create_user_submit_btn'));?></p>
         </div>
     </div>
   </div>
 </div>
+          <h1 style="color:red">RAPPEL: FAIRE LA DPAE!</h1>
+          <p><?php echo form_submit('submit', lang('create_user_submit_btn'));?></p>
 <?php echo form_close();?>
 	</div><!-- /content -->
 	<br /><br />

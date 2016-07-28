@@ -883,19 +883,25 @@ class Auth extends CI_Controller {
 				'name'  => 'group_name',
 				'id'    => 'group_name',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('group_name')
 			);
 			$this->data['description'] = array(
 				'name'  => 'description',
 				'id'    => 'description',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('description')
 			);
 			
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/create_group', $this->data);
+			$this->load->view('jq_footer');
 		}
 	}
 
@@ -949,19 +955,26 @@ class Auth extends CI_Controller {
 			'name'  => 'group_name',
 			'id'    => 'group_name',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
+
 			'value' => $this->form_validation->set_value('group_name', $group->name),
 		);
 		$this->data['group_description'] = array(
 			'name'  => 'group_description',
 			'id'    => 'group_description',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('group_description', $group->description),
 		);
 
 		$this->data['username'] = $this->session->all_userdata()['identity'];
 		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	
+		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->_render_page('auth/edit_group', $this->data);
+		$this->load->view('jq_footer');
 	}
 
 

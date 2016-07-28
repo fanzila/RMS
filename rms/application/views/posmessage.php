@@ -20,7 +20,7 @@
 			<?if(isset($msgsent)) {?>
 			<p style="background-color: #dae3d8; padding: 15px;">Message sent: <?=$msgsent?></p>
 			<? } ?>
-			<label for="text">Message:</label>
+			Message:
 			<textarea id="msg" name="msg"></textarea><br />
 
 			<input data-ajax="false"  data-theme="a" type="submit" onclick="return validateForm()" name="submit" value="Send" />

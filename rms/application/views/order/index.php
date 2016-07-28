@@ -32,12 +32,12 @@
 							<?php if($user_groups->level >= 3) { ?>
 							    <div class="col-xs">
 							        <div class="box">
-							        	<a href="/crud/suppliers/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Suppliers</a>
+							        	<a href="/crud/suppliers/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Suppliers</a>
 							        </div>
 							    </div>
 							    <div class="col-xs">
 							        <div class="box">
-							        	<a href="/crud/productsAttribut/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products attribut</a>
+							        	<a href="/crud/productsAttribut/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Products attribut</a>
 							        </div>
 							    </div>
 						

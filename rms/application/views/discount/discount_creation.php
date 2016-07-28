@@ -14,11 +14,11 @@
 						<tr>
 							<td>
 								<label for="client" id="label">Client:</label>
-								<input id="client" type="text" name="client" value="">
+								<input id="client" type="text" name="client" value="" data-clear-btn="true" />
 								<label for="reason" id="label">Reason:</label>
-								<input id="reason" type="text" name="reason" value="">
+								<input id="reason" type="text" name="reason" value="" data-clear-btn="true" />
 								<label for="nature" id="label">Nature:</label>
-								<input id="nature" type="text" name="nature" value="">
+								<input id="nature" type="text" name="nature" value="" data-clear-btn="true" />
 							</td>
 						</tr>
 						<tr>
