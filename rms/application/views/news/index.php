@@ -9,19 +9,19 @@
 			$res = $this->db->get() or die($this->mysqli->error);
 			$ret = $res->result_array();
 		?>
-		<li data-role="list-divider"><?php echo $news_item->title; ?> - <?php echo $news_item->date; ?> | <?php echo $news_item->username; ?> | <?php echo $news_item->name; ?> | 
-			<a href="#popupBasic_<?=$news_item->id?>" data-rel="popup">View confirmations</a>
-			<div data-role="popup" id="popupBasic_<?=$news_item->id?>" style="padding:7px">
-				<table style="padding:6px">
-					<?php foreach ($ret as $conf): ?> 
-						<tr style="padding:4px"><td style="padding:4px"><?=$conf['username']?></td><td style="padding:4px"><? $color="red"; if($conf['status'] == 'confirmed') { $color = "green"; } ?> <b><font color="<?=$color?>"><?=$conf['status']?></font></b></td><td style="padding:4px"><?=$conf['date_confirmed']?></td></tr>
-					<?php endforeach; ?>
-				</table>
-			</div>
-		</li>
-		<li><?php echo $news_item->text; ?></li>
-<?php endforeach; ?>
-<? } ?>
+			<li data-role="list-divider"><?php echo $news_item->title; ?> - <?php echo $news_item->date; ?> | <?php echo $news_item->username; ?> | <?php echo $news_item->name; ?> | 
+				<a href="#popupBasic_<?=$news_item->id?>" data-rel="popup">View confirmations</a>
+				<div data-role="popup" id="popupBasic_<?=$news_item->id?>" style="padding:7px">
+					<table style="padding:6px">
+						<?php foreach ($ret as $conf): ?> 
+							<tr style="padding:4px"><td style="padding:4px"><?=$conf['username']?></td><td style="padding:4px"><? $color="red"; if($conf['status'] == 'confirmed') { $color = "green"; } ?> <b><font color="<?=$color?>"><?=$conf['status']?></font></b></td><td style="padding:4px"><?=$conf['date_confirmed']?></td></tr>
+						<?php endforeach; ?>
+					</table>
+				</div>
+			</li>
+			<li><?php echo $news_item->text; ?></li>
+		<?php endforeach; ?>
+		<? }else echo 'test'; ?>
 </ul>
 
 <p><?php echo $links; ?></p>
@@ -63,10 +63,10 @@
 }
 </style>
 
-<?if($login==1){?>
+<?if($login!=null){?>
 <script type="text/javascript">
-		$(document).on('pagebeforeshow', '', function(){       
-    $( "#adminpanel" ).panel( "open");
-});
+		$(document).on('pagebeforeshow', '', function(){
+			$( "#adminpanel" ).panel( "open");
+		});
 	</script>
 <?}?>

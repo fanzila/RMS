@@ -41,7 +41,6 @@ class News extends CI_Controller {
 		
 		$this->hmw->keyLogin();
 		
-		/* GENERIC Recuperations des infos utiles au paneau lateral*/
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$bus_list = $this->hmw->getBus(null, $user->id);
@@ -63,15 +62,14 @@ class News extends CI_Controller {
 			'user_groups'	=> $user_groups[0],
 			'title'		=> 'News',
 			'keylogin'	=> $this->session->userdata('keylogin'),
-			'results'		=> $this->news_model->get_list($config["per_page"], $page),
+			'results'	=> $this->news_model->get_list($config["per_page"], $page),
 			'links'		=> $this->pagination->create_links(),
-			'bu_name'		=> $this->session->all_userdata()['bu_name'],
-			'login'		=> $login
+			'login'		=> $login,
+			'bu_name'	=> $this->session->all_userdata()['bu_name']
 			);
 
 		$headers = $this->hmw->headerVars(1, "/news/index/", "News");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('news/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('news/index',$data);
 		$this->load->view('jq_footer');
