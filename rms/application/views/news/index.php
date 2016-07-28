@@ -21,7 +21,7 @@
 			</li>
 			<li><?php echo $news_item->text; ?></li>
 		<?php endforeach; ?>
-		<? }else echo 'test'; ?>
+		<? } ?>
 </ul>
 
 <p><?php echo $links; ?></p>
