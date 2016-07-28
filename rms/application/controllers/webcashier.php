@@ -32,6 +32,7 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/index',$data);
+		$this->load->view('webcashier/jq_footer_spe');
 		$this->load->view('jq_footer');
 	}
 
@@ -60,6 +61,7 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/safe',$data);
+		$this->load->view('webcashier/jq_footer_spe');
 		$this->load->view('jq_footer');
 	}
 
@@ -127,6 +129,7 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/report',$data);
+		$this->load->view('webcashier/jq_footer_spe');
 		$this->load->view('jq_footer');
 	}
 
@@ -213,6 +216,7 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/movement',$data);
+		$this->load->view('webcashier/jq_footer_spe');
 		$this->load->view('jq_footer');
 	}
 
