@@ -18,7 +18,7 @@
 		echo form_open('news/create', $attributes); ?>	
 
 		<label for="title">Title</label>
-		<input data-theme="a" class="input" data-form="ui-body-a" type="text" id="title" name="title" /><br />
+		<input data-theme="a" class="input" data-form="ui-body-a" type="text" id="title" name="title" data-clear-btn="true" /><br />
 
 		<label for="text">Text</label>
 		<textarea id="text" name="text"></textarea><br />
