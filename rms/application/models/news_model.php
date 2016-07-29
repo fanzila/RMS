@@ -29,7 +29,7 @@ class News_model extends CI_Model {
 		
 		$bu_id =  $this->session->all_userdata()['bu_id'];
 		
-		$this->db->select('news.id as news_id, users.username, news.title, news.slug, news.text, news.date, news.id_user, bus.name, bus.id');
+		$this->db->select('news.id as news_id, users.username, news.title, news.slug, news.text, news.picture, news.date, news.id_user, bus.name, bus.id');
 		$this->db->where('news_bus.id_bu', $bu_id);
 		$this->db->limit($limit, $start);
 		$this->db->order_by("news.id", "desc");

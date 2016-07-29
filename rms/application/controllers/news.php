@@ -93,18 +93,41 @@ class News extends CI_Controller {
 		$data['from']	= $user->username;
 		$data['bus_list']	= $bus_list;
 		$data['bu_id']	= $this->session->all_userdata()['bu_id'];
+		$data['error']	= '';
 		
 
-		if (!$this->input->post('title'))
-		{
+		if (!$this->input->post('title')){
 			$this->load->view('jq_header', $data);
 			$this->load->view('news/create');
 			$this->load->view('jq_footer');
-		}
-		else
-		{
+		}else{
+			$config['upload_path'] = './pictures';
+			$config['allowed_types'] = 'gif|jpg|png';
+			$config['max_size']	= '2000';
+			$this->load->library('upload', $config);
+			$checkUpload = $this->upload->do_upload();
+			if ( ! $checkUpload){
+
+				$error = array('error' => $this->upload->display_errors());
+				if($error != "<p>You did not select a file to upload.</p>"){
+					//a rendre invisible pour "You did not select a file to upload"
+					$this->load->view('jq_header', $data);
+					$this->load->view('news/create', $error);
+					$this->load->view('jq_footer');
+				}
+
+			}else{
+				$data = $this->upload->data();
+				$picName = $data['file_name'];
+			}
+
 
 			$news_id = $this->news_model->set_news($user->id);
+			if ($checkUpload){
+				$this->db->set('picture', $picName)->where('id', $news_id);
+				$this->db->update('news');
+			}
+
 			$server_name = $this->hmw->getParam('server_name'); 
 			
 			$this->load->library('mmail');

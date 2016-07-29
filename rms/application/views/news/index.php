@@ -57,7 +57,11 @@
 				</table>
 			</div>
 		</li>
-		<li><?php echo $news_item->text; ?></li>
+		<li> <?if($news_item->picture){?>
+				    <img src="<?php echo base_url().'pictures/'.$news_item->picture ?>" class="img-responsive">
+			<?}?>
+			<?php echo $news_item->text; ?>
+		</li>
 <?php endforeach; ?>
 <? } ?>
 </ul>
