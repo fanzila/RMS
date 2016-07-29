@@ -10,6 +10,7 @@ class News extends CI_Controller {
 		$this->load->helper("url");
 		$this->load->library('ion_auth');
 		$this->load->library("hmw");
+		$this->load->helper('html');
 	}
 
 	public function view($slug = NULL)
@@ -101,7 +102,7 @@ class News extends CI_Controller {
 			$this->load->view('news/create');
 			$this->load->view('jq_footer');
 		}else{
-			$config['upload_path'] = './pictures';
+			$config['upload_path'] = './public/pictures';
 			$config['allowed_types'] = 'gif|jpg|png';
 			$config['max_size']	= '2000';
 			$this->load->library('upload', $config);

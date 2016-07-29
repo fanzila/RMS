@@ -31,6 +31,13 @@
 .ui-slider-switch .ui-slider-label {
 	white-space: normal;
 }
+.ui-li-thumb {
+    left: 1px;
+    max-height: 300px; <-- height
+    max-width: 300px; <-- width
+    position: absolute;
+    top: 0;
+}
 </style>
 <div data-role="page" data-theme="a">
 	<div data-role="header">
@@ -57,9 +64,16 @@
 				</table>
 			</div>
 		</li>
-		<li> <?if($news_item->picture){?>
-				    <img src="<?php echo base_url().'pictures/'.$news_item->picture ?>" class="img-responsive">
+		<li><img class="ui-li-icon"/>
+			<?if($news_item->picture){?>
+				<? $image_properties = array(
+						'src'   => 'public/pictures/'.$news_item->picture,
+						'class' => 'img-responsive',
+						'style' => "max-height: 300px; max-width: 300px;"
+				);?>
+				<?echo img($image_properties);?>
 			<?}?>
+
 			<?php echo $news_item->text; ?>
 		</li>
 <?php endforeach; ?>
