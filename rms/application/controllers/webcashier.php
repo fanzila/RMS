@@ -281,9 +281,11 @@ class webCashier extends CI_Controller {
 
 		$data['idtrans'] = $payid;
 
-		$this->load->view('webcashier/header', $data);
+		$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/save', $data);
-		$this->load->view('webcashier/footer');
+		$this->load->view('jq_footer');
 	}
 
 	private function closing($file, $pmid)
