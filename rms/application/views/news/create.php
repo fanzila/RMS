@@ -12,16 +12,20 @@
 		</script>
 
 			<?php echo validation_errors(); ?>
+			<?php echo $error;?>
 
 		<?php 
 		$attributes = array('name' => 'news', 'id' => 'news', 'data-ajax' => 'false');
-		echo form_open('news/create', $attributes); ?>	
+		echo form_open_multipart('news/create', $attributes); ?>	
 
 		<label for="title">Title</label>
 		<input data-theme="a" class="input" data-form="ui-body-a" type="text" id="title" name="title" data-clear-btn="true" /><br />
 
 		<label for="text">Text</label>
 		<textarea id="text" name="text"></textarea><br />
+
+		<label for="title">Picture (not needed) (Size max : 2 Mo)</label>
+		<input type="file" name="userfile" size="20" data-clear-btn="true" /><br/>
 
 		<label for="bu">BU(s)</label>
         <?php foreach ($bus_list as $bu):?>

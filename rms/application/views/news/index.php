@@ -9,17 +9,26 @@
 			$res = $this->db->get() or die($this->mysqli->error);
 			$ret = $res->result_array();
 		?>
-			<li data-role="list-divider"><?php echo $news_item->title; ?> - <?php echo $news_item->date; ?> | <?php echo $news_item->username; ?> | <?php echo $news_item->name; ?> | 
-				<a href="#popupBasic_<?=$news_item->id?>" data-rel="popup">View confirmations</a>
-				<div data-role="popup" id="popupBasic_<?=$news_item->id?>" style="padding:7px">
-					<table style="padding:6px">
-						<?php foreach ($ret as $conf): ?> 
-							<tr style="padding:4px"><td style="padding:4px"><?=$conf['username']?></td><td style="padding:4px"><? $color="red"; if($conf['status'] == 'confirmed') { $color = "green"; } ?> <b><font color="<?=$color?>"><?=$conf['status']?></font></b></td><td style="padding:4px"><?=$conf['date_confirmed']?></td></tr>
-						<?php endforeach; ?>
-					</table>
-				</div>
-			</li>
-			<li><?php echo $news_item->text; ?></li>
+		<li data-role="list-divider"><?php echo $news_item->title; ?> - <?php echo $news_item->date; ?> | <?php echo $news_item->username; ?> | <?php echo $news_item->name; ?> | 
+			<a href="#popupBasic_<?=$news_item->id?>" data-rel="popup">View confirmations</a>
+			<div data-role="popup" id="popupBasic_<?=$news_item->id?>" style="padding:7px">
+				<table style="padding:6px">
+					<?php foreach ($ret as $conf): ?> 
+						<tr style="padding:4px"><td style="padding:4px"><?=$conf['username']?></td><td style="padding:4px"><? $color="red"; if($conf['status'] == 'confirmed') { $color = "green"; } ?> <b><font color="<?=$color?>"><?=$conf['status']?></font></b></td><td style="padding:4px"><?=$conf['date_confirmed']?></td></tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+		</li>
+		<li><img class="ui-li-icon"/>
+			<?if($news_item->picture){?>
+				<? $image_properties = array(
+						'src'   => 'public/pictures/'.$news_item->picture,
+						'class' => 'img-responsive',
+						'style' => "max-height: 300px; max-width: 300px;"
+				);?>
+				<?echo img($image_properties);?>
+			<?}?>
+		<?php echo $news_item->text; ?></li>
 		<?php endforeach; ?>
 		<? } ?>
 </ul>
@@ -60,6 +69,13 @@
 }
 .ui-slider-switch .ui-slider-label {
 	white-space: normal;
+}
+.ui-li-thumb {
+    left: 1px;
+    max-height: 300px; <-- height
+    max-width: 300px; <-- width
+    position: absolute;
+    top: 0;
 }
 </style>
 
