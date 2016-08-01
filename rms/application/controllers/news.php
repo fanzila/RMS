@@ -11,6 +11,7 @@ class News extends CI_Controller {
 		$this->load->helper("url");
 		$this->load->library('ion_auth');
 		$this->load->library("hmw");
+		$this->load->helper('html');
 	}
 
 	public function view($slug = NULL)
@@ -78,7 +79,7 @@ class News extends CI_Controller {
 	public function create()
 	{
 
-
+		$error=0;
 		if (!$this->ion_auth->logged_in())
 		{
 			redirect('auth/login');
@@ -98,19 +99,46 @@ class News extends CI_Controller {
 		$this->load->helper('form');
 		
 		$headers = $this->hmw->headerVars(0, "/news/index/", "Create News");
-
+		$error = array('error' => "");
 		if (!$this->input->post('title'))
 		{
 			$this->load->view('jq_header_pre', $headers['header_post']);
 			$this->load->view('news/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
-			$this->load->view('news/create');
+			$this->load->view('news/create', $error);
 			$this->load->view('jq_footer');
-		}
-		else
-		{
+		}else{
+			$config['upload_path'] = './public/pictures';
+			$config['allowed_types'] = 'gif|jpg|png';
+			$config['max_size']	= '2000';
+			$this->load->library('upload', $config);
+			$checkUpload = $this->upload->do_upload();
+			if ( ! $checkUpload){
+
+				$error = array('error' => $this->upload->display_errors());
+				if($error != "<p>You did not select a file to upload.</p>"){
+					//a rendre invisible pour "You did not select a file to upload"
+					$this->load->view('jq_header_pre', $headers['header_post']);
+					$this->load->view('news/jq_header_spe');
+					$this->load->view('jq_header_post', $headers['header_post']);
+					$this->load->view('news/create', $error);
+					$this->load->view('jq_footer');
+				}else{
+					$error=0;
+				}
+
+			}else{
+				$data = $this->upload->data();
+				$picName = $data['file_name'];
+			}
+
 
 			$news_id = $this->news_model->set_news($user->id);
+			if ($checkUpload){
+				$this->db->set('picture', $picName)->where('id', $news_id);
+				$this->db->update('news');
+			}
+
 			$server_name = $this->hmw->getParam('server_name'); 
 			
 			$this->load->library('mmail');
