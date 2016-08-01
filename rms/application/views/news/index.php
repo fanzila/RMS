@@ -63,7 +63,7 @@
 }
 </style>
 
-<?if($login!=null){?>
+<?if($login==1){?>
 <script type="text/javascript">
 		$(document).on('pagebeforeshow', '', function(){
 			$( "#adminpanel" ).panel( "open");
