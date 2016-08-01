@@ -3,6 +3,7 @@ class News extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->database();
 		$this->load->model('news_model');
 		$this->load->helper('url_helper');
 		$this->load->library("pagination");
@@ -18,6 +19,7 @@ class News extends CI_Controller {
 		{
 			show_404();
 		}
+<<<<<<< HEAD
 		$data['title'] = $data['news_item']['title'];
 		$this->load->view('jq_header', $data);
 		$this->load->view('news/view', $data);
@@ -26,14 +28,38 @@ class News extends CI_Controller {
 	public function index()
 	{
 		$data = array();
+=======
+
+		$header['title'] = $data['news_item']['title'];
+
+		$this->load->view('jq_header_pre', $header);
+		$this->load->view('news/jq_header_spe');
+		$this->load->view('jq_header_post');
+		$this->load->view('news/view', $data);
+		$this->load->view('jq_footer');
+	}
+
+	public function index($login=null)
+	{
+		if (!$this->ion_auth->logged_in())
+		{
+			redirect('auth/login');
+		}
+		$this->hmw->changeBu();// GENERIC changement de Bu
+>>>>>>> master
 		
 		$this->hmw->keyLogin();
 		
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
+<<<<<<< HEAD
 		$data['username']		= $user->username;
 		$data['user_groups']	= $user_groups[0];
 		$data['title'] 			= 'News';
+=======
+		$bus_list = $this->hmw->getBus(null, $user->id);
+				
+>>>>>>> master
 		$config = array();
 		$config["base_url"] = base_url() . "news/index";
 		$config["total_rows"] = $this->news_model->record_count();
@@ -43,13 +69,29 @@ class News extends CI_Controller {
 		$config["num_links"] = round($choice);
 		$this->pagination->initialize($config);
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+<<<<<<< HEAD
 		$data["keylogin"] = $this->session->userdata('keylogin');
 		$data["results"] = $this->news_model->get_list($config["per_page"], $page);
 		$data["links"] = $this->pagination->create_links();
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+=======
+>>>>>>> master
 		
-		$this->load->view('jq_header', $data);
-		$this->load->view('news/index', $data);
+		$data = array(
+			'username'	=> $user->username,
+			'user_groups'	=> $user_groups[0],
+			'title'		=> 'News',
+			'keylogin'	=> $this->session->userdata('keylogin'),
+			'results'	=> $this->news_model->get_list($config["per_page"], $page),
+			'links'		=> $this->pagination->create_links(),
+			'login'		=> $login,
+			'bu_name'	=> $this->session->all_userdata()['bu_name']
+			);
+
+		$headers = $this->hmw->headerVars(1, "/news/index/", "News");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('news/index',$data);
 		$this->load->view('jq_footer');
 	}
 	public function create()
@@ -62,12 +104,13 @@ class News extends CI_Controller {
 		if ($group_info[0]->level < 1)
 		{
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/admin/');
+			redirect('/news/');
 		}
 		$user = $this->ion_auth->user()->row();
 		$bus_list = $this->hmw->getBus(null, $user->id);
 		
 		$this->load->helper('form');
+<<<<<<< HEAD
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['title']	= 'Create a news item';
 		$data['from']	= $user->username;
@@ -77,6 +120,16 @@ class News extends CI_Controller {
 		
 		if (!$this->input->post('title')){
 			$this->load->view('jq_header', $data);
+=======
+		
+		$headers = $this->hmw->headerVars(0, "/news/index/", "Create News");
+
+		if (!$this->input->post('title'))
+		{
+			$this->load->view('jq_header_pre', $headers['header_post']);
+			$this->load->view('news/jq_header_spe');
+			$this->load->view('jq_header_post', $headers['header_post']);
+>>>>>>> master
 			$this->load->view('news/create');
 			$this->load->view('jq_footer');
 		}else{
@@ -99,6 +152,7 @@ class News extends CI_Controller {
 				$data = $this->upload->data();
 				$picName = $data['file_name'];
 			}
+<<<<<<< HEAD
 			if($error == 0){
 				$news_id = $this->news_model->set_news($user->id);
 			}
@@ -155,6 +209,14 @@ class News extends CI_Controller {
 				$this->load->view('news/success');
 				$this->load->view('jq_footer');
 			}		
+=======
+
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('news/jq_header_spe');
+			$this->load->view('jq_header_post', $headers['header_post']);
+			$this->load->view('news/success');
+			$this->load->view('jq_footer');
+>>>>>>> master
 		}
 	}
 	public function confirm($key = null) {
