@@ -99,9 +99,10 @@ class Pm extends CI_Controller {
 		$this->config->load('pm', TRUE);
 		$this->load->helper('url');
 		$this->load->library('session');
+		$this->load->library('hmw');
 		$this->load->library('form_validation');
-		$this->load->model('Pm_model', 'pm_model');
-		$this->load->model('User_model', 'user_model');
+		$this->load->model('Pm_model','pm_model');
+		$this->load->model('User_model','user_model');
 		$this->lang->load('pm', 'english');
 	}
 
@@ -142,7 +143,7 @@ class Pm extends CI_Controller {
 	 */
 	function message($msg_id)
 	{
-		if( ! $msg_id) return;
+		if(! $msg_id) return;
 
 		// Get message and flag it as read
 		$message = $this->pm_model->get_message($msg_id);
@@ -167,11 +168,9 @@ class Pm extends CI_Controller {
 		
 		else $data['message'] = array();
 		$data2['title'] = 'Reporting';
-		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data2['username'] = $this->session->all_userdata()['identity'];
-		
-		$this->load->view('jq_header_pre', $data2);
-		$this->load->view('jq_header_post');
+		$headers = $this->hmw->headerVars(0, "/pm/", "PM");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('pm/menu');
 		$this->load->view('pm/details', $data);
 		$this->load->view('jq_footer');
@@ -221,13 +220,29 @@ class Pm extends CI_Controller {
 			$data['messages'] = $messages;
 		}
 		else $data['messages'] = array();
-
-		$data2['title'] = 'Reporting';
-		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data2['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('jq_header_pre', $data2);
-		$this->load->view('jq_header_post');
+		//$this->load->view('jq_header_pre', $data2);
+		switch ($data['type']) {
+			case '0':
+				$titre = "Inbox";
+				break;
+			case '1':
+				$titre = "Trashed";
+				break;
+			case '2':
+				$titre = "Sent";
+				break;
+			case '3':
+				$titre = "Unread";
+				break;
+			
+			default:
+				$titre = "ERREUR";
+				break;
+		}
+		$headers = $this->hmw->headerVars(1, "/pm/", "PM - ".$titre);
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('pm/menu');
 		$this->load->view('pm/list', $data);
 		$this->load->view('jq_footer');
@@ -323,8 +338,10 @@ class Pm extends CI_Controller {
 		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data2['username'] = $this->session->all_userdata()['identity'];
 		
-		$this->load->view('jq_header_pre', $data2);
-		$this->load->view('jq_header_post');
+		//$this->load->view('jq_header_pre', $data2);
+		$headers = $this->hmw->headerVars(0, "/pm/", "PM - Compose");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('pm/menu');
 		$this->load->view('pm/compose', $data);
 		$this->load->view('jq_footer');

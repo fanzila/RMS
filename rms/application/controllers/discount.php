@@ -75,7 +75,7 @@ class Discount extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-	 	$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
+		$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/index',$data);

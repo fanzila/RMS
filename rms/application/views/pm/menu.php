@@ -1,8 +1,3 @@
-<body>
-	<div data-role="page" data-theme="a">
-			<div data-role="header">
-				<a href="/admin/" data-role="button" data-inline="true" data-ajax="false" data-icon="home">Home</a>
-				<h1>Reporting | <?=$bu_name?> | <?=$username?></h1>
 </div>	
 	<div data-role="content" data-theme="a">
 	<?php $this->load->helper('url'); ?>
