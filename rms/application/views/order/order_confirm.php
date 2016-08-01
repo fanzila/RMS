@@ -1,9 +1,3 @@
-<? $title = "Order Prepare"; include('jq_header.php'); ?>
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/order/" data-ajax="false" data-icon="home">back</a>
-			<h1>Order Confirm | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			Order(s) have been saved to draft.
@@ -33,4 +27,3 @@
 	        return confirm('Do you really want to send the order(s)?\n->NO cancellation will be possible!<-');
 	}
 	</script>
-	<? include('jq_footer.php'); ?>

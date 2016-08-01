@@ -184,5 +184,81 @@ class Hmw {
 		}
 	}
 
+	public function changeBu() {
+		$CI = & get_instance();
+		$change_bu = $CI->input->post('bus');
+		if(!empty($change_bu)) {
+			$bu_info = $CI->hmw->getBus($change_bu);
+			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
+			$CI->hmw->updateUserBu($change_bu, $CI->session->all_userdata()['user_id']); 
+			$CI->session->set_userdata($session_data);
+		}
+	}
+
+	public function headerVars($index, $indexlocation, $title){
+		$CI = & get_instance();
+		if($index!=-1){
+			$user		= $CI->ion_auth->user()->row();
+			$bus_list	= $CI->hmw->getBus(null, $user->id);
+			$user_groups = $CI->ion_auth->get_users_groups()->result();
+
+			$bu_id		= $CI->session->all_userdata()['bu_id'];
+			$keylogin 	= $CI->session->userdata('keylogin');
+			$bu_name	= $CI->session->all_userdata()['bu_name'];
+			$username	= $CI->session->all_userdata()['identity'];
+
+			$CI->db->select('val')->from('bank_balance');
+			$bal_res = $CI->db->get();
+			$bal = $bal_res->row_array();
+
+			$CI->db->from('turnover')->order_by('date desc')->limit(1);
+		 	$bal_ca = $CI->db->get();
+			$ca = $bal_ca->row_array();
+
+			$headers = array(
+				'header_pre'	=> array(
+					'title' => $title,
+					'bu_id'	=> $bu_id
+					),
+				'header_post'	=> array(
+					'bank_balance'	=> $bal['val'],
+					'bu_id'			=> $bu_id,
+					'bu_name'		=> $bu_name,
+					'bus_list'		=> $bus_list,
+					'ca'			=> $ca,
+					'index'			=> $index,
+					'keylogin'		=> $keylogin,
+					'indexlocation'	=> $indexlocation,
+					'title'			=> $title,
+					'groupname' 	=> $user_groups[0]->name,
+					'userlevel' 	=> $user_groups[0]->level,
+					'username'		=> $username
+					)
+				);
+			}else{
+				$headers = array(
+				'header_pre'	=> array(
+					'title' => "titre".$title,
+					'bu_id'	=> null
+					),
+				'header_post'	=> array(
+					'bank_balance'	=> null,
+					'bu_id'			=> null,
+					'bu_name'		=> null,
+					'bus_list'		=> null,
+					'ca'			=> null,
+					'index'			=> 0,
+					'keylogin'		=> null,
+					'indexlocation'	=> $indexlocation,
+					'title'			=> $title,
+					'groupname' 	=> null,
+					'userlevel' 	=> null,
+					'username'		=> null
+					)
+				);
+			}
+		return $headers;
+	}
+
 }
 ?>

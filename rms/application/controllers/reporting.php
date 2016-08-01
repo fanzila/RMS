@@ -31,7 +31,7 @@ class Reporting extends CI_Controller {
 		if ($group_info[0]->level <= 0)
 		{
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/admin/');
+			redirect('/news/');
 		}
 		
 		$this->load->view('reporting');

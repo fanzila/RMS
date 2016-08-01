@@ -1,9 +1,3 @@
-<? $title = "Users"; include('jq_header.php'); ?> 
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/auth/" data-transition="slide" data-icon="home">Back</a>
-			<h1>Users | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 
@@ -32,4 +26,3 @@ echo form_open("auth/delete/".$user->id, $attributes);?>
 	<br /><br />
 	<div id="view"></div>
 </div><!-- /page -->
-<? include('jq_footer.php'); ?>

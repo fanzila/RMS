@@ -1,12 +1,3 @@
-<div data-role="page" data-theme="a">
-<? if($keylogin) { ?>	
-	<div data-role="header">
-&nbsp;&nbsp;&nbsp;
-	</div>
-	<? } ?>
-	<div data-role="header">
-		<a href="/webcashier/" data-ajax="false" data-icon="home">Back</a>
-		<h1><?=$title?>  | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 		<?if($mov == 'close') { ?><small>Closing date: <?=$archive_date?></small><? } ?>
@@ -29,23 +20,23 @@
 						<td width="40%">
 							<? if($mode->id == 1) { ?>
 								<table border="0" cellpadding="2" width="100%"><tr>
-									<td>Pièces: <input maxlength="10" type="text" name="cash1" id="basic" /></td>
-									<td>Billets: <input maxlength="10" type="text" name="notes1" id="basic" /></td>
+									<td>Pièces: <input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" /></td>
+									<td>Billets: <input maxlength="10" type="text" name="notes1" id="basic" data-clear-btn="true" /></td>
 								</tr></table>
 							<? } elseif($mode->id == 2) { ?>
 									<table border="0" cellpadding="2" width="100%"><tr>
-										<td>CB EMV: <input maxlength="10" type="text" name="cbemv" id="basic" /></td>
-										<td>CB CLESS: <input maxlength="10" type="text" name="cbcless" id="basic" /></td>
+										<td>CB EMV: <input maxlength="10" type="text" name="cbemv" id="basic" data-clear-btn="true" /></td>
+										<td>CB CLESS: <input maxlength="10" type="text" name="cbcless" id="basic" data-clear-btn="true" /></td>
 									</tr></table>
 							<? } else { ?>
-								<input maxlength="10" type="text" name="man_<?=$mode->id?>" id="basic" />
+								<input maxlength="10" type="text" name="man_<?=$mode->id?>" id="basic" data-clear-btn="true" />
 							<? } ?>
 								</td>
 						<td width="40%"><?=nl2br($com)?></td>
 					</tr>
 				<?php endforeach; ?>
 			</table>
-			Comments: <input type="text" name="comment" id="comment" />
+			Comments: <input type="text" name="comment" id="comment" data-clear-btn="true" />
 			<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 				<option value="0">User</option>
 				<?

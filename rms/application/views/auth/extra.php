@@ -1,9 +1,3 @@
-<? $title = "Find extra"; include('jq_header.php'); ?> 
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/admin/" data-transition="slide" data-icon="home">Home</a>
-			<h1>Extra finder | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
@@ -59,4 +53,3 @@ Me répondre directement sur mon numéro: <?=$current_user->phone?> et/ou mon em
 	</div><!-- /content -->
 </div>
 </div><!-- /page -->
-<? include('jq_footer.php'); ?>

@@ -49,7 +49,11 @@ class News_model extends CI_Model {
 	}
 
 	public function record_count() {
-		return $this->db->count_all('news');
+		$bu_id =  $this->session->all_userdata()['bu_id'];
+		$query = $this->db->where('id_bu', $bu_id)->get('news_bus');
+		return $query->num_rows();
+
+	//	return $this->db->count_all('news');
 	}
 
 	public function set_news($id_user)

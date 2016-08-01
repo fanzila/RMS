@@ -1,14 +1,8 @@
+		</div>
 <?
 $today = getdate();
 $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minutes] - $checklists_name"; 
 ?>
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/checklist/" data-ajax="false" data-icon="home">Back</a>
-			<h1>Checklist Record | <?=$bu_name?> | <?=$username?></h1>
-		</div>
-
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">			
 				<? if($load <= 0) { ?>Service: <?=$service?> <? } ?>
@@ -42,21 +36,21 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 								$comment = 'comment-'.$line['id'];
 									if($load == null OR ($load > 0 || $line['id'] > 0)) {
 								if($line['priority'] == 3) $bkg_color = "#ffcabf";
-								if($line['priority'] == 2) $bkg_color = "#ffdfa6"; 
+								if($line['priority'] == 2) $bkg_color = "#ffdfa6";
+								if($line['priority'] == 1) $bkg_color = "#e0e0e0";
 								?>
 								
-								<li>
+								
 									<input type="checkbox" name="<?=$line['id']?>" id="task-<?=$line['id']?>" class="custom" <?if(isset($form[$line['id']])) { ?>checked<? } ?> />
 									<label style="background-color: <?=$bkg_color?>" for="task-<?=$line['id']?>" id="label-<?=$line['id']?>"><?=nl2br($line['name'])?> <br /> <i><span style="font-size:smaller"><?=nl2br($line['comment'])?></span></i></label>
 
 									<div data-role="fieldcontain">
 										<label style="font-size:smaller" for="comment-<?=$line['id']?>">Comments</label>
 										<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment-<?=$line['id']?>"
-										name="comment-<?=$line['id']?>" value="<? if(isset($comment) && isset($form['comment-'.$line['id']])) echo nl2br($form['comment-'.$line['id']]); ?>">
+										name="comment-<?=$line['id']?>" value="<? if(isset($comment) && isset($form['comment-'.$line['id']])) echo nl2br($form['comment-'.$line['id']]); ?>"  data-clear-btn="true" />
 									</div>
-								</li>
+								
 								<? } } ?>
-								<li style="list-style-type: none;">
 									<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 										<option value="0">User</option>
 										<?
@@ -66,8 +60,8 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 											<? 
 										}
 										?>
-									</select><font size="14" color='red'><b><div class="error_cont"></div></b></font></li>
-								<li><input type="button" name="save" onClick="validator();" value="SAVE"></li>
+									</select><font size="14" color='red'><b><div class="error_cont"></div></b></font>
+								<input type="button" name="save" onClick="validator();" value="SAVE">
 							</ul>
 							<input type="hidden" name="id_checklist" value="<?=$checklists_id?>">
 							<input type="hidden" name="action" value="save_tasks">
