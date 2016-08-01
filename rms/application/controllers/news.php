@@ -38,8 +38,11 @@ class News extends CI_Controller {
 		{
 			redirect('auth/login');
 		}
+		$bu_test = $this->session->all_userdata()['bu_name'];
 		$this->hmw->changeBu();// GENERIC changement de Bu
-		
+		if($bu_test != $this->session->all_userdata()['bu_name'] && $login!=1){
+			redirect('news');
+		}
 		$this->hmw->keyLogin();
 		
 		$user					= $this->ion_auth->user()->row();
