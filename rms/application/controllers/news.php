@@ -116,7 +116,8 @@ class News extends CI_Controller {
 			if ( ! $checkUpload){
 
 				$error = array('error' => $this->upload->display_errors());
-				if($error != "<p>You did not select a file to upload.</p>"){
+				$checkError = array('error' => '<p>You did not select a file to upload.</p>');
+				if($error != $checkError){
 					//a rendre invisible pour "You did not select a file to upload"
 					$this->load->view('jq_header_pre', $headers['header_post']);
 					$this->load->view('news/jq_header_spe');
