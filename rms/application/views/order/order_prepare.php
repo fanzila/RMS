@@ -1,13 +1,6 @@
-<? $title = "Order Prepare"; include('jq_header.php'); ?>
-<body>
-	<div data-role="page">
-
-		<div data-role="header">
-			<a data-ajax="false" href="/order/" data-icon="home">Back</a>
-			<h1>Order Prepare | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 
-		<div data-role="content">
+		<div data-role="content" data-theme="a">
 			<? if($stock_update) { ?><ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 				<li style="background-color: #e8ffb9;">Stock updated</li>
 				<? foreach ($maj as $keyst) { if($keyst['stock'] != 0) { ?>
@@ -19,7 +12,7 @@
 				<? $i=0; $totalprice = 0;
 				foreach ($order as $supplier_id => $pdt_list) { 			
 					?>
-					<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
+					<ul data-role="listview" data-inset="true">
 						<li data-role="list-divider"><?=$suppliers[$supplier_id]['name']?></li>
 						<?
 						foreach ($pdt_list as $key => $pdt) { 
@@ -66,4 +59,3 @@
 						</form>
 					</div>
 				</div>
-				<? include('jq_footer.php'); ?>

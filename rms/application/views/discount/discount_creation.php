@@ -1,9 +1,6 @@
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/admin/" data-ajax="false" data-icon="home">Home</a><a href="/discount/" data-ajax="false" data-icon="back">Back</a>
+		<!--	<a href="/discount/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
 			<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
-		</div>
+		--></div>
 		<div data-role="content"><?
 			if($create) {
 			?>
@@ -17,11 +14,11 @@
 						<tr>
 							<td>
 								<label for="client" id="label">Client:</label>
-								<input id="client" type="text" name="client" value="">
+								<input id="client" type="text" name="client" value="" data-clear-btn="true" />
 								<label for="reason" id="label">Reason:</label>
-								<input id="reason" type="text" name="reason" value="">
+								<input id="reason" type="text" name="reason" value="" data-clear-btn="true" />
 								<label for="nature" id="label">Nature:</label>
-								<input id="nature" type="text" name="nature" value="">
+								<input id="nature" type="text" name="nature" value="" data-clear-btn="true" />
 							</td>
 						</tr>
 						<tr>
@@ -59,11 +56,7 @@
 								var client = $('#client').val();
 								var reason = $('#reason').val();
 
-								if(client == '') {
-									alert('Please fill discount client.');
-								} else if(reason == '') {
-									alert('Please fill discount reason.');
-								} else if(nature == '') {
+								if(nature == '') {
 									alert('Please fill discount nature.');
 								} else if(user == 0){
 									alert('Please indicate who you are.');

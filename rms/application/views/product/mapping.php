@@ -1,26 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>HANK - Products Mapping</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="msapplication-tap-highlight" content="no" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
-	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
-	<script>
 
-	</script>
-</head>
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/order/" data-ajax="false" data-icon="home">Home</a>
-			<h1>Products mapping | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
+			<div data-role="collapsible-set" data-inset="false" data-filter="true" data-filter-placeholder="Filter discounts">
 			<? $i = 0; foreach ($products_pos as $line) { ?>
 				<div data-role="collapsible">
 					<h2><?=$line['name']?></h2>
@@ -34,30 +15,36 @@
 									<? foreach ($mapping as $keymap) { 
 										if($keymap['id_pos'] == $line['id']) { 
 											?>
-											<tr><td><select id="product_<?=$line['id']?>_<?=$i?>" name="product_<?=$line['id']?>_<?=$i?>" data-mini="true"><? foreach ($products as $pdt) { ?><option value="<?=$pdt['id']?>" 
-												<? if($pdt['id'] == $keymap['id_product']) echo "selected";?>><?=stripslashes($pdt['name'])?></option><? } ?></select></td><td><small>Coef:</small></td><td><input id="coef_<?=$line['id']?>_<?=$i?>" type="text" name="coef_<?=$line['id']?>_<?=$i?>" value="<?=$keymap['coef']?>" data-mini="true"></td><td></td></tr>
+											<tr>
+												<td>
+													<select id="product_<?=$line['id']?>_<?=$i?>" name="product_<?=$line['id']?>_<?=$i?>" data-mini="true"><? foreach ($products as $pdt) { ?><option value="<?=$pdt['id']?>" 
+													<? if($pdt['id'] == $keymap['id_product']) echo "selected";?>><?=stripslashes($pdt['name'])?></option><? } ?></select></td><td><small>Coef:</small></td><td><input id="coef_<?=$line['id']?>_<?=$i?>" type="text" name="coef_<?=$line['id']?>_<?=$i?>" value="<?=$keymap['coef']?>" data-mini="true" data-clear-btn="true" />
+												</td>
+												<td>
+													
+												</td>
+											</tr>
 												<? } $i++; ?>
-										<script> var x = <?=$i?>; </script>
-										<? } ?>
+												<script> var x = <?=$i?>; </script>
+												<? } ?>
 										<tr>
 											<td colspan="4">
 												<div class="input_fields_wrap_<?=$line['id']?>"></div>		
 											</td>					
-											<tr>
-												<td colspan="4">
-													<input type="submit" id="submit_<?=$line['id']?>" name="submit_<?=$line['id']?>" value="Save" data-mini="true" onclick="validate(<?=$line['id']?>)"/>
-												</td>
-											</tr>
-										</table>
-									</li>
-								</ul>
-							</form>
-						</div>
-						<? } ?>
+										<tr>
+											<td colspan="4">
+												<input type="submit" id="submit_<?=$line['id']?>" name="submit_<?=$line['id']?>" value="Save" data-mini="true" onclick="validate(<?=$line['id']?>)" data-clear-btn="true" />
+											</td>
+										</tr>
+								</table>
+							</li>
+						</ul>
+					</form>
+				</div>
+			<? } ?>
+
 					</div><!-- /content -->
 				</div><!-- /page -->
-				<div id="adblock">plus ici</div>
-				<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
 				<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
 				<script>
 
@@ -86,7 +73,7 @@
 								}
 							}
 						}).done(function(data) {
-							return false;
+							location.reload(true);
 						}).fail(function(data) {
 							done = done + 1;
 							if(done <= 1) { 
@@ -121,6 +108,3 @@
 				}
 
 				</script>
-
-			</body>
-			</html>

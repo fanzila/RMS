@@ -1,7 +1,3 @@
-<div data-role="page" data-theme="a">
-	<div data-role="header">
-	<a href="/admin/" data-ajax="false" data-icon="home">Home</a>
-		<h1>Message caisse | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 
@@ -24,7 +20,7 @@
 			<?if(isset($msgsent)) {?>
 			<p style="background-color: #dae3d8; padding: 15px;">Message sent: <?=$msgsent?></p>
 			<? } ?>
-			<label for="text">Message:</label>
+			Message:
 			<textarea id="msg" name="msg"></textarea><br />
 
 			<input data-ajax="false"  data-theme="a" type="submit" onclick="return validateForm()" name="submit" value="Send" />

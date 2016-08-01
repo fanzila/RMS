@@ -22,6 +22,7 @@ class Checklist extends CI_Controller {
 	{
 
 		parent::__construct();
+		$this->load->library('ion_auth');
 		$this->load->library('hmw');
 		$this->load->library('mmail');
 		$this->load->database();
@@ -29,6 +30,8 @@ class Checklist extends CI_Controller {
 
 	public function index()
 	{
+		$this->hmw->changeBu();// GENERIC changement de Bu
+
 		$this->hmw->keyLogin();
 		$id_bu = $this->session->all_userdata()['bu_id'];
 
@@ -37,7 +40,7 @@ class Checklist extends CI_Controller {
 		if(isset($form)) {
 			if ($this->input->post('action') == 'save_tasks') {
 				if($this->saveTasks()) {
-					$msg = "RECORDED ON: ".date('Y-m-d H:m');
+					$msg = "RECORDED ON: ".date('Y-m-d H:i');
 				} else {
 					$msg = "WARNING NO RECORD";
 				}
@@ -55,9 +58,12 @@ class Checklist extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		$this->load->view('checklist/header');
+		$headers = $this->hmw->headerVars(1, "/checklist/", "Checklist");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('checklist/jq_header_spe');
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('checklist/checklist',$data);
-		$this->load->view('checklist/footer');
+		$this->load->view('jq_footer');
 
 	}
 
@@ -79,9 +85,12 @@ class Checklist extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		$this->load->view('checklist/header');
+		$headers = $this->hmw->headerVars(0, "/checklist/", "Checklist View Record");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('checklist/jq_header_spe');
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('checklist/checklist_prev',$data);
-		$this->load->view('checklist/footer');
+		$this->load->view('jq_footer');
 
 	}
 
@@ -137,9 +146,12 @@ class Checklist extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		$this->load->view('checklist/header');
+		$headers = $this->hmw->headerVars(0, "/checklist/", "Checklist Record");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('checklist/jq_header_spe');
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('checklist/checklist_tasks',$data);
-		$this->load->view('checklist/footer');
+		$this->load->view('jq_footer');
 	}
 
 	private function saveTasks() {

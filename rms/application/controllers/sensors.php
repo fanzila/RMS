@@ -12,6 +12,7 @@ class Sensors extends CI_Controller {
 
 	public function index()
 	{
+		$this->hmw->changeBu();// GENERIC changement de Bu
 		$this->hmw->keyLogin();
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
@@ -32,7 +33,12 @@ class Sensors extends CI_Controller {
 		$data['current'] 	= $info;
 		$data['title'] 		= 'Sensors';
 		$data['keylogin']	= $this->session->userdata('keylogin');
+
+		$headers = $this->hmw->headerVars(1, "/", "Sensors");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('sensors', $data);
+		$this->load->view('jq_footer');
 	}
 
 	public function record()

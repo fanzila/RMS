@@ -1,7 +1,3 @@
-<div data-role="page" data-theme="a">
-	<div data-role="header">
-		<a href="/webcashier/" data-ajax="false" data-icon="home">Back</a>
-		<h1><?=$title?>  | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 
@@ -23,13 +19,13 @@
 					<td align="center">TR num</td>
 				</tr>
 				<tr style="background-color: #fdfff9;">
-					<td><input maxlength="20" type="text" name="man_1" id="man_1" value="0.00" /></td>
-					<td><input maxlength="20" type="text" name="man_3" id="man_3" value="0" /></td>
+					<td><input maxlength="20" type="text" name="man_1" id="man_1" value="0.00" data-clear-btn="true" /></td>
+					<td><input maxlength="20" type="text" name="man_3" id="man_3" value="0" data-clear-btn="true" /></td>
 				</tr>
 			</table>
 			
-			Comments: <input type="text" name="comment" id="comment"  />
-		<input maxlength="20" type="hidden" name="action" value="safe" />
+			Comments: <input type="text" name="comment" id="comment" data-clear-btn="true" />
+		<input maxlength="20" type="hidden" name="action" value="safe" data-clear-btn="true" />
 		<input type="button" name="save" onClick="validator();" value="SAVE">
 	</form>
 </div>

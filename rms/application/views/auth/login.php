@@ -1,9 +1,20 @@
 <? $title = "Admin"; include('jq_header.php'); ?> 
 <body>
 	<div data-role="page">
-		<div data-role="header">
-			<h1>Admin</h1>
-		</div>
+  <div data-role="header" data-position="fixed" class="wow fadeIn">
+      <h1>
+      <div class="row">
+        <div class="col-xs">
+          <div class="box"></div>
+        </div>
+        <div class="col-xs-1">
+          <div class="box"><?=$title?></div>
+        </div>
+        <div class="col-xs">
+          <div class="box"></div>
+        </div>
+      </div></h1>
+  </div>
 		<div data-role="content">
 
 <h1><?php echo lang('login_heading');?></h1>

@@ -1,11 +1,6 @@
-<? $title = "Order"; include('jq_header.php'); 
+<?
 $today = getdate();
 ?>
-<body>
-	<div data-role="page">
-		<div data-role="header">
-			<a href="/order/" data-ajax="false" data-icon="home">Back</a>
-			<h1>Order <? if($load <= 0) { ?> <?=strtoupper($order_name)?> <? } ?> | <?=$bu_name?> | <?=$username?></h1>
 		</div>
 		<div data-role="content">
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">				
@@ -16,10 +11,10 @@ $today = getdate();
 						if($line['freq_inventory'] == $order_name OR ($order_name == 'previous' AND $order_prev[0]['supid'] == $line['supplier_id']) OR $freq_id == 1000) {
 							?>
 							<li>
-								<label for="pdt-<?=$line['id']?>"> <?=strtoupper($line['name'])?> - <span style="font-size:smaller"> <?=$line['supplier_name']?> - <?=$line['id']?>
+								<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper($line['name'])?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
 									<br /><b>Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?></b> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?>
 									<br />Packaging: <?=$line['packaging']?> per <?=$line['unit_name']?> | Unit price: <?=$line['price']/1000?>€ | Ref. supplier: <?=$line['supplier_reference']?> | Comment: <?=$line['comment']?>
-								</span>
+								
 							</label>
 							<input type="hidden" name="price-<?=$line['id']?>" id="price-<?=$line['id']?>" value="<?=$line['price']?>">
 							<input type="hidden" name="packaging-<?=$line['id']?>" id="packaging-<?=$line['id']?>" value="<?=$line['packaging']?>">
@@ -64,14 +59,14 @@ $today = getdate();
 													}
 												}
 												?>
-												/>
+												data-clear-btn="true" />
 											</td>
 												<td><small>Stock adjust: </small></td>
 												<td>
-													<input type="text" name="stock-<?=$line['id']?>" id="stock-<?=$line['id']?>" class="custom" value="0">
+													<input type="text" name="stock-<?=$line['id']?>" id="stock-<?=$line['id']?>" class="custom" value="0" data-clear-btn="true" />
 												</td>
 												<? if($load > 0 && $qtty > 0) { ?>
-													<td><label for="add<?=$line['id']?>" data-mini="true">Add to stock</label><input type="checkbox" id="add<?=$line['id']?>" name="add<?=$line['id']?>" class="add" data-mini="true" onclick="disableStock(<?=$line['id']?>);" />
+													<td><label for="add<?=$line['id']?>" data-mini="true" style="background-color:#ffffff">Add to stock</label><input type="checkbox" id="add<?=$line['id']?>" name="add<?=$line['id']?>" class="add" data-mini="true" onclick="disableStock(<?=$line['id']?>);" />
 													</td>
 													<? } ?> 
 													<? } $qtty = 0; ?>
@@ -133,4 +128,3 @@ $today = getdate();
 				});
 				
 				</script>
-				<? include('jq_footer.php'); ?>

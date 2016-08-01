@@ -8,6 +8,7 @@ class Auth extends CI_Controller {
 		$this->load->library('ion_auth');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
+		$this->load->library('hmw');
 	
 		$this->load->database();
 
@@ -20,7 +21,8 @@ class Auth extends CI_Controller {
 	//redirect if needed, otherwise display the user list
 	function extra()
 	{
-		
+		$this->hmw->changeBu();// GENERIC changement de Bu
+
 		$this->load->library("hmw");
 		$this->load->library('mmail');
 		
@@ -67,13 +69,19 @@ class Auth extends CI_Controller {
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
 			$this->data['current_user'] = $this->ion_auth->user()->row();
+			
+			$headers = $this->hmw->headerVars(1, "/auth/extra/", "Extra finder");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/extra', $this->data);
+			$this->load->view('jq_footer');
 		}
 	}
 	
 	//redirect if needed, otherwise display the user list
 	function index()
 	{
+		$this->hmw->changeBu();// GENERIC changement de Bu
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		
@@ -103,7 +111,11 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(1, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/index', $this->data);
+			$this->load->view('jq_footer');
 		}
 	}
 
@@ -129,7 +141,7 @@ class Auth extends CI_Controller {
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				//redirect('/', 'refresh');
 				//set BU
-				redirect('/admin/');
+				redirect('/news/index/1/');
 			}
 			else
 			{
@@ -148,10 +160,12 @@ class Auth extends CI_Controller {
 			$this->data['identity'] = array('name' => 'identity',
 				'id' => 'identity',
 				'type' => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('identity'),
 			);
 			$this->data['password'] = array('name' => 'password',
 				'id' => 'password',
+				'data-clear-btn' => "true",
 				'type' => 'password',
 			);
 
@@ -169,7 +183,7 @@ class Auth extends CI_Controller {
 
 		//redirect them to the login page
 		$this->session->set_flashdata('message', $this->ion_auth->messages());
-		redirect('/admin/');
+		redirect('/news/');
 	}
 
 	//change password
@@ -197,23 +211,27 @@ class Auth extends CI_Controller {
 				'name' => 'old',
 				'id'   => 'old',
 				'type' => 'password',
+				'data-clear-btn' => "true",
 			);
 			$this->data['new_password'] = array(
 				'name' => 'new',
 				'id'   => 'new',
 				'type' => 'password',
+				'data-clear-btn' => "true",
 				'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
 			);
 			$this->data['new_password_confirm'] = array(
 				'name' => 'new_confirm',
 				'id'   => 'new_confirm',
 				'type' => 'password',
+				'data-clear-btn' => "true",
 				'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
 			);
 			$this->data['user_id'] = array(
 				'name'  => 'user_id',
 				'id'    => 'user_id',
 				'type'  => 'hidden',
+				'data-clear-btn' => "true",
 				'value' => $user->id,
 			);
 			
@@ -263,7 +281,14 @@ class Auth extends CI_Controller {
 
 			//set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+
+			$headers = $this->hmw->headerVars(-1, "/", "Forgot your password?");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/forgot_password', $this->data);
+			//$this->load->view('auth/jq_footer');
+			$this->load->view('jq_footer');
+
 		}
 		else
 		{
@@ -433,7 +458,12 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/deactivate_user', $this->data);
+			$this->load->view('jq_footer');
+
 		}
 		else
 		{
@@ -476,7 +506,11 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/delete_user', $this->data);
+			$this->load->view('jq_footer');
 		}
 		else
 		{
@@ -551,7 +585,7 @@ class Auth extends CI_Controller {
 			}
 
 			//check to see if we are creating the user
-			//redirect them back to the admin page
+			//redirect them back to the news page
 			$this->session->set_flashdata('message', $this->ion_auth->messages());
 			redirect("auth", 'refresh');
 		}
@@ -565,30 +599,35 @@ class Auth extends CI_Controller {
 				'name'  => 'first_name',
 				'id'    => 'first_name',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('first_name'),
 			);
 			$this->data['last_name'] = array(
 				'name'  => 'last_name',
 				'id'    => 'last_name',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('last_name'),
 			);
 			$this->data['email'] = array(
 				'name'  => 'email',
 				'id'    => 'email',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('email'),
 			);
 			$this->data['phone'] = array(
 				'name'  => 'phone',
 				'id'    => 'phone',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('phone'),
 			);
 			$this->data['comment'] = array(
 				'name'  => 'comment',
 				'id'    => 'comment',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('comment'),
 			);
 			/**
@@ -596,12 +635,14 @@ class Auth extends CI_Controller {
 				'name'  => 'password',
 				'id'    => 'password',
 				'type'  => 'password',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('password'),
 			);
 			$this->data['password_confirm'] = array(
 				'name'  => 'password_confirm',
 				'id'    => 'password_confirm',
 				'type'  => 'password',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('password_confirm'),
 			);
 			**/
@@ -619,7 +660,11 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/create_user', $this->data);
+			$this->load->view('jq_footer');
 		}
 	}
 
@@ -745,50 +790,62 @@ class Auth extends CI_Controller {
 			'name'  => 'first_name',
 			'id'    => 'first_name',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('first_name', $user->first_name),
 		);
 		$this->data['last_name'] = array(
 			'name'  => 'last_name',
 			'id'    => 'last_name',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('last_name', $user->last_name),
 		);
 		$this->data['username'] = array(
 			'name'  => 'username',
 			'id'    => 'username',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('username', $user->username),
 		);
 		$this->data['email'] = array(
 			'name'  => 'email',
 			'id'    => 'email',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('email', $user->email),
 		);
 		$this->data['phone'] = array(
 			'name'  => 'phone',
 			'id'    => 'phone',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('phone', $user->phone),
 		);
 		$this->data['comment'] = array(
 			'name'  => 'comment',
 			'id'    => 'comment',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('comment', $user->comment),
 		);
 		$this->data['password'] = array(
 			'name' => 'password',
 			'id'   => 'password',
+			'data-clear-btn' => "true",
 			'type' => 'password'
 		);
 		$this->data['password_confirm'] = array(
 			'name' => 'password_confirm',
 			'id'   => 'password_confirm',
+			'data-clear-btn' => "true",
 			'type' => 'password'
 		);
 
+		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->_render_page('auth/edit_user', $this->data);
+		$this->load->view('jq_footer');
 	}
 
 	// create a new group
@@ -826,19 +883,25 @@ class Auth extends CI_Controller {
 				'name'  => 'group_name',
 				'id'    => 'group_name',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('group_name')
 			);
 			$this->data['description'] = array(
 				'name'  => 'description',
 				'id'    => 'description',
 				'type'  => 'text',
+				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('description')
 			);
 			
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			
+			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/create_group', $this->data);
+			$this->load->view('jq_footer');
 		}
 	}
 
@@ -892,19 +955,26 @@ class Auth extends CI_Controller {
 			'name'  => 'group_name',
 			'id'    => 'group_name',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
+
 			'value' => $this->form_validation->set_value('group_name', $group->name),
 		);
 		$this->data['group_description'] = array(
 			'name'  => 'group_description',
 			'id'    => 'group_description',
 			'type'  => 'text',
+			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('group_description', $group->description),
 		);
 
 		$this->data['username'] = $this->session->all_userdata()['identity'];
 		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	
+		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->_render_page('auth/edit_group', $this->data);
+		$this->load->view('jq_footer');
 	}
 
 

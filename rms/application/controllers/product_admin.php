@@ -60,7 +60,11 @@ class Product_admin extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
+		$headers = $this->hmw->headerVars(0, "/order/", "Product Admin");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('product/admin',$data);
+		$this->load->view('jq_footer');
 	}
 	
 	public function save()
@@ -170,8 +174,12 @@ class Product_admin extends CI_Controller {
 			);
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-			
+
+	 	$headers = $this->hmw->headerVars(0, "/order/", "Product Mapping");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('product/mapping',$data);
+		$this->load->view('jq_footer');
 	}
 
 }

@@ -29,19 +29,22 @@ class Discount extends CI_Controller {
 		$this->load->library('hmw');
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
-		
 	}
 
 	public function index($task_id = null)
 	{
+		$this->hmw->changeBu();// GENERIC changement de Bu
+
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
+		/* SPECIFIC Creation d'un message si fonction create utilisee */
 		$msg = null;
 		if($task_id=="create") {
 				$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
 		}
 
+		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
@@ -51,11 +54,12 @@ class Discount extends CI_Controller {
 		$query = $this->db->get("users");
 		$users = $query->result();
 
+		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-
 		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
 			->from('discount as T')
 			->where('T.deleted', 0)
+			->where('T.used', 0)
 			->where('T.id_bu', $id_bu);
 		if($task_id > 0) $this->db->where('id', $task_id);
 		$this->db->order_by('T.date desc');
@@ -66,15 +70,14 @@ class Discount extends CI_Controller {
 			'discount'	=> $discount,
 			'create'	=> 0,
 			'users'		=> $users,
-			'msg'		=> $msg,
-			'keylogin'	=> $this->session->userdata('keylogin')
+			'msg'		=> $msg
 			);
-
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-		$header['title'] = "Discount";
-		
-		$this->load->view('jq_header', $header);
+
+	 	$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/index',$data);
 		$this->load->view('jq_footer');
 	}
@@ -92,14 +95,15 @@ class Discount extends CI_Controller {
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$discounts 	= $res->result();
 		$data = array(
-			'discounts'	=> $discounts
+			'discounts'	=> $discounts,
+			'bu_name' 	=> $this->session->all_userdata()['bu_name'],
+			'username' 	=> $this->session->all_userdata()['identity']
 			);
-			
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
-		$header['title'] = "Discount log";
+
 		
-		$this->load->view('jq_header', $header);
+	 	$headers = $this->hmw->headerVars(0, "/discount/", "Discount Log");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/logs',$data);
 		$this->load->view('jq_footer');
 	}
@@ -179,14 +183,15 @@ class Discount extends CI_Controller {
 		$data = array(
 			'create'	=> $create,
 			'users'		=> $users,
-			'discount'		=> $discount
+			'discount'	=> $discount
 			);
 		
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-		$header['title'] = "Discount create";
-
-		$this->load->view('jq_header', $header);
+		
+		$headers = $this->hmw->headerVars(0, "/discount/", "Discount create");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/discount_creation',$data);
 		$this->load->view('jq_footer');
 	}

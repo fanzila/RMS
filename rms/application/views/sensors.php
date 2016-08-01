@@ -1,30 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>HANK - <?=$title?></title>	
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="msapplication-tap-highlight" content="no" />
+
 	<!-- <link class="include" rel="stylesheet" type="text/css" href="/public/jqplot/jquery.jqplot.css" /> 
 	<link rel="stylesheet" type="text/css" href="/public/jqplot/examples.css" /> -->
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
-	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
-	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
 	<!-- 	
 	<link type="text/css" rel="stylesheet" href="/public/jqplot/syntaxhighlighter/styles/shCoreDefault.min.css" />
     <link type="text/css" rel="stylesheet" href="/public/jqplot/syntaxhighlighter/styles/shThemejqPlot.min.css" />
 	-->
 	 <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="/public/jqplot/excanvas.js"></script><![endif]-->
-	<script src="/public/jquery-1.11.3.min.js" type="text/javascript"></script>
-	<script src="/public/jqm/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
 
-</head>
-
-<div data-role="page" data-theme="a">
-	<div data-role="header">
-		<? if(!$keylogin) { ?><a href="/admin/" data-ajax="false" data-icon="home">Home</a><? } ?> 
-		<h1>Sensors | <?=$bu_name?> | <?=$username?></h1>
 	</div>
 	<div data-role="content" data-theme="a">
 <h3>Current temperature</h3>
@@ -94,5 +76,3 @@ $(document).ready(function(){
 <script type="text/javascript" src="/public/jqplot/syntaxhighlighter/scripts/shBrushJScript.min.js"></script>
 <script type="text/javascript" src="/public/jqplot/syntaxhighlighter/scripts/shBrushXml.min.js"></script>
 -->
-</body>
-</html>
