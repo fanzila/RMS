@@ -26,9 +26,7 @@
 			$body = array(
 				'name'	=> TF_PM_BODY,
 				'id'	=> TF_PM_BODY,
-				'value' => set_value(TF_PM_BODY, $message[TF_PM_BODY]),
-				'cols'	=> 80,
-				'rows'	=> 5
+				'value' => set_value(TF_PM_BODY, $message[TF_PM_BODY])
 			);
 		?>
 								
@@ -37,21 +35,35 @@
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td width="5%"><?php echo form_label('To', $recipients['id']); ?></td>
-						<td width="33%"><?php echo form_input($recipients); ?></td>
-						<td><?php echo form_error($recipients['name']); ?></td>	
+						<td width="66%"><select style="background-color:#a1ff7c" name="recipients" id="recipients" data-inline="true" data-theme="a" required>
+							<option value="0">Recipient</option>
+							<? if($userlevel >= 2){ ?>
+								<?foreach ($users as $user) {?>
+									<? if(1/*Condition pour avoir tous les managers*/){ ?>
+										<? $all ? $all .=';'.$user->username : $all .=''.$user->username ?>
+									<? } ?>
+								<?}?>
+								<option value="<?=$all?>">Every manager</option>
+							<?}?>
+							<?foreach ($users as $user) {?>
+								<option value="<?=$user->username?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
+								</option>
+							<?}?>
+						</select></td>
+						<td><?php echo form_error($recipients['name']); ?></td>
 					</tr>	
 					<tr>
-						<td><?php echo form_label('Subject', $subject['id']); ?></td>
+						<td><?php echo form_label('Type d\'entretien', $subject['id']); ?></td>
 						<td><?php echo form_input($subject); ?></td>
 						<td><?php echo form_error($subject['name']); ?></td>	
 					</tr>	
 					<tr>
-						<td><?php echo form_label('Message', $body['id']); ?></td>
+						<td><?php echo form_label('Compte Rendu', $body['id']); ?></td>
 						<td><?php echo form_textarea($body); ?></td>
 						<td><?php echo form_error($body['name']); ?></td>	
 					</tr>
 					<tr>
-					<td colspan=2 align="center" valign="top" style="background:#F2F2F2; padding:4px;">
+					<td colspan=2 align="center" valign="top"><br/>
 						<label>
 							<!-- DO NOT CHANGE BUTTON NAME, NEEDED FOR CONTROLLER "send" -->
 							<input data-ajax="false" type="submit" name="btnSend" id="btnSend" value="Send" />

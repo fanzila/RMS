@@ -100,9 +100,10 @@ class Pm extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->library('session');
 		$this->load->library('hmw');
+		$this->load->library('ion_auth');
 		$this->load->library('form_validation');
 		$this->load->model('Pm_model','pm_model');
-		$this->load->model('User_model','user_model');
+		$this->load->model('Pm_user_model','user_model');
 		$this->lang->load('pm', 'english');
 	}
 
@@ -151,6 +152,10 @@ class Pm extends CI_Controller {
 
 		// Get message and flag it as read
 		$message = $this->pm_model->get_message($msg_id);
+
+		$user		= $this->ion_auth->user()->row();
+		$bus_list	= $this->hmw->getBus(null, $user->id);
+		$user_groups = $this->ion_auth->get_users_groups()->result();
 		if($message)
 		{
 			$message = reset($message);
@@ -171,11 +176,12 @@ class Pm extends CI_Controller {
 		}
 		
 		else $data['message'] = array();
-		$data2['title'] = 'Reporting';
-		$headers = $this->hmw->headerVars(0, "/pm/", "PM");
+		$headers = $this->hmw->headerVars(0, "/pm/", "Report");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('pm/menu');
+		if($user_groups[0]->level >= 1){
+			$this->load->view('pm/menu');
+		}
 		$this->load->view('pm/details', $data);
 		$this->load->view('jq_footer');
 	}
@@ -202,9 +208,19 @@ class Pm extends CI_Controller {
 		{
 			redirect('auth/login');
 		}
+		$group_info = $this->ion_auth_model->get_users_groups()->result();
+		if ($group_info[0]->level < 1 &&($type==1 || $type==2))
+		{
+			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
+			redirect('pm');
+		}
 		// Get & pass to view the messages view type (e.g. MSG_SENT)
 		$data['type'] = $type;
 		$messages = $this->pm_model->get_messages($type);
+
+		$user		= $this->ion_auth->user()->row();
+		$bus_list	= $this->hmw->getBus(null, $user->id);
+		$user_groups = $this->ion_auth->get_users_groups()->result();
 
 		if($messages)
 		{
@@ -215,7 +231,9 @@ class Pm extends CI_Controller {
 			{
 				$messages[$i][TF_PM_BODY] = $this->render($messages[$i][TF_PM_BODY]);
 				$messages[$i][TF_PM_AUTHOR] = $this->user_model->get_username($message[TF_PM_AUTHOR]);//Problème ici
+			//	echo "\nauteur du n°".$i." : ".$messages[$i][TF_PM_AUTHOR];
 				$messages[$i][PM_RECIPIENTS] = $this->pm_model->get_recipients($messages[$i][TF_PM_ID]);//Problème et là
+			//	echo " destinataire du n°".$i." : ".$messages[$i][TF_PM_AUTHOR];
 				$j = 0;
 				foreach ($messages[$i][PM_RECIPIENTS] as $recipient)
 				{
@@ -229,7 +247,6 @@ class Pm extends CI_Controller {
 		}
 		else $data['messages'] = array();
 		
-		//$this->load->view('jq_header_pre', $data2);
 		switch ($data['type']) {
 			case '0':
 				$titre = "Inbox";
@@ -248,10 +265,12 @@ class Pm extends CI_Controller {
 				$titre = "ERREUR";
 				break;
 		}
-		$headers = $this->hmw->headerVars(1, "/pm/", "PM - ".$titre);
+		$headers = $this->hmw->headerVars(1, "/pm/", "Report - ".$titre);
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('pm/menu');
+		if($user_groups[0]->level >= 1){
+			$this->load->view('pm/menu');
+		}
 		$this->load->view('pm/list', $data);
 		$this->load->view('jq_footer');
 	}
@@ -278,11 +297,30 @@ class Pm extends CI_Controller {
 		{
 			redirect('auth/login');
 		}
+
+		$group_info = $this->ion_auth_model->get_users_groups()->result();
+		if ($group_info[0]->level < 1)
+		{
+			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
+			redirect('/pm/');
+		}
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
+		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->where('users.active', 1);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('users.username', 'asc');
+		$query = $this->db->get("users");
+		$users = $query->result();
+
 		$rules = $this->config->item('pm_form', 'form_validation');
 		$this->form_validation->set_rules($rules);
 
 		$data['found_recipients'] = TRUE; // assume we'll find recipients - set to FALSE below otherwise
 		$data['suggestions'] = array(); // if recipients not found by exact search, save suggestions here
+		$data['users'] = $users;
 		$message = array();
 		// Set default vals passed via parameters
 		$message[PM_RECIPIENTS] = $recipients;
@@ -324,7 +362,7 @@ class Pm extends CI_Controller {
 				{
 					// On success: redirect to list view of messages
 					$this->session->set_flashdata('status', $this->lang->line('msg_sent'));
-					redirect($this->base_uri.'messages/'.MSG_NONDELETED);
+					redirect($this->base_uri.'messages/'.MSG_SENT);
 				}
 				else
 				{
@@ -346,13 +384,10 @@ class Pm extends CI_Controller {
 			$this->session->set_flashdata('status', $status);
 		}
 		$data['message'] = $message;
-		$data2['title'] = 'Reporting';
-		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data2['username'] = $this->session->all_userdata()['identity'];
 		
-		//$this->load->view('jq_header_pre', $data2);
-		$headers = $this->hmw->headerVars(0, "/pm/", "PM - Compose");
+		$headers = $this->hmw->headerVars(0, "/pm/", "Report - New interview");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('pm/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('pm/menu');
 		$this->load->view('pm/compose', $data);

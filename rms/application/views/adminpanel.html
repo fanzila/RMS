@@ -13,7 +13,6 @@
 				<br/>
 				<br/>
 				<div data-role="collapsible-set" data-inset="false">
-				<div><h3><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-info-outline zmd-fw"></i> PM</a></h3></div>
 					<div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 						<h3>Staff</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
@@ -23,6 +22,7 @@
 						<li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li>
 						<li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li>
 						<li><a rel="external" data-ajax="false" href="/order/"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li>
+						<li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Report</a></li>
 						<li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li>
 						<li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li>
 						</ul>
@@ -45,7 +45,7 @@
 						</div>
 					<?}?>
 					<? if($userlevel >= 2){?>
-						<div data-role="collapsible" <? if($userlevel == 2){?>data-collapsed="false"<?}?> data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 							<h3>Managers</h3>
 							<ul data-role="listview" data-icon="false">
 								<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>

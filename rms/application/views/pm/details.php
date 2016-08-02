@@ -1,3 +1,7 @@
+<? if($userlevel == 0){?>
+	</div>	
+		<div data-role="content" data-theme="a">
+<? } ?>
 		<?php if(count($message)>0):?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>

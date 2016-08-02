@@ -115,10 +115,19 @@ class Pm_user_model extends CI_Model {
 	 */
 	public function get_username($id)
 	{
-		@$this->load->library('ion_auth');
-		$user = $this->ion_auth->user()->row();
+	//	@$this->load->library('ion_auth');
+	//	$user = $this->ion_auth->user()->row();
+
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$this->db->select('users.username, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->where('users.id', $id);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$query = $this->db->get("users");
+		$user = $query->result();
 		
-		return $user->username;
+		return $user[0]->username;
 	}
 
 	/**
