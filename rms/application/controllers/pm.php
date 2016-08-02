@@ -128,6 +128,10 @@ class Pm extends CI_Controller {
 	 */
 	function index()
 	{
+		if (!$this->ion_auth->logged_in())
+		{
+			redirect('auth/login');
+		}
 		$this->messages();
 	}
 
@@ -194,6 +198,10 @@ class Pm extends CI_Controller {
 	 */
 	function messages($type = MSG_NONDELETED)
 	{
+		if (!$this->ion_auth->logged_in())
+		{
+			redirect('auth/login');
+		}
 		// Get & pass to view the messages view type (e.g. MSG_SENT)
 		$data['type'] = $type;
 		$messages = $this->pm_model->get_messages($type);
@@ -206,8 +214,8 @@ class Pm extends CI_Controller {
 			foreach ($messages as $message)
 			{
 				$messages[$i][TF_PM_BODY] = $this->render($messages[$i][TF_PM_BODY]);
-				$messages[$i][TF_PM_AUTHOR] = $this->user_model->get_username($message[TF_PM_AUTHOR]);
-				$messages[$i][PM_RECIPIENTS] = $this->pm_model->get_recipients($messages[$i][TF_PM_ID]);
+				$messages[$i][TF_PM_AUTHOR] = $this->user_model->get_username($message[TF_PM_AUTHOR]);//Problème ici
+				$messages[$i][PM_RECIPIENTS] = $this->pm_model->get_recipients($messages[$i][TF_PM_ID]);//Problème et là
 				$j = 0;
 				foreach ($messages[$i][PM_RECIPIENTS] as $recipient)
 				{
@@ -266,6 +274,10 @@ class Pm extends CI_Controller {
 	 */
 	function send($recipients = NULL, $subject = NULL, $body = NULL)
 	{
+		if (!$this->ion_auth->logged_in())
+		{
+			redirect('auth/login');
+		}
 		$rules = $this->config->item('pm_form', 'form_validation');
 		$this->form_validation->set_rules($rules);
 
