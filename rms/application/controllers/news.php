@@ -116,13 +116,13 @@ class News extends CI_Controller {
 			$config['max_size']	= '2000';
 			$this->load->library('upload', $config);
 			$checkUpload = $this->upload->do_upload();
+			$error = 0;
 			if ( ! $checkUpload){
 
 				$error = array('error' => $this->upload->display_errors());
 				$checkError = array('error' => '<p>You did not select a file to upload.</p>');
 				if($error != $checkError){
-					//a rendre invisible pour "You did not select a file to upload"
-					$this->load->view('jq_header_pre', $headers['header_post']);
+					$this->load->view('jq_header_pre', $headers['header_pre']);
 					$this->load->view('news/jq_header_spe');
 					$this->load->view('jq_header_post', $headers['header_post']);
 					$this->load->view('news/create', $error);
@@ -136,61 +136,63 @@ class News extends CI_Controller {
 				$picName = $data['file_name'];
 			}
 
-
-			$news_id = $this->news_model->set_news($user->id);
+			if($error==0){
+				$news_id = $this->news_model->set_news($user->id);
+			}
 			if ($checkUpload){
 				$this->db->set('picture', $picName)->where('id', $news_id);
 				$this->db->update('news');
 			}
 
-			$server_name = $this->hmw->getParam('server_name'); 
-			
-			$this->load->library('mmail');
-			$bus = $this->input->post('bus');
-			
-			$this->db->select('users.username, users.email, users.id');
-			$this->db->distinct('users.username');
-			$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-			$this->db->join('users_groups', 'users.id = users_groups.user_id', 'left');
-			$this->db->join('groups', 'groups.id = users_groups.group_id', 'left');
-			$this->db->where('users.active', 1);
-			$this->db->where('groups.name !=', 'extra');			
-			$this->db->where_in('users_bus.bu_id', $bus);			
-			$query = $this->db->get("users");
-			
-			foreach ($query->result() as $row) {
-				$key 	= md5(microtime().rand());
-				$link 	= 'http://'.$server_name.'/news/confirm/'.$key;
-				$confi = array(
-					'key' => $key,
-					'id_user' => $row->id,
-					'id_news' => $news_id,
-					'status' => 'sent'
-					);
-			
-				$this->db->insert('news_confirm', $confi);
-
-				$email['from']		= 'news@hankrestaurant.com';
-				$email['from_name']	= 'HANK NEWS';
-				$email['to']		= $row->email;
-				$email['replyto'] 	= "news@hankrestaurant.com";
-				$email['subject']	= 'Hank News! '.$this->input->post('title');
-				$email['mailtype']	= 'html';
-
-				$msg = $this->input->post('text');
-				$msg .= "\r\n\r\n->>>>Merci de confirmer la lecture de ce message en cliquant ici : $link";
-				$msg .= "\r\n-- \r\n$user->username";
-
-				$email['msg'] = $msg;
+			if($error==0){
+				$server_name = $this->hmw->getParam('server_name'); 
 				
-				$this->mmail->sendEmail($email);
-			}
+				$this->load->library('mmail');
+				$bus = $this->input->post('bus');
+				
+				$this->db->select('users.username, users.email, users.id');
+				$this->db->distinct('users.username');
+				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+				$this->db->join('users_groups', 'users.id = users_groups.user_id', 'left');
+				$this->db->join('groups', 'groups.id = users_groups.group_id', 'left');
+				$this->db->where('users.active', 1);
+				$this->db->where('groups.name !=', 'extra');			
+				$this->db->where_in('users_bus.bu_id', $bus);			
+				$query = $this->db->get("users");
+				
+				foreach ($query->result() as $row) {
+					$key 	= md5(microtime().rand());
+					$link 	= 'http://'.$server_name.'/news/confirm/'.$key;
+					$confi = array(
+						'key' => $key,
+						'id_user' => $row->id,
+						'id_news' => $news_id,
+						'status' => 'sent'
+						);
+				
+					$this->db->insert('news_confirm', $confi);
 
-			$this->load->view('jq_header_pre', $headers['header_pre']);
-			$this->load->view('news/jq_header_spe');
-			$this->load->view('jq_header_post', $headers['header_post']);
-			$this->load->view('news/success');
-			$this->load->view('jq_footer');
+					$email['from']		= 'news@hankrestaurant.com';
+					$email['from_name']	= 'HANK NEWS';
+					$email['to']		= $row->email;
+					$email['replyto'] 	= "news@hankrestaurant.com";
+					$email['subject']	= 'Hank News! '.$this->input->post('title');
+					$email['mailtype']	= 'html';
+
+					$msg = $this->input->post('text');
+					$msg .= "\r\n\r\n->>>>Merci de confirmer la lecture de ce message en cliquant ici : $link";
+					$msg .= "\r\n-- \r\n$user->username";
+
+					$email['msg'] = $msg;
+					
+					$this->mmail->sendEmail($email);
+				}
+				$this->load->view('jq_header_pre', $headers['header_pre']);
+				$this->load->view('news/jq_header_spe');
+				$this->load->view('jq_header_post', $headers['header_post']);
+				$this->load->view('news/success');
+				$this->load->view('jq_footer');
+			}
 		}
 	}
 
