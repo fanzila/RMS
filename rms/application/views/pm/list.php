@@ -2,7 +2,8 @@
 	</div>	
 		<div data-role="content" data-theme="a">
 <? } ?>
-		<? $j=0;
+		<?//Check if there is something to display. Otherwise, the titlebar would be alone.
+		$j=0;
 		for ($i=0; $i<count($messages); $i++){
 			if(($type == MSG_DELETED && $messages[$i][TF_PM_AUTHOR] == $username)||$type != MSG_DELETED){
 				$j++;

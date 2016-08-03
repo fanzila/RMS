@@ -315,12 +315,22 @@ class Pm extends CI_Controller {
 		$query = $this->db->get("users");
 		$users = $query->result();
 
+		/* SPECIFIC Recuperation depuis la base de donnees des informations subjects */
+		$this->db->select('interview_subjects.name, interview_subjects.id');
+		$this->db->join('interview_content', 'interview_subjects.id = interview_content.subject_id', 'left');
+		$this->db->where('interview_subjects.bu_id', $id_bu);
+		$this->db->order_by('interview_subjects.name', 'asc');
+		$query = $this->db->get("interview_subjects");
+		$sujets = $query->result();
+
 		$rules = $this->config->item('pm_form', 'form_validation');
 		$this->form_validation->set_rules($rules);
 
 		$data['found_recipients'] = TRUE; // assume we'll find recipients - set to FALSE below otherwise
 		$data['suggestions'] = array(); // if recipients not found by exact search, save suggestions here
 		$data['users'] = $users;
+		$data['sujets'] = $sujets;
+
 		$message = array();
 		// Set default vals passed via parameters
 		$message[PM_RECIPIENTS] = $recipients;
