@@ -8,7 +8,7 @@
 		<? if($userlevel >= 1){?>
 			<a data-ajax="false" href="<?php echo site_url()."/pm/messages/".MSG_UNREAD?>">Unread</a> &nbsp;&nbsp;&nbsp; 
 			<a data-ajax="false" href="<?php echo site_url()."/pm/messages/".MSG_SENT?>">Sent</a> &nbsp;&nbsp;&nbsp;
-			<a data-ajax="false" href="<?php echo site_url()."/pm/messages/".MSG_DELETED?>">Trashed</a> &nbsp;&nbsp;&nbsp;
+			<a data-ajax="false" href="<?php echo site_url()."/pm/messages/".MSG_DELETED?>">Archived</a> &nbsp;&nbsp;&nbsp;
 			<a data-ajax="false" href="<?php echo site_url()."/pm/send"?>">New Interview</a>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<? } ?>
 	</td>

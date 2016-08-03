@@ -292,20 +292,20 @@ class Pm_model extends CI_Model {
 		$this->db->limit(1, 0);
 		if($this->get_author($msg_id) == $this->user_id)
 		{
+			//Suppression chez l'auteur
 			$this->db->set(TF_PM_DELETED, $status);
 			$this->db->set(TF_PM_DDATE, 'NOW()', FALSE);
 			$this->db->where(TF_PM_ID, $msg_id);
 			$this->db->where(TF_PM_AUTHOR, $this->user_id);
-			return $this->table1->update_data();
-		}
-		else
-		{
+			$author = $this->table1->update_data();
+
+			//Suppression chez les récepteurs TODO
 			$this->db->set(TF_PMTO_DELETED, $status);
 			$this->db->set(TF_PMTO_DDATE, 'NOW()', FALSE);
 			$this->db->where(TF_PMTO_MESSAGE, $msg_id);
-			$this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
-			return $this->table2->update_data();
-		}
+			$recipients = $this->table2->update_data();
+			return $author && $recipients;
+		}else return 0;
 	}
 
 	/**

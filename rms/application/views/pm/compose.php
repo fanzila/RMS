@@ -40,7 +40,7 @@
 						<td width="66%"><select style="background-color:#a1ff7c" name="recipients" id="recipients" data-inline="true" data-theme="a" required>
 							<option value="0">Recipient</option>
 							<? if($userlevel >= 2){ ?>
-								<option value="<?=$managers?>">Every manager</option>
+								<option value="<?=$managers?>">All manager</option>
 							<?}?>
 							<?foreach ($users as $user) {?>
 								<option value="<?=$user->username?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>

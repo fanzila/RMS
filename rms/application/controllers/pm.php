@@ -149,7 +149,6 @@ class Pm extends CI_Controller {
 	function message($msg_id)
 	{
 		if(! $msg_id) return;
-
 		// Get message and flag it as read
 		$message = $this->pm_model->get_message($msg_id);
 
@@ -221,6 +220,7 @@ class Pm extends CI_Controller {
 		$user		= $this->ion_auth->user()->row();
 		$bus_list	= $this->hmw->getBus(null, $user->id);
 		$user_groups = $this->ion_auth->get_users_groups()->result();
+		$data['username'] = $user->username;
 
 		if($messages)
 		{
@@ -252,7 +252,7 @@ class Pm extends CI_Controller {
 				$titre = "Inbox";
 				break;
 			case '1':
-				$titre = "Trashed";
+				$titre = "Archived";
 				break;
 			case '2':
 				$titre = "Sent";
