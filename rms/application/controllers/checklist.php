@@ -160,9 +160,9 @@ class Checklist extends CI_Controller {
 		$checklist_rec_id = $this->input->post('checklist_rec_id');
 		$checklist_name = $this->input->post('checklist_name');
 		$bu_name =  $this->session->all_userdata()['bu_name'];
-
+		
 		$date = date('Y-m-d H:i:s'); 
-
+		
 		//get checklist BU, then manager2 + admin email of this BU
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$this->db->select('users.username, users.email, users.id');
@@ -209,18 +209,12 @@ class Checklist extends CI_Controller {
 				$checklist_tasks = $checklist_task_res->result();
 
 				$comment = true;
-				$msg .= "ALERTE! User ". $user[0]->first_name." ".$user[0]->last_name." says: ".$var." on task : ".$checklist_tasks[0]->name."\n";
+				$msg .= "ALERTE! User ". $user[0]->first_name." ".$user[0]->last_name." says: \n".$var." \non task : ".$checklist_tasks[0]->name."\n";
 				$email['subject'] .= " - ALERT COMMENT!";
 			}					
 		}
 
-		if($comment) {
-			$msg .= "\nRaw data: \n $srl";
-		} else {
-			$msg .= "All good!\nUser: ". $user[0]->first_name." ".$user[0]->last_name;
-		}
-
-
+		$msg .= "All good!\nUser: ". $user[0]->first_name." ".$user[0]->last_name;
 		$email['msg'] = $msg;
 
 		foreach ($query->result() as $row) {

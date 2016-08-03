@@ -14,10 +14,16 @@ function validator() {
 			}
 		},
 		messages: {
-			user: "Please specify your name"
+			user: "Please specify your name."
 		}
 	});
 
+	var dt 				= new Date();
+	var time2 			= dt.getHours() + '' + dt.getMinutes();
+	var time			= parseFloat(time2);
+	
+	var id_checklist 	= $("#id_checklist").val();
+	
 	validator.form();
 	var errors = 0;
 	var errors = validator.numberOfInvalids();
@@ -26,7 +32,7 @@ function validator() {
 	var unchecked = $( "input:checkbox:unchecked" );
 	var checked = $( "input:checkbox:checked" );
 	var username = $( "select option:selected" );
-
+	
 	if(username.text() == 'User') {	
 
 		alert('Please specify your name.');
@@ -34,6 +40,11 @@ function validator() {
 		errors = errors + 1;
 	}	
 
+	if(id_checklist == 4 && time < 2250) {
+		alert('Dude, come on it is too early to validate the checklist! Please check again carrefully all the items!');
+		errors = errors + 1;
+	}
+	
 	$.each(checked, function(key2, val2) {
 		$('label#label-'+val2.name).css( "background-color", "#a1ff7c" );
 	});

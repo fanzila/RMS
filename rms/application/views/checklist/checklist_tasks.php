@@ -63,7 +63,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 									</select><font size="14" color='red'><b><div class="error_cont"></div></b></font>
 								<input type="button" name="save" onClick="validator();" value="SAVE">
 							</ul>
-							<input type="hidden" name="id_checklist" value="<?=$checklists_id?>">
+							<input type="hidden" id="id_checklist" name="id_checklist" value="<?=$checklists_id?>">
 							<input type="hidden" name="action" value="save_tasks">
 							<input type="hidden" name="checklist_name" value="<?=$checklists_name?>">
 							<input type="hidden" name="checklist_rec_id" value="<?=$checklist_rec_id?>">
