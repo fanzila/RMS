@@ -384,12 +384,19 @@ class Pm extends CI_Controller {
 			$this->session->set_flashdata('status', $status);
 		}
 		$data['message'] = $message;
+		$managers = null;
+		foreach ($users as $user) {
+			$test = $this->ion_auth->get_users_groups($user->id)->result();
+			if($test[0]->level >= 1){
+				$managers ? $managers .=';'.$user->username : $managers .=''.$user->username;
+			}
+		}
+		$data['managers'] = $managers;
 		
 		$headers = $this->hmw->headerVars(0, "/pm/", "Report - New interview");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('pm/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('pm/menu');
 		$this->load->view('pm/compose', $data);
 		$this->load->view('jq_footer');
 	}
