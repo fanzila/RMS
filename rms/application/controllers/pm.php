@@ -311,13 +311,14 @@ class Pm extends CI_Controller {
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
 		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->or_where('users_bus.bu_id', 0);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations subjects */
-		$this->db->select('interview_subjects.name, interview_subjects.id');
 		$this->db->join('interview_content', 'interview_subjects.id = interview_content.subject_id', 'left');
+		$this->db->select('interview_subjects.name, interview_subjects.id, interview_content.text');
 		$this->db->where('interview_subjects.bu_id', $id_bu);
 		$this->db->order_by('interview_subjects.name', 'asc');
 		$query = $this->db->get("interview_subjects");
