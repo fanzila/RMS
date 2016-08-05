@@ -71,6 +71,8 @@ class Product_admin extends CI_Controller {
 	{
 
 		$this->load->library('ion_auth');
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		
 		$data = $this->input->post();
 		$sqlt = "UPDATE ";
 		$sqle = " WHERE `id` = $data[id]";
@@ -107,7 +109,7 @@ class Product_admin extends CI_Controller {
 			if($data['id'] == 'create') $id_product = $new_id;
 			if($data['id'] != 'create') $id_product = $data['id'];
 			
-			$sqlins = "INSERT INTO products_stock SET id_product = $id_product, warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW()";
+			$sqlins = "INSERT INTO products_stock SET id_product = $id_product, warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW(), id_bu = $id_bu";
 
 			if($data['id'] == 'create') {
 				$this->db->query($sqlins) or die($this->mysqli->error);		
