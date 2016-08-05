@@ -70,7 +70,7 @@
 							<?}?>
 						</select>
 							<?foreach ($sujets as $sujet) {?>
-							<div align="<?=$sujet->text?>" id="<?=$sujet->name?>" /></div>
+							<div align="<?=$sujet->text?>" id="<?=$sujet->name?>"></div>
 							<?}?>
 						</td>
 						<td><?php echo form_error($subject['name']); ?></td>	

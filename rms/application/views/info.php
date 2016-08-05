@@ -22,6 +22,12 @@
 						<p>It's the main framework used by RMS.</p>
 					</div>
 				</div>
+				<div class="col-xs">
+					<div class="box">
+						<h2><a href="https://github.com/balint42/ci_pm/" onclick="window.open(this.href);return false;">ci_pm</a></h2>
+						<p>It's the base of the report system used by RMS. Totally hacked and deturned from it's original purpose.</p>
+					</div>
+				</div>
 			</div>
 			<div class="row">
 				<h1>It lives :</h1>
