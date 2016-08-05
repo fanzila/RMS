@@ -79,7 +79,7 @@
 }
 </style>
 
-<?if($login==1){?>
+<?if($login=='welcome'){?>
 <script type="text/javascript">
 		$(document).on('pagebeforeshow', '', function(){
 			$( "#adminpanel" ).panel( "open");

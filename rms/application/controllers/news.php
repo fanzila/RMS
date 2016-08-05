@@ -40,7 +40,7 @@ class News extends CI_Controller {
 		}
 		$bu_test = $this->session->all_userdata()['bu_name'];
 		$this->hmw->changeBu();// GENERIC changement de Bu
-		if($bu_test != $this->session->all_userdata()['bu_name'] && $login!=1){
+		if($bu_test != $this->session->all_userdata()['bu_name'] && $login!='welcome'){
 			redirect('news');
 		}
 		$this->hmw->keyLogin();
