@@ -25,12 +25,17 @@
 						<li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Report</a></li>
 						<li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li>
 						<li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li>
-						<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
+						<? if($userlevel >= 2){?>
+							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
+							<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
+							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>	
+							<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff management</a></li>
+						<?}?>
 						</ul>
 					</div>
 					<? if($userlevel >= 1){?>
 						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
-							<h3>External Links</h3>
+							<h3>Tools</h3>
 							<ul data-role="listview" data-icon="false">
 								<li><a rel="external" data-ajax="false" href="http://drive.google.com/" onclick="window.open(this.href);return false;"><i class="fa fa-google"></i> Google Drive</a></li>
 								<li><a rel="external" data-ajax="false" href="http://trello.com" onclick="window.open(this.href);return false;"><i class="fa fa-trello"></i> Trello</a></li>
@@ -45,18 +50,6 @@
 							</ul>
 						</div>
 					<?}?>
-					<? if($userlevel >= 2){?>
-						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
-							<h3>Managers</h3>
-							<ul data-role="listview" data-icon="false">
-								<li><a rel="external" data-ajax="false" href="/crud/cklChecklistTasks/" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklists tasks management</a></li>
-								<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
-								<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>	
-								<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff management</a></li>
-								<li><a rel="external" data-ajax="false" href="/crud/suppliers/" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Suppliers</a></li>
-							</ul>
-						</div>
-					<?}?>
 					<?if($userlevel >= 3){?>
 						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 							<h3>Admin</h3>
@@ -64,19 +57,20 @@
 								<li><a rel="external" data-ajax="false" href="/reminder/admin">Reminder tasks management</a></li>
 
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklists/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Checklists management</a></li>
+								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklistTasks/"><i class="fa fa-hdd-o"></i> Checklists tasks management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/discount/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Discounts</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/interview/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Interview</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/interviewContent/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Interview Content</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/products/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsUnit/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsUnit</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsStock/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsStock</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products Category</a></li>
+								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/report/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Report</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdMeta/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder task management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdNotif/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder notification management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdTasks/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensorsAlarm/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors alarm management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
+								<li><a rel="external" data-ajax="false" href="/crud/suppliers/" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Suppliers</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
 							</ul>
 						</div>
