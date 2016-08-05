@@ -13,7 +13,7 @@
 				<table data-role="table" id="table-custom-2" data-insert="true" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" <? if($userlevel >= 1){?>data-filter="true" data-filter-placeholder="Filter message"<?}?>>
 					<thead>
 						<tr>
-						<th><?php if($type != MSG_SENT) echo 'From'; else echo 'Recipients'; ?></th>
+						<th><?php if($type != MSG_SENT && $type != MSG_DELETED) echo 'From'; else echo 'Recipients'; ?></th>
 						<th>Subject</th>
 						<th>Date</th>
 						<? if($userlevel >= 1){?>
@@ -31,7 +31,7 @@
 								<tr>
 									<th>
 										<?php
-										if($type != MSG_SENT) echo $messages[$i][TF_PM_AUTHOR];
+										if($type != MSG_SENT && $type != MSG_DELETED) echo $messages[$i][TF_PM_AUTHOR];
 										else
 										{
 										  	$recipients = $messages[$i][PM_RECIPIENTS];
