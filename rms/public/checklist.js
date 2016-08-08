@@ -41,7 +41,7 @@ function validator() {
 	}	
 
 	if(id_checklist == 4 && time < 2250) {
-		alert('Dude, come on it is too early to validate the checklist! Please check again carrefully all the items!');
+		alert('Dude, come on it is too early to validate the checklist! Please check again carrefully all the items and valid after 22h50.');
 		errors = errors + 1;
 	}
 	
