@@ -141,7 +141,7 @@ class Auth extends CI_Controller {
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				//redirect('/', 'refresh');
 				//set BU
-				redirect('/news/index/1/');
+				redirect('/news/index/welcome/');
 			}
 			else
 			{

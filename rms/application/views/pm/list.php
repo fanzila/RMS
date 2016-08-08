@@ -1,59 +1,60 @@
-<?php if(count($messages)>0):?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-    <td width="20%" style="font-weight:bold; background:#F2F2F2; padding:4px;">
-		<?php if($type != MSG_SENT) echo 'From'; else echo 'Recipients'; ?>
-	</td>
-    <td width="40%" style="font-weight:bold; background:#F2F2F2; padding:4px;">
-		Subject
-	</td>
-    <td width="20%" style="font-weight:bold; background:#F2F2F2; padding:4px;">
-		Date
-	</td>
-    <?php if($type != MSG_SENT): ?>
-	<td width="10%" style="font-weight:bold; background:#F2F2F2; padding:4px;">
-		Reply
-	</td>
-	<?php endif; ?>
-    <td width="10%" align="center" style="font-weight:bold; background:#F2F2F2; padding:4px;">
-		<?php if($type != MSG_DELETED) echo 'Delete'; else echo 'Restore'; ?>
-	</td>
-    </tr>
-
-	<?php for ($i=0; $i<count($messages); $i++): ?>
-	<tr style="background:#FCFBF3;">
-		<td style="padding:4px;">
-			<?php
-				if($type != MSG_SENT) echo $messages[$i][TF_PM_AUTHOR];
-				else
-				{
-				  	$recipients = $messages[$i][PM_RECIPIENTS];
-					foreach ($recipients as $recipient)
-						echo (next($recipients)) ? $recipient.', ' : $recipient;
-				}?>
-		</td>
-		<td style="padding:4px;">
-			<a data-ajax="false" href='<?php echo site_url().'/pm/message/'.$messages[$i][TF_PM_ID]; ?>'><?php echo $messages[$i][TF_PM_SUBJECT] ?></a>
-		</td>
-		<td style="padding:4px;">
-			<?php echo $messages[$i][TF_PM_DATE]; ?>
-		</td>
-	    <?php if($type != MSG_SENT): ?>
-		<td style="padding:4px;">
-			<?php echo '<a data-ajax="false" href="'.site_url().'/pm/send/'.$messages[$i][TF_PM_AUTHOR].'/RE&#58;'.$messages[$i][TF_PM_SUBJECT].'"> reply </a>' ?>
-		</td>
-		<?php endif; ?>
-		<td style="padding:4px;" align="center">
-			<?php if($type != MSG_DELETED)
-					echo '<a data-ajax="false" href="'.site_url().'/pm/delete/'.$messages[$i][TF_PM_ID].'/'.$type.'"> x </a>';
-				  else
-					echo '<a data-ajax="false" href="'.site_url().'/pm/restore/'.$messages[$i][TF_PM_ID].'"> o </a>'; ?>
-		</td>
-	</tr>
-	<?php endfor;?>
-</table>
-<?php else:?>
-<h1>No messages found.</h1>
-<?php endif;?>
-</div>
-</div>
+<? if($userlevel == 0){?>
+	</div>	
+		<div data-role="content" data-theme="a">
+<? } ?>
+		<?//Check if there is something to display. Otherwise, the titlebar would be alone.
+		$j=0;
+		for ($i=0; $i<count($messages); $i++){
+			if(($type == MSG_DELETED && $messages[$i][TF_PM_AUTHOR] == $username)||$type != MSG_DELETED){
+				$j++;
+			}
+		}?>
+			<?php if($j>0):?>
+				<table data-role="table" id="table-custom-2" data-insert="true" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" <? if($userlevel >= 1){?>data-filter="true" data-filter-placeholder="Filter message"<?}?>>
+					<thead>
+						<tr>
+						<th><?php if($type != MSG_SENT && $type != MSG_DELETED) echo 'From'; else echo 'Recipients'; ?></th>
+						<th>Subject</th>
+						<th>Date</th>
+						<? if($userlevel >= 1){?>
+							<? if($type == MSG_SENT){?>
+								<th><? echo 'Archive';?></th>
+							<? }else if($type == MSG_DELETED){?>
+								<th><? echo 'Restore';?></th>
+							<?}?>
+							</tr>
+						<?}?>
+					</thead>
+					<tbody>
+						<?php for ($i=0; $i<count($messages); $i++): ?>
+							<? if(($type == MSG_DELETED && $messages[$i][TF_PM_AUTHOR] == $username)||$type != MSG_DELETED){?>
+								<tr>
+									<th>
+										<?php
+										if($type != MSG_SENT && $type != MSG_DELETED) echo $messages[$i][TF_PM_AUTHOR];
+										else
+										{
+										  	$recipients = $messages[$i][PM_RECIPIENTS];
+											foreach ($recipients as $recipient)
+												echo (next($recipients)) ? $recipient.', ' : $recipient;
+										}?>
+									</th>
+									<th><a data-ajax="false" href='<?php echo site_url().'/pm/message/'.$messages[$i][TF_PM_ID]; ?>'><?php echo $messages[$i][TF_PM_SUBJECT] ?></a></th>
+									<th><?php echo $messages[$i][TF_PM_DATE]; ?></th>
+									<? if($userlevel >= 1){?>
+										<? if($type == MSG_SENT && $messages[$i][TF_PM_AUTHOR]==$username){?>
+											<th><? echo '<a data-ajax="false" href="'.site_url().'/pm/delete/'.$messages[$i][TF_PM_ID].'/'.$type.'"> x </a>';?></th>
+										<? }else if($type == MSG_DELETED){?>
+											<th><? echo '<a data-ajax="false" href="'.site_url().'/pm/restore/'.$messages[$i][TF_PM_ID].'"> o </a>'; ?></th>
+										<?}?>
+									<?}?>
+								</tr>
+							<?}?>
+						<?php endfor;?>
+					</tbody>
+				</table>
+			<?php else:?>
+				<h3>No messages found.</h3>
+			<?php endif;?>
+		</div>
+	</div>
