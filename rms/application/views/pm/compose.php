@@ -37,7 +37,7 @@
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td width="5%"><?php echo form_label('To', $recipients['id']); ?></td>
-						<td width="66%">
+						<td width="95%">
 							<select style="background-color:#a1ff7c" name="recipients" id="recipients" data-inline="true" data-theme="a" required>
 								<option value="">Select a Recipient</option>
 								<? if($userlevel >= 2){ ?>
