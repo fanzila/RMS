@@ -51,7 +51,7 @@ class Skills extends CI_Controller {
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-		$this->db->select('R.id, R.id_user, RI.checked, RI.comment, I.name as i_name, skills.name as s_name, cat.name as c_name, subcat.name as sub_name')
+		$this->db->select('R.id, RI.date, R.id_user, RI.checked, RI.comment, I.name as i_name, I.id as i_id, skills.name as s_name, cat.name as c_name, subcat.name as sub_name')
 			->from('skills_record as R')
 			->join('skills_record_item as RI', 'R.id = RI.id_skills_record')
 			->join('skills_item as I', 'I.id = RI.id_skills_item')
@@ -93,14 +93,18 @@ class Skills extends CI_Controller {
 		$data['username'] = $this->session->all_userdata()['identity'];
 
 		if($id != $this->ion_auth->get_user_id()){
+			$data['userlevel'] = 1;
 			$headers = $this->hmw->headerVars(0, "/skills/admin", "Skills of ".$user[0]->first_name." ".$user[0]->last_name);
 			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('skills/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('skills/index',$data);
 			$this->load->view('jq_footer');
 		}else{
+			$data['userlevel'] = 0;
 			$headers = $this->hmw->headerVars(1, "/skills/", "My Skills");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('skills/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('skills/index',$data);
 			$this->load->view('jq_footer');
@@ -167,6 +171,13 @@ class Skills extends CI_Controller {
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_sub_categories = $res->result();
 
+		$this->db->select('sr.id, us.username as sponsorname, u.username')
+			->from('skills_record as sr')
+			->join('users as us', 'us.id = id_sponsor', 'left')
+			->join('users as u', 'u.id = id_user', 'left')
+			->order_by('sponsorname asc');
+		$res 	= $this->db->get() or die($this->mysqli->error);
+		$skills_records = $res->result();
 
 
 		$data = array(
@@ -174,12 +185,14 @@ class Skills extends CI_Controller {
 			'skills_categories'	=> $skills_categories,
 			'skills_sub_categories'	=> $skills_sub_categories,
 			'skills_items'	=> $skills_items,
-			'skills_staff' => $skills_staff
+			'skills_staff' => $skills_staff,
+			'skills_records' => $skills_records
 			);
 
 		$data['users'] = $users;
 		$headers = $this->hmw->headerVars(1, "/skills/admin", "Skills Management");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('skills/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('skills/admin', $data);
 		$this->load->view('jq_footer');
@@ -188,16 +201,31 @@ class Skills extends CI_Controller {
 	public function save()
 	{		
 		$data = $this->input->post();
-		
+
+		$this->db->select('id')->from('skills_item');
+		$res = $this->db->get() or die($this->mysqli->error);
+		$skills_items = $res->result();
+
 		$reponse = 'ok';
 		$this->db->set('id_sponsor', $data['sponsor']);
 		$this->db->set('id_user', $data['user']);
+		$date = date('Y-m-d H:i:s');
+		$this->db->set('date', $date);
 
 		$this->db->trans_start();
 			if(!$this->db->insert('skills_record')) {
 				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
 			$data['id'] = $this->db->insert_id();
+			foreach ($skills_items as $skills_item) {
+				$this->db->set('id_skills_record', $data['id']);
+				$this->db->set('id_skills_item', $skills_item->id);
+				$this->db->set('date', $date);
+				$this->db->set('checked', false);//set all skills at false by default
+				$this->db->set('comment', "creation");//set with the comment 'creation' to avoid incomprehension
+				$this->db->insert('skills_record_item');
+				$this->db->insert_id();
+			}
 			
 			/*if(!$this->db->insert('discount_log')) {
 				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();

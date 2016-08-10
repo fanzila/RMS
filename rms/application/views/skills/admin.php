@@ -75,7 +75,7 @@
 										}
 									}
 								}).done(function(data) {
-										window.location = "/skills/index/admin/";
+										window.location = "/skills/index/"+user;
 								    }).fail(function(data) {
 								    	alert('WARNING! ERROR at saving!');
 								    });
@@ -85,6 +85,14 @@
 					});
 					</script>
 				</div><!--/collapsible-->
+				<div data-role="collapsible">
+					<h1>Sponsors map</h1>
+					<?foreach ($skills_records as $skills_record) {?>
+						<div data-inset="true">
+						<?=$skills_record->sponsorname?> -> <?=$skills_record->username?>
+						</div>
+					<?}?>
+				</div>
 				<div data-role="collapsible">
 					<h1>Skills map</h1>
 					<div data-role="collapsible-set" data-inset="true">
