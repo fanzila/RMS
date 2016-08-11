@@ -32,8 +32,28 @@ class Skills extends CI_Controller {
 	public function index($id = null)
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
-		if($id!= null && $id!=$this->ion_auth->get_user_id()){
-			if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id))){
+		$current_user = $this->ion_auth->get_user_id();
+		if($id!= null && $id!=$current_user){
+			$this->db->select('sr.id, us.id as id_sponsor, u.id as id_user')
+				->from('skills_record as sr')
+				->join('users as us', 'us.id = id_sponsor', 'left')
+				->join('users as u', 'u.id = id_user', 'left')
+				->where('id_user', $id);
+			$res 	= $this->db->get() or die($this->mysqli->error);
+			$skills_records = $res->result();
+			if($skills_records!=null){
+				if($skills_records[0]->id_sponsor==$current_user){
+					$bypass_sponsor=1;
+				}else{
+					$bypass_sponsor=0;
+				}
+			}else{
+				$bypass_sponsor=0;
+			}
+			if($bypass_sponsor==0 && (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id))){
+				if(!$this->ion_auth->logged_in()){
+					redirect('news', 'refresh');
+				}
 				redirect('skills', 'refresh');
 			}else{
 				$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -45,7 +65,7 @@ class Skills extends CI_Controller {
 				$user = $query->result();
 			}
 		}else{
-			$id = $this->ion_auth->get_user_id();
+			$id = $current_user;
 		}
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
@@ -92,9 +112,14 @@ class Skills extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		if($id != $this->ion_auth->get_user_id()){
+		if($id != $current_user){
 			$data['userlevel'] = 1;
-			$headers = $this->hmw->headerVars(0, "/skills/admin", "Skills of ".$user[0]->first_name." ".$user[0]->last_name);
+			if($bypass_sponsor!=0){
+				$link = "/skills/admin";
+			}else{
+				$link = "/skills/sponsor";
+			}
+			$headers = $this->hmw->headerVars(0, $link, "Skills of ".$user[0]->first_name." ".$user[0]->last_name);
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('skills/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
@@ -113,8 +138,11 @@ class Skills extends CI_Controller {
 	
 	public function admin()
 	{
-		if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin())) {
-				redirect('skills', 'refresh');
+		if (!$this->ion_auth->is_admin()) {
+			if(!$this->ion_auth->logged_in()){
+				redirect('news', 'refresh');
+			}
+			redirect('skills', 'refresh');
 		}
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
@@ -186,7 +214,8 @@ class Skills extends CI_Controller {
 			'skills_sub_categories'	=> $skills_sub_categories,
 			'skills_items'	=> $skills_items,
 			'skills_staff' => $skills_staff,
-			'skills_records' => $skills_records
+			'skills_records' => $skills_records,
+			'current_user' => $this->ion_auth->get_user_id()
 			);
 
 		$data['users'] = $users;
@@ -198,39 +227,77 @@ class Skills extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
+	public function sponsor()
+	{
+		if (!$this->ion_auth->logged_in()) {
+				redirect('news', 'refresh');
+		}
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+
+		$this->db->select('sr.id, us.id as id_sponsor, u.first_name, u.last_name, u.id as id_user')
+			->from('skills_record as sr')
+			->join('users as us', 'us.id = id_sponsor', 'left')
+			->join('users as u', 'u.id = id_user', 'left');
+		$res 	= $this->db->get() or die($this->mysqli->error);
+		$skills_records = $res->result();
+
+		$data = array(
+			'skills_records' => $skills_records,
+			'current_user' => $this->ion_auth->get_user_id()
+			);
+
+		$headers = $this->hmw->headerVars(1, "/skills/sponsor", "Skills Sponsoring");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('skills/jq_header_spe');
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('skills/sponsor', $data);
+		$this->load->view('jq_footer');
+	}
+
 	public function save()
 	{		
 		$data = $this->input->post();
+		$this->db->select('sr.id_user, us.username as sponsor_name')
+			->from('skills_record as sr')
+			->join('users as us', 'us.id = id_sponsor', 'left');
+		$res 	= $this->db->get() or die($this->mysqli->error);
+		$users = $res->result();
 
-		$this->db->select('id')->from('skills_item');
-		$res = $this->db->get() or die($this->mysqli->error);
-		$skills_items = $res->result();
-
+		$check=0;
 		$reponse = 'ok';
-		$this->db->set('id_sponsor', $data['sponsor']);
-		$this->db->set('id_user', $data['user']);
-		$date = date('Y-m-d H:i:s');
-		$this->db->set('date', $date);
+		foreach ($users as $user) {
+			if($data['user']==$user->id_user){
+				$check+=1;
+				$reponse = "This user already has a sponsor (".$user->sponsor_name.")";
+				break;
+			}
+		}
+		if($check==0){
+			$this->db->select('id')->from('skills_item');
+			$res = $this->db->get() or die($this->mysqli->error);
+			$skills_items = $res->result();
 
-		$this->db->trans_start();
-			if(!$this->db->insert('skills_record')) {
-				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-			}
-			$data['id'] = $this->db->insert_id();
-			foreach ($skills_items as $skills_item) {
-				$this->db->set('id_skills_record', $data['id']);
-				$this->db->set('id_skills_item', $skills_item->id);
-				$this->db->set('date', $date);
-				$this->db->set('checked', false);//set all skills at false by default
-				$this->db->set('comment', "creation");//set with the comment 'creation' to avoid incomprehension
-				$this->db->insert('skills_record_item');
-				$this->db->insert_id();
-			}
-			
-			/*if(!$this->db->insert('discount_log')) {
-				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-			}*/
-		$this->db->trans_complete();
+			$this->db->set('id_sponsor', $data['sponsor']);
+			$this->db->set('id_user', $data['user']);
+			$date = date('Y-m-d H:i:s');
+			$this->db->set('date', $date);
+
+			$this->db->trans_start();
+				if(!$this->db->insert('skills_record')) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+				$data['id'] = $this->db->insert_id();
+				foreach ($skills_items as $skills_item) {
+					$this->db->set('id_skills_record', $data['id']);
+					$this->db->set('id_skills_item', $skills_item->id);
+					$this->db->set('date', $date);
+					$this->db->set('checked', false);//set all skills at false by default
+					$this->db->set('comment', "creation");//set with the comment 'creation' to avoid incomprehension
+					$this->db->insert('skills_record_item');
+					$this->db->insert_id();
+				}
+			$this->db->trans_complete();
+		}		
 
 		echo json_encode(['reponse' => $reponse]);
 	}

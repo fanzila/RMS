@@ -235,6 +235,16 @@ class Crud extends CI_Controller {
         $this->_example_output($output); 
     }
 
+    public function skills_sub_category()
+    {
+        $this->grocery_crud->columns('id', 'name');
+        $this->grocery_crud->required_fields('id', 'name');
+        $this->grocery_crud->set_table('skills_sub_category');
+        $output = $this->grocery_crud->render();
+ 
+        $this->_example_output($output); 
+    }
+
     public function skills_record_item()
     {
         $this->grocery_crud->columns('id', 'id_skills_record', 'id_skills_item', 'checked', 'comment');

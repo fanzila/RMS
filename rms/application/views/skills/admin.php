@@ -5,7 +5,7 @@
 					<h1>Create a sponsoring link</h1>
 					<?$attributes = array('id' => "sponsorship", 'name' => "sponsorship");
 					echo form_open("skills/save", $attributes);?>
-						<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
+						<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 							<tr>
 								<td colspan="2" style="background-color: #fbf19e;">Sponsorship to create :
 								</td>
@@ -34,7 +34,6 @@
 									?></select>
 								</td>
 							</tr>
-							<tr><td>. . . . . .</td><td><p>Ensuite se débrouiller pour avoir la sélection des skills du parrain de disponible pour sélectionner ce qu'il doit enseigner.</p></td></tr>
 						</table>
 						<?$attributes = array('id' => "sub", 'name' => "submit");
 						echo form_submit($attributes, 'Save');?>
@@ -87,19 +86,31 @@
 				</div><!--/collapsible-->
 				<div data-role="collapsible">
 					<h1>Sponsors map</h1>
-					<?foreach ($skills_records as $skills_record) {?>
-						<div data-inset="true">
-						<?=$skills_record->sponsorname?> -> <?=$skills_record->username?>
-						</div>
-					<?}?>
+					<table data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter...">
+						<thead>
+							<th>Sponsor</th>
+							<th>Trainee</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?foreach ($skills_records as $skills_record) {?>
+							<tr">
+								<td><?=$skills_record->sponsorname?></td>
+								<td><?=$skills_record->username?></td>
+							</tr>
+						<?}?>
+						</tbody>
+					</table>
 				</div>
 				<div data-role="collapsible">
 					<h1>Skills map</h1>
 					<div data-role="collapsible-set" data-inset="true">
 							<?foreach ($skills as $skill) {?><!--Affichage des skills générales-->
 								<?$check=0;foreach($skills_items as $skills_item){
-									if($skills_item->s_name == $skill->name) $check+=1;
-									if($check == 1) break;
+									if($skills_item->s_name == $skill->name){
+										$check+=1;
+										break;
+									}
 								}?>
 								<?if($check==1){?>
 									<div data-role="collapsible" data-inset="true">
@@ -107,8 +118,10 @@
 										<div data-inset="true">
 											<?foreach ($skills_categories as $category) {?><!--Affichage des Catégories-->
 												<?$check=0;foreach($skills_items as $skills_item){
-													if($skills_item->c_name == $category->name) $check+=1;
-													if($check == 1) break;
+													if($skills_item->c_name == $category->name && $skills_item->s_name == $skill->name){
+														$check+=1;
+														break;
+													}
 												}?>
 												<?if($check==1){?>
 													<div data-role="collapsible" data-inset="true">
@@ -145,9 +158,11 @@
 					<select style="background-color:#a1ff7c" name="sponsor" id="sponsor" data-inline="true" data-theme="a" onchange="getContent(this)">
 						<option value="">Sponsor</option>
 						<?foreach ($users as $user) {?>
-							<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
-							</option>
-						<? } ?>
+							<?if($user->id!=$current_user){?>
+								<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
+								</option>
+							<?}?>
+						<?}?>
 					?></select>
 					<div data-role="collapsible-set" data-inset="true">
 					</div>

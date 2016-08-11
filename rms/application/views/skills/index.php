@@ -16,18 +16,23 @@
 						<div data-inset="false">
 							<?foreach ($skills as $skill) {?><!--Affichage des skills générales-->
 								<?$check=0;foreach($skills_items as $skills_item){
-									if($skills_item->s_name == $skill->name) $check+=1;
-									if($check == 1) break;
+									if($skills_item->s_name == $skill->name){
+										$check+=1;
+										break;
+									}
 								}?>
 								<?if($check==1){?>
 									<?$color = $vert_leger;
 									$check=0;
 									foreach($skills_items as $skills_item){
 										foreach ($skills_categories as $category) {
-											if($skills_item->c_name == $category->name){
+											if($skills_item->c_name == $category->name && $skills_item->s_name == $skill->name){
 												foreach ($skills_sub_categories as $sub_category) {
 													if($skills_item->sub_name == $sub_category->name && $skills_item->c_name == $category->name){
-														if($skills_item->checked == false) $check+=1;
+														if($skills_item->checked == false){
+															$check+=1;
+															break;
+														}
 													}
 												}
 											}
@@ -43,8 +48,10 @@
 										<div data-inset="true">
 											<?foreach ($skills_categories as $category) {?><!--Affichage des Catégories-->
 												<?$check=0;foreach($skills_items as $skills_item){
-													if($skills_item->c_name == $category->name) $check+=1;
-													if($check == 1) break;
+													if($skills_item->c_name == $category->name && $skills_item->s_name == $skill->name){
+														$check+=1;
+														break;
+													}
 												}?>
 												<?if($check==1){?>
 													<?$color = $vert_leger;
@@ -95,7 +102,7 @@
 																					if($skills_item->checked == true) $bkg_color = $vert_pomme;
 																					else $bkg_color = $rouge_petard?>
 																					<input type="checkbox" name="<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" id="task-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" class="custom" <?if($skills_item->checked == true) { ?>checked<? } ?> />
-																					<label style="background-color: <?=$bkg_color?>" for="task-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" id="label-<?=$skills_item->i_name?>"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i> Comments : <?=$skills_item->comment?></label>
+																					<label style="background-color: <?=$bkg_color?>" for="task-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" id="label-<?=$skills_item->i_name?>"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
 																					<?if($userlevel!=0){?>
 																						<label style="font-size:smaller" for="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>">Comment :</label>
 																						<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" name="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
