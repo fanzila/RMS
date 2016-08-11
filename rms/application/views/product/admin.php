@@ -18,7 +18,10 @@
 					</form>
 				</fieldset>
 				<ul data-role="listview" data-inset="true">
-				<? foreach ($products as $line) { ?>
+				<? 
+				if(!empty($products)) {
+				foreach ($products as $line) { 
+					?>
 					<li data-role="list-divider"><?=stripslashes($line['name'])?> - <?=$line['id']?></li>
 					<? 
 					$bkgcolor = '';
@@ -164,8 +167,10 @@
 						</table>
 					</form>
 					</li>
-				<? } 
-				} ?>
+				<? 	} 
+				  } 
+				} 
+				?>
 				</ul>
 							<? if($command == 'create') { ?>
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">

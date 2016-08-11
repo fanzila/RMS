@@ -40,10 +40,12 @@ class Product_admin extends CI_Controller {
 		$id_bu			=  $this->session->all_userdata()['bu_id'];
 		
 		$supplier_id = '';
+		$products 	 = '';
 		$postid = $this->input->post('supplier_id');
 		if($command == null && isset($postid)) $supplier_id = 1;
 		if($command == 'filter' && isset($postid)) $supplier_id = $this->input->post('supplier_id');
-		$products 			= $this->product->getProducts($product_id, $supplier_id, null, null, $id_bu);
+		if(!empty($supplier_id) OR !empty($product_id) ) $products = $this->product->getProducts($product_id, $supplier_id, null, null, $id_bu);
+		
 		$suppliers 			= $this->product->getSuppliers(null, null, $id_bu);
 		$products_unit 		= $this->product->getProductUnit();
 		$products_category 	= $this->product->getProductCategory();
