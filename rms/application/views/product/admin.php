@@ -6,7 +6,7 @@
 					<form id="filter" name="filter" method="post" data-ajax="false" action="/product_admin/index/filter">
 						<div class="ui-block-a">
 							<select name="supplier_id"  data-mini="true">
-								<option value="">ALL</option>
+								<option value="">SELECT</option>
 								<? foreach ($suppliers as $sup) { ?>
 									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; } ?> ><?=$sup['name']?></option>
 								<? } ?>
@@ -18,8 +18,11 @@
 					</form>
 				</fieldset>
 				<ul data-role="listview" data-inset="true">
-				<? foreach ($products as $line) { ?>
-					<li data-role="list-divider"><?=stripslashes($line['name'])?> - <?=$line['id']?></li>
+				<? 
+				if(!empty($products)) {
+				foreach ($products as $line) { 
+					?>
+					<li data-role="list-divider"><?=stripslashes($line['name'])?> <small>- <?=$line['id']?></small></li>
 					<? 
 					$bkgcolor = '';
 					if($line['active'] == 0 ) $bkgcolor = '#e5e5e5'; 
@@ -164,8 +167,10 @@
 						</table>
 					</form>
 					</li>
-				<? } 
-				} ?>
+				<? 	} 
+				  } 
+				} 
+				?>
 				</ul>
 							<? if($command == 'create') { ?>
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">

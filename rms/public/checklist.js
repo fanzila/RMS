@@ -39,12 +39,12 @@ function validator() {
 		$('#user').css( "background-color", "#a1ff7c" );
 		errors = errors + 1;
 	}	
-
+/**
 	if(id_checklist == 4 && time < 2250) {
 		alert('Dude, come on it is too early to validate the checklist! Please check again carrefully all the items and valid after 22h50.');
 		errors = errors + 1;
 	}
-	
+**/	
 	$.each(checked, function(key2, val2) {
 		$('label#label-'+val2.name).css( "background-color", "#a1ff7c" );
 	});
