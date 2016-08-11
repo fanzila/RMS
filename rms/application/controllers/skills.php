@@ -71,7 +71,7 @@ class Skills extends CI_Controller {
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-		$this->db->select('R.id, RI.date, R.id_user, RI.checked, RI.comment, I.name as i_name, I.id as i_id, skills.name as s_name, cat.name as c_name, subcat.name as sub_name')
+		$this->db->select('R.id, RI.date, R.id_user, RI.checked, RI.comment, I.name as i_name, I.id as i_id, skills.name as s_name, cat.name as c_name, subcat.name as sub_name, skills.id as s_id, cat.id as c_id, subcat.id as sub_id')
 			->from('skills_record as R')
 			->join('skills_record_item as RI', 'R.id = RI.id_skills_record')
 			->join('skills_item as I', 'I.id = RI.id_skills_item')
@@ -114,7 +114,7 @@ class Skills extends CI_Controller {
 
 		if($id != $current_user){
 			$data['userlevel'] = 1;
-			if($bypass_sponsor!=0){
+			if($bypass_sponsor!=1){
 				$link = "/skills/admin";
 			}else{
 				$link = "/skills/sponsor";
@@ -254,6 +254,18 @@ class Skills extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
+	/*TODO : function to add new items to skills.*/
+	public function create()
+	{/*
+		if (!$this->ion_auth->is_admin()) {
+			if(!$this->ion_auth->logged_in()){
+				redirect('news', 'refresh');
+			}
+			redirect('skills', 'refresh');
+		}
+		
+	*/}
+
 	public function save()
 	{		
 		$data = $this->input->post();
@@ -300,6 +312,81 @@ class Skills extends CI_Controller {
 		}		
 
 		echo json_encode(['reponse' => $reponse]);
+	}
+
+	private function saveSkills() {//FIXME!!!!
+
+		$srl = serialize($this->input->post());
+		$checklist_rec_id = $this->input->post('checklist_rec_id');
+		$checklist_name = $this->input->post('checklist_name');
+		$bu_name =  $this->session->all_userdata()['bu_name'];
+		
+		$date = date('Y-m-d H:i:s'); 
+		
+		//get checklist BU, then manager2 + admin email of this BU
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$this->db->select('users.username, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->join('users_groups', 'users.id = users_groups.user_id');
+		$this->db->where('users.active', 1);
+		$this->db->where_in('users_groups.group_id', array(1,4));
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('users.username', 'asc');
+		$query = $this->db->get("users");
+
+		if($checklist_rec_id > 0) {
+			$this->db->set('user', $this->input->post('user'));
+			$this->db->set('data', $srl);
+			$this->db->set('date', 'NOW()', FALSE);
+			$req = $this->db->update('checklist_records')->where('id', $checklist_rec_id);
+			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' UPDATED';
+
+		} else {
+			$this->db->set('user', $this->input->post('user'));
+			$this->db->set('id_checklist', $this->input->post('id_checklist'));
+			$this->db->set('data', $srl);
+			$this->db->set('date', 'NOW()', FALSE);
+			$req = $this->db->insert('checklist_records');	
+			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' CREATED';
+		}	
+
+		$comment = false;
+		$msg = '';
+
+		$this->db->select('id, first_name, last_name')->from('users')->where('id', $this->input->post('user'));
+		$users_res = $this->db->get() or die($this->mysqli->error);
+		$user = $users_res->result();
+
+		foreach ($this->input->post() as $key => $var) {
+
+			$line = explode('-', $key);
+
+			if($line[0] == 'comment' AND !empty($var)) {
+
+				$this->db->select('name')->from('checklist_tasks')->where('id', $line[1]);
+				$checklist_task_res = $this->db->get() or die($this->mysqli->error);
+				$checklist_tasks = $checklist_task_res->result();
+
+				$comment = true;
+				$msg .= "ALERTE! User ". $user[0]->first_name." ".$user[0]->last_name." says: \n".$var." \non task : ".$checklist_tasks[0]->name."\n";
+				$email['subject'] .= " - ALERT COMMENT!";
+			}					
+		}
+
+		$msg .= "All good!\nUser: ". $user[0]->first_name." ".$user[0]->last_name;
+		$email['msg'] = $msg;
+
+		foreach ($query->result() as $row) {
+			$email['to']	= $row->email;	
+			$this->mmail->sendEmail($email);
+		}
+
+		if(!$req) {
+			echo $this->db->error;
+			return false;
+		}
+		return true;
 	}
 
 /*	public function log($admin = null)

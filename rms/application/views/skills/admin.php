@@ -1,7 +1,7 @@
 		</div>
 		<div data-role="content">
 			<div data-role="collapsible-set" data-inset="true">
-				<div data-role="collapsible">
+				<div data-role="collapsible" style="background-color : #e0e0e0">
 					<h1>Create a sponsoring link</h1>
 					<?$attributes = array('id' => "sponsorship", 'name' => "sponsorship");
 					echo form_open("skills/save", $attributes);?>
@@ -84,9 +84,9 @@
 					});
 					</script>
 				</div><!--/collapsible-->
-				<div data-role="collapsible">
+				<div data-role="collapsible" style="background-color : #ffffff">
 					<h1>Sponsors map</h1>
-					<table data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter...">
+					<table style="background-color : #f0f0f0" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter...">
 						<thead>
 							<th>Sponsor</th>
 							<th>Trainee</th>
@@ -102,7 +102,7 @@
 						</tbody>
 					</table>
 				</div>
-				<div data-role="collapsible">
+				<div data-role="collapsible" style="background-color : #e0e0e0">
 					<h1>Skills map</h1>
 					<div data-role="collapsible-set" data-inset="true">
 							<?foreach ($skills as $skill) {?><!--Affichage des skills générales-->
@@ -124,7 +124,7 @@
 													}
 												}?>
 												<?if($check==1){?>
-													<div data-role="collapsible" data-inset="true">
+													<div data-role="collapsible" data-inset="true" style="background-color : #e0e0e0">
 														<h4><?=$category->name?></h4>
 														<div data-inset="true">
 															<?foreach($users as $user){
@@ -153,26 +153,22 @@
 							<?}?>
 						</div><!-- /skills filter -->
 				</div>
-				<div data-role="collapsible">
-					<h1>Skills by person</h1>
-					<select style="background-color:#a1ff7c" name="sponsor" id="sponsor" data-inline="true" data-theme="a" onchange="getContent(this)">
-						<option value="">Sponsor</option>
+				<div data-role="collapsible" style="background-color : #fff">
+					<h1>Skills by person</h1>					
+					<ul data-role="listview" data-inset="true" data-filter="true" style="background-color : #e0e0e0">
 						<?foreach ($users as $user) {?>
 							<?if($user->id!=$current_user){?>
-								<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
-								</option>
+								<li><a data-ajax="false" href="/skills/index/<?=$user->id?>"><?=$user->first_name?> <?=$user->last_name?></a></li>
 							<?}?>
 						<?}?>
-					?></select>
-					<div data-role="collapsible-set" data-inset="true">
-					</div>
+					</ul>
 				</div>
-				<script type="text/javascript">
-					function getContent(select) {
-						var test = select.value;
-						if(test!="")window.location = "/skills/index/"+test;
-					}
-				</script>
+				<div data-role="collapsible" style="background-color : #e0e0e0">
+					<h1>Add New Skills</h1>					
+					<ul data-role="listview" data-inset="true" style="background-color : #fff">
+								<li>Coming soon</li>
+					</ul>
+				</div>
 			</div><!--/collapsible set-->
 		</div><!-- /content -->
 	</div><!-- /page -->
