@@ -7,11 +7,12 @@
 				<div class="ui-body ui-corner-all">
 					<br/>
 					<?
+					$i=0;
 					$rouge_petard	= "#ff1919";
 					$rouge_doux		= "#ff7777";
 					$vert_pomme		= "#19b319";
 					$vert_leger		= "#77ff77";?>
-					<form id="skills" name="skills" method="post" action="/skills/save_skills/">
+					<form id="skills" name="skills" method="post" action="/skills/saveSkills/">
 					<? if($skills_items!=null){ ?>
 						<div data-inset="false">
 							<?foreach ($skills as $skill) {?><!--Affichage des skills générales-->
@@ -101,12 +102,14 @@
 																					<?$bkg_color = '';
 																					if($skills_item->checked == true) $bkg_color = $vert_pomme;
 																					else $bkg_color = $rouge_petard?>
-																					<input type="checkbox" name="<?=$skills_item->i_id?>-<?=$skills_item->c_id?>-<?=$skills_item->sub_id?>" id="skill-<?=$skills_item->i_id?>-<?=$skills_item->c_id?>-<?=$skills_item->sub_id?>" class="custom" <?if($skills_item->checked == true) { ?>checked<? } ?> />
-																					<label style="background-color: <?=$bkg_color?>" for="skill-<?=$skills_item->i_id?>-<?=$skills_item->c_id?>-<?=$skills_item->sub_id?>" id="label-<?=$skills_item->i_id?>"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
+																					<input type="checkbox" class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?> />
+																					<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
 																					<?if($userlevel!=0){?>
-																						<label style="font-size:smaller" for="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_id?>-<?=$skills_item->sub_id?>">Comment :</label>
-																						<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_id?>-<?=$skills_item->sub_id?>" name="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_id?>-<?=$skills_item->sub_id?>" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
+																						<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
+																						<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
 																					<?}?>
+																					<input type="hidden" id="id_item[<?=$i?>]" name="id_item[<?=$i?>]" value="<?=$skills_item->i_id?>">
+																					<?$i+=1;?>
 																				<?}?>
 																			<?}?>
 																		</ul>
@@ -122,25 +125,22 @@
 								<?}?>
 							<?}?>
 						</div><!-- /skills filter -->
-						<?if($userlevel!=0){?><input type="button" id="save" name="save" value="SAVE (pas fonctionnel!)" style="background-color: #303030" ><?}?>
+						<input type="hidden" id="id_record" name="id_record" value="<?=$skills_item->id?>">
+						<input type="hidden" id="i" name="i" value="<?=$i?>">
+						<?if($userlevel!=0){?><input type="button" id="save" name="save" value="SAVE" style="background-color: #303030" ><?}?>
 					<?}?>
 					</form>
 
 					<script>
 						$(document).ready(function() {
-
 							var $form = $('#skills');
-
 							$('#save').on('click', function() {
 								$form.trigger('submit');
 								return false;
 							});
 
 							$form.on('submit', function() {
-								<?php foreach ($skills_items as $skills_item): ?>
-									var checked/*Trouver comment ajouter $skills_item->id*/ = $('#skill-<?=$skills_item->i_id?>-<?=$skills_item->c_id?>-<?=$skills_item->sub_id?>').val();
-									var comment/*Trouver comment ajouter $skills_item->id*/ = $('#comment-<?=$skills_item->i_id?>-<?=$skills_item->c_id?>-<?=$skills_item->sub_id?>').val();
-								<?php endforeach ?>
+
 								$.ajax({
 									url: $(this).attr('action'),
 									type: $(this).attr('method'),
@@ -158,7 +158,6 @@
 								}).fail(function(data) {
 									alert('WARNING! ERROR at saving!');
 								});
-								
 								return false;
 							});
 						});

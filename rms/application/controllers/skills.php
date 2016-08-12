@@ -314,79 +314,66 @@ class Skills extends CI_Controller {
 		echo json_encode(['reponse' => $reponse]);
 	}
 
-	private function saveSkills() {//FIXME!!!!
+	public function saveSkills()//FIXME!!!!
+	{
+		$i = 0;
+		$changed=0;
+		$val_checked = array();
+		$val_comment = array();
+		$id_skills_item = array();
+		$reponse = 'ok';
+		date_default_timezone_set('Europe/Paris');
 
-		$srl = serialize($this->input->post());
-		$checklist_rec_id = $this->input->post('checklist_rec_id');
-		$checklist_name = $this->input->post('checklist_name');
-		$bu_name =  $this->session->all_userdata()['bu_name'];
+		$data = $this->input->post();
+		$nb_occurences = $data['i'];
+		$id_record = $data['id_record'];
+		foreach ($data['id_item'] as $key => $value) {
+			$id_skills_item[$key]= $value;
+		}
+		foreach ($data['comment'] as $key => $value) {
+			$val_comment[$key]= $value;
+		}
+		for($i ; $i<$nb_occurences ; $i++){
+			$this->db->select('checked, comment')->from('skills_record_item')->where('id_skills_item', $id_skills_item[$i])->where('id_skills_record', $id_record);
+			$int = $this->db->get();
+			$test = $int->result();
+			if(isset($data['checked'][$i])){
+				if($test[0]->checked==0){
+					$this->db->set('checked', 1);
+					$changed=1;
+				}
+			}else{
+				if($test[0]->checked==1){
+					$this->db->set('checked', 0);
+					$changed=1;
+				}
+			}
+			if($val_comment[$i]!=$test[0]->comment){
+				$this->db->set('comment', $val_comment[$i]);
+				$changed=1;
+			}
+			if($changed==1){
+				$this->db->set('date', date('Y-m-d H:i:s'));
+				$this->db->from('skills_record_item');
+				$this->db->where('id_skills_item', $id_skills_item[$i]);
+				$this->db->where('id_skills_record', $id_record);
+				$this->db->update('skills_record_item');
+			}else{
+				$reponse = 'Nothing to change!';
+			}
+		}
+
+	/*	$this->db->select('R.id as id_record, RI.id_skills_item as id_item, RI.checked as checked, RI.comment as comment, RI.date as date')
+			->from('skills_record as R')
+			->join('skills_record_item as RI', 'id_record = RI.id_skills_record', 'left')
+			->where('id_record', $id_record)
+			->order_by('id_item asc');
+		//$res 	= $this->db->get() or die($this->mysqli->error);
+		//$skills_record = $res->result();*/
+
 		
-		$date = date('Y-m-d H:i:s'); 
-		
-		//get checklist BU, then manager2 + admin email of this BU
-		$id_bu =  $this->session->all_userdata()['bu_id'];
-		$this->db->select('users.username, users.email, users.id');
-		$this->db->distinct('users.username');
-		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-		$this->db->join('users_groups', 'users.id = users_groups.user_id');
-		$this->db->where('users.active', 1);
-		$this->db->where_in('users_groups.group_id', array(1,4));
-		$this->db->where('users_bus.bu_id', $id_bu);
-		$this->db->order_by('users.username', 'asc');
-		$query = $this->db->get("users");
-
-		if($checklist_rec_id > 0) {
-			$this->db->set('user', $this->input->post('user'));
-			$this->db->set('data', $srl);
-			$this->db->set('date', 'NOW()', FALSE);
-			$req = $this->db->update('checklist_records')->where('id', $checklist_rec_id);
-			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' UPDATED';
-
-		} else {
-			$this->db->set('user', $this->input->post('user'));
-			$this->db->set('id_checklist', $this->input->post('id_checklist'));
-			$this->db->set('data', $srl);
-			$this->db->set('date', 'NOW()', FALSE);
-			$req = $this->db->insert('checklist_records');	
-			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' CREATED';
-		}	
-
-		$comment = false;
-		$msg = '';
-
-		$this->db->select('id, first_name, last_name')->from('users')->where('id', $this->input->post('user'));
-		$users_res = $this->db->get() or die($this->mysqli->error);
-		$user = $users_res->result();
-
-		foreach ($this->input->post() as $key => $var) {
-
-			$line = explode('-', $key);
-
-			if($line[0] == 'comment' AND !empty($var)) {
-
-				$this->db->select('name')->from('checklist_tasks')->where('id', $line[1]);
-				$checklist_task_res = $this->db->get() or die($this->mysqli->error);
-				$checklist_tasks = $checklist_task_res->result();
-
-				$comment = true;
-				$msg .= "ALERTE! User ". $user[0]->first_name." ".$user[0]->last_name." says: \n".$var." \non task : ".$checklist_tasks[0]->name."\n";
-				$email['subject'] .= " - ALERT COMMENT!";
-			}					
-		}
-
-		$msg .= "All good!\nUser: ". $user[0]->first_name." ".$user[0]->last_name;
-		$email['msg'] = $msg;
-
-		foreach ($query->result() as $row) {
-			$email['to']	= $row->email;	
-			$this->mmail->sendEmail($email);
-		}
-
-		if(!$req) {
-			echo $this->db->error;
-			return false;
-		}
-		return true;
+	
+		echo  json_encode(['reponse' => $reponse]);
 	}
 
 /*	public function log($admin = null)
