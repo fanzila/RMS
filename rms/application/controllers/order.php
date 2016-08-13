@@ -115,11 +115,11 @@ public function cliCheckPosClosing($id_bu) {
 			$this->load->library("cashier");
 
 			$today_day = @date('d');
-			$this->db->where('id_bu', $id_bu); 
+			$this->db->where('movement', 'close'); 
 			$this->db->order_by("id", "desc"); 
 			$this->db->limit(1);
 			
-			$query = $this->db->get('pos_archives') or die($this->mysqli->error);
+			$query = $this->db->get('pos_movements') or die($this->mysqli->error);
 			$res = $query->result_object();
 			
 			$timestamp = strtotime($res[0]->date);
