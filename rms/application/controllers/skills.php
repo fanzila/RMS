@@ -31,6 +31,9 @@ class Skills extends CI_Controller {
 
 	public function index($id = null)
 	{
+		if(!$this->ion_auth->logged_in()){
+			redirect('news', 'refresh');
+		}
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$current_user = $this->ion_auth->get_user_id();
 		if($id!= null && $id!=$current_user){
