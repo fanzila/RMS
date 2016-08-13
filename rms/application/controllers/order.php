@@ -98,6 +98,7 @@ public function cliUpdateSales($id_bu) {
 			$this->cashier->posInfo('updateTurnover', $param);	
 			$this->cashier->posInfo('salesUpdate', $param);	
 			$this->cashier->updateStock($id_bu);
+			@unlink ( '/tmp/cashlock'.$id_bu );
 		} else { 
 			return false; 
 		}
