@@ -68,7 +68,7 @@
 									dataType: 'json',
 									success: function(json) {
 										if(json.reponse == 'ok') {
-											alert('Saved!');
+											//alert('Saved!');
 										} else {
 											alert('WARNING! ERROR at saving : '+ json.reponse);
 										}

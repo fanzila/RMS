@@ -128,6 +128,8 @@
 						<input type="hidden" id="id_record" name="id_record" value="<?=$skills_item->id?>">
 						<input type="hidden" id="i" name="i" value="<?=$i?>">
 						<?if($userlevel!=0){?><input type="button" id="save" name="save" value="SAVE" style="background-color: #303030" ><?}?>
+					<?}else{?>
+						<h2>You have no sponsor yet.</h2>
 					<?}?>
 					</form>
 
@@ -148,7 +150,7 @@
 									dataType: 'json',
 									success: function(json) {
 										if(json.reponse == 'ok') {
-											alert('Saved!');
+											//alert('Saved!');
 										} else {
 											alert('WARNING! ERROR at saving : '+ json.reponse);
 										}

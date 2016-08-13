@@ -318,60 +318,67 @@ class Skills extends CI_Controller {
 	{
 		$i = 0;
 		$changed=0;
-		$val_checked = array();
-		$val_comment = array();
-		$id_skills_item = array();
+		$error=0;
+		$test_rep=0;
 		$reponse = 'ok';
-		date_default_timezone_set('Europe/Paris');
 
 		$data = $this->input->post();
-		$nb_occurences = $data['i'];
-		$id_record = $data['id_record'];
-		foreach ($data['id_item'] as $key => $value) {
-			$id_skills_item[$key]= $value;
-		}
-		foreach ($data['comment'] as $key => $value) {
-			$val_comment[$key]= $value;
-		}
-		for($i ; $i<$nb_occurences ; $i++){
-			$this->db->select('checked, comment')->from('skills_record_item')->where('id_skills_item', $id_skills_item[$i])->where('id_skills_record', $id_record);
-			$int = $this->db->get();
-			$test = $int->result();
-			if(isset($data['checked'][$i])){
-				if($test[0]->checked==0){
-					$this->db->set('checked', 1);
-					$changed=1;
-				}
-			}else{
-				if($test[0]->checked==1){
-					$this->db->set('checked', 0);
-					$changed=1;
-				}
-			}
-			if($val_comment[$i]!=$test[0]->comment){
-				$this->db->set('comment', $val_comment[$i]);
-				$changed=1;
-			}
-			if($changed==1){
-				$this->db->set('date', date('Y-m-d H:i:s'));
-				$this->db->from('skills_record_item');
-				$this->db->where('id_skills_item', $id_skills_item[$i]);
-				$this->db->where('id_skills_record', $id_record);
-				$this->db->update('skills_record_item');
-			}else{
-				$reponse = 'Nothing to change!';
-			}
-		}
+		date_default_timezone_set('Europe/Paris');
+		$date = date('Y-m-d H:i:s');
 
-	/*	$this->db->select('R.id as id_record, RI.id_skills_item as id_item, RI.checked as checked, RI.comment as comment, RI.date as date')
-			->from('skills_record as R')
-			->join('skills_record_item as RI', 'id_record = RI.id_skills_record', 'left')
-			->where('id_record', $id_record)
-			->order_by('id_item asc');
-		//$res 	= $this->db->get() or die($this->mysqli->error);
-		//$skills_record = $res->result();*/
+		$this->db->trans_start();
+			for($i ; $i<$data['i'] ; $i++){
+				if($error==0){
+					$changed=0;
+					$this->db->select('checked, comment')->from('skills_record_item')->where('id_skills_item', $data['id_item'][$i])->where('id_skills_record', $data['id_record']);
+					$int = $this->db->get();
+					$test = $int->result();
+					if(isset($data['checked'][$i])){
+						if($test[0]->checked==0){
+							$this->db->set('checked', 1);
+							$changed=1;
+						}
+					}else{
+						if($test[0]->checked==1){
+							$this->db->set('checked', 0);
+							$changed=1;
+						}
+					}
+					if($test[0]->comment != $data['comment'][$i]){
+						$this->db->set('comment', $data['comment'][$i]);
+						$changed=1;
+					}
+					if($changed==1){
+						$this->db->set('date', $date);
+						$this->db->from('skills_record_item');
+						$this->db->where('id_skills_item', $data['id_item'][$i]);
+						$this->db->where('id_skills_record', $data['id_record']);
+						if(!$this->db->update('skills_record_item')) {
+							$response = "Can't place the insert sql request (line ".$i."), error message: ".$this->db->_error_message();
+							$error++;
+						}
+						$test_rep++;
+					}
+				}
+			}
+			if($error==0 && $test_rep>0){
+				$this->db->set('date', $date);
+				$this->db->from('skills_record');
+				$this->db->where('id', $data['id_record']);
+				if(!$this->db->update('skills_record')) {
+					$response = "Can't place the insert sql request (id_record), error message: ".$this->db->_error_message();
+					$error++;
+				}
+			}	
+		$this->db->trans_complete();
 
-		
+		if($error>0){
+
+		}else if($test_rep>0){
+			$reponse = 'ok';
+		}else{
+			$reponse = 'Nothing to change!';
+		}		
 	
 		echo  json_encode(['reponse' => $reponse]);
 	}
