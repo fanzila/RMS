@@ -104,6 +104,62 @@ public function cliUpdateSales($id_bu) {
 	}
 }
 
+//cd /var/www/hank/rms/rms && php index.php order cliCheckPosClosing 1
+public function cliCheckPosClosing($id_bu) {
+
+	if($this->input->is_cli_request()) {
+
+		$param = array();
+		$param['id_bu'] = $id_bu;
+		if($this->input->is_cli_request()) {
+			$this->load->library("cashier");
+
+			$today_day = @date('d');
+			$this->db->where('movement', 'close'); 
+			$this->db->order_by("id", "desc"); 
+			$this->db->limit(1);
+			
+			$query = $this->db->get('pos_movements') or die($this->mysqli->error);
+			$res = $query->result_object();
+			
+			$timestamp = strtotime($res[0]->date);
+			$archive_day = date('d', $timestamp);
+			//echo "TODAY $today_day - DB $archive_day";
+			
+			if($archive_day != $today_day) {
+			
+				$info = $this->hmw->getBuInfo($id_bu);
+				$this->load->library('mmail');
+				
+				$msg = "WARINING! ".$info->name." CASHPAD NOT CLOSED!";
+			
+				//get manager2 + admin email of this BU
+				$this->db->select('users.username, users.email, users.id');
+				$this->db->distinct('users.username');
+				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+				$this->db->join('users_groups', 'users.id = users_groups.user_id');
+				$this->db->where('users.active', 1);
+				$this->db->where_in('users_groups.group_id', array(1,4));
+				$this->db->where('users_bus.bu_id', $id_bu);
+				$query = $this->db->get("users");
+
+				$email['subject'] 	= $msg;
+				$email['msg'] 		= $msg;
+
+				foreach ($query->result() as $row) {
+					$email['to']	= $row->email;	
+					$this->mmail->sendEmail($email);
+				}
+				$this->hmw->sendNotif($msg, $id_bu);
+
+			}
+			
+		} else { 
+			return false; 
+		}
+	}
+}
+
 public function previousOrders()
 {		
 

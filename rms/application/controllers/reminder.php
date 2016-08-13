@@ -32,9 +32,10 @@ class Reminder extends CI_Controller {
 
 	public function index($task_id = null, $view = null)
 	{
+
+		$this->hmw->keyLogin();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$this->load->library('rmd');
-		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
 		$msg = null;

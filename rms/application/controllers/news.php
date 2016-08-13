@@ -34,16 +34,14 @@ class News extends CI_Controller {
 
 	public function index($login=null)
 	{
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+
+		$this->hmw->keyLogin();
+		
 		$bu_test = $this->session->all_userdata()['bu_name'];
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		if($bu_test != $this->session->all_userdata()['bu_name'] && $login!='welcome'){
 			redirect('news');
 		}
-		$this->hmw->keyLogin();
 		
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();

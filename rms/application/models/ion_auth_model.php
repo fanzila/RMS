@@ -978,7 +978,7 @@ class Ion_auth_model extends CI_Model
 	 * @return bool
 	 * @author Mathew
 	 **/
-	public function login($identity, $password, $remember=FALSE)
+	public function login($identity, $password, $remember=FALSE, $keylogin=FALSE)
 	{
 		$this->trigger_events('pre_login');
 
@@ -1041,10 +1041,10 @@ class Ion_auth_model extends CI_Model
 					foreach ($bus as $key) {
 						if($key->id == $user->current_bu_id) $bu_name = $key->name;
 					}
-					$session_data = array('bu_id'  => $user->current_bu_id, 'bu_name'  => $bu_name);
+					$session_data = array('bu_id'  => $user->current_bu_id, 'bu_name'  => $bu_name, 'keylogin'  => $keylogin);
 				} else {
 					$user_bu_id = $this->get_users_bus($user->id)->result();
-					$session_data = array('bu_id'  => $user_bu_id[0]->id, 'bu_name'  => $user_bu_id[0]->name);	
+					$session_data = array('bu_id'  => $user_bu_id[0]->id, 'bu_name'  => $user_bu_id[0]->name, 'keylogin'  => $keylogin);	
 				}
 				$this->session->set_userdata($session_data);
 				return TRUE;

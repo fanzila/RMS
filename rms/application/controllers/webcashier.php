@@ -183,7 +183,8 @@ class webCashier extends CI_Controller {
 			
 			//check if this archive has already been used for closing
 			$this->db->select('closing_id')->from('pos_movements')->where('movement', 'close')->where('closing_id', $d['seqid'])->where('id_bu', $id_bu);
-			$rsid = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));$osid = $rsid->result_object();
+			$rsid = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$osid = $rsid->result_object();
 			$data['force'] = 0;
 			
 			$param_pos_info['id_bu'] = $id_bu;
@@ -205,7 +206,7 @@ class webCashier extends CI_Controller {
 					As tu bien cloture la caisse ? <br />
 					Si oui attends quelques minutes, la page de cloture va bientot s'afficher. <br />
 					Ou alors, tu as deja entre tes donnees.</h2>
-					Dernière cloture faite le : $archive_date
+					Dernière cloture faite pour : $archive_date
 					<h2><a href='/webcashier/'>Retour</a></h2>
 					<p><small><a href='/webcashier/movement/close?force=1'>Voir l'interface</a></small></p>";
 					exit();
