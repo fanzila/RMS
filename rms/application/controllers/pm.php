@@ -317,10 +317,10 @@ class Pm extends CI_Controller {
 		$users = $query->result();
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations subjects */
-		$this->db->select('interview_subjects.name, interview_subjects.id, interview_subjects.text');
-		$this->db->where('interview_subjects.bu_id', $id_bu);
-		$this->db->order_by('interview_subjects.name', 'asc');
-		$query = $this->db->get("interview_subjects");
+		$this->db->select('report_subjects.name, report_subjects.id, report_subjects.text');
+		$this->db->where('report_subjects.bu_id', $id_bu);
+		$this->db->order_by('report_subjects.name', 'asc');
+		$query = $this->db->get("report_subjects");
 		$sujets = $query->result();
 
 		$rules = $this->config->item('pm_form', 'form_validation');
@@ -403,7 +403,7 @@ class Pm extends CI_Controller {
 		}
 		$data['managers'] = $managers;
 		
-		$headers = $this->hmw->headerVars(0, "/pm/", "Report - New interview");
+		$headers = $this->hmw->headerVars(0, "/pm/", "Report - New report");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('pm/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);

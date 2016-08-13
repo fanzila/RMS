@@ -179,7 +179,7 @@ class Crud extends CI_Controller {
     {
         $this->grocery_crud->columns('id', 'name', 'text');
         $this->grocery_crud->required_fields('id', 'name', 'text', 'bu_id');
-        $this->grocery_crud->set_table('interview_subjects');
+        $this->grocery_crud->set_table('report_subjects');
         $output = $this->grocery_crud->render();
  
         $this->_example_output($output); 
