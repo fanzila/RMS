@@ -169,8 +169,8 @@ class Hmw {
 				
 				$user = $this->getParam('keylogin_user');
 				$pass = $this->getParam('keylogin_pass');
-				$newdata = array('keylogin'  => TRUE, 'id_bu' => $id_bu);
-				$CI->session->set_userdata($newdata);
+//				$newdata = array('keylogin'  => TRUE, 'id_bu' => $id_bu, 'bu_id' => $id_bu);
+//				$CI->session->set_userdata($newdata);
 				
 				$CI->ion_auth->login($user, $pass, true);
 			}

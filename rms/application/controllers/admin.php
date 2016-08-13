@@ -30,11 +30,8 @@ class Admin extends CI_Controller {
 	public function index()
 	{		
 		
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
-		
+		$this->hmw->keyLogin();
+				
 		$change_bu = $this->input->post('bus');
 		if(!empty($change_bu)) { 
 			$bu_info = $this->hmw->getBus($change_bu);
