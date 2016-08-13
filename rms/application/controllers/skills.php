@@ -255,16 +255,57 @@ class Skills extends CI_Controller {
 
 
 	/*TODO : function to add new items to skills.*/
-	public function create()
-	{/*
-		if (!$this->ion_auth->is_admin()) {
-			if(!$this->ion_auth->logged_in()){
-				redirect('news', 'refresh');
-			}
-			redirect('skills', 'refresh');
-		}
+	public function create($id=null)
+	{
+		$data = $this->input->post();
+		$i=-1;
+		$exist=false;
+		$reponse = 'ok';
 		
-	*/}
+		$this->db->select('name');
+		if($id=='skill'){
+			$this->db->from('skills');
+			$i=1;
+		}else if($id=='cat'){
+			$this->db->from('skills_category');
+			$i=2;
+		}else if($id=='subcat'){
+			$this->db->from('skills_sub_category');
+			$i=3;
+		}
+		$res 	= $this->db->get() or die($this->mysqli->error);
+		$results = $res->result();
+
+		foreach ($results as $result) {
+			if($result->name==$data['name'][$i]){
+				$exist=true;
+			}
+		}
+
+		if($exist==false){
+			$this->db->trans_start();
+				$this->db->set('name', $data['name'][$i]);
+				if($id=='skill'){
+					if(!$this->db->insert('skills')) {
+						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					}
+				}else if($id=='cat'){
+					if(!$this->db->insert('skills_category')) {
+						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					}
+				}else if($id=='subcat'){
+					if(!$this->db->insert('skills_sub_category')) {
+						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					}
+				}
+				if(!$this->db->insert_id()) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+			$this->db->trans_complete();
+		}
+
+		echo json_encode(['reponse' => $reponse]);
+	}
 
 	public function save()
 	{		
