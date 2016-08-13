@@ -117,7 +117,7 @@ class Skills extends CI_Controller {
 			if($bypass_sponsor!=1){
 				$link = "/skills/admin";
 			}else{
-				$link = "/skills/sponsor";
+				$link = "/skills/start";
 			}
 			$headers = $this->hmw->headerVars(0, $link, "Skills of ".$user[0]->first_name." ".$user[0]->last_name);
 			$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -127,7 +127,7 @@ class Skills extends CI_Controller {
 			$this->load->view('jq_footer');
 		}else{
 			$data['userlevel'] = 0;
-			$headers = $this->hmw->headerVars(1, "/skills/", "My Skills");
+			$headers = $this->hmw->headerVars(0, "/skills/start/", "My Skills");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('skills/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
@@ -227,7 +227,7 @@ class Skills extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
-	public function sponsor()
+	public function start()
 	{
 		if (!$this->ion_auth->logged_in()) {
 				redirect('news', 'refresh');
@@ -246,13 +246,13 @@ class Skills extends CI_Controller {
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
-		$headers = $this->hmw->headerVars(1, "/skills/sponsor", "Skills Sponsoring");
+		$headers = $this->hmw->headerVars(1, "/skills/start/", "Skills");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('skills/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('skills/sponsor', $data);
+		$this->load->view('skills/start', $data);
 		$this->load->view('jq_footer');
 	}
+
 
 	/*TODO : function to add new items to skills.*/
 	public function create()
