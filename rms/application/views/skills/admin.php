@@ -42,51 +42,6 @@
 							</tr>
 						</table>
 					</form>
-
-					<script>
-					$(document).ready(function() {
-
-						var $form = $('#sponsorship');
-
-						$('#sub').on('click', function() {
-							$form.trigger('submit');
-							return false;
-						});
-
-						$form.on('submit', function() {
-
-							var sponsor = $('#sponsor').val();
-							var user = $('#user').val();
-
-							if(sponsor == '') {
-								alert('Please fill sponsor.');
-							} else if(user == 0){
-								alert('Please indicate who has to learn.');
-							} else if(user == sponsor){
-								alert('You have to choose two different people.');
-							}else {
-								$.ajax({
-									url: $(this).attr('action'),
-									type: $(this).attr('method'),
-									data: $(this).serialize(),
-									dataType: 'json',
-									success: function(json) {
-										if(json.reponse == 'ok') {
-											//alert('Saved!');
-										} else {
-											alert('WARNING! ERROR at saving : '+ json.reponse);
-										}
-									}
-								}).done(function(data) {
-										window.location = "/skills/index/"+user;
-								    }).fail(function(data) {
-								    	alert('WARNING! ERROR at saving!');
-								    });
-							}
-							return false;
-						});
-					});
-					</script>
 				</div><!--/collapsible-->
 				<div data-role="collapsible" style="background-color : #ffffff">
 					<h1>Sponsors map</h1>
@@ -110,54 +65,59 @@
 				</div>
 				<div data-role="collapsible" style="background-color : #e0e0e0">
 					<h1>Skills map</h1>
-					<div data-role="collapsible-set" data-inset="true">
+					<table style="background-color : #fff" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter...">
+						<thead>
+							<tr>
+								<th>Skill</th>
+								<th>Staff</th>
+							</tr>
+						</thead>
+						<tbody>
 							<?foreach ($skills as $skill) {?><!--Affichage des skills générales-->
-								<?$check=0;foreach($skills_items as $skills_item){
-									if($skills_item->s_name == $skill->name){
-										$check+=1;
-										break;
-									}
-								}?>
-								<?if($check==1){?>
-									<div data-role="collapsible" data-inset="true">
-										<h4><?=$skill->name?></h4>
-										<div data-inset="true">
-											<?foreach ($skills_categories as $category) {?><!--Affichage des Catégories-->
-												<?$check=0;foreach($skills_items as $skills_item){
-													if($skills_item->c_name == $category->name && $skills_item->s_name == $skill->name){
-														$check+=1;
-														break;
-													}
-												}?>
-												<?if($check==1){?>
-													<div data-role="collapsible" data-inset="true" style="background-color : #e0e0e0">
-														<h4><?=$category->name?></h4>
-														<div data-inset="true">
-															<?foreach($users as $user){
-																$validated=0;
-																foreach ($skills_items as $skills_item) {
-																	if($skills_item->c_name == $category->name && $skills_item->id_user == $user->id){
-																		if($skills_item->checked == true){
-																			$validated=1;
-																		}else{
-																			$validated=0;
-																			break;
-																		}
+							<?$check=0;foreach($skills_items as $skills_item){
+								if($skills_item->s_name == $skill->name){
+									$check+=1;
+									break;
+								}
+							}?>
+							<?if($check==1){?>
+							
+										<?foreach ($skills_categories as $category) {?><!--Affichage des Catégories-->
+											<?$check=0;foreach($skills_items as $skills_item){
+												if($skills_item->c_name == $category->name && $skills_item->s_name == $skill->name){
+													$check+=1;
+													break;
+												}
+											}?>
+											<?if($check==1){?>
+														<?foreach($users as $user){
+															$validated=0;
+															foreach ($skills_items as $skills_item) {
+																if($skills_item->c_name == $category->name && $skills_item->id_user == $user->id){
+																	if($skills_item->checked == true){
+																		$validated=1;
+																	}else{
+																		$validated=0;
+																		break;
 																	}
 																}
-																if($validated == 1){
-																	?><div data-inset="true"><?=$user->username?></div><?
-																}
-															}?>
-														</div><!-- /insert for sub categories -->
-													</div><!-- /collapsible -->
-												<?}?>
+															}
+															if($validated == 1){
+																?>
+																<tr>
+																	<td><?=$skill->name?> - <?=$category->name?></td>
+																	<td><?=$user->username?></td>
+																</tr>
+																<?
+															}
+														}?>
 											<?}?>
-										</div><!-- /inset for categories -->
-									</div><!-- /collapsible -->
-								<?}?>
+										<?}?>
+								
 							<?}?>
-						</div><!-- /skills filter -->
+						<?}?>
+						</tbody>
+					</table>
 				</div>
 				<div data-role="collapsible" style="background-color : #fff">
 					<h1>Skills by person</h1>					
@@ -179,11 +139,11 @@
 								</td>
 							</tr>
 							<tr>
-								<td width="8%"><label for="name[1]" id="label">Skill :</label></td>
+								<td width="8%"><label for="name[1]" id="label">Skill:</label></td>
 								<td width="82%"><input type="text" id="name[1]" name="name[1]" value="" data-clear-btn="true" /></td>
 								<td width="10%">
 									<?$attributes = array('id' => "sub-skill", 'name' => "submit");
-									echo form_submit($attributes, 'Save new skill');?>
+									echo form_submit($attributes, 'Save');?>
 								</td>
 							</tr>
 						</table>
@@ -196,11 +156,11 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="8%"><label for="name[2]" id="label">Category :</label></td>
+							<td width="8%"><label for="name[2]" id="label">Category:</label></td>
 							<td width="82%"><input type="text" id="name[2]" name="name[2]" value="" data-clear-btn="true" /></td>
 							<td width="10%">
 								<?$attributes = array('id' => "sub-cat", 'name' => "submit");
-								echo form_submit($attributes, 'Save new category');?>
+								echo form_submit($attributes, 'Save');?>
 							</td>
 						</tr>
 					</table>
@@ -209,27 +169,108 @@
 					echo form_open("skills/create/subcat", $attributes);?>
 					<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 						<tr>
-							<td colspan="3" style="background-color: #fbf19e;">Category to create :
+							<td colspan="3" style="background-color: #fbf19e;">Sub-category to create :
 							</td>
 						</tr>
 						<tr>
-							<td width="8%"><label for="name[3]" id="label">Sub-Category :</label></td>
+							<td width="8%"><label for="name[3]" id="label">Sub-Category:</label></td>
 							<td width="82%"><input type="text" id="name[3]" name="name[3]" value="" data-clear-btn="true" /></td>
 							<td width="10%">
 								<?$attributes = array('id' => "sub-subcat", 'name' => "submit");
-								echo form_submit($attributes, 'Save new sub-category');?>
+								echo form_submit($attributes, 'Save');?>
 							</td>
 						</tr>
 					</table>
 					</form>
-					<ul data-role="listview" data-inset="true" style="background-color : #fff">
-								<li>Coming soon : skills_item</li>
-					</ul>
+
+					<?$attributes = array('id' => "skills_item", 'name' => "skills_item");
+					echo form_open("skills/createItem", $attributes);?>
+						<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
+							<tr>
+								<td colspan="3" style="background-color: #fbf19e;">Skill item to create :
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<select style="background-color:#a1ff7c" name="s_skill" id="s_skill" data-inline="true" data-theme="a" required>
+										<option value="">Select a skill</option>
+										<?foreach ($skills as $skill) {?>
+											<option value="<?=$skill->id?>"><?=$skill->name?></option>
+										<? } ?>
+									?></select>
+									<select style="background-color:#a1ff7c" name="s_cat" id="s_cat" data-inline="true" data-theme="a" required>
+										<option value="">Select a category</option>
+										<?foreach ($skills_categories as $skills_category) {?>
+											<option value="<?=$skills_category->id?>"><?=$skills_category->name?></option>
+										<? } ?>
+									?></select>
+									<select style="background-color:#a1ff7c" name="s_subcat" id="s_subcat" data-inline="true" data-theme="a" required>
+										<option value="">Select a sub-category</option>
+										<?foreach ($skills_sub_categories as $skills_sub_category) {?>
+											<option value="<?=$skills_sub_category->id?>"><?=$skills_sub_category->name?></option>
+										<? } ?>
+									?></select>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="text" id="s_item" name="s_item" value="Name of the item" onFocus="this.select()" data-clear-btn="true" /></td>
+							</tr>
+							<tr>
+								<td>
+									<?$attributes = array('id' => "s_sub", 'name' => "submit");
+									echo form_submit($attributes, 'Save');?>
+								</td>
+							</tr>
+						</table>
+					</form>					
 				</div>
 			</div><!--/collapsible set-->
 		</div><!-- /content -->
 	</div><!-- /page -->
+	<script>
+		$(document).ready(function() {
 
+			var $form = $('#sponsorship');
+
+			$('#sub').on('click', function() {
+				$form.trigger('submit');
+				return false;
+			});
+
+			$form.on('submit', function() {
+
+				var sponsor = $('#sponsor').val();
+				var user = $('#user').val();
+
+				if(sponsor == '') {
+					alert('Please fill sponsor.');
+				} else if(user == 0){
+					alert('Please indicate who has to learn.');
+				} else if(user == sponsor){
+					alert('You have to choose two different people.');
+				}else {
+					$.ajax({
+						url: $(this).attr('action'),
+						type: $(this).attr('method'),
+						data: $(this).serialize(),
+						dataType: 'json',
+						success: function(json) {
+							if(json.reponse == 'ok') {
+								//alert('Saved!');
+							} else {
+								alert('WARNING! ERROR at saving : '+ json.reponse);
+							}
+						}
+					}).done(function(data) {
+							window.location = "/skills/index/"+user;
+					    }).fail(function(data) {
+					    	alert('WARNING! ERROR at saving!');
+					    });
+				}
+				return false;
+			});
+		});
+	</script>
 	<script>
 		$(document).ready(function() {
 			var $form = $('#skill');
@@ -265,7 +306,6 @@
 			});
 		});
 	</script>
-
 	<script>
 		$(document).ready(function() {
 			var $form = $('#cat');
@@ -301,7 +341,6 @@
 			});
 		});
 	</script>
-
 	<script>
 		$(document).ready(function() {
 			var $form = $('#subcat');
@@ -315,6 +354,53 @@
 				if(name == '') {
 					alert('There\'s just one thing to fill, seriously...');
 				} else {
+					$.ajax({
+						url: $(this).attr('action'),
+						type: $(this).attr('method'),
+						data: $(this).serialize(),
+						dataType: 'json',
+						success: function(json) {
+							if(json.reponse == 'ok') {
+								alert('Saved!');
+							} else {
+								alert('WARNING! ERROR at saving : '+ json.reponse);
+							}
+						}
+					}).done(function(data) {
+							location.reload(true);
+					    }).fail(function(data) {
+					    	alert('WARNING! ERROR at saving!');
+					    });
+				}
+				return false;
+			});
+		});
+	</script>
+	<script>
+		$(document).ready(function() {
+
+			var $form = $('#skills_item');
+
+			$('#s_sub').on('click', function() {
+				$form.trigger('submit');
+				return false;
+			});
+
+			$form.on('submit', function() {
+				var s_skill	= $('#s_skill').val();
+				var s_cat	= $('#s_cat').val();
+				var s_subcat= $('#s_subcat').val();
+				var s_item	= $('#s_item').val();
+
+				if(s_skill == '') {
+					alert('Please select the skill.');
+				}else if(s_cat == ''){
+					alert('Please select the category.');
+				}else if(s_subcat == ''){
+					alert('Please select the sub-category.');
+				}else if(s_item == '' || s_item == 'Name of the item'){
+					alert('Please fill the name of the new item.');
+				}else {
 					$.ajax({
 						url: $(this).attr('action'),
 						type: $(this).attr('method'),

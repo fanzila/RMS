@@ -254,7 +254,7 @@ class Skills extends CI_Controller {
 	}
 
 
-	/*TODO : function to add new items to skills.*/
+	/*function to add new skills, cat and sub-cat.*/
 	public function create($id=null)
 	{
 		$data = $this->input->post();
@@ -302,6 +302,47 @@ class Skills extends CI_Controller {
 					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}
 			$this->db->trans_complete();
+		}
+
+		echo json_encode(['reponse' => $reponse]);
+	}
+
+		public function createItem()
+	{
+		$data = $this->input->post();
+		$exist=false;
+		$reponse = 'ok';
+		
+		$this->db->select('name, id_skills, id_cat, id_sub_cat');
+		$this->db->from('skills_item');
+		$res 	= $this->db->get() or die($this->mysqli->error);
+		$results = $res->result();
+
+		foreach ($results as $result) {
+			if($result->name==$data['s_item'] ){
+				if($result->id_skills == $data['s_skill'] || $result->id_cat == $data['s_cat'] || $result->id_sub_cat == $data['s_subcat']){
+					$exist=true;
+				}
+				
+			}
+		}
+
+		if($exist==false){
+			$this->db->trans_start();
+				$this->db->set('name',		$data['s_item']);
+				$this->db->set('id_skills',	$data['s_skill']);
+				$this->db->set('id_cat',	$data['s_cat']);
+				$this->db->set('id_sub_cat',$data['s_subcat']);
+				
+				if(!$this->db->insert('skills_item')) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+				if(!$this->db->insert_id()) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+			$this->db->trans_complete();
+		}else{
+			$reponse = 'The item already exist!';
 		}
 
 		echo json_encode(['reponse' => $reponse]);
