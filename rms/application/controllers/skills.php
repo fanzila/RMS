@@ -211,6 +211,16 @@ class Skills extends CI_Controller {
 		$skills_records = $res->result();
 
 
+		$this->db->select('sl.id as id, sl.type, u.username as username, sli.checked as checked, sli.comment as comment, sl.date as date')
+			->from('skills_log as sl')
+			->join('skills_log_item as sli', 'sli.id_log = sl.id', 'left')
+			->join('users as u', 'u.id = id_user', 'left')
+			->order_by('date desc')
+			->limit(100);
+		$res 	= $this->db->get() or die($this->mysqli->error);
+		$skills_logs = $res->result();
+
+
 		$data = array(
 			'skills'	=> $skills,
 			'skills_categories'	=> $skills_categories,
@@ -218,6 +228,7 @@ class Skills extends CI_Controller {
 			'skills_items'	=> $skills_items,
 			'skills_staff' => $skills_staff,
 			'skills_records' => $skills_records,
+			'skills_logs' => $skills_logs,
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
@@ -478,8 +489,8 @@ class Skills extends CI_Controller {
 							/*add a line in the log_item for each modified item*/
 							$this->db->set('id_log', $id_log);
 							$this->db->set('id_record_item', $test[0]->id);
-							if($checked==10)$this->db->set('checked', 0);
-							if($checked==11)$this->db->set('checked', 1);
+							if($checked==10)$this->db->set('checked', 'NO');
+							if($checked==11)$this->db->set('checked', 'YES');
 							if($comment==1)$this->db->set('comment', $data['comment'][$i]);
 							$this->db->insert('skills_log_item');
 							$this->db->insert_id();

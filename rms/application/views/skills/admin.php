@@ -224,6 +224,35 @@
 						</table>
 					</form>					
 				</div>
+				<div data-role="collapsible" style="background-color : #ffffff">
+					<h1>Log</h1>
+					<table style="background-color : #f0f0f0" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter logs">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>User</th>
+								<th>Action</th>
+								<th>Validated</th>
+								<th>Comment</th>
+								<th>Date</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?foreach ($skills_logs as $skills_log) {?>
+
+								<tr>
+									<td><?=$skills_log->id?></td>
+									<td><?=$skills_log->username?></td>
+									<td><?=$skills_log->type?>ion</td>
+									<td><?=$skills_log->checked?></td>
+									<td><?=$skills_log->comment?></td>
+									<td><?=$skills_log->date?></td>
+								</tr>
+						<?}?>
+						</tbody>
+					</table>
+				</div>
+
 			</div><!--/collapsible set-->
 		</div><!-- /content -->
 	</div><!-- /page -->
