@@ -26,17 +26,17 @@ body {
 }
 </style>
 </head>
-<center><h2>BON DE COMMANDE<br />N°<?=$info['idorder']?></h1></center>
-	<table>
+<center><h3>BON DE COMMANDE<br />N°<?=$info['idorder']?></h3></center>
+	<table width="100%">
 		<tr>
-			<td>
+			<td width="60%" valign="top">
 <table class="smallfont" border="0" width="100%">
 	<tr><td><?=nl2br($info['company_info'])?></td></tr>
 	<tr><td>Horaire de livraison : <?=$info['dlv_info']?></td></tr>
 	<tr><td>Contact pour cette commande : <?=$info['user']?></td></tr>
 	<tr><td><a href="mailto:<?=$info['email_order']?>"><?=$info['email_order']?></a> - Tel : <a href="phone:"><?=$info['user_tel']?></a></td></tr>
 </table>
-</td><td width="30px"></td><td style="border-left: 1px solid silver;" valign="top">
+</td><td width="40%" style="border-left: 1px solid silver;" valign="top">
 <table class="smallfont" border="0" width="100%">
 	<tr><td>Date : <?=$info['date']?></td></tr>
 	<tr><td>Société : <?=$info['sup_name']?> <br /> 
