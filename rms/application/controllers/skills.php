@@ -351,7 +351,7 @@ class Skills extends CI_Controller {
 		echo json_encode(['reponse' => $reponse]);
 	}
 
-	public function save()
+	public function save()//here we create a sponsoring link
 	{		
 		$data = $this->input->post();
 		$this->db->select('sr.id_user, us.username as sponsor_name')
@@ -362,6 +362,7 @@ class Skills extends CI_Controller {
 
 		$check=0;
 		$reponse = 'ok';
+		$current_user = $this->ion_auth->get_user_id();
 		foreach ($users as $user) {
 			if($data['user']==$user->id_user){
 				$check+=1;
@@ -384,13 +385,24 @@ class Skills extends CI_Controller {
 					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}
 				$data['id'] = $this->db->insert_id();
+
+				$this->db->set('id_user', $current_user);
+				$this->db->set('date', $date);
+				$this->db->set('id_skills_record', $data['id']);
+				if(!$this->db->insert('skills_log')) {
+					$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
+				}
+				$this->db->insert_id();
+
 				foreach ($skills_items as $skills_item) {
 					$this->db->set('id_skills_record', $data['id']);
 					$this->db->set('id_skills_item', $skills_item->id);
 					$this->db->set('date', $date);
 					$this->db->set('checked', false);//set all skills at false by default
 					$this->db->set('comment', "creation");//set with the comment 'creation' to avoid incomprehension
-					$this->db->insert('skills_record_item');
+					if(!$this->db->insert('skills_record_item')){
+						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					}
 					$this->db->insert_id();
 				}
 			$this->db->trans_complete();
@@ -401,11 +413,15 @@ class Skills extends CI_Controller {
 
 	public function saveSkills()//FIXME!!!!
 	{
+		$reponse = 'ok';
 		$i = 0;
 		$changed=0;
+		$checked=0;
+		$comment=0;
 		$error=0;
+		$id_log=0;
 		$test_rep=0;
-		$reponse = 'ok';
+		$current_user = $this->ion_auth->get_user_id();
 
 		$data = $this->input->post();
 		date_default_timezone_set('Europe/Paris');
@@ -414,23 +430,28 @@ class Skills extends CI_Controller {
 		$this->db->trans_start();
 			for($i ; $i<$data['i'] ; $i++){
 				if($error==0){
+					$comment=0;
 					$changed=0;
-					$this->db->select('checked, comment')->from('skills_record_item')->where('id_skills_item', $data['id_item'][$i])->where('id_skills_record', $data['id_record']);
+					$checked=0;
+					$this->db->select('id, checked, comment')->from('skills_record_item')->where('id_skills_item', $data['id_item'][$i])->where('id_skills_record', $data['id_record']);
 					$int = $this->db->get();
 					$test = $int->result();
 					if(isset($data['checked'][$i])){
 						if($test[0]->checked==0){
 							$this->db->set('checked', 1);
+							$checked=11;
 							$changed=1;
 						}
 					}else{
 						if($test[0]->checked==1){
 							$this->db->set('checked', 0);
+							$checked=10;
 							$changed=1;
 						}
 					}
 					if($test[0]->comment != $data['comment'][$i]){
 						$this->db->set('comment', $data['comment'][$i]);
+						$comment=1;
 						$changed=1;
 					}
 					if($changed==1){
@@ -442,17 +463,39 @@ class Skills extends CI_Controller {
 							$response = "Can't place the insert sql request (line ".$i."), error message: ".$this->db->_error_message();
 							$error++;
 						}
+						if($test_rep==0){
+							/*add a line in the main log*/
+							$this->db->set('id_user', $current_user);
+							$this->db->set('date', $date);
+							$this->db->set('type', 'edit');
+							$this->db->set('id_skills_record', $data['id_record']);
+							if(!$this->db->insert('skills_log')) {
+								$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
+							}
+							$id_log = $this->db->insert_id();
+						}
+						if($error==0){
+							/*add a line in the log_item for each modified item*/
+							$this->db->set('id_log', $id_log);
+							$this->db->set('id_record_item', $test[0]->id);
+							if($checked==10)$this->db->set('checked', 0);
+							if($checked==11)$this->db->set('checked', 1);
+							if($comment==1)$this->db->set('comment', $data['comment'][$i]);
+							$this->db->insert('skills_log_item');
+							$this->db->insert_id();
+						}
+						
 						$test_rep++;
 					}
 				}
 			}
 			if($error==0 && $test_rep>0){
+				/*update the date of the main record*/
 				$this->db->set('date', $date);
 				$this->db->from('skills_record');
 				$this->db->where('id', $data['id_record']);
 				if(!$this->db->update('skills_record')) {
 					$response = "Can't place the insert sql request (id_record), error message: ".$this->db->_error_message();
-					$error++;
 				}
 			}	
 		$this->db->trans_complete();
