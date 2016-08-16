@@ -59,7 +59,7 @@
 									<td><?=$skills_record->sponsorname?></td>
 									<td><?=$skills_record->username?></td>
 								</tr>
-						<?}?>
+							<?}?>
 						</tbody>
 					</table>
 				</div>
@@ -122,9 +122,17 @@
 				<div data-role="collapsible" style="background-color : #fff">
 					<h1>Skills by person</h1>					
 					<ul data-role="listview" data-inset="true" data-filter="true" style="background-color : #e0e0e0">
+						<?$ok=0;?>
 						<?foreach ($users as $user) {?>
+							<?$ok=0;?>
 							<?if($user->id!=$current_user){?>
-								<li><a data-ajax="false" href="/skills/index/<?=$user->id?>"><?=$user->first_name?> <?=$user->last_name?></a></li>
+								<?foreach ($skills_records as $skills_record) {?>
+									<?if($user->username == $skills_record->username){
+										$ok=1;
+										break;
+									}?>
+								<?}?>
+								<li><a data-ajax="false" <?if($ok==1){?>href="/skills/index/<?=$user->id?>"<?}?>><?=$user->first_name?> <?=$user->last_name?> <?if($ok==0){?><font size="2" color="#4a7b50">no sponsor<?}?></font></a></li>
 							<?}?>
 						<?}?>
 					</ul>
@@ -243,7 +251,7 @@
 								<tr>
 									<td><?=$skills_log->id?></td>
 									<td><?=$skills_log->username?></td>
-									<td><?=$skills_log->type?>ion</td>
+									<td><?=$skills_log->type?></td>
 									<td><?=$skills_log->checked?></td>
 									<td><?=$skills_log->comment?></td>
 									<td><?=$skills_log->date?></td>
@@ -260,6 +268,7 @@
 		$(document).ready(function() {
 
 			var $form = $('#sponsorship');
+			var $valid;
 
 			$('#sub').on('click', function() {
 				$form.trigger('submit');
@@ -286,12 +295,15 @@
 						success: function(json) {
 							if(json.reponse == 'ok') {
 								//alert('Saved!');
+								$valid=1;
 							} else {
 								alert('WARNING! ERROR at saving : '+ json.reponse);
+								$valid = 0;
 							}
 						}
 					}).done(function(data) {
-							window.location = "/skills/index/"+user;
+							if($valid == 1)
+								window.location = "/skills/index/"+user;
 					    }).fail(function(data) {
 					    	alert('WARNING! ERROR at saving!');
 					    });
