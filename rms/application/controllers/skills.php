@@ -521,34 +521,4 @@ class Skills extends CI_Controller {
 	
 		echo  json_encode(['reponse' => $reponse]);
 	}
-
-/*	public function log($admin = null)
-	{
-		$this->hmw->keyLogin();
-		$id_bu =  $this->session->all_userdata()['bu_id'];
-		//mettre un checkpoint de droit d'accès TODO pour admin
-		$this->db->select('l.id, l.id_skills_record, l.date, r.id_sponsor, i.name, ri.checked, ri.comment, u.username')
-			->from('skills_log as l')
-			->join('skills_record as r', 'r.id = l.id_skills_record', 'left')
-			->join('skills_record_item as ri', 'ri.id_skills_record = r.id', 'left')
-			->join('skills_item as i', 'i.id = ri.id_skills_item', 'left')
-			->join('users as u', 'u.id = r.id_sponsor', 'left')
-			->where('r.id_user', $this->ion_auth->get_user_id())
-			->order_by('l.date desc')
-			->limit(100);
-		$res 	= $this->db->get() or die($this->mysqli->error);
-		$skills = $res->result();
-		$data = array(
-			'skills'	=> $skills,
-			'bu_name' 	=> $this->session->all_userdata()['bu_name'],
-			'username' 	=> $this->session->all_userdata()['identity']
-			);
-
-		
-	 	$headers = $this->hmw->headerVars(0, "/skills/", "Skills Log");
-		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('skills/log',$data);
-		$this->load->view('jq_footer');
-	}*/
 }
