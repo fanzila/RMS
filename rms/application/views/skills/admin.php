@@ -52,13 +52,16 @@
 								<th>Trainee</th>
 							</tr>
 						</thead>
+						<?$id_bu =  $this->session->all_userdata()['bu_id'];?>
 						<tbody>
-							<?foreach ($skills_records as $skills_record) {?>
-
-								<tr>
-									<td><?=$skills_record->sponsorname?></td>
-									<td><?=$skills_record->username?></td>
-								</tr>
+							<?foreach ($skills_records as $skills_record) {
+									if($skills_record->bu_id == $id_bu){?>
+										<tr>
+											<td><?=$skills_record->sponsorname?></td>
+											<td><?=$skills_record->username?></td>
+										</tr>
+									<?}?>
+								<?//if($skills_record->id_user == $user->bu_id){?>
 							<?}?>
 						</tbody>
 					</table>
@@ -240,6 +243,8 @@
 								<th>ID</th>
 								<th>User</th>
 								<th>Action</th>
+								<th>User touched</th>
+								<th>Item touched</th>
 								<th>Validated</th>
 								<th>Comment</th>
 								<th>Date</th>
@@ -252,6 +257,8 @@
 									<td><?=$skills_log->id?></td>
 									<td><?=$skills_log->username?></td>
 									<td><?=$skills_log->type?></td>
+									<td><?=$skills_log->toucheduser?></td>
+									<td><?=$skills_log->name?></td>
 									<td><?=$skills_log->checked?></td>
 									<td><?=$skills_log->comment?></td>
 									<td><?=$skills_log->date?></td>

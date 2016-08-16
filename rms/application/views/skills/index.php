@@ -102,12 +102,14 @@
 																					<?$bkg_color = '';
 																					if($skills_item->checked == true) $bkg_color = $vert_pomme;
 																					else $bkg_color = $rouge_petard?>
-																					<input type="checkbox" class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?> />
-																					<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
-																					<?if($userlevel!=0){?>
-																						<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
-																						<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
-																					<?}?>
+																					<li>
+																						<input type="checkbox" <?/*if($userlevel==0){?>disabled<?}*/?> class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?> />
+																						<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
+																						<?if($userlevel!=0){?>
+																							<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
+																							<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
+																						<?}?>
+																					</li>
 																					<input type="hidden" id="id_item[<?=$i?>]" name="id_item[<?=$i?>]" value="<?=$skills_item->i_id?>">
 																					<?$i+=1;?>
 																				<?}?>

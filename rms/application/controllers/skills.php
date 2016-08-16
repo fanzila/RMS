@@ -147,6 +147,7 @@ class Skills extends CI_Controller {
 			}
 			redirect('skills', 'refresh');
 		}
+		$this->hmw->changeBu();// GENERIC changement de Bu
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -202,19 +203,25 @@ class Skills extends CI_Controller {
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_sub_categories = $res->result();
 
-		$this->db->select('sr.id, us.username as sponsorname, u.username')
+		$this->db->select('sr.id, sr.id_user, us.username as sponsorname, u.username, ub.bu_id')
 			->from('skills_record as sr')
 			->join('users as us', 'us.id = id_sponsor', 'left')
 			->join('users as u', 'u.id = id_user', 'left')
+			->join('users_bus as ub', 'ub.user_id = u.id', 'left')
 			->order_by('sponsorname asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_records = $res->result();
 
 
-		$this->db->select('sl.id as id, sl.type, u.username as username, sli.checked as checked, sli.comment as comment, sl.date as date')
+		$this->db->select('sl.id as id, sl.type, uv.username as toucheduser, si.name, u.username as username, sli.checked as checked, sli.comment as comment, sl.date as date')
 			->from('skills_log as sl')
 			->join('skills_log_item as sli', 'sli.id_log = sl.id', 'left')
+			->join('skills_record_item as ri', 'ri.id = sli.id_record_item', 'left')
+			->join('skills_item as si', 'si.id = ri.id_skills_item', 'left')
 			->join('users as u', 'u.id = id_user', 'left')
+			->join('skills_record as sr', 'sr.id = sl.id_skills_record')
+			->join('users as uv', 'uv.id = sr.id_user', 'left')
+			->where('sl.bu_id', $id_bu)
 			->order_by('date desc')
 			->limit(100);
 		$res 	= $this->db->get() or die($this->mysqli->error);
@@ -400,6 +407,7 @@ class Skills extends CI_Controller {
 				$this->db->set('id_user', $current_user);
 				$this->db->set('date', $date);
 				$this->db->set('id_skills_record', $data['id']);
+				$this->db->set('bu_id', $this->session->all_userdata()['bu_id']);
 				if(!$this->db->insert('skills_log')) {
 					$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
 				}
@@ -480,6 +488,7 @@ class Skills extends CI_Controller {
 							$this->db->set('date', $date);
 							$this->db->set('type', 'edit');
 							$this->db->set('id_skills_record', $data['id_record']);
+							$this->db->set('bu_id', $this->session->all_userdata()['bu_id']);
 							if(!$this->db->insert('skills_log')) {
 								$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
 							}
