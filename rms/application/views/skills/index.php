@@ -8,7 +8,7 @@
 					<br/>
 					<?
 					$i=0;
-					$rouge_petard	= "#ff1919";
+					$rouge_petard	= "#ff2d2d";
 					$rouge_doux		= "#ff7777";
 					$vert_pomme		= "#19b319";
 					$vert_leger		= "#77ff77";?>
@@ -74,10 +74,31 @@
 													}?>
 													<div data-role="collapsible" <?if($check==1){?> data-collapsed="false"<?}?>>
 														<h4 style="background-color: <?=$color?>"><?=$valided?> <?=$category->name?> <?=$valided?></h4>
+
+<ul data-role="">
+	<?foreach($skills_items as $skills_item){?>
+		<?if($skills_item->sub_id == 0 && $skills_item->c_name == $category->name && $skills_item->s_name == $skill->name){?>
+			<?$bkg_color = '';
+			if($skills_item->checked == true) $bkg_color = $vert_pomme;
+			else $bkg_color = $rouge_petard?>
+			<li>
+				<input type="checkbox" <?/*if($userlevel==0){?>disabled<?}*/?> class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?> />
+				<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
+				<?if($userlevel!=0){?>
+					<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
+					<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
+				<?}?>
+			</li>
+			<input type="hidden" id="id_item[<?=$i?>]" name="id_item[<?=$i?>]" value="<?=$skills_item->i_id?>">
+			<?$i+=1;?>
+		<?}?>
+	<?}?>
+</ul>
+
 														<div data-inset="true">
 															<?foreach ($skills_sub_categories as $sub_category) {?><!--Affichage des sub-catégories-->
 																<?$check=0;foreach($skills_items as $skills_item){
-																	if($skills_item->sub_name == $sub_category->name && $skills_item->c_name == $category->name) $check+=1;
+																	if($skills_item->sub_name == $sub_category->name && $skills_item->c_name == $category->name && $skills_item->sub_name!= 'NONE') $check+=1;
 																	if($check == 1) break;
 																}?>
 																<?if($check==1){?>

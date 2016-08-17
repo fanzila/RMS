@@ -135,7 +135,7 @@
 										break;
 									}?>
 								<?}?>
-								<li><a data-ajax="false" <?if($ok==1){?>href="/skills/index/<?=$user->id?>"<?}?>><?=$user->first_name?> <?=$user->last_name?> <?if($ok==0){?><font size="2" color="#4a7b50">no sponsor<?}?></font></a></li>
+								<li><a data-ajax="false" <?if($ok==1){?>href="/skills/index/<?=$user->id?>/1"<?}?>><?=$user->first_name?> <?=$user->last_name?> <?if($ok==0){?><font size="2" color="#4a7b50">no sponsor<?}?></font></a></li>
 							<?}?>
 						<?}?>
 					</ul>
@@ -217,6 +217,7 @@
 									?></select>
 									<select style="background-color:#a1ff7c" name="s_subcat" id="s_subcat" data-inline="true" data-theme="a" required>
 										<option value="">Select a sub-category</option>
+										<option value="0">NONE</option>
 										<?foreach ($skills_sub_categories as $skills_sub_category) {?>
 											<option value="<?=$skills_sub_category->id?>"><?=$skills_sub_category->name?></option>
 										<? } ?>
@@ -401,6 +402,8 @@
 				var name = document.getElementById("name[3]").value;
 				if(name == '') {
 					alert('There\'s just one thing to fill, seriously...');
+				} else if(name == 'NONE' || name == 'None' || name == 'none') {
+					alert('This name is reserved.');
 				} else {
 					$.ajax({
 						url: $(this).attr('action'),

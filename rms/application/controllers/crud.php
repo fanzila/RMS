@@ -187,7 +187,7 @@ class Crud extends CI_Controller {
 
     public function skills()
     {
-        $this->grocery_crud->columns('id', 'name');
+        $this->grocery_crud->columns('id', 'name', 'deleted');
         $this->grocery_crud->required_fields('id', 'name');
         $this->grocery_crud->set_table('skills');
         $output = $this->grocery_crud->render();
@@ -197,7 +197,7 @@ class Crud extends CI_Controller {
 
     public function skills_item()
     {
-        $this->grocery_crud->columns('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat');
+        $this->grocery_crud->columns('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat', 'deleted');
         $this->grocery_crud->required_fields('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat');
         $this->grocery_crud->set_table('skills_item');
         $output = $this->grocery_crud->render();
@@ -227,7 +227,7 @@ class Crud extends CI_Controller {
 
     public function skills_category()
     {
-        $this->grocery_crud->columns('id', 'name');
+        $this->grocery_crud->columns('id', 'name', 'deleted');
         $this->grocery_crud->required_fields('id', 'name');
         $this->grocery_crud->set_table('skills_category');
         $output = $this->grocery_crud->render();
@@ -237,7 +237,7 @@ class Crud extends CI_Controller {
 
     public function skills_sub_category()
     {
-        $this->grocery_crud->columns('id', 'name');
+        $this->grocery_crud->columns('id', 'name', 'deleted');
         $this->grocery_crud->required_fields('id', 'name');
         $this->grocery_crud->set_table('skills_sub_category');
         $output = $this->grocery_crud->render();

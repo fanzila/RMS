@@ -29,12 +29,12 @@ class Skills extends CI_Controller {
 		$this->load->library('form_validation');
 	}
 
-	public function index($id = null)
+	public function index($id = null, $back=null)
 	{
 		if(!$this->ion_auth->logged_in()){
 			redirect('news', 'refresh');
 		}
-		$this->hmw->changeBu();// GENERIC changement de Bu
+
 		$current_user = $this->ion_auth->get_user_id();
 		if($id!= null && $id!=$current_user){
 			$this->db->select('sr.id, us.id as id_sponsor, u.id as id_user')
@@ -117,7 +117,7 @@ class Skills extends CI_Controller {
 
 		if($id != $current_user){
 			$data['userlevel'] = 1;
-			if($bypass_sponsor!=1){
+			if($bypass_sponsor!=1 || $back==1){
 				$link = "/skills/admin";
 			}else{
 				$link = "/skills/start";
@@ -254,6 +254,7 @@ class Skills extends CI_Controller {
 				redirect('news', 'refresh');
 		}
 		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$this->hmw->changeBu();// GENERIC changement de Bu
 
 		$this->db->select('sr.id, us.id as id_sponsor, u.first_name, u.last_name, u.id as id_user')
 			->from('skills_record as sr')
@@ -389,7 +390,16 @@ class Skills extends CI_Controller {
 			}
 		}
 		if($check==0){
-			$this->db->select('id')->from('skills_item');
+			$this->db->select('I.id')
+				->from('skills_item as I')
+				->join('skills', 'skills.id = I.id_skills')
+				->join('skills_category as cat', 'I.id_cat = cat.id')
+				->join('skills_sub_category as subcat', 'I.id_sub_cat = subcat.id', 'left')//
+				->where('skills.deleted', 0)
+				->where('I.deleted', 0)
+				->where('cat.deleted', 0)
+				->where('subcat.deleted', 0)//
+			;
 			$res = $this->db->get() or die($this->mysqli->error);
 			$skills_items = $res->result();
 
@@ -418,7 +428,7 @@ class Skills extends CI_Controller {
 					$this->db->set('id_skills_item', $skills_item->id);
 					$this->db->set('date', $date);
 					$this->db->set('checked', false);//set all skills at false by default
-					$this->db->set('comment', "creation");//set with the comment 'creation' to avoid incomprehension
+					$this->db->set('comment', "");//set with the comment 'creation' to avoid incomprehension
 					if(!$this->db->insert('skills_record_item')){
 						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 					}
