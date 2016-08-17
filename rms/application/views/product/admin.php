@@ -5,7 +5,7 @@
 				<fieldset class="ui-grid-a">
 					<form id="filter" name="filter" method="post" data-ajax="false" action="/product_admin/index/filter">
 						<div class="ui-block-a">
-							<select name="supplier_id"  data-mini="true">
+							<select name="supplier_id"  data-mini="true" onchange="getContent(this)">
 								<option value="">SELECT</option>
 								<? foreach ($suppliers as $sup) { ?>
 									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; } ?> ><?=$sup['name']?></option>
