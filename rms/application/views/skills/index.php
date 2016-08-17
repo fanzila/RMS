@@ -1,6 +1,12 @@
 <?//		<a href="/skills/log/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-more-vert"></i></a>?>
 		</div>
-
+<style>
+	ul {
+  list-style-image: none;
+  list-style: none;
+  list-style-type: none;
+}
+</style>
 		<div role="main" class="ui-content wow fadeIn" data-inset="false">
 
 			<div data-role="content">
