@@ -1,4 +1,3 @@
-<?//		<a href="/skills/log/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-more-vert"></i></a>?>
 		</div>
 <style>
 	ul {
@@ -80,7 +79,6 @@
 													}?>
 													<div data-role="collapsible" <?if($check==1){?> data-collapsed="false"<?}?>>
 														<h4 style="background-color: <?=$color?>"><?=$valided?> <?=$category->name?> <?=$valided?></h4>
-
 														<ul data-role="">
 															<?foreach($skills_items as $skills_item){?>
 																<?if($skills_item->sub_id == 0 && $skills_item->c_name == $category->name && $skills_item->s_name == $skill->name){?>
@@ -88,7 +86,7 @@
 																	if($skills_item->checked == true) $bkg_color = $vert_pomme;
 																	else $bkg_color = $rouge_petard?>
 																	<li>
-																		<input type="checkbox" <?/*if($userlevel==0){?>disabled<?}*/?> class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?> />
+																		<input type="checkbox" <?if($userlevel==0){?>disabled<?}?> class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?> />
 																		<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
 																		<?if($userlevel!=0){?>
 																			<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
@@ -130,7 +128,7 @@
 																					if($skills_item->checked == true) $bkg_color = $vert_pomme;
 																					else $bkg_color = $rouge_petard?>
 																					<li>
-																						<input type="checkbox" <?/*if($userlevel==0){?>disabled<?}*/?> class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?> />
+																						<input type="checkbox" <?if($userlevel==0){?>disabled<?}?> class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?> />
 																						<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
 																						<?if($userlevel!=0){?>
 																							<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
