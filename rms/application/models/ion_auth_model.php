@@ -1036,14 +1036,21 @@ class Ion_auth_model extends CI_Model
 				$this->trigger_events(array('post_login', 'post_login_successful'));
 				$this->set_message('login_successful');
 				
-				if(!empty($user->current_bu_id)) { 
+				//check if user has current_bu_id and has right to login to this bu 
+				$user_bu_id = $this->get_users_bus($user->id)->result();
+				$currentbulogin = false;
+				foreach ($user_bu_id as $userline)
+				{
+					if($userline->id == $user->current_bu_id) $currentbulogin = true;
+				}
+								
+				if(!empty($user->current_bu_id) && $currentbulogin) { 
 					$bus = $this->bus()->result();
 					foreach ($bus as $key) {
 						if($key->id == $user->current_bu_id) $bu_name = $key->name;
 					}
 					$session_data = array('bu_id'  => $user->current_bu_id, 'bu_name'  => $bu_name, 'keylogin'  => $keylogin);
 				} else {
-					$user_bu_id = $this->get_users_bus($user->id)->result();
 					$session_data = array('bu_id'  => $user_bu_id[0]->id, 'bu_name'  => $user_bu_id[0]->name, 'keylogin'  => $keylogin);	
 				}
 				$this->session->set_userdata($session_data);
