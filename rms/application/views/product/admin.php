@@ -5,15 +5,12 @@
 				<fieldset class="ui-grid-a">
 					<form id="filter" name="filter" method="post" data-ajax="false" action="/product_admin/index/filter">
 						<div class="ui-block-a">
-							<select name="supplier_id"  data-mini="true" onchange="getContent(this)">
+							<select name="supplier_id"  data-mini="true" onchange="this.form.submit()">
 								<option value="">SELECT</option>
 								<? foreach ($suppliers as $sup) { ?>
 									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; } ?> ><?=$sup['name']?></option>
 								<? } ?>
 							</select>
-						</div>
-						<div class="ui-block-b">
-							<input type="submit" name="submit" value="filter" data-mini="true" data-ajax="false" data-clear-btn="true" />
 						</div>
 					</form>
 				</fieldset>
