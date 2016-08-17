@@ -29,7 +29,7 @@
 						        	<a href="/product_admin/mapping/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products mapping</a>
 						        </div>
 						    </div>
-							<?php if($user_groups->level >= 3) { ?>
+							<?php if($user_groups->level >= 2) { ?>
 							    <div class="col-xs">
 							        <div class="box">
 							        	<a href="/crud/suppliers/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Suppliers</a>
