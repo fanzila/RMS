@@ -232,10 +232,10 @@ class webCashier extends CI_Controller {
 		$data['user_groups']	= $user_groups[0];
 		$data["keylogin"]		= $this->session->userdata('keylogin');
 		$data['title']			= 'Cashier';
-		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
+		$data['bu_name'] 		= $this->session->all_userdata()['bu_name'];
 		$data['mov']			= $this->input->post('mov');
 		$userpost 				= $this->input->post('user');
-		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
+		$id_bu			 		= $this->session->all_userdata()['bu_id'];
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
 		
@@ -261,7 +261,7 @@ class webCashier extends CI_Controller {
 			}
 			
 			if($this->input->post('mov') != 'safe_in' AND $this->input->post('mov') != 'safe_out') {
-				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash1'))+$this->cashier->clean_number($this->input->post('notes1'));
+				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'))+$this->cashier->clean_number($this->input->post('notes1'));
 				$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cbemv'))+$this->cashier->clean_number($this->input->post('cbcless'));
 			}
 
