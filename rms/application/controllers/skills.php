@@ -124,7 +124,6 @@ class Skills extends CI_Controller {
 			}
 			$headers = $this->hmw->headerVars(0, $link, "Skills of ".$user[0]->first_name." ".$user[0]->last_name);
 			$this->load->view('jq_header_pre', $headers['header_pre']);
-			$this->load->view('skills/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('skills/index',$data);
 			$this->load->view('jq_footer');
@@ -132,7 +131,6 @@ class Skills extends CI_Controller {
 			$data['userlevel'] = 0;
 			$headers = $this->hmw->headerVars(0, "/skills/start/", "My Skills");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
-			$this->load->view('skills/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('skills/index',$data);
 			$this->load->view('jq_footer');
@@ -242,7 +240,6 @@ class Skills extends CI_Controller {
 		$data['users'] = $users;
 		$headers = $this->hmw->headerVars(1, "/skills/admin", "Skills Management");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('skills/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('skills/admin', $data);
 		$this->load->view('jq_footer');
