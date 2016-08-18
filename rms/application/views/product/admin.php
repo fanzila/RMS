@@ -315,7 +315,7 @@
 															if(json.reponse == 'ok' || done == 0) {
 																if(done <= 1) { 
 																	alert('Saved!'); 
-																	//window.location.reload();
+																	window.location = "/product_admin/index/create1";
 																	return false; 
 																}
 																
@@ -326,7 +326,6 @@
 															}
 														}
 													}).done(function(data) {
-														window.location = "/product_admin/index/create1";
 														return false;
 													}).fail(function(data) {
 														done = done + 1;

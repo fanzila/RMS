@@ -32,7 +32,10 @@ class Product_admin extends CI_Controller {
 	{		
 		$this->load->library('product');
 		$product_id = null;
-		
+		if($command=="create1") {
+			$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
+			$command = "create";
+		}
 		if(isset($_GET['id_product'])) {
 			$product_id = $_GET['id_product']; 
 			$command = 'filter';
@@ -40,10 +43,6 @@ class Product_admin extends CI_Controller {
 		$id_bu			=  $this->session->all_userdata()['bu_id'];
 
 		$msg = null;
-		if($command=="create1") {
-				$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
-				$command = "create";
-		}
 		
 		$supplier_id = '';
 		$products 	 = '';
@@ -87,10 +86,23 @@ class Product_admin extends CI_Controller {
 		$sqle = " WHERE `id` = $data[id]";
 		$reponse = 'ok';
 
+		
+
 		if($data['id'] == 'create') {
 			$sqlt = "INSERT INTO ";
 			$sqle = "";
-
+		/*	$this->db->select('name, id_supplier');
+			$this->db->from('products');
+			$this->db->where('name', addslashes($data['name']));
+			$this->db->where('id_supplier', $data['id_supplier']);
+			$res = $this->db->get() or die($this->mysqli->error);
+			$test = $res->result();
+			if($test[0]->name==addslashes($data['name']) && $test[0]->id_supplier==$data['id_supplier']){
+				foreach ($test as $key => $value) {
+				echo json_encode(['reponse' => $test[$key]->name." : ".$test[$key]->id_supplier/*'The product already is in the database'/]);
+				exit();
+				}
+			}*/
 		}
 
 		if(empty($data['id'])) exit();
@@ -110,6 +122,7 @@ class Product_admin extends CI_Controller {
 			comment = '".addslashes($data['comment'])."'
 			$sqle";
 
+	$this->db->trans_start();
 		$req = $this->db->query($sql) or die($this->mysqli->error);
 		if($data['id'] == 'create') $new_id = $this->db->insert_id();
 		
@@ -131,6 +144,7 @@ class Product_admin extends CI_Controller {
 					$this->db->query("UPDATE products_stock SET warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW() WHERE id_product = $id_product") or die($this->mysqli->error);
 				}
 		}
+	$this->db->trans_complete();
 
 		echo json_encode(['reponse' => $reponse]);
 		exit();
