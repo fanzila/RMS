@@ -132,7 +132,7 @@ class Cashier {
 			while($row_cashmovement=$result_cashmovement->fetchArray(SQLITE3_ASSOC)){
 				if(empty($row_cashmovement['TYPE'])) $row_cashmovement['TYPE'] = 0;
 				if(empty($row_cashmovement['CUSTOMER'])) $row_cashmovement['CUSTOMER'] = null;
-				$q_cashmovement = "INSERT IGNORE INTO sales_cashmovements SET id_pos='".$row_cashmovement['ID']."', `date`='".$row_cashmovement['DATE']."', user='".$row_cashmovement['USER']."', amount=".$row_cashmovement['AMOUNT'].", method='".$row_cashmovement['METHOD']."', type=".$row_cashmovement['TYPE'].", description='".stripslashes($row_cashmovement['DESCRIPTION'])."', `archive`='".$file."', customer='".$row_cashmovement['CUSTOMER']."', id_bu = $id_bu"; 
+				$q_cashmovement = "INSERT IGNORE INTO sales_cashmovements SET id_pos='".$row_cashmovement['ID']."', `date`='".$row_cashmovement['DATE']."', user='".$row_cashmovement['USER']."', amount=".$row_cashmovement['AMOUNT'].", method='".$row_cashmovement['METHOD']."', type=".$row_cashmovement['TYPE'].", description='".addslashes($row_cashmovement['DESCRIPTION'])."', `archive`='".$file."', customer='".$row_cashmovement['CUSTOMER']."', id_bu = $id_bu"; 
 				$r_cashmovement = $CI->db->query($q_cashmovement) or die($this->db->_error_message());
 			}
 		}
