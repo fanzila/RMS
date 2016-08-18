@@ -5,13 +5,19 @@
 				<fieldset class="ui-grid-a">
 					<form id="filter" name="filter" method="post" data-ajax="false" action="/product_admin/index/filter">
 						<div class="ui-block-a">
+							<?$test=0;?>
 							<select name="supplier_id"  data-mini="true" onchange="this.form.submit()">
 								<option value="">SELECT</option>
 								<? foreach ($suppliers as $sup) { ?>
-									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; } ?> ><?=$sup['name']?></option>
+									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; $test=1;}?> ><?=$sup['name']?></option>
 								<? } ?>
 							</select>
 						</div>
+						<?if($test==0){?>
+							<div class="ui-block-b"> 
+								<input type="submit" name="submit" value="filter" data-mini="true" data-ajax="false" data-clear-btn="true" /> 
+							</div>
+						<?}?>
 					</form>
 				</fieldset>
 				<ul data-role="listview" data-inset="true">
@@ -170,6 +176,11 @@
 				?>
 				</ul>
 							<? if($command == 'create') { ?>
+								<?if($msg) { ?>
+									<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
+										<?=$msg?> Thanks! Have A Nice Karma!"
+									</div>
+								<?}?>
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 								<li>
 									<form id="pdt1" class="pdt1" name="pdt1" method="post" action="/product_admin/save">
@@ -315,6 +326,7 @@
 															}
 														}
 													}).done(function(data) {
+														window.location = "/product_admin/index/create1";
 														return false;
 													}).fail(function(data) {
 														done = done + 1;

@@ -38,6 +38,12 @@ class Product_admin extends CI_Controller {
 			$command = 'filter';
 		}
 		$id_bu			=  $this->session->all_userdata()['bu_id'];
+
+		$msg = null;
+		if($command=="create1") {
+				$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
+				$command = "create";
+		}
 		
 		$supplier_id = '';
 		$products 	 = '';
@@ -52,6 +58,7 @@ class Product_admin extends CI_Controller {
 
 
 		$data = array(
+			'msg'				=> $msg,
 			'command'			=> $command,
 			'products'			=> $products,
 			'suppliers'			=> $suppliers,
@@ -62,7 +69,7 @@ class Product_admin extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		$headers = $this->hmw->headerVars(0, "/order/", "Product Admin");
+		$headers = $this->hmw->headerVars(0, "/product_admin/", "Product Admin");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('product/admin',$data);
