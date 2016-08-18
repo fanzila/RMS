@@ -226,7 +226,7 @@ class Cashier {
 		$CI->load->database();
 		$CI->load->library("hmw");
 		$file	= $this->getPosDbDir($param['id_bu']);
-		if(!file_exists($file)) exit('No db found for BU ID'.$param['id_bu'].' in '.$file);
+		if(!file_exists($file)) exit('No POS db found for BU ID '.$param['id_bu'].' in '.$file);
 		$db	= new SQLite3($file);
 		
 		$getBuInfo = $CI->hmw->getBuInfo($param['id_bu']);
