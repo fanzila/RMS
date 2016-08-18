@@ -407,7 +407,7 @@ class Cashier {
 		$CI->load->library("hmw");
 		if(isset($datein)) $dateseek = $this->getPosArchivesDatetime($datein);
 		$dir	= $this->getPosArchivesDir($id_bu);
-		if(empty($dir)) exit('No db found');
+		if(empty($dir)) exit('No db found for BU ID '.$id_bu);
 		$files	= scandir($dir, 0);
 		$line2	= null;
 		foreach ($files as $line) {
