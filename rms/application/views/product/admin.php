@@ -64,7 +64,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<small>Unit type</small>
+										<small>Unité de facturation</small>
 										<select id="id_unit<?=$line['id']?>" name="id_unit"  data-mini="true">
 											<? foreach ($products_unit as $pack_unit) { ?>
 												<option value="<?=$pack_unit['id']?>" <? if($pack_unit['id'] == $line['id_unit']) { echo "selected"; } ?> ><?=$pack_unit['name']?></option>
