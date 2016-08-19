@@ -370,32 +370,6 @@ class Pm extends CI_Controller {
 			{
 				if($this->pm_model->send_message($recipient_ids, $subject, $body))
 				{
-
-					$server_name = $this->hmw->getParam('server_name'); 
-					
-					$this->load->library('mmail');
-					$bus = $this->input->post('bus');
-					
-					$this->db->select('username, email, id');
-					$this->db->distinct('username');
-					foreach ($recipient_ids as $recipient_id) {
-						$this->db->where('id', $recipient_id);	
-					}			
-					$query = $this->db->get("users");
-					
-					foreach ($query->result() as $row) {
-						$key 	= md5(microtime().rand());
-						$email['from']		= 'news@hankrestaurant.com';
-						$email['from_name']	= 'HANK NEWS';
-						$email['to']		= $row->email;
-						$email['replyto'] 	= "news@hankrestaurant.com";
-						$email['subject']	= 'Hank Report! '.$subject;
-						$email['mailtype']	= 'html';
-						$email['msg'] = $body;
-					
-						$this->mmail->sendEmail($email);
-					}
-
 					// On success: redirect to list view of messages
 					$this->session->set_flashdata('status', $this->lang->line('msg_sent'));
 					redirect($this->base_uri.'messages/'.MSG_SENT);
