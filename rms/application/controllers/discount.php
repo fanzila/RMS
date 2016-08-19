@@ -124,20 +124,20 @@ class Discount extends CI_Controller {
 		$this->db->trans_start();
 			if($data['id'] == 'create') {
 				if(!$this->db->insert('discount')) {
-					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}
 				$data['id'] = $this->db->insert_id();
 			} else {
 				$this->db->set('used', $data['used']);
 				$this->db->where('id', $data['id']);
 				if (!$this->db->update('discount')) {
-					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}
 					$this->db->set('used', $data['used']);
 				$this->db->where('id_bu', $id_bu);
 				$this->db->where('id_discount', $data['id']);
 				if(!$this->db->update('discount_log')) {
-					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}
 				$this->db->set('event_type', "update");
 				$this->db->set('used', $data['used']);
@@ -152,7 +152,7 @@ class Discount extends CI_Controller {
 			$this->db->set('date', date('Y-m-d H:i:s'));
 			
 			if(!$this->db->insert('discount_log')) {
-				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
 		$this->db->trans_complete();
 
