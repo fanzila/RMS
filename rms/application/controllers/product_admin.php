@@ -23,6 +23,8 @@ class Product_admin extends CI_Controller {
 
 		parent::__construct();
 
+
+		$this->load->library('ion_auth');
 		$this->load->library('email');
 		$this->load->library('hmw');
 		$this->hmw->keyLogin();
@@ -30,6 +32,7 @@ class Product_admin extends CI_Controller {
 
 	public function index($command = null)
 	{		
+		$id_bu	=  $this->session->all_userdata()['bu_id'];
 		$this->load->library('product');
 		$product_id = null;
 		$msg = null;
@@ -41,7 +44,6 @@ class Product_admin extends CI_Controller {
 			$product_id = $_GET['id_product']; 
 			$command = 'filter';
 		}
-		$id_bu			=  $this->session->all_userdata()['bu_id'];
 
 		
 		$supplier_id = '';
@@ -147,7 +149,6 @@ class Product_admin extends CI_Controller {
 
 	public function save()
 	{
-		$this->load->library('ion_auth');
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$reponse = 'ok';
 		$data = $this->input->post();
@@ -156,6 +157,13 @@ class Product_admin extends CI_Controller {
 		$user = $this->ion_auth->user()->row();
 		date_default_timezone_set('Europe/Paris');
 		$date = date('Y-m-d H:i:s');
+		
+		$this->db->select('name, id_supplier');
+		$this->db->from('products');
+		$this->db->where('name', addslashes($data['name']));
+		$this->db->where('id_supplier', $data['id_supplier']);
+		$res = $this->db->get() or die($this->mysqli->error);
+		$test = $res->result();
 
 		$this->db->set('name', addslashes($data['name']));
 		$this->db->set('id_supplier', $data['id_supplier']);
@@ -171,17 +179,12 @@ class Product_admin extends CI_Controller {
 		$this->db->trans_start();
 		if($data['id'] == 'create') {
 			$reponse = 'okcreate';
-			$this->db->select('name, id_supplier');
-			$this->db->from('products');
-			$this->db->where('name', addslashes($data['name']));
-			$this->db->where('id_supplier', $data['id_supplier']);
-			$res = $this->db->get() or die($this->mysqli->error);
-			$test = $res->result();
 			if(isset($test[0])){
 				echo json_encode(['reponse' => 'The product already is in the database']);
+				$test=1;
 				exit();
 			}
-			if(1){
+			if($test != 1){
 				if(!$this->db->insert('products')) {
 					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}

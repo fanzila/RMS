@@ -323,12 +323,14 @@
 															} else if(json.reponse == 'ok' || done == 0) {
 																if(done <= 1) { 
 																	alert('Saved!');
+																	location.reload(true);
 																	return false; 
 																}
 																
 																return false;
 															} else {
 																alert('WARNING! ERROR at saving : '+ json.reponse);
+																window.location = "/product_admin/index/create";
 																return false;
 															}
 														}
