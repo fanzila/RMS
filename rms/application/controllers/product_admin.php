@@ -26,7 +26,6 @@ class Product_admin extends CI_Controller {
 		$this->load->library('email');
 		$this->load->library('hmw');
 		$this->hmw->keyLogin();
-		$this->load->database();
 	}
 
 	public function index($command = null)

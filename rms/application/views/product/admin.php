@@ -323,7 +323,6 @@
 															} else if(json.reponse == 'ok' || done == 0) {
 																if(done <= 1) { 
 																	alert('Saved!');
-																	location.reload(true);
 																	return false; 
 																}
 																
