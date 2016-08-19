@@ -19,7 +19,7 @@
 				</table>
 			</div>
 		</li>
-		<li><img class="ui-li-icon"/>
+		<li data-filtertext="<?=$news_item->title?> <?=$news_item->date?>"><img class="ui-li-icon"/>
 			<?if($news_item->picture){?>
 				<? $image_properties = array(
 						'src'   => 'public/pictures/'.$news_item->picture,
