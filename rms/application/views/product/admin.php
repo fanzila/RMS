@@ -171,10 +171,11 @@
 					</form>
 					</li>
 				<? 	} 
-				  } 
-				} 
+				  } ?>
+				</ul>  
+				<?} 
 				?>
-				</ul>
+				
 							<? if($command == 'create') { ?>
 								<?if($msg) { ?>
 									<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
@@ -312,10 +313,17 @@
 														dataType: 'json',
 														success: function(json) {
 															done = done + 1;
-															if(json.reponse == 'ok' || done == 0) {
-																if(done <= 1) { 
-																	alert('Saved!'); 
+															if(json.reponse == 'okcreate' || done == 0) {
+																if(done <= 1) {
 																	window.location = "/product_admin/index/create1";
+																	return false; 
+																}
+																
+																return false;
+															} else if(json.reponse == 'ok' || done == 0) {
+																if(done <= 1) { 
+																	alert('Saved!');
+																	location.reload(true);
 																	return false; 
 																}
 																
