@@ -180,9 +180,7 @@ class Product_admin extends CI_Controller {
 		if($data['id'] == 'create') {
 			$reponse = 'okcreate';
 			if(isset($test[0])){
-				echo json_encode(['reponse' => 'The product already is in the database']);
 				$test=1;
-				exit();
 			}
 			if($test != 1){
 				if(!$this->db->insert('products')) {
