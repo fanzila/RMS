@@ -1,4 +1,6 @@
+		<? if($command != 'create') { ?>
 			<a href="/product_admin/index/create" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
+		<?}?>
 		</div>
 		<div data-role="content" data-theme="a">
 			<? if($command != 'create') { ?>
