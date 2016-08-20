@@ -52,7 +52,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<small>Unit price €</small>
+										<small>Prix unitaire €</small>
 										<input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>"  data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>

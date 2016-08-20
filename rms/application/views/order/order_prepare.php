@@ -1,5 +1,4 @@
 		</div>
-
 		<div data-role="content" data-theme="a">
 			<? if($stock_update) { ?><ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 				<li style="background-color: #e8ffb9;">Stock updated</li>

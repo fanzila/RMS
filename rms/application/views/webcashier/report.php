@@ -24,7 +24,7 @@
 					<li>
 						<h3>Date: <?=$m['mov']['date']?></h3>
 						<h3>User: <?=$m['mov']['username']?> </h3>
-						<p>Comments: <?=$m['mov']['comment']?></p>
+						<p>Comments Cashpad: <?=$m['mov']['comment']?></p>
 						<p>Cashpad cash: <?=$m['mov']['pos_cash_amount']?>€ | Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_num']?></p>
 			
 						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
@@ -81,6 +81,12 @@
 		<?php endforeach; ?>
 	</table>
 	<? } ?>
+	<? /**
+	<label for="comment-<?=$m['mov']['id']?>">Movement comments</label>
+		<input maxlength="255" type="comments" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" />
+		<input type="button" name="save" value="SAVE">
+		
+	**/ ?>
 				</li>
 			</ul>
 		</div> <!-- end collapsible -->
