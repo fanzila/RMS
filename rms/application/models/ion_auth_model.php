@@ -1036,24 +1036,6 @@ class Ion_auth_model extends CI_Model
 				$this->trigger_events(array('post_login', 'post_login_successful'));
 				$this->set_message('login_successful');
 				
-				//check if user has current_bu_id and has right to login to this bu 
-				$user_bu_id = $this->get_users_bus($user->id)->result();
-				$currentbulogin = false;
-				foreach ($user_bu_id as $userline)
-				{
-					if($userline->id == $user->current_bu_id) $currentbulogin = true;
-				}
-								
-				if(!empty($user->current_bu_id) && $currentbulogin) { 
-					$bus = $this->bus()->result();
-					foreach ($bus as $key) {
-						if($key->id == $user->current_bu_id) $bu_name = $key->name;
-					}
-					$session_data = array('bu_id'  => $user->current_bu_id, 'bu_name'  => $bu_name, 'keylogin'  => $keylogin);
-				} else {
-					$session_data = array('bu_id'  => $user_bu_id[0]->id, 'bu_name'  => $user_bu_id[0]->name, 'keylogin'  => $keylogin);	
-				}
-				$this->session->set_userdata($session_data);
 				return TRUE;
 			}
 		}
@@ -1870,12 +1852,35 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('pre_set_session');
 
+		//check if user has current_bu_id and has right to login to this bu 
+		$user_bu_id = $this->get_users_bus($user->id)->result();
+		$currentbulogin = false;
+		foreach ($user_bu_id as $userline)
+		{
+			if($userline->id == $user->current_bu_id) $currentbulogin = true;
+		}
+
+		//Set BU
+		if(!empty($user->current_bu_id) && $currentbulogin) { 
+			$bus = $this->bus()->result();
+			foreach ($bus as $key) {
+				if($key->id == $user->current_bu_id) $bu_name = $key->name;
+			}
+			$id_bu = $user->current_bu_id;
+		} else {
+			$user_bu_id = $this->get_users_bus($user->id)->result();
+			$id_bu = $user_bu_id[0]->id;
+			$bu_name = $user_bu_id[0]->name;
+		}
+		
 		$session_data = array(
 		    'identity'             => $user->{$this->identity_column},
 		    'username'             => $user->username,
 		    'email'                => $user->email,
 		    'user_id'              => $user->id, //everyone likes to overwrite id so we'll use user_id
-		    'old_last_login'       => $user->last_login
+		    'old_last_login'       => $user->last_login, 
+			'bu_id'				   => $id_bu,
+			'bu_name'			   => $bu_name
 		);
 
 		$this->session->set_userdata($session_data);
@@ -1960,7 +1965,7 @@ class Ion_auth_model extends CI_Model
 
 		//get the user
 		$this->trigger_events('extra_where');
-		$query = $this->db->select($this->identity_column.', id, username, email, last_login')
+		$query = $this->db->select($this->identity_column.', id, username, email, last_login, current_bu_id')
 		                  ->where($this->identity_column, get_cookie($this->config->item('identity_cookie_name', 'ion_auth')))
 		                  ->where('remember_code', get_cookie($this->config->item('remember_cookie_name', 'ion_auth')))
 		                  ->limit(1)
@@ -1972,23 +1977,9 @@ class Ion_auth_model extends CI_Model
 			$user = $query->row();
 
 			$this->update_last_login($user->id);
-
+			
 			$this->set_session($user);
-			
-			//Set BU
-			if(!empty($user->current_bu_id)) { 
-				$bus = $this->bus()->result();
-				foreach ($bus as $key) {
-					if($key->id == $user->current_bu_id) $bu_name = $key->name;
-				}
-				$session_data = array('bu_id'  => $user->current_bu_id, 'bu_name'  => $bu_name);
-			} else {
-				$user_bu_id = $this->get_users_bus($user->id)->result();
-				$session_data = array('bu_id'  => $user_bu_id[0]->id, 'bu_name'  => $user_bu_id[0]->name);	
-			}
-			$this->session->set_userdata($session_data);
-			
-
+	
 			//extend the users cookies if the option is enabled
 			if ($this->config->item('user_extend_on_login', 'ion_auth'))
 			{

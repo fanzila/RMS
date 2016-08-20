@@ -113,7 +113,6 @@
 			
 			<script type="text/javascript">
 				function getContent(select) {
-					var test = select.value;
 					var text = document.getElementById(select.value).align;
 					tinymce.get('privmsg_body').setContent(text);
 				}

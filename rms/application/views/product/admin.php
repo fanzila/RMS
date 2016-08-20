@@ -1,20 +1,25 @@
+		<? if($command != 'create') { ?>
 			<a href="/product_admin/index/create" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
+		<?}?>
 		</div>
 		<div data-role="content" data-theme="a">
 			<? if($command != 'create') { ?>
 				<fieldset class="ui-grid-a">
 					<form id="filter" name="filter" method="post" data-ajax="false" action="/product_admin/index/filter">
 						<div class="ui-block-a">
-							<select name="supplier_id"  data-mini="true">
+							<?$test=0;?>
+							<select name="supplier_id"  data-mini="true" onchange="this.form.submit()">
 								<option value="">SELECT</option>
 								<? foreach ($suppliers as $sup) { ?>
-									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; } ?> ><?=$sup['name']?></option>
+									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; $test=1;}?> ><?=$sup['name']?></option>
 								<? } ?>
 							</select>
 						</div>
-						<div class="ui-block-b">
-							<input type="submit" name="submit" value="filter" data-mini="true" data-ajax="false" data-clear-btn="true" />
-						</div>
+						<?if($test==0){?>
+							<div class="ui-block-b"> 
+								<input type="submit" name="submit" value="filter" data-mini="true" data-ajax="false" data-clear-btn="true" /> 
+							</div>
+						<?}?>
 					</form>
 				</fieldset>
 				<ul data-role="listview" data-inset="true">
@@ -49,7 +54,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<small>Unit price €</small>
+										<small>Prix unitaire €</small>
 										<input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>"  data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
@@ -168,11 +173,17 @@
 					</form>
 					</li>
 				<? 	} 
-				  } 
-				} 
+				  } ?>
+				</ul>  
+				<?} 
 				?>
-				</ul>
+				
 							<? if($command == 'create') { ?>
+								<?if($msg) { ?>
+									<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
+										<?=$msg?> Thanks! Have A Nice Karma!"
+									</div>
+								<?}?>
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 								<li>
 									<form id="pdt1" class="pdt1" name="pdt1" method="post" action="/product_admin/save">
@@ -304,16 +315,24 @@
 														dataType: 'json',
 														success: function(json) {
 															done = done + 1;
-															if(json.reponse == 'ok' || done == 0) {
+															if(json.reponse == 'okcreate') {
+																if(done <= 1) {
+																	window.location = "/product_admin/index/create1";
+																	return false; 
+																}
+																
+																return false;
+															} else if(json.reponse == 'ok' || done == 0) {
 																if(done <= 1) { 
-																	alert('Saved!'); 
-																	//window.location.reload();
+																	alert('Saved!');
+																	//location.reload(true);
 																	return false; 
 																}
 																
 																return false;
 															} else {
 																alert('WARNING! ERROR at saving : '+ json.reponse);
+																//window.location = "/product_admin/index/create";
 																return false;
 															}
 														}
