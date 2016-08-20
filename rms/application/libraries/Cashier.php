@@ -132,7 +132,7 @@ class Cashier {
 			while($row_cashmovement=$result_cashmovement->fetchArray(SQLITE3_ASSOC)){
 				if(empty($row_cashmovement['TYPE'])) $row_cashmovement['TYPE'] = 0;
 				if(empty($row_cashmovement['CUSTOMER'])) $row_cashmovement['CUSTOMER'] = null;
-				$q_cashmovement = "INSERT IGNORE INTO sales_cashmovements SET id_pos='".$row_cashmovement['ID']."', `date`='".$row_cashmovement['DATE']."', user='".$row_cashmovement['USER']."', amount=".$row_cashmovement['AMOUNT'].", method='".$row_cashmovement['METHOD']."', type=".$row_cashmovement['TYPE'].", description='".$row_cashmovement['DESCRIPTION']."', `archive`='".$file."', customer='".$row_cashmovement['CUSTOMER']."', id_bu = $id_bu"; 
+				$q_cashmovement = "INSERT IGNORE INTO sales_cashmovements SET id_pos='".$row_cashmovement['ID']."', `date`='".$row_cashmovement['DATE']."', user='".$row_cashmovement['USER']."', amount=".$row_cashmovement['AMOUNT'].", method='".$row_cashmovement['METHOD']."', type=".$row_cashmovement['TYPE'].", description='".addslashes($row_cashmovement['DESCRIPTION'])."', `archive`='".$file."', customer='".$row_cashmovement['CUSTOMER']."', id_bu = $id_bu"; 
 				$r_cashmovement = $CI->db->query($q_cashmovement) or die($this->db->_error_message());
 			}
 		}
@@ -226,7 +226,7 @@ class Cashier {
 		$CI->load->database();
 		$CI->load->library("hmw");
 		$file	= $this->getPosDbDir($param['id_bu']);
-		if(empty($file)) exit('No db found');
+		if(!file_exists($file)) exit('No POS db found for BU ID '.$param['id_bu'].' in '.$file);
 		$db	= new SQLite3($file);
 		
 		$getBuInfo = $CI->hmw->getBuInfo($param['id_bu']);
@@ -407,7 +407,7 @@ class Cashier {
 		$CI->load->library("hmw");
 		if(isset($datein)) $dateseek = $this->getPosArchivesDatetime($datein);
 		$dir	= $this->getPosArchivesDir($id_bu);
-		if(empty($dir)) exit('No db found');
+		if(empty($dir)) exit('No db found for BU ID '.$id_bu);
 		$files	= scandir($dir, 0);
 		$line2	= null;
 		foreach ($files as $line) {
