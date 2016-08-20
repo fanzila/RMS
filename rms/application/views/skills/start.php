@@ -15,7 +15,7 @@
 					<?}?>
 				<?}?>					
 			</ul><br/>
-			<iframe width='100%' height='700px' frameborder='0' scrolling="no" src='https://docs.google.com/document/d/1xkGHiWm0ekGp0yQdLAbrGWr9UwRSJYcfJQ6E3gnoMHc/edit?usp=sharing&output=html&widget=true&chrome=false'></iframe>
+		<?//	<iframe width='100%' height='700px' frameborder='0' scrolling="no" src='https://docs.google.com/document/d/1xkGHiWm0ekGp0yQdLAbrGWr9UwRSJYcfJQ6E3gnoMHc/edit?usp=sharing&output=html&widget=true&chrome=false'></iframe>?>
 
 		</div><!-- /content -->
 	</div><!-- /page -->	
