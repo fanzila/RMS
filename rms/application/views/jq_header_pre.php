@@ -20,6 +20,6 @@
 	<link rel="stylesheet" href="/public/droid2/css/nativedroid2.css" />
 
 	<!--A remplacer par une bu en local-->
-	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.0/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="/public/fontAwesome/4.6.3/css/font-awesome.min.css" />
 	
 	<script type="text/javascript" src="/public/jquery-1.11.3.min.js"></script>

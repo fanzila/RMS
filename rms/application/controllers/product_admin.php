@@ -23,6 +23,8 @@ class Product_admin extends CI_Controller {
 
 		parent::__construct();
 
+
+		$this->load->library('ion_auth');
 		$this->load->library('email');
 		$this->load->library('hmw');
 		$this->hmw->keyLogin();
@@ -30,14 +32,19 @@ class Product_admin extends CI_Controller {
 
 	public function index($command = null)
 	{		
+		$id_bu	=  $this->session->all_userdata()['bu_id'];
 		$this->load->library('product');
 		$product_id = null;
-		
+		$msg = null;
+		if($command=="create1") {
+			$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
+			$command = "create";
+		}
 		if(isset($_GET['id_product'])) {
 			$product_id = $_GET['id_product']; 
 			$command = 'filter';
 		}
-		$id_bu			=  $this->session->all_userdata()['bu_id'];
+
 		
 		$supplier_id = '';
 		$products 	 = '';
@@ -52,6 +59,7 @@ class Product_admin extends CI_Controller {
 
 
 		$data = array(
+			'msg'				=> $msg,
 			'command'			=> $command,
 			'products'			=> $products,
 			'suppliers'			=> $suppliers,
@@ -62,14 +70,24 @@ class Product_admin extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 		
-		$headers = $this->hmw->headerVars(0, "/order/", "Product Admin");
-		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('product/admin',$data);
-		$this->load->view('jq_footer');
+		if($command!='create'){
+			$headers = $this->hmw->headerVars(0, "/order/", "Product Admin");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
+			$this->load->view('product/admin',$data);
+			$this->load->view('jq_footer');
+		}else{
+			$headers = $this->hmw->headerVars(0, "/product_admin/", "Product Admin");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
+			$this->load->view('product/admin',$data);
+			$this->load->view('jq_footer');
+		}
+		
 	}
-	
-	public function save()
+
+//Old save function (in case there are undetected proble in the new one)	
+/*	public function savebkp()
 	{
 
 		$this->load->library('ion_auth');
@@ -83,7 +101,6 @@ class Product_admin extends CI_Controller {
 		if($data['id'] == 'create') {
 			$sqlt = "INSERT INTO ";
 			$sqle = "";
-
 		}
 
 		if(empty($data['id'])) exit();
@@ -124,10 +141,108 @@ class Product_admin extends CI_Controller {
 					$this->db->query("UPDATE products_stock SET warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW() WHERE id_product = $id_product") or die($this->mysqli->error);
 				}
 		}
+	
 
 		echo json_encode(['reponse' => $reponse]);
 		exit();
+	}*/
+
+	public function save()
+	{
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$reponse = 'ok';
+		$data = $this->input->post();
+		if(empty($data['id'])) exit();
+		$price = $data['price']*1000;
+		$user = $this->ion_auth->user()->row();
+		date_default_timezone_set('Europe/Paris');
+		$date = date('Y-m-d H:i:s');
+		
+		$this->db->select('name, id_supplier');
+		$this->db->from('products');
+		$this->db->where('name', addslashes($data['name']));
+		$this->db->where('id_supplier', $data['id_supplier']);
+		$res = $this->db->get() or die($this->mysqli->error);
+		$test = $res->result();
+
+		$this->db->set('name', addslashes($data['name']));
+		$this->db->set('id_supplier', $data['id_supplier']);
+		$this->db->set('price', $price);
+		$this->db->set('id_unit', $data['id_unit']);
+		$this->db->set('packaging', $data['packaging']);
+		$this->db->set('id_category', $data['id_category']);
+		$this->db->set('active', $data['active']);
+		$this->db->set('freq_inventory', $data['freq_inventory']);
+		$this->db->set('supplier_reference', $data['supplier_reference']);
+		$this->db->set('comment', addslashes($data['comment']));
+
+		$this->db->trans_start();
+		if($data['id'] == 'create') {
+			$reponse = 'okcreate';
+			if(isset($test[0])){
+				$test=1;
+			}
+			if($test != 1){
+				if(!$this->db->insert('products')) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+				$new_id = $this->db->insert_id();
+				$id_product = $new_id;
+
+				$this->db->set('id_product', $id_product);
+				$this->db->set('warning', $data['stock_warning']);
+				$this->db->set('mini', $data['stock_mini']);
+				$this->db->set('max', $data['stock_max']);
+				$this->db->set('qtty', $data['stock_qtty']);
+				$this->db->set('last_update_id_user', $user->id);
+				$this->db->set('last_update_user', $date);
+				$this->db->set('id_bu', $id_bu);
+				if(!$this->db->insert('products_stock')) {
+					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+			}else{
+				$reponse = 'The product already is in the database';
+			}
+		}else{
+			$this->db->where('id', $data['id']);
+			if(!$this->db->update('products')) {
+				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+			}
+			$id_product = $data['id'];
+
+			$this->db->where('id_product', $data['id']);
+			$reqs = $this->db->get('products_stock') or die($this->mysqli->error);
+			$rets = $reqs->result_array();
+				if(empty($rets)) {
+					$this->db->set('id_product', $id_product);
+					$this->db->set('warning', $data['stock_warning']);
+					$this->db->set('mini', $data['stock_mini']);
+					$this->db->set('max', $data['stock_max']);
+					$this->db->set('qtty', $data['stock_qtty']);
+					$this->db->set('last_update_id_user', $user->id);
+					$this->db->set('last_update_user', $date);
+					$this->db->set('id_bu', $id_bu);
+					if(!$this->db->insert('products_stock')) {
+						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					}
+				} else {
+					$this->db->set('warning', $data['stock_warning']);
+					$this->db->set('mini', $data['stock_mini']);
+					$this->db->set('max', $data['stock_max']);
+					$this->db->set('qtty', $data['stock_qtty']);
+					$this->db->set('last_update_id_user', $user->id);
+					$this->db->set('last_update_user', $date);					
+					$this->db->where('id_product', $id_product);
+					if(!$this->db->update("products_stock")) {
+						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					}
+				}
+		}
+		$this->db->trans_complete();
+		echo json_encode(['reponse' => $reponse]);
+		exit();
 	}
+
 
 	public function save_mapping()
 	{		

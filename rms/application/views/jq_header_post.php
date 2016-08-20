@@ -1,5 +1,6 @@
 </head>
 <body>
+	<?php $dev = false; if($_SERVER['SERVER_NAME'] == 'rms.dev') $dev = true; ?>
 	<?if($title!="Order"){?>
 	<div data-role="page" class="nd2-no-menu-swipe">
 	<?}else{?>
@@ -8,6 +9,7 @@
 		<?php if($index==1){
 			include('adminpanel.html');
 		}?>
+		<?if($dev) { ?><div style="text-align: center;width:100%;background-color: #c3f59d;height:30px;border:2px solid #ccc;color:red">DEV MODE</div><br><? } ?>
 		<div data-role="header" data-position="fixed" class="wow fadeIn">
 			<?if($bu_id==1){?>
 				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.amber.css" />

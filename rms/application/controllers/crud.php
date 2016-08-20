@@ -179,7 +179,77 @@ class Crud extends CI_Controller {
     {
         $this->grocery_crud->columns('id', 'name', 'text');
         $this->grocery_crud->required_fields('id', 'name', 'text', 'bu_id');
-        $this->grocery_crud->set_table('interview_subjects');
+        $this->grocery_crud->set_table('report_subjects');
+        $output = $this->grocery_crud->render();
+ 
+        $this->_example_output($output); 
+    }
+
+    public function skills()
+    {
+        $this->grocery_crud->columns('id', 'name', 'deleted');
+        $this->grocery_crud->required_fields('id', 'name');
+        $this->grocery_crud->set_table('skills');
+        $output = $this->grocery_crud->render();
+ 
+        $this->_example_output($output); 
+    }
+
+    public function skills_item()
+    {
+        $this->grocery_crud->columns('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat', 'deleted');
+        $this->grocery_crud->required_fields('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat');
+        $this->grocery_crud->set_table('skills_item');
+        $output = $this->grocery_crud->render();
+ 
+        $this->_example_output($output); 
+    }
+
+    public function skills_record()
+    {
+        $this->grocery_crud->columns('id', 'id_sponsor', 'id_user');
+        $this->grocery_crud->required_fields('id', 'id_sponsor', 'id_user');
+        $this->grocery_crud->set_table('skills_record');
+        $output = $this->grocery_crud->render();
+ 
+        $this->_example_output($output); 
+    }
+
+    public function skills_log()
+    {
+        $this->grocery_crud->columns('id', 'id_skills_record', 'date');
+        $this->grocery_crud->required_fields('id', 'id_skills_record', 'date');
+        $this->grocery_crud->set_table('skills_log');
+        $output = $this->grocery_crud->render();
+ 
+        $this->_example_output($output); 
+    }
+
+    public function skills_category()
+    {
+        $this->grocery_crud->columns('id', 'name', 'deleted');
+        $this->grocery_crud->required_fields('id', 'name');
+        $this->grocery_crud->set_table('skills_category');
+        $output = $this->grocery_crud->render();
+ 
+        $this->_example_output($output); 
+    }
+
+    public function skills_sub_category()
+    {
+        $this->grocery_crud->columns('id', 'name', 'deleted');
+        $this->grocery_crud->required_fields('id', 'name');
+        $this->grocery_crud->set_table('skills_sub_category');
+        $output = $this->grocery_crud->render();
+ 
+        $this->_example_output($output); 
+    }
+
+    public function skills_record_item()
+    {
+        $this->grocery_crud->columns('id', 'id_skills_record', 'id_skills_item', 'checked', 'comment');
+        $this->grocery_crud->required_fields('id', 'id_skills_record', 'id_skills_item', 'checked');
+        $this->grocery_crud->set_table('skills_record_item');
         $output = $this->grocery_crud->render();
  
         $this->_example_output($output); 

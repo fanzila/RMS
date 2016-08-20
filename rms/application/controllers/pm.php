@@ -230,10 +230,8 @@ class Pm extends CI_Controller {
 			foreach ($messages as $message)
 			{
 				$messages[$i][TF_PM_BODY] = $this->render($messages[$i][TF_PM_BODY]);
-				$messages[$i][TF_PM_AUTHOR] = $this->user_model->get_username($message[TF_PM_AUTHOR]);//Problème ici
-			//	echo "\nauteur du n°".$i." : ".$messages[$i][TF_PM_AUTHOR];
-				$messages[$i][PM_RECIPIENTS] = $this->pm_model->get_recipients($messages[$i][TF_PM_ID]);//Problème et là
-			//	echo " destinataire du n°".$i." : ".$messages[$i][TF_PM_AUTHOR];
+				$messages[$i][TF_PM_AUTHOR] = $this->user_model->get_username($messages[$i][TF_PM_AUTHOR]);
+				$messages[$i][PM_RECIPIENTS] = $this->pm_model->get_recipients($messages[$i][TF_PM_ID]);
 				$j = 0;
 				foreach ($messages[$i][PM_RECIPIENTS] as $recipient)
 				{
@@ -317,10 +315,10 @@ class Pm extends CI_Controller {
 		$users = $query->result();
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations subjects */
-		$this->db->select('interview_subjects.name, interview_subjects.id, interview_subjects.text');
-		$this->db->where('interview_subjects.bu_id', $id_bu);
-		$this->db->order_by('interview_subjects.name', 'asc');
-		$query = $this->db->get("interview_subjects");
+		$this->db->select('report_subjects.name, report_subjects.id, report_subjects.text');
+		$this->db->where('report_subjects.bu_id', $id_bu);
+		$this->db->order_by('report_subjects.name', 'asc');
+		$query = $this->db->get("report_subjects");
 		$sujets = $query->result();
 
 		$rules = $this->config->item('pm_form', 'form_validation');
@@ -370,6 +368,30 @@ class Pm extends CI_Controller {
 			{
 				if($this->pm_model->send_message($recipient_ids, $subject, $body))
 				{
+					$server_name = $this->hmw->getParam('server_name'); 
+					
+					$this->load->library('mmail');
+					$bus = $this->input->post('bus');
+					
+					$this->db->select('username, email, id');
+					$this->db->distinct('username');
+					foreach ($recipient_ids as $recipient_id) {
+						$this->db->where('id', $recipient_id);	
+					}			
+					$query = $this->db->get("users");
+					
+					foreach ($query->result() as $row) {
+						$key 	= md5(microtime().rand());
+						$email['from']		= 'news@hankrestaurant.com';
+						$email['from_name']	= 'HANK NEWS';
+						$email['to']		= $row->email;
+						$email['replyto'] 	= "news@hankrestaurant.com";
+						$email['subject']	= 'Hank Report! '.$subject;
+						$email['mailtype']	= 'html';
+						$email['msg'] = $body;
+					
+						$this->mmail->sendEmail($email);
+					}
 					// On success: redirect to list view of messages
 					$this->session->set_flashdata('status', $this->lang->line('msg_sent'));
 					redirect($this->base_uri.'messages/'.MSG_SENT);
@@ -403,7 +425,7 @@ class Pm extends CI_Controller {
 		}
 		$data['managers'] = $managers;
 		
-		$headers = $this->hmw->headerVars(0, "/pm/", "Report - New interview");
+		$headers = $this->hmw->headerVars(0, "/pm/", "Report - New report");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('pm/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
