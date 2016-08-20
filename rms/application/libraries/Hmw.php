@@ -230,7 +230,8 @@ class Hmw {
 					'title'			=> $title,
 					'groupname' 	=> $user_groups[0]->name,
 					'userlevel' 	=> $user_groups[0]->level,
-					'username'		=> $username
+					'username'		=> $username,
+					'user_id'		=> $user->id
 					)
 				);
 			}else{

@@ -16,16 +16,16 @@
 					<div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 						<h3>Staff</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
-						<li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> Skills</a></li>
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
-						<li><a rel="external" data-ajax="false" href="/account/"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li>
+						<li><a rel="external" class="ui-disabled" data-ajax="false" href="/account/index/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/order/"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>
-						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li><?}?>
 						<li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Report</a></li>
+						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li><?}?>
+						<li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> Training</a></li>
 						<? if($userlevel >= 2){?>
 							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
 							<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>

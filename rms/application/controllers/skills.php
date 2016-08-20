@@ -250,8 +250,13 @@ class Skills extends CI_Controller {
 		if (!$this->ion_auth->logged_in()) {
 				redirect('news', 'refresh');
 		}
-		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$this->hmw->changeBu();// GENERIC changement de Bu
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$bu_name	= $this->session->all_userdata()['bu_name'];
+
+		$this->db->select('bu_info')->from('bus')->where('id', $id_bu);
+		$res = $this->db->get() or die($this->mysqli->error);
+		$bu_infos = $res->result();
 
 		$this->db->select('sr.id, us.id as id_sponsor, u.first_name, u.last_name, u.id as id_user')
 			->from('skills_record as sr')
@@ -262,10 +267,13 @@ class Skills extends CI_Controller {
 
 		$data = array(
 			'skills_records' => $skills_records,
+			'id_bu'			=> $id_bu,
+			'bu_name'		=> $bu_name,
+			'bu_infos'		=> $bu_infos[0]->bu_info,
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
-		$headers = $this->hmw->headerVars(1, "/skills/start/", "Skills");
+		$headers = $this->hmw->headerVars(1, "/skills/start/", "Training");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('skills/start', $data);
