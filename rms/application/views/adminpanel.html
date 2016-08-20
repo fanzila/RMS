@@ -17,7 +17,7 @@
 						<h3>Staff</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
-						<li><a rel="external" class="ui-disabled" data-ajax="false" href="/account/index/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li>
+						<li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>

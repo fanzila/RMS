@@ -977,6 +977,141 @@ class Auth extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
+	public function edit_oneself($id=null)
+	{
+		$this->data['title'] = "Edit User";
+
+		if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id)))
+		{
+			redirect('auth', 'refresh');
+		}
+
+		$user = $this->ion_auth->user($id)->row();
+		$groups=$this->ion_auth->groups()->result_array();
+		$bus=$this->ion_auth->bus()->result_array();
+		$currentGroups = $this->ion_auth->get_users_groups($id)->result();
+		$currentBus = $this->ion_auth->get_users_bus($id)->result();
+
+		//validate form input
+		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'xss_clean');
+		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'min_length[12]|max_length[12]|xss_clean');
+		$this->form_validation->set_rules('groups', $this->lang->line('edit_user_validation_groups_label'), 'xss_clean');
+		$this->form_validation->set_rules('bus', $this->lang->line('edit_user_validation_bus_label'), 'xss_clean');
+
+		if (isset($_POST) && !empty($_POST))
+		{
+			// do we have a valid request?
+			if ($this->_valid_csrf_nonce() === FALSE || $id != $this->input->post('id'))
+			{
+				show_error($this->lang->line('error_csrf'));
+			}
+
+			//update the password if it was posted
+			if ($this->input->post('password'))
+			{
+				$this->form_validation->set_rules('password', $this->lang->line('edit_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
+				$this->form_validation->set_rules('password_confirm', $this->lang->line('edit_user_validation_password_confirm_label'), 'required');
+			}
+
+			if ($this->form_validation->run() === TRUE)
+			{
+				$data = array(
+					'email'		 => $this->input->post('email'),
+					'phone'      => $this->input->post('phone')
+				);
+				
+				//update the password if it was posted
+				if ($this->input->post('password'))
+				{
+					$data['password'] = $this->input->post('password');
+				}
+
+				$this->ion_auth->update($user->id, $data);
+
+				// Only allow updating groups if user is admin
+				if ($this->ion_auth->is_admin())
+				{
+					//Update the groups user belongs to
+					$groupData = $this->input->post('groups');
+					$buData    = $this->input->post('bus');
+
+					if (isset($groupData) && !empty($groupData)) {
+
+						$this->ion_auth->remove_from_group('', $id);
+
+						foreach ($groupData as $grp) {
+							$this->ion_auth->add_to_group($grp, $id);
+						}
+
+					}
+					
+					if (isset($buData) && !empty($buData)) {
+
+						$this->ion_auth->remove_from_bu('', $id);
+
+						foreach ($buData as $bu) {
+							$this->ion_auth->add_to_bu($bu, $id);
+						}
+
+					}
+				}
+				
+				//check to see if we are creating the user
+				//redirect them back to the admin page
+				$this->session->set_flashdata('message', "Your modifications are recorded");
+				redirect('/auth/edit_oneself/'.$id, 'refresh');
+			}
+		}
+
+		//display the edit user form
+		$this->data['csrf'] = $this->_get_csrf_nonce();
+
+		//set the flash data error message if there is one
+		$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+
+		//pass the user to the view
+		$this->data['user'] = $user;
+		$this->data['groups'] = $groups;
+		$this->data['bus'] = $bus;
+		$this->data['currentGroups'] = $currentGroups;
+		$this->data['currentBus'] = $currentBus;
+		
+		$this->data['username2'] = $this->session->all_userdata()['identity'];
+		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+
+		$this->data['email'] = array(
+			'name'  => 'email',
+			'id'    => 'email',
+			'type'  => 'text',
+			'data-clear-btn' => "true",
+			'value' => $this->form_validation->set_value('email', $user->email),
+		);
+		$this->data['phone'] = array(
+			'name'  => 'phone',
+			'id'    => 'phone',
+			'type'  => 'text',
+			'data-clear-btn' => "true",
+			'value' => $this->form_validation->set_value('phone', $user->phone),
+		);
+		$this->data['password'] = array(
+			'name' => 'password',
+			'id'   => 'password',
+			'data-clear-btn' => "true",
+			'type' => 'password'
+		);
+		$this->data['password_confirm'] = array(
+			'name' => 'password_confirm',
+			'id'   => 'password_confirm',
+			'data-clear-btn' => "true",
+			'type' => 'password'
+		);
+
+		$headers = $this->hmw->headerVars(1, "/auth/", "My account");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->_render_page('auth/account', $this->data);
+		$this->load->view('jq_footer');
+	}
 
 	function _get_csrf_nonce()
 	{
