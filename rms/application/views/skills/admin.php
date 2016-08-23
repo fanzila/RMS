@@ -135,7 +135,9 @@
 										break;
 									}?>
 								<?}?>
-								<li><a data-ajax="false" <?if($ok==1){?>href="/skills/index/<?=$user->id?>/1"<?}?>><?=$user->first_name?> <?=$user->last_name?> <?if($ok==0){?><font size="2" color="#4a7b50">no sponsor<?}?></font></a></li>
+								<?if($ok==1){?>
+									<li><a data-ajax="false" href="/skills/index/<?=$user->id?>/1"><?=$user->first_name?> <?=$user->last_name?></font></a></li>
+								<?}?>
 							<?}?>
 						<?}?>
 					</ul>

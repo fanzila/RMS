@@ -16,8 +16,6 @@
 				<?}?>					
 			</ul><br/>
 			<h2>Hank's play book</h2>
-			<p>Sur chrome uniquement. Si on est connecté à son compte avec un droit de regard.</p>
-			<iframe width='100%' height='700px' frameborder='0' scrolling="no" src="https://docs.google.com/document/d/1xkGHiWm0ekGp0yQdLAbrGWr9UwRSJYcfJQ6E3gnoMHc/"></iframe>
-
+			<iframe width='100%' height='700px' frameborder='0.1' src="<?=$bu_link?>"></iframe>
 		</div><!-- /content -->
 	</div><!-- /page -->	
