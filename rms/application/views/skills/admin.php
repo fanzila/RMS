@@ -313,7 +313,7 @@
 						}
 					}).done(function(data) {
 							if($valid == 1)
-								window.location = "/skills/index/"+user;
+								window.location = "/skills/index/"+user+"/1";
 					    }).fail(function(data) {
 					    	alert('WARNING! ERROR at saving!');
 					    });
