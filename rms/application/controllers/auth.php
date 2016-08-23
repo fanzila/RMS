@@ -720,8 +720,8 @@ function forgot_password()
 		$this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'required|xss_clean');
 		$this->form_validation->set_rules('last_name', $this->lang->line('edit_user_validation_lname_label'), 'required|xss_clean');
 		$this->form_validation->set_rules('username', $this->lang->line('edit_user_validation_lname_label'), 'required|xss_clean');
-		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'xss_clean');
-		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'min_length[12]|max_length[12]|xss_clean');
+		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'required|valid_email|xss_clean');
+		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'exact_length[12]|numeric|xss_clean');
 		$this->form_validation->set_rules('comment', 'Enter a valid comment', 'xss_clean');
 		$this->form_validation->set_rules('groups', $this->lang->line('edit_user_validation_groups_label'), 'xss_clean');
 		$this->form_validation->set_rules('bus', $this->lang->line('edit_user_validation_bus_label'), 'xss_clean');
@@ -1025,8 +1025,8 @@ function forgot_password()
 		$currentBus = $this->ion_auth->get_users_bus($id)->result();
 
 		//validate form input
-		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'xss_clean');
-		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'min_length[12]|max_length[12]|xss_clean');
+		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'required|valid_email|xss_clean');
+		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'exact_length[12]|numeric|xss_clean');
 		$this->form_validation->set_rules('groups', $this->lang->line('edit_user_validation_groups_label'), 'xss_clean');
 		$this->form_validation->set_rules('bus', $this->lang->line('edit_user_validation_bus_label'), 'xss_clean');
 
