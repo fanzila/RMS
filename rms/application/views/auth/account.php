@@ -39,7 +39,3 @@ echo form_open(uri_string(), $attributes);
     </div>
   </div>
   <?php echo form_close();?>
-</div>
-	<br /><br />
-	<div id="view"></div>
-</div>

@@ -1103,13 +1103,6 @@ function forgot_password()
 
 		//pass the user to the view
 		$this->data['user'] = $user;
-		$this->data['groups'] = $groups;
-		$this->data['bus'] = $bus;
-		$this->data['currentGroups'] = $currentGroups;
-		$this->data['currentBus'] = $currentBus;
-		
-		$this->data['username2'] = $this->session->all_userdata()['identity'];
-		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
 		$this->data['email'] = array(
 			'name'  => 'email',
