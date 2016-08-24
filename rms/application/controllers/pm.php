@@ -148,6 +148,8 @@ class Pm extends CI_Controller {
 	 */
 	function message($msg_id)
 	{
+		$this->hmw->changeBu();// GENERIC changement de Bu
+
 		if(! $msg_id) return;
 		// Get message and flag it as read
 		$message = $this->pm_model->get_message($msg_id);
@@ -207,6 +209,7 @@ class Pm extends CI_Controller {
 		{
 			redirect('auth/login');
 		}
+		$this->hmw->changeBu();// GENERIC changement de Bu
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1 &&($type==1 || $type==2))
 		{
