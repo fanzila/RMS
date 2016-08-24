@@ -26,11 +26,23 @@
 								<td><label for="user" id="label">Trainee:</label></td>
 								<td>
 									<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
+										<?$ok=0;?>
 										<option value="">Trainee</option>
 										<?foreach ($users as $user) {?>
-											<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
-											</option>
-										<? } ?>
+											<?$ok=0;?>
+											<?if($user->id!=$current_user){?>
+												<?foreach ($skills_records as $skills_record) {?>
+													<?if($user->username == $skills_record->username){
+														$ok=1;
+														break;
+													}?>
+												<?}?>
+												<?if($ok==0){?>
+													<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
+													</option>
+												<?}?>
+											<?}?>
+										<?}?>
 									?></select>
 								</td>
 							</tr>
