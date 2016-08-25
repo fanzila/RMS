@@ -4,7 +4,7 @@
 <h1><?php echo lang('forgot_password_heading');?></h1>
 <p><?php echo sprintf(lang('forgot_password_subheading'), 'Username');?></p>
 
-<div id="infoMessage"><?php echo $message;?></div>
+<div id="infoMessage"><font color="#228b22"><?php echo $message;?></font></div>
 
 <?php $attributes = array('rel' => 'external', 'data-ajax' => 'false');
 echo form_open("auth/forgot_password", $attributes);?>

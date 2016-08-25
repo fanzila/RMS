@@ -20,7 +20,7 @@
 <h1><?php echo lang('login_heading');?></h1>
 <p><?php echo lang('login_subheading');?></p>
 
-<div id="infoMessage"><?php echo $message;?></div>
+<div id="infoMessage"><font color="#228b22"><?php echo $message;?></font></div>
 
 <form action="/auth/login" method="post" accept-charset="utf-8" rel="external" data-ajax="false">
 
