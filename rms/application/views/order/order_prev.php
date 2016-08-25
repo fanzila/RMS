@@ -1,4 +1,5 @@
 		</div>
+		
 		<div data-role="content" data-theme="a">
 			
 			<?$attributes = array('id' => "logOrder", 'name' => "logOrder");
@@ -9,22 +10,41 @@
 						</td>
 					</tr>
 					<tr>
-						<td width="10%"><label for="supplier" id="label">Supplier:</label></td>
-						<td width="40%"><input type="text" id="supplier" name="supplier" value="" data-clear-btn="true" /></td>
-						<td width="10%"><label for="user" id="label">Username:</label></td>
-						<td width="40%"><input type="text" id="user" name="user" value="" data-clear-btn="true" /></td>
+						<td colspan="2">
+							<select style="background-color:#a1ff7c" name="supplier" id="supplier" data-mini="true">
+								<option value="">Select a supplier</option>
+								<? foreach ($suppliers as $sup) { ?>
+									<option value="<?=$sup['name']?>"><?=$sup['name']?></option>
+								<? } ?>
+							</select>
+						</td>
+						<td colspan="2" width="50%">
+							<select style="background-color:#a1ff7c" name="user" id="user" data-mini="true">
+								<option value="">Select a user</option>
+								<?foreach ($users as $user) {?>
+									<option value="<?=$user->username?>"><?=$user->first_name?> <?=$user->last_name?>
+									</option>
+								<?}?>
+							</select>
+						</td>
 					</tr>
 					<tr>
-						<td><label for="idorder" id="label">ID:</label></td>
-						<td><input type="text" id="idorder" name="idorder" value="" data-clear-btn="true" /></td>
-						<td><label for="status" id="label">Status:</label></td>
-						<td><input type="text" id="status" name="status" value="" data-clear-btn="true" /></td>
+						<td width="10%"><label for="idorder" id="label">ID:</label></td>
+						<td width="40%"><input type="text" id="idorder" name="idorder" value="" data-clear-btn="true" /></td>
+						<td colspan="2">
+							<select style="background-color:#a1ff7c" id="status" name="status" data-mini="true">
+								<option value="">Select a status</option>
+								<option value="sent">Sent</option>
+								<option value="draft">Draft</option>
+								
+							</select>
+						</td>
 					</tr>
 					<tr>
 						<td><label for="sdate" id="label">From the : (YYYY-MM-DD)</label></td>
-						<td><input type="text" id="sdate" name="sdate" value="" data-clear-btn="true" /></td>
+						<td><input type="date" id="sdate" name="sdate" value="" data-clear-btn="true" /></td>
 						<td><label for="edate" id="label">To the : (YYYY-MM-DD)</label></td>
-						<td><input type="text" id="edate" name="edate" value="" data-clear-btn="true" /></td>
+						<td><input type="date" id="edate" name="edate" value="" data-clear-btn="true" /></td>
 					</tr>
 					<tr>
 						<td colspan="4">
@@ -47,6 +67,6 @@
 					<?php endforeach; ?>
 				<?}?>
 			</ul>
-			<p><?php echo $links; ?></p>
+			<p><?=$links?></p>
 			</div>
 		</div>

@@ -11,7 +11,7 @@
 							<select name="supplier_id"  data-mini="true" onchange="this.form.submit()">
 								<option value="">SELECT</option>
 								<? foreach ($suppliers as $sup) { ?>
-									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected"; $test=1;}?> ><?=$sup['name']?></option>
+									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected";}?> ><?=$sup['name']?></option>
 								<? } ?>
 							</select>
 						</div>

@@ -27,6 +27,7 @@ class Order extends CI_Controller {
 		$this->load->model('order_model');
 		$this->load->library("pagination");
 		$this->load->helper(array('form', 'url'));
+		$this->load->library('product');
 		$this->load->database();
 
 	}
@@ -35,8 +36,7 @@ class Order extends CI_Controller {
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
 
-		$this->hmw->keyLogin();		
-		$this->load->library('product');
+		$this->hmw->keyLogin();
 
 		$id_bu			=  $this->session->all_userdata()['bu_id'];
 
@@ -168,20 +168,33 @@ public function previousOrders()
 {
 	$this->hmw->keyLogin();
 	$id_bu =  $this->session->all_userdata()['bu_id'];
+	$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+	$this->db->distinct('users.username');
+	$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+	$this->db->where('active', 1);
+	$this->db->where('users_bus.bu_id', $id_bu);
+	$this->db->order_by('users.username', 'asc');
+	$query = $this->db->get("users");
+	$users = $query->result();
 
 	$config = array();
 	$config["base_url"] = base_url() . "order/previousOrders";
 	$config["total_rows"] = $this->order_model->record_count();
 	$config["per_page"] = 10;
 	$config["uri_segment"] = 3;
-	$choice = $config["total_rows"] / $config["per_page"];
-	$config["num_links"] = round($choice);
+	$config['first_link'] = 'First';
+	$config['prev_link'] = 'previous';
+	$config['next_link'] = 'next';
+	$config['last_link'] = 'Last';
+	$config['num_links'] = 4;
 
 	$this->pagination->initialize($config);
 
 	$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
 
 	$data = array(
+		'suppliers'	=> $this->product->getSuppliers(true, null, $id_bu),
+		'users'		=> $users,
 		'results'	=> $this->order_model->get_list($config["per_page"], $page),
 		'links'		=> $this->pagination->create_links()
 		);
