@@ -176,8 +176,14 @@ class News extends CI_Controller {
 					$email['replyto'] 	= "news@hankrestaurant.com";
 					$email['subject']	= 'Hank News! '.$this->input->post('title');
 					$email['mailtype']	= 'html';
-
-					$msg = $this->input->post('text');
+					
+					if ($checkUpload){
+						$msg = '<img src="http://rms.hankrestaurant.com/public/pictures/'.$picName.'" class="img-responsive" style="max-height: 300px; max-width: 300px;" alt=""/><br/>';
+						$msg .= $this->input->post('text');
+					}else{
+						$msg = $this->input->post('text');
+					}
+					
 					$msg .= "\r\n\r\n->>>>Merci de confirmer la lecture de ce message en cliquant ici : $link";
 					$msg .= "\r\n-- \r\n$user->username";
 

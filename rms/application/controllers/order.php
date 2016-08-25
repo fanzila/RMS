@@ -24,6 +24,9 @@ class Order extends CI_Controller {
 		parent::__construct();
 		$this->load->library('hmw');
 		$this->load->library('ion_auth');
+		$this->load->model('order_model');
+		$this->load->library("pagination");
+		$this->load->helper(array('form', 'url'));
 		$this->load->database();
 
 	}
@@ -162,23 +165,25 @@ public function cliCheckPosClosing($id_bu) {
 }
 
 public function previousOrders()
-{		
-
+{
 	$this->hmw->keyLogin();
 	$id_bu =  $this->session->all_userdata()['bu_id'];
 
-	$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, c.status as confirm, s.name as supplier_name');
-	$this->db->from('orders as r');
-	$this->db->join('users as u', 'r.user = u.id');
-	$this->db->join('suppliers as s','s.id = r.supplier_id','left');
-	$this->db->join('orders_confirm as c','r.idorder = c.idorder','left');
-	$this->db->where('r.id_bu', $id_bu);
-	$this->db->order_by('r.date desc')->limit(300);
-	$rec_res = $this->db->get() or die($this->mysqli->error);
-	$rec = $rec_res->result_array();
+	$config = array();
+	$config["base_url"] = base_url() . "order/previousOrders";
+	$config["total_rows"] = $this->order_model->record_count();
+	$config["per_page"] = 10;
+	$config["uri_segment"] = 3;
+	$choice = $config["total_rows"] / $config["per_page"];
+	$config["num_links"] = round($choice);
+
+	$this->pagination->initialize($config);
+
+	$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
 
 	$data = array(
-		'order'	=> $rec,
+		'results'	=> $this->order_model->get_list($config["per_page"], $page),
+		'links'		=> $this->pagination->create_links()
 		);
 	$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 	$data['username'] = $this->session->all_userdata()['identity'];
@@ -627,6 +632,59 @@ private function groupOrder($data, $id_bu)
 	}
 	return $total;
 }
+	function getprevorder(){
+		$id_bu =  $this->session->all_userdata()['bu_id'];		
+		$data = $this->input->post();
+		$ok=0;
+		$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, c.status as confirm, s.name as supplier_name');
+		$this->db->from('orders as r');
+		$this->db->join('users as u', 'r.user = u.id');
+		$this->db->join('suppliers as s','s.id = r.supplier_id','left');
+		$this->db->join('orders_confirm as c','r.idorder = c.idorder','left');
+		$this->db->where('r.id_bu', $id_bu);
+
+		if($data['supplier']!=''){
+			$ok=1;
+			$this->db->where('s.name',		$data['supplier']);
+		}
+		if($data['user']!=''){
+			$ok=1;
+			$this->db->where('u.username',	$data['user']);
+		}
+		if($data['idorder']!=''){
+			$ok=1;
+			$this->db->where('r.idorder',	$data['idorder']);
+		}
+		if($data['status']!=''){
+			$ok=1;
+			$this->db->where('r.status',	$data['status']);
+		}
+		if($data['sdate']!=''){
+			$ok=1;
+			$this->db->where('r.date >=',	$data['sdate']);
+		}
+		if($data['edate']!=''){
+			$ok=1;
+			$this->db->where('r.date <=',	$data['edate']);
+		}
+
+		$this->db->order_by('r.date desc')->limit(25);
+		$rec_res = $this->db->get() or die($this->mysqli->error);
+		$rec = $rec_res->result_array();
+
+		$data = array(
+			'order'	=>	$rec,
+			'bu_name'	=> $this->session->all_userdata()['bu_name'],
+			'username'	=> $this->session->all_userdata()['identity'],
+			'valided'	=> $ok
+			);
+		$headers = $this->hmw->headerVars(0, "/order/previousOrders", "Order prev : search results");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('order/search_results', $data);
+		$this->load->view('jq_footer');
+
+	}
 
 private function clean_number($num) {
 	$t1 = str_replace ( ',' , '.' , $num);

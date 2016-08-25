@@ -41,7 +41,7 @@
 							<select style="background-color:#a1ff7c" name="recipients" id="recipients" data-inline="true" data-theme="a" required>
 								<option value="">Select a Recipient</option>
 								<? if($userlevel >= 2){ ?>
-									<option value="<?=$managers?>">All managers</option>
+									<option value="<?=$managers?>">All managers of <?=$bu_name?></option>
 								<?}?>
 								<?foreach ($users as $user) {
 									if($user->username != $this->session->all_userdata()['identity']){?>
