@@ -80,6 +80,7 @@ class Pm_model extends CI_Model {
 		$this->ci = & get_instance();
 		$this->load->model('Pm_user_model', 'user_model');
 		$this->load->library('Table_model');
+		$this->load->library('session');
 		$this->table1 = new Table_model(TABLE_PM, $dateformat, $enforce_field_types);
 		$this->table2 = new Table_model(TABLE_PMTO, $dateformat, $enforce_field_types);
 		$this->user_id = $this->user_model->current_id();
@@ -156,6 +157,7 @@ class Pm_model extends CI_Model {
 				$this->db->where(TF_PM_AUTHOR, $this->user_id);
 				break;
 		}
+		$this->db->where(TF_PM_BU, $this->session->all_userdata()['bu_id']);
 		// Get messages by join of table1 & 2
 		$this->db->join($t2, TF_PMTO_MESSAGE.' = '.TF_PM_ID);
 		$this->db->group_by(TF_PM_ID); // To get only distinct messages
@@ -359,6 +361,7 @@ class Pm_model extends CI_Model {
 		$this->db->set(TF_PM_SUBJECT, $subject);
 		$this->db->set(TF_PM_BODY, $body);
 		$this->db->set(TF_PM_NOTIFY, $notify);
+		$this->db->set(TF_PM_BU, $this->session->all_userdata()['bu_id']);
 		if( ! $this->table1->insert_data())
 			return FALSE;
 		$msg_id = $this->table1->insert_id;

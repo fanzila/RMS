@@ -429,6 +429,7 @@ class Pm extends CI_Controller {
 		$data['managers'] = $managers;
 		
 		$headers = $this->hmw->headerVars(0, "/pm/", "Report - New report");
+		$data['bu_name'] = $headers['header_post']['bu_name'];
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('pm/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);

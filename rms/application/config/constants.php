@@ -68,6 +68,7 @@ define('TF_PM_BODY', 'privmsg_body');
 define('TF_PM_NOTIFY', 'privmsg_notify');
 define('TF_PM_DELETED', 'privmsg_deleted');
 define('TF_PM_DDATE', 'privmsg_ddate');
+define('TF_PM_BU', 'privmsg_id_bu');
 define('PM_RECIPIENTS', 'recipients'); // NOT AN ACTUAL DB FIELD, but used for controller & view
 // Private messaging link table fields
 define('TF_PMTO_ID', 'pmto_id');
