@@ -203,6 +203,7 @@ public function previousOrders()
 
 	$headers = $this->hmw->headerVars(0, "/order/", "Orders");
 	$this->load->view('jq_header_pre', $headers['header_pre']);
+	$this->load->view('order/jq_header_spe');
 	$this->load->view('jq_header_post', $headers['header_post']);
 	$this->load->view('order/order_prev',$data);
 	$this->load->view('jq_footer');
