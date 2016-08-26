@@ -314,23 +314,23 @@
 														data: $(this).serialize(),
 														dataType: 'json',
 														success: function(json) {
-															done = done + 1;
-															if(json.reponse == 'okcreate') {
-																if(done <= 1) {
+															if(json.reponse == 'okcreate' && done == 0) {
+																done = done + 1;
+																if(done == 1) {
 																	window.location = "/product_admin/index/create1";
 																	return false; 
 																}
 																
 																return false;
-															} else if(json.reponse == 'ok' || done == 0) {
-																if(done <= 1) { 
+															} else if(json.reponse == 'ok' && done == 0) {
+																done = done + 1;
+																if(done == 1) { 
 																	alert('Saved!');
 																	//location.reload(true);
 																	return false; 
 																}
-																
 																return false;
-															} else {
+															} else if(done == 0){
 																alert('WARNING! ERROR at saving : '+ json.reponse);
 																//window.location = "/product_admin/index/create";
 																return false;
