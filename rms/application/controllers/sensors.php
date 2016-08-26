@@ -66,6 +66,71 @@ class Sensors extends CI_Controller {
 		}
 	}
 
+	public function cliCheckLast($id_bu)
+	{
+
+		if($this->input->is_cli_request()) {
+			$this->db->from('sensors_temp as st')
+				->join('sensors as s', 's.id = st.id_sensor')
+				->where('s.id_bu', $id_bu);
+			$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$info = $r->result_array();
+
+			foreach ($info as $key => $val) {
+
+				$email	= array();
+				$msg	= '';
+				$date	= $val['date'];
+
+				$this->db->select('st.date, s.name')
+					->from('sensors_temp as st')
+					->join('sensors as s', 'st.id_sensor = s.id')
+					->where('st.id_sensor', $val['id_sensor'])
+					->where('s.id_bu', $id_bu)
+					->where("CAST(st.`date` AS DATE) < CAST(DATE_SUB(CAST(NOW() AS DATE),INTERVAL 55 MINUTE) AS DATE)")
+					->where("CAST(NOW() AS TIME) BETWEEN CAST('09:00:00' AS TIME) AND CAST('22:00:00' AS TIME)")
+					->order_by('date desc')->limit(1);
+				$rs = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+
+				$is = $rs->result();
+
+				if(!empty($is)) {
+					$buinfo = $this->hmw->getBuInfo($id_bu);
+					$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": Last check at ".$is[0]->date."\n ";
+
+					$this->hmw->sendNotif($msg, $id_bu);
+
+					//get checklist BU, then manager2 + admin email of this BU
+					$this->db->select('users.username, users.email, users.id');
+					$this->db->distinct('users.username');
+					$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+					$this->db->join('users_groups', 'users.id = users_groups.user_id');
+					$this->db->where('users.active', 1);
+					$this->db->where_in('users_groups.group_id', array(1,4));
+					$this->db->where('users_bus.bu_id', $id_bu);
+					$query = $this->db->get("users");
+
+					$email['subject'] 	= $buinfo->name." Sensor '".$is[0]->name."' error!";
+					$email['msg'] 		= $msg;
+					foreach ($query->result() as $row) {
+						$email['to']	= $row->email;	
+						$this->mmail->sendEmail($email);
+					}
+					$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				}
+			}
+			return;
+
+		} else {
+			echo "Access refused.";
+			return;
+		}
+	}
+
+
+
+
+
 	//cd /var/www/hank/rms/rms && php index.php sensors cliCheck 1 #every 5 mn
 	//cd /var/www/hank/rms/assets/1wire.sh #every 5 mn
 	public function cliCheck($id_bu)
