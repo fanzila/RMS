@@ -475,6 +475,26 @@ class Ion_auth
 	}
 
 	/**
+	 * is_real_admin
+	 *
+	 * @return bool
+	 * @author Ben Edmunds
+	 **/
+	public function is_real_admin($id=false)
+	{
+		$group_info = $this->ion_auth_model->get_users_groups()->result();
+		if ($group_info[0]->level == 3) {
+			return true;
+		}
+
+		$this->ion_auth_model->trigger_events('is_admin');
+
+		$admin_group = $this->config->item('admin_group', 'ion_auth');
+
+		return $this->in_group($admin_group, $id);
+	}
+
+	/**
 	 * in_group
 	 *
 	 * @param mixed group(s) to check
