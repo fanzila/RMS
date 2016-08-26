@@ -43,8 +43,10 @@
 			<td><?php echo htmlspecialchars($user->comment,ENT_QUOTES,'UTF-8');?></td>
 			<? if($users['0']->groups['0']->level >= 2) { ?>
 			<td>
+				<?$test_real = $this->ion_auth->is_real_admin($current_user->id);?>
+				<?$test_fake = $this->ion_auth->is_admin($current_user->id);?>
 				<?php foreach ($user->groups as $group):?>
-					<?php echo anchor("auth/edit_group/".$group->id, htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')) ;?><br />
+					<?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_group/".$group->id, htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')) ;?><br />
                 <?php endforeach?>
 			</td>
 			<td>
@@ -53,8 +55,10 @@
                 <?php endforeach?>
 			</td>
 			<td><?php $attributes = array('rel' => 'external', 'data-ajax' => 'false');
-			echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($users['0']->groups['0']->level >= 3) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? } ?></td>
-			<td><?php echo anchor("auth/edit_user/".$user->id, 'Edit', $attributes) ;?></td>
+			if($test_real || ($test_fake && $group->name != 'admin')){
+				echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($users['0']->groups['0']->level >= 3) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? }} ?></td>
+			
+			<td><?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_user/".$user->id, 'Edit', $attributes) ;?></td>
 			<? } ?>
 		</tr>
 	<?php endforeach;?>

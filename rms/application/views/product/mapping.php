@@ -59,21 +59,21 @@
 							data: $(this).serialize(),
 							dataType: 'json',
 							success: function(json) {
-								done = done + 1;
-								if(json.reponse == 'ok' || done == 0) {
-									if(done <= 1) { 
+								
+								if(json.reponse == 'ok' && done == 0) {
+									done = done + 1;
+									if(done == 1) { 
 										alert('Saved!'); 
 										return false; 
 									}
-
 									return false;
-								} else {
+								} else if(done == 0){
 									alert('WARNING! ERROR at saving : '+ json.reponse);
 									return false;
 								}
 							}
 						}).done(function(data) {
-							location.reload(true);
+							//location.reload(true);
 						}).fail(function(data) {
 							done = done + 1;
 							if(done <= 1) { 

@@ -149,13 +149,13 @@ class Ion_auth
 					'forgotten_password_code' => $user->forgotten_password_code
 				);
 
-				if(!$this->config->item('use_ci_email', 'ion_auth'))
+				/*if(!$this->config->item('use_ci_email', 'ion_auth'))
 				{
 					$this->set_message('forgot_password_successful');
 					return $data;
 				}
 				else
-				{
+				{*/
 					$message = $this->load->view($this->config->item('email_templates', 'ion_auth').$this->config->item('email_forgot_password', 'ion_auth'), $data, true);
 					$this->email->clear();
 					$this->email->from($this->config->item('admin_email', 'ion_auth'), $this->config->item('site_title', 'ion_auth'));
@@ -163,7 +163,22 @@ class Ion_auth
 					$this->email->subject($this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_forgotten_password_subject'));
 					$this->email->message($message);
 
-					if ($this->email->send())
+
+					$this->load->library('mmail');
+					$key 	= md5(microtime().rand());
+					$email['from']		= $this->config->item('admin_email', 'ion_auth');
+					$email['from_name']	= $this->config->item('site_title', 'ion_auth');
+					$email['to']		= $user->email;
+					$email['replyto'] 	= "noreply@hankrestaurant.com";
+					$email['subject']	= $this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_forgotten_password_subject');
+					$email['mailtype']	= 'html';
+					$email['msg'] = $message;
+				
+					$this->mmail->sendEmail($email);
+					return TRUE;
+
+
+					/*if ($this->email->send())
 					{
 						$this->set_message('forgot_password_successful');
 						return TRUE;
@@ -173,7 +188,7 @@ class Ion_auth
 						$this->set_error('forgot_password_unsuccessful');
 						return FALSE;
 					}
-				}
+				}*/
 			}
 			else
 			{
@@ -449,6 +464,26 @@ class Ion_auth
 	{
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level >= 2) {
+			return true;
+		}
+
+		$this->ion_auth_model->trigger_events('is_admin');
+
+		$admin_group = $this->config->item('admin_group', 'ion_auth');
+
+		return $this->in_group($admin_group, $id);
+	}
+
+	/**
+	 * is_real_admin
+	 *
+	 * @return bool
+	 * @author Ben Edmunds
+	 **/
+	public function is_real_admin($id=false)
+	{
+		$group_info = $this->ion_auth_model->get_users_groups()->result();
+		if ($group_info[0]->level == 3) {
 			return true;
 		}
 

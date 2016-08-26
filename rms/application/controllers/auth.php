@@ -110,6 +110,7 @@ class Auth extends CI_Controller {
 
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['current_user'] = $this->ion_auth->user()->row();
 			
 			$headers = $this->hmw->headerVars(1, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
