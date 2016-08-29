@@ -1022,7 +1022,7 @@ class Ion_auth_model extends CI_Model
 					return FALSE;
 				}
 
-				$this->set_session($user);
+				$this->set_session($user, $keylogin);
 
 				$this->update_last_login($user->id);
 
@@ -1847,7 +1847,7 @@ class Ion_auth_model extends CI_Model
 	 * @return bool
 	 * @author jrmadsen67
 	 **/
-	public function set_session($user)
+	public function set_session($user, $keylogin = false)
 	{
 
 		$this->trigger_events('pre_set_session');
@@ -1880,6 +1880,7 @@ class Ion_auth_model extends CI_Model
 		    'user_id'              => $user->id, //everyone likes to overwrite id so we'll use user_id
 		    'old_last_login'       => $user->last_login, 
 			'bu_id'				   => $id_bu,
+			'keylogin'			   => $keylogin,
 			'bu_name'			   => $bu_name
 		);
 
