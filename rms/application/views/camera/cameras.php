@@ -20,5 +20,6 @@
 <?if(isset($cam4)) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/4"></iframe>			
 <? } ?>
+<p><a href="/cameras/index/allbu/1">View all cam</a></p>
 </body>
 </html>
