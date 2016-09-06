@@ -20,16 +20,16 @@
 <?if(isset($cam4)) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/4"></iframe>			
 <? } ?>
-<?if(isset($cam5)) { ?>
+<?if(isset($cam1)) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/4"></iframe>			
 <? } ?>
-<?if(isset($cam6)) { ?>
+<?if(isset($cam2)) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/4"></iframe>			
 <? } ?>
-<?if(isset($cam7)) { ?>
+<?if(isset($cam3)) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/4"></iframe>			
 <? } ?>
-<?if(isset($cam8)) { ?>
+<?if(isset($cam4)) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/4"></iframe>			
 <? } ?>
 <p><a href="/cameras/index/allbu/1">View all cam</a></p>
