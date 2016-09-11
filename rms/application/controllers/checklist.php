@@ -114,11 +114,9 @@ class Checklist extends CI_Controller {
 		$checklist_res = $this->db->get();
 		$checklists = $checklist_res->row();
 
-		if($id_ckl == 2 OR $id_ckl == 3 OR $id_ckl == 4) {
-			$this->db->select('name, id, comment, priority, day_month_num, day_week_num')->from('checklist_tasks')->where('active', 1)->where('id_checklist', $id_ckl)->order_by('order asc');
-			$checklist_task_res = $this->db->get();
-			$checklist_tasks = $checklist_task_res->result_array();
-		}
+		$this->db->select('name, id, comment, priority, day_month_num, day_week_num')->from('checklist_tasks')->where('active', 1)->where('id_checklist', $id_ckl)->order_by('order asc');
+		$checklist_task_res = $this->db->get();
+		$checklist_tasks = $checklist_task_res->result_array();
 
 		$this->db->select('id, first_name, last_name')->from('users')->where('active', 1)->order_by('first_name asc');
 		$users_res = $this->db->get() or die($this->mysqli->error);
