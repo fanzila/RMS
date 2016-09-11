@@ -688,7 +688,9 @@ function forgot_password()
 			$this->data['current_user'] = $userinfo;
 			$this->data['groupinfo'] = $groupinfo;
 			
-			$this->data['welcome_email'] = $this->hmw->getParam('welcome_email');
+			$id_bu =  $this->session->all_userdata()['bu_id'];
+			$buinfo = $this->hmw->getBuInfo($id_bu);
+			$this->data['welcome_email'] = $buinfo->welcome_email;
 			
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
