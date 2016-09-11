@@ -167,8 +167,8 @@ class Hmw {
 			$keyl = $this->getParam('keylogin');
 			if($getkey == $keyl) {
 				
-				$user = $this->getParam('keylogin_user');
-				$pass = $this->getParam('keylogin_pass');
+				$user = $this->getParam('keylogin_user_'.$id_bu);
+				$pass = $this->getParam('keylogin_pass_'.$id_bu);
 				
 				$CI->ion_auth->login($user, $pass, true, true);
 			}
