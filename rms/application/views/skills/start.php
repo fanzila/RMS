@@ -15,6 +15,10 @@
 				<?}?>					
 			</ul><br/>
 			<h2>Hank's play book</h2>
-			<iframe width='100%' height='700px' frameborder='0.1' src="<?=$bu_link?>"></iframe>
+			<ul data-role="listview" data-inset="true">
+				<li>
+					<iframe width='100%' height='700px' frameborder='0.1' src="<?=$bu_link?>"></iframe>
+				</li>
+			</ul>
 		</div><!-- /content -->
 	</div><!-- /page -->	
