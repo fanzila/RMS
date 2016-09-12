@@ -231,7 +231,6 @@
 									</select>
 									<select style="background-color:#a1ff7c" name="s_subcat" id="s_subcat" data-inline="true" data-theme="a" required>
 										<option value="">Select a sub-category</option>
-										<option value="0">NONE</option>
 										<?foreach ($skills_sub_categories as $skills_sub_category) {?>
 											<option value="<?=$skills_sub_category->id?>"><?=$skills_sub_category->name?></option>
 										<? } ?>
