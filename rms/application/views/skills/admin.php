@@ -217,12 +217,6 @@
 							</tr>
 							<tr>
 								<td>
-									<select style="background-color:#a1ff7c" name="s_skill" id="s_skill" data-inline="true" data-theme="a" required>
-										<option value="">Select a skill</option>
-										<?foreach ($skills as $skill) {?>
-											<option value="<?=$skill->id?>"><?=$skill->name?></option>
-										<? } ?>
-									?></select>
 									<select style="background-color:#a1ff7c" name="s_cat" id="s_cat" data-inline="true" data-theme="a" required>
 										<option value="">Select a category</option>
 										<?foreach ($skills_categories as $skills_category) {?>
@@ -234,6 +228,12 @@
 										<option value="0">NONE</option>
 										<?foreach ($skills_sub_categories as $skills_sub_category) {?>
 											<option value="<?=$skills_sub_category->id?>"><?=$skills_sub_category->name?></option>
+										<? } ?>
+									?></select>
+									<select style="background-color:#a1ff7c" name="s_skill" id="s_skill" data-inline="true" data-theme="a" required>
+										<option value="">Select a skill</option>
+										<?foreach ($skills as $skill) {?>
+											<option value="<?=$skill->id?>"><?=$skill->name?></option>
 										<? } ?>
 									?></select>
 								</td>

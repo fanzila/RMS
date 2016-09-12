@@ -7,16 +7,14 @@
 }
 </style>
 		<div role="main" class="ui-content wow fadeIn" data-inset="false">
-
 			<div data-role="content">
 				<div class="ui-body ui-corner-all">
-					<br/>
 					<?
 					$i=0;
-					$rouge_petard	= "#ff2d2d";
+					$rouge_petard	= "#ff7777";
 					$rouge_doux		= "#ff7777";
 					$R_font_color	= "#ff0000";
-					$vert_pomme		= "#19b319";
+					$vert_pomme		= "#77ff77";
 					$vert_leger		= "#77ff77";
 					$V_font_color	= "#4a7b50";?>
 					<form id="skills" name="skills" method="post" action="/skills/saveSkills/">
@@ -47,7 +45,7 @@
 										}
 										if($check == 1){
 											$color = $rouge_doux;
-											$valided = '<i class="zmdi zmdi-star-border zmd-fw"></i>';
+											$valided = '<i class="zmdi"></i>';
 											break;
 										}
 									}?>
@@ -63,7 +61,7 @@
 												}?>
 												<?if($check==1){?>
 													<?$color = $vert_leger;
-													$valided = '<i class="zmdi zmdi-star zmd-fw"></i>';
+													$valided = '<i class="zmdi"></i>';
 													$check=0;
 													foreach($skills_items as $skills_item){
 														if($skills_item->c_name == $category->name){
@@ -75,7 +73,7 @@
 														}
 														if($check == 1){
 															$color = $rouge_doux;
-															$valided = '<i class="zmdi zmdi-star-border zmd-fw"></i>';
+															$valided = '<i class="zmdi"></i>';
 															break;
 														}
 													}?>
@@ -90,14 +88,14 @@
 																	<?if($userlevel!=0){?>
 																							<li>
 																								<input type="checkbox" class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?>>
-																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
+																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
 																								
 																								<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
 																								<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
 																							</li>
 																						<?}else{?>
 																							<li>
-																								<label id="label[<?=$i?>]"><?if($skills_item->checked == true){?><font size="3" color="<?=$V_font_color?>"><i class="zmdi zmdi-check-circle"></i><?}else{?><font size="4" color="<?=$R_font_color?>"><i class="zmdi zmdi-circle-o"></i><?}?> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></font></label>
+																								<label id="label[<?=$i?>]"><?if($skills_item->checked == true){?><font size="3" color="<?=$V_font_color?>"><i class="zmdi zmdi-check-circle"></i><?}else{?><font size="4" color="<?=$R_font_color?>"><i class="zmdi zmdi-circle-o"></i><?}?> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></font></label>
 																							</li>
 																						<?}?>
 																	<input type="hidden" id="id_item[<?=$i?>]" name="id_item[<?=$i?>]" value="<?=$skills_item->i_id?>">
@@ -114,7 +112,7 @@
 																}?>
 																<?if($check==1){?>
 																	<?$color = $vert_leger;
-																	$valided = '<i class="zmdi zmdi-star zmd-fw"></i>';
+																	$valided = '<i class="zmdi"></i>';
 																	$check=0;
 																	foreach($skills_items as $skills_item){
 																		if($skills_item->sub_name == $sub_category->name && $skills_item->c_name == $category->name){
@@ -122,7 +120,7 @@
 																		}
 																		if($check == 1){
 																			$color = $rouge_doux;
-																			$valided = '<i class="zmdi zmdi-star-border zmd-fw"></i>';
+																			$valided = '<i class="zmdi"></i>';
 																			break;
 																		}
 																	}?>
@@ -137,14 +135,14 @@
 																						<?if($userlevel!=0){?>
 																							<li>
 																								<input type="checkbox" class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?>>
-																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
+																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->date!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
 																								
 																								<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
 																								<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
 																							</li>
 																						<?}else{?>
 																							<li>
-																								<label id="label[<?=$i?>]"><?if($skills_item->checked == true){?><font size="3" color="<?=$V_font_color?>"><i class="zmdi zmdi-check-circle"></i><?}else{?><font size="4" color="<?=$R_font_color?>"><i class="zmdi zmdi-circle-o"></i><?}?> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></font></label>
+																								<label id="label[<?=$i?>]"><?if($skills_item->checked == true){?><font size="3" color="<?=$V_font_color?>"><i class="zmdi zmdi-check-circle"></i><?}else{?><font size="4" color="<?=$R_font_color?>"><i class="zmdi zmdi-circle-o"></i><?}?> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></font></label>
 																							</li>
 																						<?}?>
 																					<input type="hidden" id="id_item[<?=$i?>]" name="id_item[<?=$i?>]" value="<?=$skills_item->i_id?>">
