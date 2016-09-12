@@ -177,7 +177,7 @@ class Pm extends CI_Controller {
 		}
 		
 		else $data['message'] = array();
-		$headers = $this->hmw->headerVars(0, "/pm/", "Report");
+		$headers = $this->hmw->headerVars(0, "/pm/", "My reports");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		if($user_groups[0]->level >= 1){
@@ -266,7 +266,7 @@ class Pm extends CI_Controller {
 				$titre = "ERREUR";
 				break;
 		}
-		$headers = $this->hmw->headerVars(1, "/pm/", "Report - ".$titre);
+		$headers = $this->hmw->headerVars(1, "/pm/", "My reports - ".$titre);
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		if($user_groups[0]->level >= 1){
@@ -428,7 +428,7 @@ class Pm extends CI_Controller {
 		}
 		$data['managers'] = $managers;
 		
-		$headers = $this->hmw->headerVars(0, "/pm/", "Report - New report");
+		$headers = $this->hmw->headerVars(0, "/pm/", "My reports - New report");
 		$data['bu_name'] = $headers['header_post']['bu_name'];
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('pm/jq_header_spe');

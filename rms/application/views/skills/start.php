@@ -1,9 +1,8 @@
 		</div>
 		<div data-role="content" data-theme="a">
-			<h2>Info Bu spé</h2>
 				<ul data-role="listview" data-inset="true">
-					<li data-role="list-divider"><? echo $bu_name;?></li>
-					<li><? echo $bu_infos; ?></li>
+					<li data-role="list-divider">Infos pratiques</li>
+					<li><? echo nl2br($bu_infos); ?></li>
 				</ul>
 
 			<h2>Skills</h2>

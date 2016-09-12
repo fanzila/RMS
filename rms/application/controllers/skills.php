@@ -274,7 +274,7 @@ class Skills extends CI_Controller {
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
-		$headers = $this->hmw->headerVars(1, "/skills/start/", "Training");
+		$headers = $this->hmw->headerVars(1, "/skills/start/", "My space");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('skills/start', $data);
