@@ -82,29 +82,27 @@ class Skills extends CI_Controller {
 			->join('skills_category as cat', 'I.id_cat = cat.id')
 			->join('skills_sub_category as subcat', 'I.id_sub_cat = subcat.id')
 			->where('R.id_user', $id)
-			->order_by('I.order asc');
+			->order_by('skills.order asc, cat.order asc, subcat.order asc, I.order asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_items = $res->result();
 
 		$this->db->select('id, name')
 			->from('skills')
-			->order_by('name desc');
+			->order_by('order asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills = $res->result();
 
 		$this->db->select('id, name')
 			->from('skills_category')
-			->order_by('name desc');
+			->order_by('order asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_categories = $res->result();
 
 		$this->db->select('id, name')
 			->from('skills_sub_category')
-			->order_by('name desc');
+			->order_by('order asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_sub_categories = $res->result();
-
-
 
 		$data = array(
 			'skills'	=> $skills,
@@ -432,7 +430,6 @@ class Skills extends CI_Controller {
 				foreach ($skills_items as $skills_item) {
 					$this->db->set('id_skills_record', $data['id']);
 					$this->db->set('id_skills_item', $skills_item->id);
-					//$this->db->set('date', $date);
 					$this->db->set('checked', false);//set all skills at false by default
 					$this->db->set('comment', "");//set with the comment 'creation' to avoid incomprehension
 					if(!$this->db->insert('skills_record_item')){

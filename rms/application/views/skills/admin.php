@@ -160,11 +160,11 @@
 					echo form_open("skills/create/skill/", $attributes);?>
 						<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 							<tr>
-								<td colspan="3" style="background-color: #fbf19e;">Skill to create :
+								<td colspan="3" style="background-color: #fbf19e;">Topic to create :
 								</td>
 							</tr>
 							<tr>
-								<td width="8%"><label for="name[1]" id="label">Skill:</label></td>
+								<td width="8%"><label for="name[1]" id="label">Topic:</label></td>
 								<td width="82%"><input type="text" id="name[1]" name="name[1]" value="" data-clear-btn="true" /></td>
 								<td width="10%">
 									<?$attributes = array('id' => "sub-skill", 'name' => "submit");
@@ -217,25 +217,25 @@
 							</tr>
 							<tr>
 								<td>
+									<select style="background-color:#a1ff7c" name="s_skill" id="s_skill" data-inline="true" data-theme="a" required>
+										<option value="">Select a Topic</option>
+										<?foreach ($skills as $skill) {?>
+											<option value="<?=$skill->id?>"><?=$skill->name?></option>
+										<? } ?>
+									</select>
 									<select style="background-color:#a1ff7c" name="s_cat" id="s_cat" data-inline="true" data-theme="a" required>
 										<option value="">Select a category</option>
 										<?foreach ($skills_categories as $skills_category) {?>
 											<option value="<?=$skills_category->id?>"><?=$skills_category->name?></option>
 										<? } ?>
-									?></select>
+									</select>
 									<select style="background-color:#a1ff7c" name="s_subcat" id="s_subcat" data-inline="true" data-theme="a" required>
 										<option value="">Select a sub-category</option>
 										<option value="0">NONE</option>
 										<?foreach ($skills_sub_categories as $skills_sub_category) {?>
 											<option value="<?=$skills_sub_category->id?>"><?=$skills_sub_category->name?></option>
 										<? } ?>
-									?></select>
-									<select style="background-color:#a1ff7c" name="s_skill" id="s_skill" data-inline="true" data-theme="a" required>
-										<option value="">Select a skill</option>
-										<?foreach ($skills as $skill) {?>
-											<option value="<?=$skill->id?>"><?=$skill->name?></option>
-										<? } ?>
-									?></select>
+									</select>
 								</td>
 							</tr>
 							<tr>
