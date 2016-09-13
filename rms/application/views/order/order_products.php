@@ -80,9 +80,11 @@ $today = getdate();
 										TOTAL ORDER : <span id="total">0</span>€
 									</li> 
 								</ul>
+								<? if(!$keylogin) { ?>
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 									<li><input type="submit" name="save" value="SAVE"></li>
-								</ul>							
+								</ul>	
+								<? } ?>						
 								<input type="hidden" name="action" value="save_order">
 							</form>
 						</div><!-- /theme -->

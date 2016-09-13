@@ -64,14 +64,7 @@ class Admin extends CI_Controller {
 		);
 		
 		$header['title'] = "Admin Hank";
-		
-		/**
-		$headers = $this->hmw->headerVars(1, "/welcome/", "Welcome");
-		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('admin', $data);
-		$this->load->view('jq_footer');
-		**/
+
 	}
 
 }

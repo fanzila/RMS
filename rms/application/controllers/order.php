@@ -215,7 +215,7 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 	$this->hmw->keyLogin();
 	$this->load->library('product');
 	$id_bu =  $this->session->all_userdata()['bu_id'];
-
+	
 	$order_prev = null;
 	$freq = $this->freq();
 
@@ -244,16 +244,15 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 	}else{
 		$title = "Order n°".$load;
 	}
-	$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-	$data['username'] = $this->session->all_userdata()['identity'];
+	$data['bu_name']	=  $this->session->all_userdata()['bu_name'];
+	$data['username']	= $this->session->all_userdata()['identity'];
+	$data['keylogin']	= $this->session->userdata('keylogin');
 	
 	$headers = $this->hmw->headerVars(0, "/order/", $title);
 	$this->load->view('jq_header_pre', $headers['header_pre']);
 	$this->load->view('jq_header_post', $headers['header_post']);
 	$this->load->view('order/order_products',$data);
 	$this->load->view('jq_footer');
-
-	//$this->load->view('order/order_products',$data);
 
 }
 
