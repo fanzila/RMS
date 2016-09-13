@@ -385,14 +385,13 @@ class Pm extends CI_Controller {
 					
 					foreach ($query->result() as $row) {
 						$key 	= md5(microtime().rand());
-						$email['from']		= 'news@hankrestaurant.com';
-						$email['from_name']	= 'HANK NEWS';
+						$email['from']		= 'noreply@hankrestaurant.com';
+						$email['from_name']	= 'RMS';
 						$email['to']		= $row->email;
-						$email['replyto'] 	= "news@hankrestaurant.com";
-						$email['subject']	= 'Hank Report! '.$subject;
+						$email['replyto'] 	= "noreply@hankrestaurant.com";
+						$email['subject']	= 'Hank Report: '.$subject;
 						$email['mailtype']	= 'html';
 						$email['msg'] = $body;
-					
 						$this->mmail->sendEmail($email);
 					}
 					// On success: redirect to list view of messages

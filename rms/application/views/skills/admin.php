@@ -128,7 +128,6 @@
 														}?>
 											<?}?>
 										<?}?>
-								
 							<?}?>
 						<?}?>
 						</tbody>
@@ -154,6 +153,7 @@
 						<?}?>
 					</ul>
 				</div>
+				<?php if($level >= 3) { ?>
 				<div data-role="collapsible" style="background-color : #e0e0e0">
 					<h1>Add New Skills</h1>
 					<?$attributes = array('id' => "skill", 'name' => "skill");
@@ -238,7 +238,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td><input type="text" id="s_item" name="s_item" value="Name of the item" onFocus="this.select()" data-clear-btn="true" /></td>
+								<td><input type="text" id="s_item" name="s_item" value="" /></td>
 							</tr>
 							<tr>
 								<td>
@@ -249,6 +249,7 @@
 						</table>
 					</form>					
 				</div>
+				<?php } ?>
 				<div data-role="collapsible" style="background-color : #ffffff">
 					<h1>Log</h1>
 					<table style="background-color : #f0f0f0" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter logs">

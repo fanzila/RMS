@@ -112,7 +112,7 @@ class Skills extends CI_Controller {
 			);
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-
+		
 		if($id != $current_user){
 			$data['userlevel'] = 1;
 			if($bypass_sponsor!=1 || $back==1){
@@ -235,6 +235,8 @@ class Skills extends CI_Controller {
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
+		$user_groups	= $this->ion_auth->get_users_groups()->result();
+		$data['level']	= $user_groups[0]->level;
 		$data['users'] = $users;
 		$headers = $this->hmw->headerVars(1, "/skills/admin", "Skills Management");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
