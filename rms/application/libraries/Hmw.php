@@ -209,7 +209,7 @@ class Hmw {
 			$bal_res = $CI->db->get();
 			$bal = $bal_res->row_array();
 
-			$CI->db->from('turnover')->order_by('date desc')->limit(1);
+			$CI->db->from('turnover')->order_by('date desc')->where('id_bu',$bu_id)->limit(1);
 		 	$bal_ca = $CI->db->get();
 			$ca = $bal_ca->row_array();
 

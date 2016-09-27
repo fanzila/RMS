@@ -47,7 +47,7 @@ class Admin extends CI_Controller {
 		$bal_res = $this->db->get();
 		$bal = $bal_res->row_array();
 		
-		$this->db->from('turnover')->order_by('date desc')->limit(1);
+		$this->db->from('turnover')->order_by('date desc')->where('id_bu',$change_bu)->limit(1);
 	 	$bal_ca = $this->db->get();
 		$ca = $bal_ca->row_array();
 
