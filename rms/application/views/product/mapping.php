@@ -47,7 +47,7 @@
 				</div><!-- /page -->
 				<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
 				<script>
-
+				var x = 0;
 				function validate(idl) {
 					var $form = $('#fo' + idl);
 					var done = 0;
