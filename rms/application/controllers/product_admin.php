@@ -283,7 +283,7 @@ class Product_admin extends CI_Controller {
 	{		
 		$this->load->library('product');
 		$id_bu			=  $this->session->all_userdata()['bu_id'];
-		$products_pos	= $this->product->getPosProducts();
+		$products_pos	= $this->product->getPosProducts($id_bu);
 		$products 		= $this->product->getProducts(null, null, 'p.name', null, $id_bu);
 		$mapping		= $this->product->getMapping($id_bu);
 		$data = array(

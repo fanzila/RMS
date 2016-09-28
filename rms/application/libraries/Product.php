@@ -15,7 +15,7 @@ class Product {
 			$array = array('p.name' => $term);
 			$CI->db->where('p.deleted', 0)->like($array);
 		}
-	
+		$CI->db->where('s.id_bu', $id_bu);
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
 		
@@ -31,9 +31,9 @@ class Product {
 	return $ret;
 }
 
-public function getPosProducts() {
+public function getPosProducts($id_bu) {
 	$CI =& get_instance();
-	$CI->db->select('*')->from('sales_product')->where('deleted', 0);
+	$CI->db->select('*')->from('sales_product')->where('deleted', 0)->where('id_bu', $id_bu);
 	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {
