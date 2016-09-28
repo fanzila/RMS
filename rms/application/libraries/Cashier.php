@@ -292,7 +292,7 @@ class Cashier {
 			$result_ct = $db->query("select count(*) AS ct FROM RECEIPT");
 			$res['ct'] = $result_ct ->fetchArray(SQLITE3_ASSOC);
 			
-			$resu = $CI->db->query("UPDATE turnover SET last='".$time_la."', num='".$res['ct']['ct']."', amount='".$res['to']['SUM(AMOUNT_PAID)']."', id_bu = $param[id_bu]");
+			$resu = $CI->db->query("UPDATE turnover SET last='".$time_la."', num='".$res['ct']['ct']."', amount='".$res['to']['SUM(AMOUNT_PAID)']."' WHERE id_bu = $param[id_bu]");
 			break;
 			
 			case 'getMovements':
