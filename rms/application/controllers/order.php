@@ -91,9 +91,10 @@ class Order extends CI_Controller {
 
 //cd /var/www/hank/rms/rms && php index.php order cliUpdateSales 1
 public function cliUpdateSales($id_bu) {
-
+	
+	if(empty($id_bu)) exit('empty BU ID');
+	
 	if($this->input->is_cli_request()) {
-
 		$param = array();
 		$param['id_bu'] = $id_bu;
 		if($this->input->is_cli_request()) {
