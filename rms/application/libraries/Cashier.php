@@ -302,7 +302,7 @@ class Cashier {
 				LEFT JOIN users AS u ON u.id = up.id_user 
 				LEFT JOIN pos_payments_type AS ppt ON ppt.pos_id = sc.method 
 				LEFT JOIN sales_customers AS sc2 ON sc2.pos_id = sc.customer
-				WHERE archive = '".$param['closing_file']."' AND ppt.id_bu = ".$param['id_bu']." ";
+				WHERE archive = '".$param['closing_file']."' AND ppt.id_bu = ".$param['id_bu']." GROUP BY sc.id ";
 			$r_mov = $CI->db->query($q_mov) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			return $r_mov->result_array();
 			break;
