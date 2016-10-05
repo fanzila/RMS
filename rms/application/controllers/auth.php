@@ -90,11 +90,6 @@ class Auth extends CI_Controller {
 			//redirect them to the login page
 			redirect('auth/login', 'refresh');
 		}
-		elseif ($group_info[0]->level < 2) //remove this elseif if you want to enable this for non-admins
-		{
-			//redirect them to the home page because they must be an administrator to view this
-			return show_error('You must be an administrator to view this page.');
-		}
 		else
 		{
 			//set the flash data error message if there is one
@@ -875,6 +870,9 @@ function forgot_password()
 			'data-clear-btn' => "true",
 			'type' => 'password'
 		);
+		
+		
+		$this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
 
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 		$this->load->view('jq_header_pre', $headers['header_pre']);

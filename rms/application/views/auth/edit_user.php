@@ -74,9 +74,13 @@ echo form_open(uri_string(), $attributes);
                         break;
                         }
                     }
+				if($group['id'] == 1 AND $current_user_groups[0]->level < 3) { 
+					echo ""; 
+				} else {
                 ?>
                 <input type="checkbox" name="groups[]" value="<?php echo $group['id'];?>"<?php echo $checked;?>>
                 <?php echo htmlspecialchars($group['name'],ENT_QUOTES,'UTF-8');?>
+				<? } ?>
                 </label>
             <?php endforeach?>
               </div></div>
