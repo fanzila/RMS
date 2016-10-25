@@ -54,10 +54,10 @@ class Cameras extends CI_Controller {
 		
 		$local 		= false;
 		$ip 		= $this->input->ip_address();
-		$id_bu 		= $this->session->all_userdata()['bu_id'];
-		$buinfo 	= $this->hmw->getBuInfo($id_bu);
-		$current_ip = $buinfo->net_ip;
-		if($ip == $current_ip) $local = true;
+		//$id_bu 		= $this->session->all_userdata()['bu_id'];
+		$buinfo1 	= $this->hmw->getBuInfo(1);
+		$buinfo2 	= $this->hmw->getBuInfo(2);
+		if($ip == $buinfo1->net_ip OR $ip == $buinfo2->net_ip) $local = true;
 
 		foreach ($row as $key => $var) {
 			$url['cam'.$i] = $var->adress;
