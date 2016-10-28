@@ -515,6 +515,7 @@ public function confirmOrder() {
 		$info['sup_id'] 	= $post[$i.'_SUPID'];
 		$info['dlv_info'] 	= $post[$i.'_DLV_INFO'];
 		$info['dlv_comt'] 	= $post[$i.'_DLV_COMT'];
+		$info['dlv_como'] 	= $post[$i.'_DLV_COMO'];
 		$info['franco'] 	= $post[$i.'_FRANCO'];
 		$info['totalprice'] = $post[$i.'_TOTALPRICE'];	
 		$info['userid'] 	= $user->id;	

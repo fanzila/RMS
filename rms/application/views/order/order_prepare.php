@@ -47,6 +47,7 @@
 							<input type="hidden" name="<?=$i?>_EMAIL"  value="<?=$suppliers[$supplier_id]['contact_order_email']?>">
 							<input type="hidden" name="<?=$i?>_DLV_INFO"  value="<?=$suppliers[$supplier_id]['comment_delivery_info']?>">
 							<input type="hidden" name="<?=$i?>_DLV_COMT"  value="<?=$suppliers[$supplier_id]['comment_delivery']?>">
+							<input type="hidden" name="<?=$i?>_DLV_COMO"  value="<?=$suppliers[$supplier_id]['comment_order']?>">
 							<input type="hidden" name="<?=$i?>_SUPID"  value="<?=$supplier_id?>">
 							<input type="hidden" name="<?=$i?>_FRANCO"  value="<?=$suppliers[$supplier_id]['carriage_paid']?>">
 							<input type="hidden" name="<?=$i?>_TOTALPRICE"  value="<?=$totalprice?>">

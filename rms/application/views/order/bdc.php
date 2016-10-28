@@ -44,6 +44,7 @@ body {
 		Tel : <?=$info['sup_tel']?></td></tr>
 	<tr><td>Franco : <?=$info['franco']?></td></tr>
 	<?if(isset($info['dlv_comt'])) {?> <tr><td><?=$info['dlv_comt']?></td></tr> <? } ?>
+	<?if(isset($info['dlv_como'])) {?> <tr><td><?=$info['dlv_como']?></td></tr> <? } ?>
 </table>
 </td>
 </tr>
