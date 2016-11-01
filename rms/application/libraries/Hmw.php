@@ -170,6 +170,7 @@ class Hmw {
 				$user = $this->getParam('keylogin_user_'.$id_bu);
 				$pass = $this->getParam('keylogin_pass_'.$id_bu);
 				
+				//login($user, $pass, remember, keylogin);
 				$CI->ion_auth->login($user, $pass, true, true);
 			}
 

@@ -1979,7 +1979,12 @@ class Ion_auth_model extends CI_Model
 
 			$this->update_last_login($user->id);
 			
-			$this->set_session($user);
+			//check if user is keylogin
+			$keylogin = false; 
+			$query_keylogin = $this->db->select('id')->where('val',$user->username)->limit(1)->get('params');
+			if($query_keylogin->num_rows() == 1) $keylogin = true;
+						
+			$this->set_session($user, $keylogin);
 	
 			//extend the users cookies if the option is enabled
 			if ($this->config->item('user_extend_on_login', 'ion_auth'))

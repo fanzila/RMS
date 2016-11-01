@@ -39,7 +39,7 @@ class PHP_Evaluator {
     }
 
     //$code = html_entity_decode($code); // @todo uncomment this when tested
-    eval($code); 
+    @eval($code); 
   }
 
   function render(Frame $frame) {
