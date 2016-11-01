@@ -379,7 +379,7 @@ class Pm extends CI_Controller {
 					$this->db->select('username, email, id');
 					$this->db->distinct('username');
 					foreach ($recipient_ids as $recipient_id) {
-						$this->db->where('id', $recipient_id);	
+						$this->db->or_where_in('id', $recipient_id);	
 					}			
 					$query = $this->db->get("users");
 					

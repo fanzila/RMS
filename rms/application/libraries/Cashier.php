@@ -245,7 +245,7 @@ class Cashier {
 			$sql2 	= "SELECT SUM(AMOUNT) AS FLOAT2 FROM RECEIPTPAYMENT WHERE METHOD='".$id_pos_cash_method."'";
 			$result2 = $db->query($sql2);
 			$res2	= $result2->fetchArray(SQLITE3_ASSOC);
-			$sql3 	= "SELECT CASH_FLOAT_IN AS FLOAT3 FROM CASHFLOAT";
+			$sql3 	= "SELECT SUM(CASH_FLOAT_IN) AS FLOAT3 FROM CASHFLOAT";
 			$result3 = $db->query($sql3);
 			$res3	= $result3->fetchArray(SQLITE3_ASSOC);
 			$ret 	= ($res1['FLOAT1']+$res2['FLOAT2']+$res3['FLOAT3'])/1000;
