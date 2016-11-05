@@ -227,9 +227,12 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 		$order_prev		= unserialize($order_rec->data);
 	}
 
+	$supinfo	= null;
 	$products	= $this->product->getProducts(null, $supplier_id, null, null, $id_bu, true);
 	$stock 		= $this->product->getStock($id_bu);
 	$attributs	= $this->product->getAttributs();
+	
+	if(isset($supplier_id)) $supinfo = $this->product->getSuppliers(null, $supplier_id, $id_bu);
 
 	$data = array(
 		'products'			=> $products,
@@ -238,6 +241,7 @@ public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
 		'order_prev'		=> $order_prev,
 		'stock'				=> $stock,
 		'attributs'			=> $attributs,
+		'supinfo'			=> $supinfo[$supplier_id],
 		'load' 				=> $load
 		);
 	if($load <= 0) { 

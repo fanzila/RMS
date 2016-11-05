@@ -88,7 +88,7 @@ public function getSuppliers($order = null, $idsup = null, $id_bu = null) {
 	$CI->load->library('hmw');
 
 	if($order) {
-		$CI->db->select('s.id as id, s.name, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info')
+		$CI->db->select('s.id as id, s.name, s.location, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.contact_sale_name, s.contact_sale_tel, s.contact_sale_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info')
 		->from('suppliers as s')
 		->join('(SELECT date, user, status, supplier_id FROM orders WHERE status = "sent" AND date IS NOT null) as o','o.supplier_id = s.id','left')
 		->where('s.active', 1)
@@ -96,7 +96,7 @@ public function getSuppliers($order = null, $idsup = null, $id_bu = null) {
 		->where('s.id_bu', $id_bu)
 		->order_by('o.date desc');
 	} else {
-		$CI->db->select('s.id as id, s.name, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info')
+		$CI->db->select('s.id as id, s.name, s.location, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.contact_sale_name, s.contact_sale_tel, s.contact_sale_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info')
 	 	->from('suppliers as s')
 	 	->where('active', 1)
 	 	->where('deleted', 0)

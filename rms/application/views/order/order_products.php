@@ -75,16 +75,28 @@ $today = getdate();
 									</li>
 									<? } ?>
 								</ul>	
-								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
-									<li data-role="list-divider" style="list-style-type: none;">
-										TOTAL ORDER : <span id="total">0</span>€
-									</li> 
-								</ul>
 								<? if(!$keylogin) { ?>
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 									<li><input type="submit" name="save" value="SAVE"></li>
 								</ul>	
-								<? } ?>						
+								<? } ?>
+								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
+								<li data-role="list-divider" style="list-style-type: none;">
+									TOTAL ORDER: <span id="total">0</span>€ <hr />
+									Carriage paid: <?=$supinfo['carriage_paid']?> <br /> 
+									Delivery days: <?=$supinfo['delivery_days']?> <br /> 
+									Internal comments: <?=$supinfo['comment_internal']?> <br />
+									Order comment: <?=$supinfo['comment_order']?> <br /> 
+									Delivery comment: <?=$supinfo['comment_delivery']?> <br /> 
+									Delivery schedule: <?=$supinfo['comment_delivery_info']?> <br />
+									Order method: <?=$supinfo['order_method']?> <br />
+									Payment type: <?=$supinfo['payment_type']?> <br />
+									Payment delay: <?=$supinfo['payment_delay']?> <br />
+									Location: <?=$supinfo['location']?> <br />
+									Contact sale: <?=$supinfo['contact_sale_name']?> | <?=$supinfo['contact_sale_tel']?> |  <?=$supinfo['contact_sale_email']?><br />
+									Contact order: <?=$supinfo['contact_order_name']?> | <?=$supinfo['contact_order_tel']?> |  <?=$supinfo['contact_order_email']?>
+								</li>
+								</ul>				
 								<input type="hidden" name="action" value="save_order">
 							</form>
 						</div><!-- /theme -->
