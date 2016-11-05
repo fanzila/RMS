@@ -3,7 +3,7 @@
 			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
 				<?if($msg) { ?>
 					<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
-						<li style="background-color: #e8ffb9;">Merci! Votre action a bien été enregistrée. [<?=$msg?>]</li>
+						<li style="background-color: #e8ffb9;">Thanks! Votre action a bien été enregistrée. [<?=$msg?>]</li>
 					</ul>
 					<? } ?>
 					<form id="tasks" name="tasks" method="post" action="/reminder/">

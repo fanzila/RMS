@@ -49,6 +49,7 @@ class Rmd extends CI_Controller  {
 		if($view != 'all') $CI->db->where("( DATE_ADD(TIMESTAMP(M.`start`), INTERVAL M.`repeat_interval` SECOND) <= TIMESTAMP('$nowtime') )
 		OR ( (`repeat_year` = $year OR `repeat_year` = '*' ) AND (`repeat_month` = $month OR `repeat_month` = '*' ) AND (`repeat_day` = $day OR `repeat_day` = '*' ) AND (`repeat_week` = $week OR `repeat_week` = '*' ) AND (`repeat_weekday` = $weekday OR `repeat_weekday` = '*') AND (`start` >= DATE('$nowtime')) )");
 	
+		$CI->db->order_by('overdue', 'asc');
 		$query	= $CI->db->get();
 		
 		return $query->result();
