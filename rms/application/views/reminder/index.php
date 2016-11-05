@@ -36,7 +36,7 @@
 
 								?>
 									<input type="checkbox" name="task_<?=$line->id?>" id="task-<?=$line->id?>" class="custom" />
-									<label style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?> &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?></label>
+									<label style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if( isset($line->interval)) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?></label>
 								<? } ?>
 									<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 										<option value="0">User</option>
