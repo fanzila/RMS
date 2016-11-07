@@ -54,9 +54,21 @@ class Cameras extends CI_Controller {
 		
 		$local 		= false;
 		$ip 		= $this->input->ip_address();
+		$ca 		= array();
+		$data		= array();
 		//$id_bu 		= $this->session->all_userdata()['bu_id'];
 		$buinfo1 	= $this->hmw->getBuInfo(1);
 		$buinfo2 	= $this->hmw->getBuInfo(2);
+		
+		$this->db->from('turnover')->order_by('date desc')->where('id_bu',1)->limit(1);
+	 	$bal_ca = $this->db->get();
+		$ca[1] = $bal_ca->row_array();
+
+		$this->db->from('turnover')->order_by('date desc')->where('id_bu',2)->limit(1);
+	 	$bal_ca = $this->db->get();
+		$ca[2] = $bal_ca->row_array();
+
+		
 		if($ip == $buinfo1->net_ip OR $ip == $buinfo2->net_ip) $local = true;
 
 		foreach ($row as $key => $var) {
@@ -65,10 +77,12 @@ class Cameras extends CI_Controller {
 			$i++;	
 		}
 		
+		$data['url'] = $url;
+		$data['ca'] = $ca;
 		$session_data['cam'] = $url;
 		$this->session->set_userdata($session_data);
 		
-		$this->load->view('camera/cameras', $url);
+		$this->load->view('camera/cameras', $data);
 	}
 	
 	public function frame($num)
