@@ -9,7 +9,7 @@
 	<META http-equiv="refresh" content="60"> 
 </head>
 <body>
-	<div style="width:99%; background-color: #b8cb64; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">ARCH: <?=number_format($ca[1]['amount'], 0, '.', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=$ca[2]['amount']?>€ <small><?=$ca[2]['last']?></small></div>
+	<div style="width:99%; background-color: #b8cb64; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">ARCH: <?=number_format($ca[1]['amount']/1000, 0, ',', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=number_format($ca[2]['amount']/1000, 0, ',', ' ')?>€ <small><?=$ca[2]['last']?></small></div>
 <?if(isset($url['cam1'])) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/1"></iframe>
 <? } ?>
