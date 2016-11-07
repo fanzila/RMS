@@ -16,6 +16,9 @@
 					<div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 						<h3>Staff</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
+						<? if($userlevel >= 2){?>
+							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
+						<? } ?>		
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
 						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> My space</a></li>
 						<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-calendar zmd-fw"></i> Planning</a></li>
@@ -30,7 +33,6 @@
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li><?}?>
 						<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff list</a></li>
 						<? if($userlevel >= 2){?>
-							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
 							<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 							<li><a rel="external" data-ajax="false" href="/skills/admin/"><i class="zmdi zmdi-star zmd-fw"></i> Skills management</a></li>	
