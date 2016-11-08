@@ -58,7 +58,7 @@ class Pm_model extends CI_Model {
 	 */
 	private $bu_id = NULL;
 	/**
-	 * @var int: level of the logged in user from the db
+	 * @var int: user level of the logged in user from the db
 	 */
 	private $user_level = NULL;
 	/**
@@ -144,7 +144,7 @@ class Pm_model extends CI_Model {
 		{
 			// Message types RECEIVED
 			case MSG_NONDELETED:
-				$this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
+				if($this->user_level < 2) $this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
 				$this->db->where(TF_PMTO_DELETED, NULL);
 				break;
 			case MSG_DELETED:
@@ -199,9 +199,9 @@ class Pm_model extends CI_Model {
 		$this->db->from($t1);
 		// this produces "(A AND B) OR (A AND C)" = "A AND (B OR C)"
 		$this->db->where(TF_PM_ID, $msg_id);
-		$this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
+		if($this->user_level < 2)  $this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
 		$this->db->or_where(TF_PM_ID, $msg_id);
-		$this->db->where(TF_PM_AUTHOR, $this->user_id);
+		if($this->user_level < 2)  $this->db->where(TF_PM_AUTHOR, $this->user_id);
 		$this->db->join($t2, TF_PMTO_MESSAGE.' = '.TF_PM_ID);
 
 		return $this->table1->get_data();
