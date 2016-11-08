@@ -13,7 +13,8 @@
 				<table data-role="table" id="table-custom-2" data-insert="true" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" <? if($userlevel >= 1){?>data-filter="true" data-filter-placeholder="Filter message"<?}?>>
 					<thead>
 						<tr>
-						<th><?php if($type != MSG_SENT && $type != MSG_DELETED) echo 'From'; else echo 'Recipients'; ?></th>
+						<th>From</th>
+						<th>To</th>
 						<th>Subject</th>
 						<th>Date</th>
 						<? if($userlevel >= 1){?>
@@ -31,13 +32,15 @@
 								<tr>
 									<th>
 										<?php
-										if($type != MSG_SENT && $type != MSG_DELETED) echo $messages[$i][TF_PM_AUTHOR];
-										else
-										{
+										echo $messages[$i][TF_PM_AUTHOR];
+										?>
+									</th>
+									<th>
+										<?php
 										  	$recipients = $messages[$i][PM_RECIPIENTS];
 											foreach ($recipients as $recipient)
 												echo (next($recipients)) ? $recipient.', ' : $recipient;
-										}?>
+										?>
 									</th>
 									<th><a data-ajax="false" href='<?php echo site_url().'/pm/message/'.$messages[$i][TF_PM_ID]; ?>'><?php echo $messages[$i][TF_PM_SUBJECT] ?></a></th>
 									<th><?php echo $messages[$i][TF_PM_DATE]; ?></th>

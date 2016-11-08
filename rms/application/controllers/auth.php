@@ -9,7 +9,7 @@ class Auth extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 		$this->load->library('hmw');
-	
+
 		$this->load->database();
 
 		$this->form_validation->set_error_delimiters($this->config->item('error_start_delimiter', 'ion_auth'), $this->config->item('error_end_delimiter', 'ion_auth'));
@@ -25,7 +25,7 @@ class Auth extends CI_Controller {
 
 		$this->load->library("hmw");
 		$this->load->library('mmail');
-		
+
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
@@ -36,24 +36,24 @@ class Auth extends CI_Controller {
 			$txtmessage = $this->input->post('txtmessage');
 			$this->data['message']  = '';
 			$sento = '';
-			
+
 			if($txtmessage) {
 				foreach ($this->input->post() as $key => $var) {
 					$line = explode('-', $key);
-						if($line[0] == 'sms') {
-							$userinfo = $this->hmw->getUser($line[1]);
-							$sento .= $userinfo->username." by sms at ".$userinfo->phone ."<br/>";
-							$this->hmw->sendSms($userinfo->phone, $txtmessage);
-						}
-						if($line[0] == 'email') {
-							$userinfo = $this->hmw->getUser($line[1]);							
-							$email['to']	= $userinfo->email;
-							$email['subject'] = 'Open shift @Hank!';
-							$email['msg'] = $txtmessage;
-							$sento .= $userinfo->username." by email at ".$userinfo->email." <br/>";
-							$this->mmail->sendEmail($email);
-						}
+					if($line[0] == 'sms') {
+						$userinfo = $this->hmw->getUser($line[1]);
+						$sento .= $userinfo->username." by sms at ".$userinfo->phone ."<br/>";
+						$this->hmw->sendSms($userinfo->phone, $txtmessage);
 					}
+					if($line[0] == 'email') {
+						$userinfo = $this->hmw->getUser($line[1]);							
+						$email['to']	= $userinfo->email;
+						$email['subject'] = 'Open shift @Hank!';
+						$email['msg'] = $txtmessage;
+						$sento .= $userinfo->username." by email at ".$userinfo->email." <br/>";
+						$this->mmail->sendEmail($email);
+					}
+				}
 				$this->data['message']  = '<b>Message sent to:</b> <br />'.$sento;
 			}
 
@@ -64,12 +64,12 @@ class Auth extends CI_Controller {
 				$this->data['users'][$k]->bus = $this->ion_auth->get_users_bus($user->id)->result();
 				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
-			
+
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-			
+
 			$this->data['current_user'] = $this->ion_auth->user()->row();
-			
+
 			$headers = $this->hmw->headerVars(1, "/auth/extra/", "Extra finder");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
@@ -77,14 +77,14 @@ class Auth extends CI_Controller {
 			$this->load->view('jq_footer');
 		}
 	}
-	
+
 	//redirect if needed, otherwise display the user list
 	function index()
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		
+
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
@@ -106,7 +106,7 @@ class Auth extends CI_Controller {
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			$this->data['current_user'] = $this->ion_auth->user()->row();
-			
+
 			$headers = $this->hmw->headerVars(1, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
@@ -158,12 +158,12 @@ class Auth extends CI_Controller {
 				'type' => 'text',
 				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('identity'),
-			);
+				);
 			$this->data['password'] = array('name' => 'password',
 				'id' => 'password',
 				'data-clear-btn' => "true",
 				'type' => 'password',
-			);
+				);
 
 			$this->_render_page('auth/login', $this->data);
 		}
@@ -208,29 +208,29 @@ class Auth extends CI_Controller {
 				'id'   => 'old',
 				'type' => 'password',
 				'data-clear-btn' => "true",
-			);
+				);
 			$this->data['new_password'] = array(
 				'name' => 'new',
 				'id'   => 'new',
 				'type' => 'password',
 				'data-clear-btn' => "true",
 				'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
-			);
+				);
 			$this->data['new_password_confirm'] = array(
 				'name' => 'new_confirm',
 				'id'   => 'new_confirm',
 				'type' => 'password',
 				'data-clear-btn' => "true",
 				'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
-			);
+				);
 			$this->data['user_id'] = array(
 				'name'  => 'user_id',
 				'id'    => 'user_id',
 				'type'  => 'hidden',
 				'data-clear-btn' => "true",
 				'value' => $user->id,
-			);
-			
+				);
+
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 			//render
@@ -257,57 +257,14 @@ class Auth extends CI_Controller {
 	}
 
 
-function forgot_password()
-		{
-			$this->form_validation->set_rules('username', 'Unername', 'required');
-			if ($this->form_validation->run() == false) {
-				//setup the input
-				$this->data['username'] = array('name'    => 'username',
-											 'id'      => 'username',
-											);
-				//set any errors and display the form
-				$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-				
-				$headers = $this->hmw->headerVars(-1, "/", "Forgot your password?");
-				$this->load->view('jq_header_pre', $headers['header_pre']);
-				$this->load->view('jq_header_post', $headers['header_post']);
-				$this->_render_page('auth/forgot_password', $this->data);
-				$this->load->view('jq_footer');
-			}
-			else {
-				//run the forgotten password method to email an activation code to the user
-				$forgotten = $this->ion_auth->forgotten_password($this->input->post('username'));
-
-				if ($forgotten) { //if there were no errors
-					$this->session->set_flashdata('message', $this->ion_auth->messages());
-					redirect("auth/login", 'refresh'); //we should display a confirmation page here instead of the login page
-				}
-				else {
-					$this->session->set_flashdata('message', $this->ion_auth->errors());
-					redirect("auth/forgot_password", 'refresh');
-				}
-			}
-		}
-		/*
-	//forgot password
 	function forgot_password()
 	{
-		$this->form_validation->set_rules('email', $this->lang->line('forgot_password_validation_email_label'), 'required|valid_email');
-		if ($this->form_validation->run() == false)
-		{
+		$this->form_validation->set_rules('username', 'Username', 'required');
+		if ($this->form_validation->run() == false) {
 			//setup the input
-			$this->data['email'] = array('name' => 'email',
-				'id' => 'email',
-			);
-
-			if ( $this->config->item('identity', 'ion_auth') == 'username' ){
-				$this->data['identity_label'] = $this->lang->line('forgot_password_username_identity_label');
-			}
-			else
-			{
-				$this->data['identity_label'] = $this->lang->line('forgot_password_email_identity_label');
-			}
-
+			$this->data['username'] = array('name'    => 'username',
+				'id'      => 'username',
+				);
 			//set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
@@ -316,40 +273,21 @@ function forgot_password()
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/forgot_password', $this->data);
 			$this->load->view('jq_footer');
-
 		}
-		else
-		{
-			// get identity from username or email
-			if ( $this->config->item('identity', 'ion_auth') == 'username' ){
-				$identity = $this->ion_auth->where('username', strtolower($this->input->post('email')))->users()->row();
-			}
-			else
-			{
-				$identity = $this->ion_auth->where('email', strtolower($this->input->post('email')))->users()->row();
-			}
-	            	if(empty($identity)) {
-		        	$this->ion_auth->set_message('forgot_password_email_not_found');
-		                $this->session->set_flashdata('message', $this->ion_auth->messages());
-                		redirect("auth/forgot_password", 'refresh');
-            		}
-
+		else {
 			//run the forgotten password method to email an activation code to the user
-			$forgotten = $this->ion_auth->forgotten_password($identity->{$this->config->item('identity', 'ion_auth')});
+			$forgotten = $this->ion_auth->forgotten_password($this->input->post('username'));
 
-			if ($forgotten)
-			{
-				//if there were no errors
+			if ($forgotten) { //if there were no errors
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				redirect("auth/login", 'refresh'); //we should display a confirmation page here instead of the login page
 			}
-			else
-			{
+			else {
 				$this->session->set_flashdata('message', $this->ion_auth->errors());
 				redirect("auth/forgot_password", 'refresh');
 			}
 		}
-	}*/
+	}
 
 	//reset password - final step for forgotten password
 	public function reset_password($code = NULL)
@@ -379,21 +317,21 @@ function forgot_password()
 				$this->data['new_password'] = array(
 					'name' => 'new',
 					'id'   => 'new',
-				'type' => 'password',
+					'type' => 'password',
 					'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
-				);
+					);
 				$this->data['new_password_confirm'] = array(
 					'name' => 'new_confirm',
 					'id'   => 'new_confirm',
 					'type' => 'password',
 					'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
-				);
+					);
 				$this->data['user_id'] = array(
 					'name'  => 'user_id',
 					'id'    => 'user_id',
 					'type'  => 'hidden',
 					'value' => $user->id,
-				);
+					);
 				$this->data['csrf'] = $this->_get_csrf_nonce();
 				$this->data['code'] = $code;
 
@@ -482,10 +420,10 @@ function forgot_password()
 			// insert csrf check
 			$this->data['csrf'] = $this->_get_csrf_nonce();
 			$this->data['user'] = $this->ion_auth->user($id)->row();
-			
+
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-			
+
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
@@ -533,7 +471,7 @@ function forgot_password()
 
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-			
+
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
@@ -562,13 +500,13 @@ function forgot_password()
 			redirect('auth', 'refresh');
 		}
 	}
-	
+
 	//create a new user
 	function create_user()
 	{
 		$this->load->library("hmw");
 		$this->load->library('mmail');
-	
+
 		$this->data['title'] = "Create User";
 
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
@@ -598,12 +536,12 @@ function forgot_password()
 				'last_name'  => trim($this->input->post('last_name')),
 				'comment'  	 => trim($this->input->post('comment')),
 				'phone'      => trim($this->input->post('phone'))
-			);
+				);
 		}
 		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $this->input->post('groups'), $this->input->post('bus')))
 		{
 			$welcome_email = $this->input->post('welcome_email');
-			
+
 			if(!empty($welcome_email)) {						
 				$email 				= array();
 				$email['to']		= strtolower($this->input->post('email'));
@@ -629,49 +567,49 @@ function forgot_password()
 				'type'  => 'text',
 				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('first_name'),
-			);
+				);
 			$this->data['last_name'] = array(
 				'name'  => 'last_name',
 				'id'    => 'last_name',
 				'type'  => 'text',
 				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('last_name'),
-			);
+				);
 			$this->data['email'] = array(
 				'name'  => 'email',
 				'id'    => 'email',
 				'type'  => 'text',
 				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('email'),
-			);
+				);
 			$this->data['phone'] = array(
 				'name'  => 'phone',
 				'id'    => 'phone',
 				'type'  => 'text',
 				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('phone'),
-			);
+				);
 			$this->data['comment'] = array(
 				'name'  => 'comment',
 				'id'    => 'comment',
 				'type'  => 'text',
 				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('comment'),
-			);
+				);
 			/**
 			$this->data['password'] = array(
-				'name'  => 'password',
-				'id'    => 'password',
-				'type'  => 'password',
-				'data-clear-btn' => "true",
-				'value' => $this->form_validation->set_value('password'),
+			'name'  => 'password',
+			'id'    => 'password',
+			'type'  => 'password',
+			'data-clear-btn' => "true",
+			'value' => $this->form_validation->set_value('password'),
 			);
 			$this->data['password_confirm'] = array(
-				'name'  => 'password_confirm',
-				'id'    => 'password_confirm',
-				'type'  => 'password',
-				'data-clear-btn' => "true",
-				'value' => $this->form_validation->set_value('password_confirm'),
+			'name'  => 'password_confirm',
+			'id'    => 'password_confirm',
+			'type'  => 'password',
+			'data-clear-btn' => "true",
+			'value' => $this->form_validation->set_value('password_confirm'),
 			);
 			**/
 			$this->data['groups']	= $groups=$this->ion_auth->groups()->result_array();
@@ -679,17 +617,17 @@ function forgot_password()
 
 			$userinfo = $this->ion_auth->user()->row();
 			$groupinfo = $this->ion_auth_model->get_users_groups()->result();
-			
+
 			$this->data['current_user'] = $userinfo;
 			$this->data['groupinfo'] = $groupinfo;
-			
+
 			$id_bu =  $this->session->all_userdata()['bu_id'];
 			$buinfo = $this->hmw->getBuInfo($id_bu);
 			$this->data['welcome_email'] = $buinfo->welcome_email;
-			
+
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-			
+
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
@@ -748,8 +686,8 @@ function forgot_password()
 					'email'		 => $this->input->post('email'),
 					'phone'      => $this->input->post('phone'),
 					'comment'      => $this->input->post('comment')
-				);
-				
+					);
+
 				//update the password if it was posted
 				if ($this->input->post('password'))
 				{
@@ -774,7 +712,7 @@ function forgot_password()
 						}
 
 					}
-					
+
 					if (isset($buData) && !empty($buData)) {
 
 						$this->ion_auth->remove_from_bu('', $id);
@@ -785,7 +723,7 @@ function forgot_password()
 
 					}
 				}
-				
+
 				//check to see if we are creating the user
 				//redirect them back to the admin page
 				$this->session->set_flashdata('message', "User Saved");
@@ -812,7 +750,7 @@ function forgot_password()
 		$this->data['bus'] = $bus;
 		$this->data['currentGroups'] = $currentGroups;
 		$this->data['currentBus'] = $currentBus;
-		
+
 		$this->data['username2'] = $this->session->all_userdata()['identity'];
 		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 
@@ -822,56 +760,56 @@ function forgot_password()
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('first_name', $user->first_name),
-		);
+			);
 		$this->data['last_name'] = array(
 			'name'  => 'last_name',
 			'id'    => 'last_name',
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('last_name', $user->last_name),
-		);
+			);
 		$this->data['username'] = array(
 			'name'  => 'username',
 			'id'    => 'username',
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('username', $user->username),
-		);
+			);
 		$this->data['email'] = array(
 			'name'  => 'email',
 			'id'    => 'email',
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('email', $user->email),
-		);
+			);
 		$this->data['phone'] = array(
 			'name'  => 'phone',
 			'id'    => 'phone',
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('phone', $user->phone),
-		);
+			);
 		$this->data['comment'] = array(
 			'name'  => 'comment',
 			'id'    => 'comment',
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('comment', $user->comment),
-		);
+			);
 		$this->data['password'] = array(
 			'name' => 'password',
 			'id'   => 'password',
 			'data-clear-btn' => "true",
 			'type' => 'password'
-		);
+			);
 		$this->data['password_confirm'] = array(
 			'name' => 'password_confirm',
 			'id'   => 'password_confirm',
 			'data-clear-btn' => "true",
 			'type' => 'password'
-		);
-		
-		
+			);
+
+
 		$this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
 
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
@@ -918,18 +856,18 @@ function forgot_password()
 				'type'  => 'text',
 				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('group_name')
-			);
+				);
 			$this->data['description'] = array(
 				'name'  => 'description',
 				'id'    => 'description',
 				'type'  => 'text',
 				'data-clear-btn' => "true",
 				'value' => $this->form_validation->set_value('description')
-			);
-			
+				);
+
 			$this->data['username'] = $this->session->all_userdata()['identity'];
 			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-			
+
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
@@ -991,18 +929,18 @@ function forgot_password()
 			'data-clear-btn' => "true",
 
 			'value' => $this->form_validation->set_value('group_name', $group->name),
-		);
+			);
 		$this->data['group_description'] = array(
 			'name'  => 'group_description',
 			'id'    => 'group_description',
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('group_description', $group->description),
-		);
+			);
 
 		$this->data['username'] = $this->session->all_userdata()['identity'];
 		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-	
+
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -1051,8 +989,8 @@ function forgot_password()
 				$data = array(
 					'email'		 => $this->input->post('email'),
 					'phone'      => $this->input->post('phone')
-				);
-				
+					);
+
 				//update the password if it was posted
 				if ($this->input->post('password'))
 				{
@@ -1077,7 +1015,7 @@ function forgot_password()
 						}
 
 					}
-					
+
 					if (isset($buData) && !empty($buData)) {
 
 						$this->ion_auth->remove_from_bu('', $id);
@@ -1088,7 +1026,7 @@ function forgot_password()
 
 					}
 				}
-				
+
 				//check to see if we are creating the user
 				//redirect them back to the admin page
 				$this->session->set_flashdata('message', "Your modifications are recorded");
@@ -1111,26 +1049,26 @@ function forgot_password()
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('email', $user->email),
-		);
+			);
 		$this->data['phone'] = array(
 			'name'  => 'phone',
 			'id'    => 'phone',
 			'type'  => 'text',
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('phone', $user->phone),
-		);
+			);
 		$this->data['password'] = array(
 			'name' => 'password',
 			'id'   => 'password',
 			'data-clear-btn' => "true",
 			'type' => 'password'
-		);
+			);
 		$this->data['password_confirm'] = array(
 			'name' => 'password_confirm',
 			'id'   => 'password_confirm',
 			'data-clear-btn' => "true",
 			'type' => 'password'
-		);
+			);
 
 		$headers = $this->hmw->headerVars(1, "/auth/", "My account");
 		$this->load->view('jq_header_pre', $headers['header_pre']);

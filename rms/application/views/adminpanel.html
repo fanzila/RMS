@@ -14,7 +14,7 @@
 				<br/>
 				<div data-role="collapsible-set" data-inset="false">
 					<div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
-						<h3>Staff</h3>
+						<h3>Main</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
 						<? if($userlevel >= 2){?>
 							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
@@ -24,14 +24,14 @@
 						<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-calendar zmd-fw"></i> Planning</a></li>
 						<? } ?>
 						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li><? } ?>
-						<li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> My Reports</a></li>
+						<li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/order/"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li><?}?>
-						<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff list</a></li>
+						<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff</a></li>
 						<? if($userlevel >= 2){?>
 							<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>

@@ -238,7 +238,7 @@ class Hmw {
 			}else{
 				$headers = array(
 				'header_pre'	=> array(
-					'title' => "titre".$title,
+					'title' => $title,
 					'bu_id'	=> null
 					),
 				'header_post'	=> array(

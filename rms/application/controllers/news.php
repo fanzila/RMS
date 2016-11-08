@@ -214,7 +214,7 @@ class News extends CI_Controller {
 			$res_sup = $this->db->get_where('news', array('id' => $ret[0]['id_news'])) or die($this->mysqli->error);
 			$ret_sup = $res_sup->result_array();
 			
-			$this->db->set('date_confirmed', "NOW()")
+			$this->db->set('date_confirmed', 'NOW()', FALSE)
 			->set('status', 'confirmed')
 			->set('IP', $ip)
 			->where('key', $key);

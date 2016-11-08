@@ -54,6 +54,14 @@ class Pm_model extends CI_Model {
 	 */
 	private $user_id = NULL;
 	/**
+	 * @var int: bu id of the logged in user from the db
+	 */
+	private $bu_id = NULL;
+	/**
+	 * @var int: level of the logged in user from the db
+	 */
+	private $user_level = NULL;
+	/**
 	 * @var array|array|mixed: two dimensional associative array with message fields
 	 * (1st dimension int, 2nd dimension associative with field names as keys)
 	 * set upon call to {@link get_messages} or {@link get_message}.
@@ -84,6 +92,11 @@ class Pm_model extends CI_Model {
 		$this->table1 = new Table_model(TABLE_PM, $dateformat, $enforce_field_types);
 		$this->table2 = new Table_model(TABLE_PMTO, $dateformat, $enforce_field_types);
 		$this->user_id = $this->user_model->current_id();
+		$this->bu_id = $this->session->all_userdata()['bu_id'];
+		
+		$user_groups = $this->ion_auth->get_users_groups()->result();
+		$this->user_level = $user_groups[0]->level;
+		
 	}
 
 	/**
