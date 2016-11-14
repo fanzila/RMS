@@ -43,7 +43,7 @@ class Crud extends CI_Controller {
 
     public function cklChecklists()
     {
-		$this->grocery_crud->fields('id','name','active','order');
+		$this->grocery_crud->fields('id','name','active','order','id_bu');
         $this->grocery_crud->set_table('checklists');
         $output = $this->grocery_crud->render();
  

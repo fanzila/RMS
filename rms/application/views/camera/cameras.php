@@ -34,6 +34,6 @@
 <?if(isset($url['cam8'])) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/8"></iframe>			
 <? } ?>
-<p><a href="/cameras/index/allbu/1">View all cam</a></p>
+<p><a href="/cameras/index/onebu/1">View cam for current BU only</a></p>
 </body>
 </html>

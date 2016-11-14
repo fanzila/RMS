@@ -18,7 +18,7 @@ class Cameras extends CI_Controller {
 	* @see http://codeigniter.com/user_guide/general/urls.html
 	*/
 
-	public function index($allbu = false)
+	public function index($onebu = false)
 	{		
 		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 		header("Cache-Control: post-check=0, pre-check=0", false);
@@ -43,10 +43,10 @@ class Cameras extends CI_Controller {
 
 		$url = array();
 
-		if($allbu) { 
-			$this->db->from('cameras');
-		} else {
+		if($onebu) { 
 			$this->db->from('cameras')->where('id_bu', $this->session->userdata('bu_id'));
+		} else {
+			$this->db->from('cameras');
 		}
 		$res = $this->db->get();
 		$row = $res->result();
