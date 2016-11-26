@@ -54,7 +54,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<small>Prix unitaire €</small>
+										<small>Prix H.T. /unité €</small>
 										<input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>"  data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
@@ -66,7 +66,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<small>Unité de facturation</small>
+										<small>Unité de vente</small>
 										<select id="id_unit<?=$line['id']?>" name="id_unit"  data-mini="true">
 											<? foreach ($products_unit as $pack_unit) { ?>
 												<option value="<?=$pack_unit['id']?>" <? if($pack_unit['id'] == $line['id_unit']) { echo "selected"; } ?> ><?=$pack_unit['name']?></option>
@@ -191,9 +191,9 @@
 										<tr>
 											<td><small>Name</small></td>
 											<td><small>Supplier</small></td>
-											<td><small>Unit price €</small></td>
-											<td><small>Packaging</small></td>
-											<td><small>Unit type</small></td>
+											<td><small>Prix H.T. /unité</small></td>
+											<td><small>Colisage</small></td>
+											<td><small>Unité de vente</small></td>
 											<td><small>Category</small></td>
 											<td><small>Active</small></td>
 											<td><small>Freq. inventaire</small></td>

@@ -12,9 +12,8 @@ $today = getdate();
 							?>
 							<li>
 								<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper($line['name'])?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
-									<br /><b>Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?></b> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?>
-									<br />Colisage: <?=$line['packaging']?>  <?=$line['unit_name']?> | Unité facturation: <?=$line['price']/1000?>€ | Ref. supplier: <?=$line['supplier_reference']?> | Comment: <?=$line['comment']?>
-								
+									<br />Colisage: <?=$line['packaging']?>  | Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ <br />
+								Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <br /> Ref. supplier: <?=$line['supplier_reference']?> | Comment: <?=$line['comment']?>
 							</label>
 							<input type="hidden" name="price-<?=$line['id']?>" id="price-<?=$line['id']?>" value="<?=$line['price']?>">
 							<input type="hidden" name="packaging-<?=$line['id']?>" id="packaging-<?=$line['id']?>" value="<?=$line['packaging']?>">
