@@ -752,9 +752,9 @@ class Order extends CI_Controller {
 					$email['subject'] 	= "Relance de confirmation de commande ".$line->idorder;
 					$email['attach'] 	= 'orders/'.$date_y.'/'.$date_m.'/'.$line->idorder.'_'.$line->name.'.pdf';
 					$email['replyto'] 	= $order_email;
-					$email['msg'] 		= "Bonjour ".$line->name."!\n\nIl y a 1 jour ou plus, nous vous avons envoyé la commande numéro $line->idorder de nouveau en PJ.\n";
+					$email['msg'] 		= "Bonjour ".$line->name."!\n\nIl y a 1 jour ou plus, nous vous avons envoyé la commande numéro $line->idorder de nouveau en PJ.\n\n";
 					$email['msg'] 		.= "Afin de nous assurer de la bonne prise en compte de celle-ci, merci de bien vouloir la valider en cliquant sur ce lien : $link";
-					$email['msg'] 		.= "-- \n\nHave A Nice Karma,\n-- \nHANK - ".$user->username."\nEmail : $order_email \nTel : $user->phone";
+					$email['msg'] 		.= "\n\nHave A Nice Karma,\n\n-- \n\nHANK - ".$user->username."\n\nEmail : $order_email \n\nTel : $user->phone";
 
 					$this->mmail->sendEmail($email);
 
