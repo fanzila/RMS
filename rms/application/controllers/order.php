@@ -331,7 +331,7 @@ class Order extends CI_Controller {
 
 			$this->db->set('date_confirmed', "NOW()", FALSE);
 			$this->db->set('status', "confirmed");
-			$this->db->set('comment', mysql_real_escape_string(addslashes($scomment)));
+			$this->db->set('comment', $scomment);
 			$this->db->set('IP', $ip);
 			$this->db->where('key', $key);
 			$this->db->update('orders_confirm')  or die($this->mysqli->error);
@@ -346,7 +346,7 @@ class Order extends CI_Controller {
 				$email['subject'] 	.= "Confirmation de commande de ".$ret_sup[0]['name'].", order: ".$ret[0]['idorder'];
 				$email['replyto'] 	= $order_email;
 				$email['msg'] 		= "Commande : ".$ret[0]['idorder']." validée par fournisseur ".$ret_sup[0]['name'].".";
-				if(!empty($scomment)) { $email['msg'] .= "\n\nCOMMENTAIRE: ".stripslashes($scomment)."\n"; }
+				if(!empty($scomment)) { $email['msg'] .= "\n\nCOMMENTAIRE: ".$scomment."\n"; }
 				$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK\n";
 				$this->mmail->sendEmail($email);
 			}
@@ -754,7 +754,7 @@ class Order extends CI_Controller {
 					$email['replyto'] 	= $order_email;
 					$email['msg'] 		= "Bonjour ".$line->name."!\n\nIl y a 1 jour ou plus, nous vous avons envoyé la commande numéro $line->idorder de nouveau en PJ.\n\n";
 					$email['msg'] 		.= "Afin de nous assurer de la bonne prise en compte de celle-ci, merci de bien vouloir la valider en cliquant sur ce lien : $link";
-					$email['msg'] 		.= "\n\nHave A Nice Karma,\n\n-- \n\nHANK - ".$user->username."\n\nEmail : $order_email \n\nTel : $user->phone";
+					$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK - ".$user->username."\nEmail : $order_email \nTel : $user->phone";
 
 					$this->mmail->sendEmail($email);
 
