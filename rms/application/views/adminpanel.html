@@ -20,11 +20,12 @@
 							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
 						<? } ?>		
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
-						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> My space</a></li>
+						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> My skills</a></li>
 						<li><a rel="external" data-ajax="false" href="http://hank.shiftplanning.com/app/" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-calendar zmd-fw"></i> Planning</a></li>
 						<? } ?>
 						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li><? } ?>
-						<li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li>
+						<li><a rel="external" data-ajax="false" href="/book/"><i class="zmdi zmdi-book zmd-fw"></i> Play Book</a></li>
+						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li><? } ?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>

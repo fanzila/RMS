@@ -254,10 +254,6 @@ class Skills extends CI_Controller {
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$bu_name	= $this->session->all_userdata()['bu_name'];
 
-		$this->db->select('bu_info, training_link')->from('bus')->where('id', $id_bu);
-		$res = $this->db->get() or die($this->mysqli->error);
-		$bu_infos = $res->result();
-
 		$this->db->select('sr.id, us.id as id_sponsor, u.first_name, u.last_name, u.id as id_user')
 			->from('skills_record as sr')
 			->join('users as us', 'us.id = id_sponsor', 'left')
@@ -269,8 +265,6 @@ class Skills extends CI_Controller {
 			'skills_records' => $skills_records,
 			'id_bu'			=> $id_bu,
 			'bu_name'		=> $bu_name,
-			'bu_infos'		=> $bu_infos[0]->bu_info,
-			'bu_link'		=> $bu_infos[0]->training_link,
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
