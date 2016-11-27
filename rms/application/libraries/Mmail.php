@@ -11,6 +11,10 @@ class Mmail {
 		
 		$config = array();
 		$config['charset'] = 'utf-8';
+		$config['mailtype'] = 'text';
+		$config['crlf'] = "\n";
+		$config['newline'] = "\n";
+		
 		$config['from'] = 'noreply@hankrestaurant.com';
 		$config['from_name'] = 'RMS';
 		if(isset($email['from'])) {
