@@ -56,7 +56,7 @@ class Discount extends CI_Controller {
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
+		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.persistent as tpersistent')
 			->from('discount as T')
 			->where('T.deleted', 0)
 			->where('T.used', 0)
@@ -110,13 +110,16 @@ class Discount extends CI_Controller {
 
 	public function save()
 	{
-		$id_bu =  $this->session->all_userdata()['bu_id'];		
-		$data = $this->input->post();
+		$id_bu			= $this->session->all_userdata()['bu_id'];		
+		$data 			= $this->input->post();
+		$user_groups 	= $this->ion_auth->get_users_groups()->result();
+		$userlevel 		= $user_groups[0]->level;
+		$reponse 		= 'ok';
 		
-		$reponse = 'ok';
 		$this->db->set('nature', $data['nature']);
 		$this->db->set('client', $data['client']);
 		$this->db->set('reason', $data['reason']);
+		$this->db->set('persistent', $data['persistent']);
 		$this->db->set('id_user', $data['user']);
 		$this->db->set('date', date('Y-m-d H:i:s'));
 		$this->db->set('id_bu', $id_bu);
@@ -128,7 +131,10 @@ class Discount extends CI_Controller {
 				}
 				$data['id'] = $this->db->insert_id();
 			} else {
+				
 				$this->db->set('used', $data['used']);
+				if($data['persistent'] == 1 AND $userlevel < 2) $this->db->set('used', false);
+				
 				$this->db->where('id', $data['id']);
 				if (!$this->db->update('discount')) {
 					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
@@ -172,7 +178,7 @@ class Discount extends CI_Controller {
 		$query = $this->db->get("users");
 		$users = $query->result();
 
-		$this->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused')
+		$this->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.persistent as tpersistent')
 			->from('discount as T')
 			->where('T.id_bu', $id_bu)
 			->where('T.deleted', 0)

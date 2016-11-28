@@ -1,6 +1,4 @@
-		<!--	<a href="/discount/" class="ui-btn ui-btn-left"><i class="zmdi zmdi-arrow-back zmd-fw"></i></a>
-			<h1><?=$title?> | <?=$bu_name?> | <?=$username?></h1>
-		--></div>
+</div>
 		<div data-role="content"><?
 			if($create) {
 			?>
@@ -23,14 +21,20 @@
 						</tr>
 						<tr>
 							<td>
-								<label for="user" id="label">User saving the discount :</label>
+								<label for="user" id="label">User saving the discount:</label>
 								<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 									<option value="0">User</option>
 									<?foreach ($users as $user) {?>
 										<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
 										</option>
 									<? } ?>
-								?></select>
+								</select>
+								
+								<label for="persistent" id="label">Persistent:</label>
+								<select style="background-color:#a1ff7c" name="persistent" id="persistent" data-inline="true" data-theme="a" required>
+									<option value="0">No</option>
+									<option value="1">Yes</option>
+									</select>		
 							</td>
 						</tr>
 					</table>

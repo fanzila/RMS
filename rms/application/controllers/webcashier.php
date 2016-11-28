@@ -7,6 +7,8 @@ class webCashier extends CI_Controller {
 		@$this->load->library('ion_auth');
 		$this->load->library("hmw");
 		$this->load->library("cashier");
+		$this->load->helper(array('form', 'url'));
+		$this->load->library('form_validation');
 	}
 
 	public function index()
@@ -36,9 +38,20 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
+	public function save_report_comment()
+	{
+		$reponse = 'ok';
+		$data = $this->input->post();
+		$this->db->set('comment_report', $data['comment-'.$data['id']]);
+		$this->db->where('id', $data['id']);
+		if(!$this->db->update('pos_movements')) {
+			$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+		}
+		echo json_encode(['reponse' => $reponse]);
+	}
+	
 	public function safe()
 	{
-
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 2)
 		{
@@ -95,12 +108,12 @@ class webCashier extends CI_Controller {
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
 		
-		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file')
+		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report')
 			->from('pos_movements as pm')
 			->join('users as u', 'u.id = pm.id_user', 'left')
 			->where('pm.id_bu', $id_bu)
 			->order_by('pm.id desc')
-			->limit(500);
+			->limit(300);
 		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		
 		$res_pm = $r_pm->result_array();

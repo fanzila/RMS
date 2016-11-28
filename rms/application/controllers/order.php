@@ -276,6 +276,7 @@ class Order extends CI_Controller {
 		foreach ($post as $key => $var) {
 			$ex = @explode('-',$key);
 			if($ex[0] == 'stock') { 
+				if(empty($var)) $var = '0';
 				$q = "INSERT INTO products_stock (qtty, id_product, last_update_id_user, last_update_user, id_bu) VALUES($var, $ex[1], $user->id, NOW(), $id_bu) ON DUPLICATE KEY UPDATE qtty=qtty+$var, last_update_id_user=$user->id, last_update_user=NOW()";
 				$this->db->query($q) or die($this->mysqli->error);
 				$pdt_info = $this->product->getProducts($ex[1], null, null, null, $id_bu);

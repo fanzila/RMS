@@ -13,6 +13,7 @@
 		
 		<?php foreach ($lines as $m): ?>
 			<? $mov = '';
+			$cash_amount = 0;
 			if($m['mov']['movement'] == 'safe_in' OR $m['mov']['movement'] == 'safe_out') $mov = 'safe';
 			if($m['mov']['movement'] == 'open') $mov = 'open';
 			if($m['mov']['movement'] == 'close') $mov = 'close';
@@ -35,7 +36,9 @@
 								<?if($mov != 'safe') { ?><td>Balance</td><? } ?>
 							</tr>
 							<?php $total = 0; foreach ($m['pay'] as $m2): ?>
-								<? $total += $m2['amount_pos']; ?>
+								<? 
+								$total += $m2['amount_pos'];
+								?>
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
 								<tr>
 									<td><?=$m2['name']?></td>
@@ -50,6 +53,17 @@
 	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']; ?> 
 		<? if($check_amount < 0 ) { ?><p style="color : red; font: bold 16px Arial, Verdana, sans-serif;">ALERT! <?=$check_amount?>€ cash missing!</p>
 		<? } } ?>
+<div style="width:70%">		
+		<h3>Movement comments</h3>
+		<?
+		$id_form = "report".$m['mov']['id'];
+		$attributes = array('id' => $id_form, 'name' => $id_form);
+		echo form_open("webcashier/save_report_comment", $attributes);?>
+			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" value="<?=$m['mov']['comment_report']?>" />
+			<input type="submit" id="sub<?=$m['mov']['id']?>" onclick="validate(<?=$m['mov']['id']?>)" name="submit" value="Save" data-mini="true" data-clear-btn="true" />
+			<input type="hidden" name="id" value="<?=$m['mov']['id']?>">
+		</form>
+</div>
 <? if($mov =='close') { ?>		
 		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 			<tr style="background-color: #fbf19e;"><td colspan="6">POS Movements</td></tr>
@@ -80,16 +94,65 @@
 		<tr><td><?=$cusers?></td></tr>
 		<?php endforeach; ?>
 	</table>
-	<? } ?>
-	<? /**
-	<label for="comment-<?=$m['mov']['id']?>">Movement comments</label>
-		<input maxlength="255" type="comments" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" />
-		<input type="button" name="save" value="SAVE">
-		
-	**/ ?>
+	<? } ?>	
 				</li>
 			</ul>
 		</div> <!-- end collapsible -->
 	<?php endforeach; ?>
 </div> <!-- end content -->
 </div> <!-- end page -->
+
+						<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
+						<script>
+						
+						function isNumeric(n) {
+							return !isNaN(parseFloat(n)) && isFinite(n);
+						}
+						
+						function validate(idl) {
+							var $form = $('#report' + idl);
+							var done = 0;
+							$form.on('submit', function() {
+																					
+								var comment = $('#comment-' + idl).val();
+								
+								$.ajax({
+									url: $(this).attr('action'),
+									type: $(this).attr('method'),
+									data: $(this).serialize(),
+									dataType: 'json',
+									success: function(json) {
+										if(json.reponse == 'okcreate' && done == 0) {
+											done = done + 1;
+											if(done == 1) {
+												//window.location = "/product_admin/index/create1";
+												return false; 
+											}
+											
+											return false;
+										} else if(json.reponse == 'ok' && done == 0) {
+											done = done + 1;
+											if(done == 1) { 
+												alert('Saved!');
+												//location.reload(true);
+												return false; 
+											}
+											return false;
+										} else if(done == 0){
+											alert('WARNING! ERROR at saving : '+ json.reponse);
+											return false;
+										}
+									}
+								}).done(function(data) {
+									return false;
+								}).fail(function(data) {
+									done = done + 1;
+									if(done <= 1) { 
+										alert('WARNING! ERROR at saving!');
+										return false; 
+									}
+								});
+								return false;
+							});
+						}
+						</script>

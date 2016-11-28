@@ -35,6 +35,8 @@
 											<label for="nature-<?=$line->tid?>" id="label">Nature:</label>
 											<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>" data-clear-btn="true">
 
+<? if($line->tpersistent) { ?><p>WARNING! This discount is persistent because it can be used multiple times. Even if you save it with used = yes, IT WILL NOT BE SAVED AS USED (unless you are logged as manager). <br />If you think that discount should be set at used, please advise your manager.</p><? } ?>
+
 											<select style="background-color:#a1ff7c" id="used-<?=$line->tid?>" name="used" data-inline="true" data-theme="a" required>
 												<option value="0">Utiliser : NON</option>
 												<option value="1" selected>Utiliser : OUI</option>
@@ -47,8 +49,8 @@
 													</option>
 												<?}?>
 											</select>
-
 											<input type="hidden" name="id" value="<?=$line->tid?>">
+											<input type="hidden" name="persistent" value="<?=$line->tpersistent?>">
 											<?$attributes = array('id' => "sub=".$line->tid, 'name' => "submit");
 											echo form_submit($attributes, 'Save');?>
 										</form>

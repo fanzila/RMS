@@ -17,7 +17,7 @@
 						</div>
 						<?if($test==0){?>
 							<div class="ui-block-b"> 
-								<input type="submit" name="submit" value="filter" data-mini="true" data-ajax="false" data-clear-btn="true" /> 
+								<input type="submit" name="filtering" value="filter" data-mini="true" data-ajax="false" data-clear-btn="true" /> 
 							</div>
 						<?}?>
 					</form>
@@ -267,7 +267,6 @@
 		</div><!-- /content -->
 	</div><!-- /page -->
 											<script src="/public/jqv/dist/jquery.validate.min.js" type="text/javascript"></script>
-											<script src="/public/rmd.js" type="text/javascript"></script>
 
 											<script>
 											
