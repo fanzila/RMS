@@ -276,7 +276,9 @@ class Order extends CI_Controller {
 		foreach ($post as $key => $var) {
 			$ex = @explode('-',$key);
 			if($ex[0] == 'stock') { 
+				$var = $this->clean_number($var);
 				if(empty($var)) $var = '0';
+				if(!empty($var) AND !is_numeric($var)) exit('Stock has to be numeric, invalid: '.$var);
 				$q = "INSERT INTO products_stock (qtty, id_product, last_update_id_user, last_update_user, id_bu) VALUES($var, $ex[1], $user->id, NOW(), $id_bu) ON DUPLICATE KEY UPDATE qtty=qtty+$var, last_update_id_user=$user->id, last_update_user=NOW()";
 				$this->db->query($q) or die($this->mysqli->error);
 				$pdt_info = $this->product->getProducts($ex[1], null, null, null, $id_bu);
@@ -588,10 +590,11 @@ class Order extends CI_Controller {
 
 		//fill array with suppliers
 		foreach ($data as $key => $var) {
+			$key = $this->clean_number($key);
 			if(is_numeric($key)) {
 				$$products[$key]['supplier_name'] = array($key => $var);
 				$qtty = $this->clean_number($var);
-				if(!empty($var) AND !is_numeric($qtty)) exit('Quantity has to be numeric, invalid: '.$var);
+				if(!empty(trim($var)) AND !is_numeric($qtty)) exit('Quantity has to be numeric, invalid: '.$var);
 
 				$complet[] = array(
 					'supplier' => $products[$key]['supplier_name'], 
