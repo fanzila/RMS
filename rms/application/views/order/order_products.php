@@ -1,143 +1,202 @@
 <?
 $today = getdate();
 ?>
-		</div>
-		<div data-role="content">
-			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">				
-				<form onload="updateTotal()" id="order" name="order" class="order" method="post" action="/order/prepareOrder/" onsubmit="return validateForm()" data-ajax="false">
-					<ul data-filter="true" data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
+</div>
+<div data-role="content">
+	<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">	
+		<? if($load > 0 AND $type == 'reception') { ?><h3>Order: <?=$load?></h3><? } ?>			
+		<form onload="updateTotal()" id="order" name="order" class="order" method="post" action="/order/detailOrder/"  data-ajax="false" <? if($keylogin) { ?>onsubmit="return validateForm()"<? } ?>>
+			<ul data-filter="true" data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
+				<?
+			$hide = 0;
+			foreach ($products as $line) {
+				if($load) {
+					if(empty($line['qtty']) AND (!isset($line['stock']) OR $line['stock'] == 0) AND $hide == 0) {
+						$hide = 1;
+						?>
+						<li><input type='button' id='hideshow' value='View other products'></li>
 						<?
-					foreach ($products as $line) {
-						if($line['freq_inventory'] == $order_name OR ($order_name == 'previous' AND $order_prev[0]['supid'] == $line['supplier_id']) OR $freq_id == 1000) {
-							?>
-							<li>
-								<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper($line['name'])?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
-									<br />Colisage: <?=$line['packaging']?>  | Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ <br />
-								Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <br /> Ref. supplier: <?=$line['supplier_reference']?> | Comment: <?=$line['comment']?>
-							</label>
-							<input type="hidden" name="price-<?=$line['id']?>" id="price-<?=$line['id']?>" value="<?=$line['price']?>">
-							<input type="hidden" name="packaging-<?=$line['id']?>" id="packaging-<?=$line['id']?>" value="<?=$line['packaging']?>">
-							<input type="hidden" name="unitname-<?=$line['id']?>" id="unitname-<?=$line['id']?>" value="<?=$line['unit_name']?>"> 
-							<table>
-								<tr>
-									<? $atexist = false; foreach ($attributs as $seek) { if($seek['id_product'] == $line['id']) $atexist = true; } ?>
-									<? if($atexist) { ?>
-										<td>
-											<select id="attribut-<?=$line['id']?>" name="attribut-<?=$line['id']?>"  data-mini="true">
-												<option value="0"></option>
-												<? foreach ($attributs as $att) { 
-													if($att['id_product'] == $line['id']) { 
-													?>
-													<option value="<?=$att['id']?>" 
-														<? 
-														if($load > 0) { 
-															foreach ($order_prev as $key => $var) {
-																if($var['attribut'] > 0 AND $var['attribut'] == $att['id']) {
-																	echo "selected";
-																}
-															}
-														}
-														?>
-														><?=$att['name']?></option>
-													<? } } ?>
-												</select>
-											</td>
-											<? } else { ?>
-												<td><input type="hidden" name="attribut-<?=$line['id']?>" id="attribut-<?=$line['id']?>" value="0"></td> 
-											<? } ?>
-											<td>
-												<input type="text" name="<?=$line['id']?>" id="pdt-<?=$line['id']?>" class="custom" data-mini="true" 
-												<? 
-												if($load > 0) {
-													$qtty = 0;
-													foreach ($order_prev as $key => $var) {
-														if($var['qtty'] > 0 AND strtoupper($var['id']) == strtoupper($line['id'])) {
-															echo "value='".$var['qtty']."'";
-															$qtty = $var['qtty'];
-														}
-													}
+				}
+			}
+			?>
+			<div id='hide-<?=$line['id']?>' class="hide-<?=$hide?>">
+				<li>
+					<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper($line['name'])?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
+						<br />Colisage: <?=$line['packaging']?>  | Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ <br />
+						Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <br /> Ref. supplier: <?=$line['supplier_reference']?> | Comment: <?=$line['comment']?>
+					</label>
+			
+					<table cellpadding="4">
+						<tr>
+									<td>
+										<? 
+										$qtty = null;
+										if($load > 0) {
+											$qtty = 0;
+											if(isset($line['qtty'])) {
+												if($line['qtty'] > 0) {
+													$qtty = $line['qtty'];
 												}
-												?>
-												data-clear-btn="true" />
+											}
+										}
+										if($type != 'reception' AND $type != 'viewreception') { ?>
+											
+										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" value="<?=$qtty?>" data-clear-btn="true" />
+										<? } else { ?><input type="hidden" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" value="<?=$qtty?>" />
+										<small>Order qtty:</small> <?=$qtty?><small> => </small><? } ?>
+									</td>
+
+									<? if($load > 0 && $type == 'viewreception' && (isset($line['stock']) OR (isset($line['qtty']) && $line['qtty'] > 0 ))) { 
+										(!isset($line['stock'])) ? $line['stock']=0 : $line['stock'];
+
+										$added_stock = 0;
+										if(isset($line['stock'])) {
+												$added_stock = $line['stock'];
+												if($qtty == $added_stock) {
+													$icon = 'zmdi-badge-check';
+													$fontcolor = 'green';
+												} else {
+													$icon = 'zmdi-alert-triangle';
+													$fontcolor = 'red';
+												}
+
+										}											
+										?>
+										<td><span class="zmdi <?=$icon?>"></span><font color="<?=$fontcolor?>"> Received qtty:</font></td>
+										<td><font color="<?=$fontcolor?>"><?=$added_stock?></font></td>
+										<? } ?> 
+										<? if($load > 0 && $type == 'reception') { ?>
+											<td><small>Received: </small></td>
+											<td>
+												<input type="text" name="stock[<?=$line['id']?>]" id="stock-<?=$line['id']?>" class="custom" value="0" style="width:120px" data-clear-btn="true" />
 											</td>
-												<td><small>Stock adjust: </small></td>
-												<td>
-													<input type="text" name="stock-<?=$line['id']?>" id="stock-<?=$line['id']?>" class="custom" value="0" data-clear-btn="true" />
+											<? if($load > 0 && $qtty > 0 && $type == 'reception') { ?>
+												<td><input type="button" id="add<?=$line['id']?>" name="add[<?=$line['id']?>]" class="add" value="OK" data-mini="true" onclick="disableStock(<?=$line['id']?>);" />
 												</td>
-												<? if($load > 0 && $qtty > 0) { ?>
-													<td><label for="add<?=$line['id']?>" data-mini="true" style="background-color:#ffffff">Add to stock</label><input type="checkbox" id="add<?=$line['id']?>" name="add<?=$line['id']?>" class="add" data-mini="true" onclick="disableStock(<?=$line['id']?>);" />
-													</td>
-													<? } ?> 
-													<? } $qtty = 0; ?>
-												</tr>
+												<? } ?> 
+												<? } ?>
+											</tr>
 										</table>
+	
 									</li>
+									<? if($load > 0 && $type == 'reception') { ?>
+										<!-- QTTY for reception check status -->
+										<input type="hidden" id="qtty_check[<?=$line['id']?>]" name="qtty_check[<?=$line['id']?>]" value="<?=$qtty?>">
 									<? } ?>
-								</ul>	
-								<? if(!$keylogin) { ?>
-								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
-									<li><input type="submit" name="save" value="SAVE"></li>
-								</ul>	
+									
+									<!-- START hidden price: 1 for php, 1 for js -->
+									<input type="hidden" id="price-<?=$line['id']?>" name="price-<?=$line['id']?>" value="<?=$line['price']?>">
+									<input type="hidden" id="price[<?=$line['id']?>]" name="price[<?=$line['id']?>]" value="<?=$line['price']?>">
+									<!-- END hidden price -->
+									<input type="hidden" name="pdt" value="<?=$line['id']?>">
+									<input type="hidden" name="pdt_name[<?=$line['id']?>]" value="<?=strtoupper($line['name'])?>">
+								</div>
+								<? $qtty = 0; $added_stock = 0; } ?>
+							</ul>
+
+							<? if($type == 'reception') { ?>
+								<label for="comment_reception" data-mini="true" style="background-color:#ffffff">Comments (Only to notify or if problem)</label>
+								<input type="text" name="comment_reception" id="comment_reception" class="custom"  data-clear-btn="true" />
+								<input type="hidden" name="idorder" value="<?=$load?>">
 								<? } ?>
+
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
-								<li data-role="list-divider" style="list-style-type: none;">
-									TOTAL ORDER: <span id="total">0</span>€ <hr />
-									Carriage paid: <?=$supinfo['carriage_paid']?> <br /> 
-									Delivery days: <?=$supinfo['delivery_days']?> <br /> 
-									Internal comments: <?=$supinfo['comment_internal']?> <br />
-									Order comment: <?=$supinfo['comment_order']?> <br /> 
-									Delivery comment: <?=$supinfo['comment_delivery']?> <br /> 
-									Delivery schedule: <?=$supinfo['comment_delivery_info']?> <br />
-									Order method: <?=$supinfo['order_method']?> <br />
-									Payment type: <?=$supinfo['payment_type']?> <br />
-									Payment delay: <?=$supinfo['payment_delay']?> <br />
-									Location: <?=$supinfo['location']?> <br />
-									Contact sale: <?=$supinfo['contact_sale_name']?> | <?=$supinfo['contact_sale_tel']?> |  <?=$supinfo['contact_sale_email']?><br />
-									Contact order: <?=$supinfo['contact_order_name']?> | <?=$supinfo['contact_order_tel']?> |  <?=$supinfo['contact_order_email']?>
-								</li>
-								</ul>				
-								<input type="hidden" name="action" value="save_order">
-							</form>
-						</div><!-- /theme -->
-					</div><!-- /content -->
-				</div><!-- /page -->
-				<script>
+									<? if($type == 'reception' AND $keylogin) { ?>
+										<li>													
+											<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
+												<option value="">User</option>
+												<?
+											foreach ($users as $user) {
+												?>
+												<option value="<?=$user->id?>"><?=$user->first_name?> <?=$user->last_name?></option>
+												<? 
+											}
+											?>
+											?>
+										</select>
+										<li>
+											<input type="submit" name="save" value="SAVE">
+										</li>
+									<? } ?>
+									<? if(!$keylogin && $type != 'viewreception') { ?>
+										<li><input type="submit" name="save" value="SAVE"></li>
+									<? } ?>
+									</ul>
 
-				function disableStock(idl) {
-					pdt = $('#pdt-' + idl).val();
-					checked = $('#add' + idl).is(':checked');
-					sum = 0;
-					if(checked) { sum = parseInt(pdt); }
-					$('#stock-' + idl).val(sum);
-				}
-				
-				function updateTotal() {
-					var total = 0;
-					$(".order input[type='text']").each(function () {
-
-						if($(this).val() === '') {
-							// empty
-						} else {
-							//get name/id of filled elements
-							var elid = $(this).attr("name");							
-							//get price
-							var price = $("#price" + '-' + elid).val();
-							//get qtty
-							var nb = $("#pdt" + '-' + elid).val();
-							//get sub total
-							if(price) var sub = nb*price;
-							if(price) total = total + sub;
-						}
-						$( "#total" ).text( (Math.round(total*100)/100)/1000 );
+									<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
+										<li data-role="list-divider" style="list-style-type: none;">
+											<? if($type != 'reception' AND $type != 'viewreception') { ?>TOTAL ORDER: <span id="total">0</span>€ H.T.<hr /><? } ?>
+											Carriage paid: <?=$supinfo['carriage_paid']?> | Delivery days: <?=$supinfo['delivery_days']?> | Location: <?=$supinfo['location']?> <br />
+											Internal comments: <?=$supinfo['comment_internal']?> <br />
+											Order comment: <?=$supinfo['comment_order']?> <br /> 
+											Delivery comment: <?=$supinfo['comment_delivery']?> <br /> 
+											Delivery schedule: <?=$supinfo['comment_delivery_info']?> <br />
+											Order method: <?=$supinfo['order_method']?> | Payment type: <?=$supinfo['payment_type']?> | Payment delay: <?=$supinfo['payment_delay']?> <br />
+											Contact sale: <?=$supinfo['contact_sale_name']?> | <?=$supinfo['contact_sale_tel']?> |  <?=$supinfo['contact_sale_email']?><br />
+											Contact order: <?=$supinfo['contact_order_name']?> | <?=$supinfo['contact_order_tel']?> |  <?=$supinfo['contact_order_email']?>
+										</li>
+									</ul>				
+									<input type="hidden" name="supplier" value="<?=$supinfo['id']?>">
+									<input type="hidden" name="action" value="save_order">
+									<input type="hidden" name="type" value="<?=$type?>">
+								</form>
+							</div><!-- /theme -->
+						</div><!-- /content -->
+					</div><!-- /page -->
+					<script>
+					
+					jQuery(document).ready(function(){
+						jQuery('.hide-1').toggle('hide');
+						jQuery('#hideshow').on('click', function(event) {        
+							jQuery('.hide-1').toggle('show');
+						});
 					});
-				}
-				
-				$("form :input").change(function() {
-					updateTotal();
-				});
-				
-				$( document ).ready(function() {
-					updateTotal();
-				});
-				
-				</script>
+
+					function disableStock(idl) {
+						qtty = $('#qtty-' + idl).val();
+						sum = parseInt(qtty);
+						$('#stock-' + idl).val(sum);
+					}
+
+					function updateTotal() {
+						var total = 0;
+						$(".order input[type='text']").each(function () {
+							if($(this).val() === '') {
+								// empty
+							} else {
+								var elid	= $(this).attr("name");
+								var elid1	= elid.split("[");
+								var elid2	= elid1[1].split("]");
+								var idpdt	= elid2[0];
+								var item	= elid1[0];
+								var price	= $('#price' + '-' + idpdt).val();
+								var qtty	= $('#qtty' + '-' + idpdt).val();
+
+								if(item == 'qtty' && qtty > 0) { 						
+									//get sub total
+									if(price) var sub = qtty*price;
+									if(price) total = total + sub;
+								}
+							}
+							$( "#total" ).text( (Math.round(total*100)/100)/1000 );
+
+						});
+					}
+
+					$("form :input").change(function() {
+						updateTotal();
+					});
+
+					$( document ).ready(function() {
+						updateTotal();
+					});
+
+					function validateForm() {
+					    var x = document.forms["order"]["user"].value;
+					    if (x == "") {
+					        alert("User must be filled out");
+					        return false;
+					    }
+					}
+
+					</script>

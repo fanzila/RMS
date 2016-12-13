@@ -10,7 +10,8 @@ class Product {
 		$CI->db->select('p.id, s.id as supplier_id, p.supplier_reference, pc.name AS category_name, p.name AS name, s.name AS supplier_name, p.price, p.active, p.id_category, puprc.name AS unit_name, p.id_unit AS id_unit, p.packaging AS packaging, p.freq_inventory, p.comment, ps.mini AS stock_mini, ps.max AS stock_max, ps.qtty AS stock_qtty, ps.warning AS stock_warning, ps.last_update_user AS last_update_user, ps.last_update_pos AS last_update_pos, u.username AS last_update_user_name')->from('products AS p')->join('suppliers AS s', 'p.id_supplier = s.id')->join('products_unit AS puprc', 'p.id_unit = puprc.id')->join('products_category AS pc','p.id_category = pc.id','left')->join('products_stock AS ps','p.id= ps.id_product','left')->join('users AS u','ps.last_update_id_user = u.id','left');
 		if($id) $sqladd = $CI->db->where('p.deleted', 0)->where('p.id', $id);
 		if($active) $CI->db->where('p.active', true);
-		if($supplier_id != null) $CI->db->where('p.deleted', 0)->where('s.id', $supplier_id);
+		if($supplier_id != null && $supplier_id != '%') $CI->db->where('p.deleted', 0)->where('s.id', $supplier_id);
+		if($supplier_id != null && $supplier_id == '%') $CI->db->where('p.deleted', 0)->where('p.active', true);
 		if($term != null){
 			$array = array('p.name' => $term);
 			$CI->db->where('p.deleted', 0)->like($array);
@@ -88,7 +89,7 @@ public function getSuppliers($order = null, $idsup = null, $id_bu = null) {
 	$CI->load->library('hmw');
 
 	if($order) {
-		$CI->db->select('s.id as id, s.name, s.location, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.contact_sale_name, s.contact_sale_tel, s.contact_sale_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info')
+		$CI->db->select('s.id as id, s.name, s.location, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.contact_sale_name, s.contact_sale_tel, s.contact_sale_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info, s.simple_order_form')
 		->from('suppliers as s')
 		->join('(SELECT date, user, status, supplier_id FROM orders WHERE status = "sent" AND date IS NOT null) as o','o.supplier_id = s.id','left')
 		->where('s.active', 1)
@@ -96,7 +97,7 @@ public function getSuppliers($order = null, $idsup = null, $id_bu = null) {
 		->where('s.id_bu', $id_bu)
 		->order_by('o.date desc');
 	} else {
-		$CI->db->select('s.id as id, s.name, s.location, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.contact_sale_name, s.contact_sale_tel, s.contact_sale_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info')
+		$CI->db->select('s.id as id, s.name, s.location, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.contact_sale_name, s.contact_sale_tel, s.contact_sale_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info, s.simple_order_form')
 	 	->from('suppliers as s')
 	 	->where('active', 1)
 	 	->where('deleted', 0)

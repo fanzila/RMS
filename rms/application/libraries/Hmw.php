@@ -196,13 +196,14 @@ class Hmw {
 
 	public function headerVars($index, $indexlocation, $title){
 		$CI = & get_instance();
+		
 		if($index!=-1){
 			$user		= $CI->ion_auth->user()->row();
 			$bus_list	= $CI->hmw->getBus(null, $user->id);
 			$user_groups = $CI->ion_auth->get_users_groups()->result();
 
 			$bu_id		= $CI->session->all_userdata()['bu_id'];
-			$keylogin 	= $CI->session->userdata('keylogin');
+			$keylogin 	= $CI->session->all_userdata()['keylogin'];
 			$bu_name	= $CI->session->all_userdata()['bu_name'];
 			$username	= $CI->session->all_userdata()['identity'];
 

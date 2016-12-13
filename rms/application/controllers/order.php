@@ -35,20 +35,15 @@ class Order extends CI_Controller {
 	public function index()
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
-
 		$this->hmw->keyLogin();
-
 		$id_bu			=  $this->session->all_userdata()['bu_id'];
-
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
-		$freq			= $this->freq();
 		$suppliers 		= $this->product->getSuppliers(true, null, $id_bu);
 
 		$data = array(
 			'keylogin'		=> $this->session->userdata('keylogin'),
 			'user_groups'	=> $user_groups[0],
-			'suppliers'    	=> $suppliers,
-			'freq'			=> $freq);
+			'suppliers'    	=> $suppliers);
 
 		$data['bu_name']  =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
@@ -58,8 +53,6 @@ class Order extends CI_Controller {
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/index',$data);
 		$this->load->view('jq_footer');
-
-
 	}
 
 	public function autoCompProducts(){
@@ -165,38 +158,50 @@ class Order extends CI_Controller {
 		}
 	}
 
-	public function previousOrders()
+	public function viewOrders()
 	{
 		$this->hmw->keyLogin();
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu 		= $this->session->all_userdata()['bu_id'];
+		$keylogin 	= $this->session->all_userdata()['keylogin'];
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('active', 1);
 		$this->db->where('users_bus.bu_id', $id_bu);
 		$this->db->order_by('users.username', 'asc');
-		$query = $this->db->get("users");
-		$users = $query->result();
-
-		$config = array();
-		$config["base_url"] = base_url() . "order/previousOrders";
-		$config["total_rows"] = $this->order_model->record_count();
-		$config["per_page"] = 10;
-		$config["uri_segment"] = 3;
-		$config['first_link'] = 'First';
-		$config['prev_link'] = 'previous';
-		$config['next_link'] = 'next';
-		$config['last_link'] = 'Last';
-		$config['num_links'] = 4;
+		$query					= $this->db->get("users");
+		$users					= $query->result();
+		
+		$config 				= array();
+		$config["base_url"] 	= base_url() . "order/viewOrders";
+		$config["total_rows"] 	= $this->order_model->record_count();
+		$config["per_page"] 	= 10;
+		$config["uri_segment"] 	= 3;
+		$config['first_link'] 	= 'First';
+		$config['prev_link'] 	= 'previous';
+		$config['next_link'] 	= 'next';
+		$config['last_link'] 	= 'Last';
+		$config['num_links'] 	= 4;
 
 		$this->pagination->initialize($config);
 
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-
+		$post  = $this->input->post();
+		
+		if(isset($post['search'])) {
+			$results	= $this->searchOrder($post, $id_bu, $keylogin); 
+			$search		= true;
+		} else { 
+			$results	= $this->order_model->get_list($config["per_page"], $page, $keylogin);
+			$search		= false; 
+		}
+		
 		$data = array(
 			'suppliers'	=> $this->product->getSuppliers(true, null, $id_bu),
 			'users'		=> $users,
-			'results'	=> $this->order_model->get_list($config["per_page"], $page),
+			'results'	=> $results,
+			'keylogin'	=> $keylogin,
+			'search'	=> $search,
 			'links'		=> $this->pagination->create_links()
 			);
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
@@ -206,50 +211,86 @@ class Order extends CI_Controller {
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('order/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('order/order_prev',$data);
+		$this->load->view('order/order_view',$data);
 		$this->load->view('jq_footer');
 	}
 
-	public function viewProducts($id_freq = null, $load = null, $supplier_id = null)
+	private function sortProductOrder($a, $b) {
+		if(isset($b['stock']) && $b['stock'] > 0) {
+			$b['qtty'] = $b['stock'];
+		}
+		return $b['qtty'] - $a['qtty'];
+	}
+
+	public function viewProducts($load = null, $supplier_id = null, $type = null)
 	{		
 
 		$this->hmw->keyLogin();
 		$this->load->library('product');
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
-		$order_prev = null;
-		$freq = $this->freq();
+		$order_prev		= null;
+		$supinfo		= null;
+		$data_reception = null;
+		$products		= $this->product->getProducts(null, $supplier_id, null, null, $id_bu, true);
+		$stock 			= $this->product->getStock($id_bu);
+		$attributs		= $this->product->getAttributs();
 
 		if($load > 0) {
-			$this->db->select('r.user, r.id as rec_id, r.data, r.date')->from('orders as r')->where('r.idorder', $load)->where('id_bu', $id_bu);
+			$this->db->from('orders as r')->where('r.idorder', $load)->where('id_bu', $id_bu);
 			$order_rec_res	= $this->db->get() or die($this->mysqli->error);
 			$order_rec		= $order_rec_res->row();
 			$order_prev		= unserialize($order_rec->data);
+			$supplier_id	= $order_prev['supplier'];
+			
+			if($type == 'viewreception') $order_recev = unserialize($order_rec->data_reception);
+			
+			foreach ($products as $key => $val) {
+				
+				$products[$key]['qtty'] = null;
+				if(isset($order_prev['pdt'][$key]['qtty']) && $order_prev['pdt'][$key]['qtty'] > 0) {
+					$products[$key]['qtty'] = $order_prev['pdt'][$key]['qtty'];
+				}
+				//Inject product added at reception 
+				if($type == 'viewreception' && isset($order_recev['pdt'][$key]['stock'])) { 
+					$products[$key]['stock'] = $order_recev['pdt'][$key]['stock'];
+					if(!isset($products[$key]['qtty']) AND $order_recev['pdt'][$key]['stock'] > 0) $products[$key]['qtty'] = 0;
+				}
+				
+				//Remove product from viewreception if empty 
+				if($type == 'viewreception' && (empty($products[$key]['stock']) AND empty($products[$key]['qtty']))) {
+					unset($products[$key]);
+				}
+				
+			}
+			
+			uasort($products, array($this, "sortProductOrder"));
+			//print_r($products);
 		}
-
-		$supinfo	= null;
-		$products	= $this->product->getProducts(null, $supplier_id, null, null, $id_bu, true);
-		$stock 		= $this->product->getStock($id_bu);
-		$attributs	= $this->product->getAttributs();
 
 		if(isset($supplier_id)) $supinfo = $this->product->getSuppliers(null, $supplier_id, $id_bu);
 
+		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->where('users.active', 1);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('users.username', 'asc');
+		$query = $this->db->get("users");
+		$users = $query->result();
+
 		$data = array(
 			'products'			=> $products,
-			'order_name'		=> $freq[$id_freq]['name'],
-			'freq_id'			=> $id_freq,
-			'order_prev'		=> $order_prev,
 			'stock'				=> $stock,
 			'attributs'			=> $attributs,
+			'users'				=> $users,
 			'supinfo'			=> $supinfo[$supplier_id],
-			'load' 				=> $load
+			'load' 				=> $load, 
+			'type'				=> $type
 			);
-		if($load <= 0) { 
-			$title	= "Order ".strtoupper($data['order_name']);
-		}else{
-			$title = "Order n°".$load;
-		}
-		$data['bu_name']	=  $this->session->all_userdata()['bu_name'];
+
+		$title 				= "Order ".$supinfo[$supplier_id]['name'];
+		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
 		$data['keylogin']	= $this->session->userdata('keylogin');
 
@@ -261,48 +302,140 @@ class Order extends CI_Controller {
 
 	}
 
-	public function prepareOrder() {
+	public function detailOrder() {
 
 		$this->hmw->keyLogin();
 		$this->load->library('product');
 		$this->load->library('ion_auth');
-		$user = $this->ion_auth->user()->row();
-		$stock_update = false;
-		$post = $this->input->post();
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$user			= $this->ion_auth->user()->row();
+		$stock_update	= false;
+		$post			= $this->input->post();
+		$id_bu 			= $this->session->all_userdata()['bu_id'];
+		$update_stock	= array();
+		$do_something	= false;
+		
+		if(empty($post)) exit('Nothing to process, go back');
+		foreach ($post as $key => $var) {	
 
-		//maj stock
-		$maj = array();
-		foreach ($post as $key => $var) {
-			$ex = @explode('-',$key);
-			if($ex[0] == 'stock') { 
-				$var = $this->clean_number($var);
-				if(empty($var)) $var = '0';
-				if(!empty($var) AND !is_numeric($var)) exit('Stock has to be numeric, invalid: '.$var);
-				$q = "INSERT INTO products_stock (qtty, id_product, last_update_id_user, last_update_user, id_bu) VALUES($var, $ex[1], $user->id, NOW(), $id_bu) ON DUPLICATE KEY UPDATE qtty=qtty+$var, last_update_id_user=$user->id, last_update_user=NOW()";
-				$this->db->query($q) or die($this->mysqli->error);
-				$pdt_info = $this->product->getProducts($ex[1], null, null, null, $id_bu);
-				$maj[$ex[1]]['stock'] = $var;
-				$maj[$ex[1]]['name'] = $pdt_info[$ex[1]]['name'];
-				if(!empty($var)) $stock_update = true;
+			//update stock 
+			if($key == 'stock') { 
+				foreach ($var as $id_pdt => $value) {
+					$value = $this->clean_number($value);
+					if(empty($value)) $value = '0';
+					if(!empty($value) AND !is_numeric($value)) exit('Stock has to be numeric, invalid: '.$value);
+					$q = "INSERT INTO products_stock (qtty, id_product, last_update_id_user, last_update_user, id_bu) VALUES($value, $id_pdt, $user->id, NOW(), $id_bu) ON DUPLICATE KEY UPDATE qtty=qtty+$value, last_update_id_user=$user->id, last_update_user=NOW()";
+					$this->db->query($q) or die($this->mysqli->error);
+					$pdt_info = $this->product->getProducts($id_pdt, null, null, null, $id_bu);
+					$update_stock[$id_pdt]['stock']	= $value;
+					$update_stock[$id_pdt]['name']	= $pdt_info[$id_pdt]['name'];
+					if(!empty($var) AND $value > 0) { 
+						$stock_update = true;
+						$do_something	= true;
+					}
+				}	
 			}
+
+			if($post['type'] != 'reception') { 
+				//insert order
+				$id_pdt = 0; 
+				$value = 0;
+				if($key == 'qtty') {
+					$order = array();
+					$order['id'] = date('ymd').rand(1000, 9000);
+					$order['supplier'] = $post['supplier'];
+					$pricetotal = 0; 
+
+					foreach ($var as $id_pdt => $value) {
+						if($value > 0) { 
+							$order['pdt'][$id_pdt] = array(
+								'qtty' => $value,
+								'name' => $post['pdt_name'][$id_pdt],
+								'price' => $post['price'][$id_pdt],
+								'subtotal' => $post['price'][$id_pdt]*$value
+								);
+						}
+						if(!empty($value) AND !is_numeric($value)) exit('Qtty has to be numeric, invalid: '.$value);
+						if(!empty($value) AND is_numeric($value)) $do_something	= true;
+						$pricetotal += $post['price'][$id_pdt]*$value;
+					}
+					$order['pricetotal'] = $pricetotal;
+
+					//serialize and insert into db
+					$srl = serialize($order);
+					$this->db->set('data', $srl);
+					$this->db->set('idorder', $order['id']);
+					$this->db->set('supplier_id', $post['supplier']);
+					$this->db->set('user', $user->id);
+					$this->db->set('id_bu', $id_bu);
+					$this->db->insert('orders');				
+				}
+
+				//order is reception
+			} else {
+				$do_something = true;
+				$user_receive = $user->id;
+				if(isset($post['user'])) {
+					if($post['user']) { 
+						$user_receive = $post['user']; 
+					}
+				}
+				if($key == 'stock') {
+					$order_reception = array();
+					$status_reception = true;
+					foreach ($var as $id_pdt => $value) {
+						if($value > 0) { 
+							$order_reception['pdt'][$id_pdt] = array(
+								'qtty' => $value,
+								'name' => $post['pdt_name'][$id_pdt],
+								'price' => $post['price'][$id_pdt],
+								'stock' => $post['stock'][$id_pdt],
+								'subtotal' => $post['price'][$id_pdt]*$value
+								);
+						}
+
+							if($post['qtty_check'][$id_pdt] != $post['stock'][$id_pdt]) {
+								$status_reception = false;
+							}
+					}
+
+					
+					//serialize and insert into db
+					if(isset($post['user'])) $user_receive = $post['user'];
+					$srl = serialize($order_reception);
+					$this->db->set('data_reception', $srl);
+					$this->db->set('comment_reception', $post['comment_reception']);
+					$this->db->set('status', 'received');
+					$this->db->set('user_reception', $user_receive);
+					$this->db->set('date_reception', "NOW()", FALSE);
+					$this->db->set('status_reception', $status_reception);
+					$this->db->where('idorder', $post['idorder']);
+					$this->db->update('orders')  or die($this->mysqli->error);		
+					$order = array('id' => $post['idorder']);
+				}
+			} 
 		}
 
-		$suppliers = $this->product->getSuppliers(null, null, $id_bu);
+		$supinfo = $this->product->getSuppliers(null, $post['supplier'], $id_bu);
+		$pdtinfo = $this->product->getProducts(null, $post['supplier'], null, null, $id_bu, null);
 
 		$data = array(
-			'order' => $this->groupOrder($post, $id_bu), 
-			'suppliers' => $suppliers, 
-			'stock_update' => $stock_update, 
-			'maj' => $maj);
+			'order'			=> $order,
+			'suppliers'		=> $post['supplier'], 
+			'stock_update'	=> $stock_update,
+			'supinfo'		=> $supinfo[$post['supplier']], 
+			'pdtinfo'		=> $pdtinfo, 
+			'type'			=> $post['type'],
+			'update_stock' 	=> $update_stock);
 
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Prepare");
+		if(!$do_something) exit('Empty form, go back');
+
+		$headers = $this->hmw->headerVars(0, "/order/", "Order Detail");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('order/order_prepare',$data);
+		$this->load->view('order/order_detail',$data);
 		$this->load->view('jq_footer');
 	}
 
@@ -360,17 +493,6 @@ class Order extends CI_Controller {
 		$this->load->view('order/confirm',$data);
 	}
 
-	public function downloadOrder($id) {
-
-		$this->load->helper('download');
-		$date_y = '20'.$id[0].$id[1]; 
-		$date_m = $id[2].$id[3];
-		$data = file_get_contents('orders/'.$date_y.'/'.$date_m.'/'.$id.'.pdf');
-		$name = $id.'.pdf';
-		force_download($name, $data);
-
-	}
-
 	public function sendOrder() {
 
 		$this->hmw->keyLogin();
@@ -378,76 +500,61 @@ class Order extends CI_Controller {
 		$this->load->helper('download');
 		$this->load->library('mmail');
 		$this->load->helper('file');
-		$id_bu =  $this->session->all_userdata()['bu_id'];
 
-		$post 	= $this->input->post();
-		$sup 	= array();
-		$disp 	= array(); 
-		$inc 	= 0;
+		$id_bu 			= $this->session->all_userdata()['bu_id'];
+		$user 			= $this->ion_auth->user()->row();
+		$post			= $this->input->post();
 
-		$server_name = $this->hmw->getParam('server_name');
-		$order_email = $this->hmw->getEmail('order', $id_bu);
+		$idorder		= $post['idorder'];
+		$sup 			= array();
+		$disp 			= array(); 
+		$inc 			= 0;
+		$order			= $this->getOrder($idorder, $id_bu) or die('Can\'t get order: ' .$idorder. ' for BU '.$id_bu);
 
-		foreach ($post as $key => $var) {
-			$ex = @explode('_',$key);
-			if(@$ex[1] == 'ID') $sup[$ex[0]]['id'] = $var;
-			if(@$ex[1] == 'EMAIL') $sup[$ex[0]]['email'] = $var;
-			if(@$ex[1] == 'EMAILCC') $sup[$ex[0]]['emailcc'] = $var;
-			if(@$ex[1] == 'IDORDER') $sup[$ex[0]]['idorder'] = $var;
-			if(@$ex[1] == 'SUP') $sup[$ex[0]]['name'] = $var;
-			if(@$ex[1] == 'SUPID') $sup[$ex[0]]['supid'] = $var;
-			if(@$ex[1] == 'USER') $sup[$ex[0]]['user'] = $var;
-			if(@$ex[1] == 'USERID') $sup[$ex[0]]['userid'] = $var;
-			if(@$ex[1] == 'COMT') $sup[$ex[0]]['comt'] = $var;
-			$inc++;
+		$server_name	= $this->hmw->getParam('server_name');
+		$order_email 	= $this->hmw->getEmail('order', $id_bu);
+		$getSupInfo		= $this->product->getSuppliers(null, $order->supplier_id, $id_bu);
+		$supinfo		= $getSupInfo[$order->supplier_id];
+
+		$email 	= array();
+		$cc 	= '';
+
+		$key 	= md5(microtime().rand());
+		$link 	= 'http://'.$server_name.'/order/confirm/'.$key;
+
+		if(!empty($supinfo['contact_order_email'])) {
+			$cc = $order_email;
+			if(!empty($order->ccemail)) $cc .= ','.$order->ccemail;
+
+			$email['from']		= $order_email;
+			$email['from_name']	= 'HANK';
+			$email['cc'] 		= $cc;
+			$email['to']		= $supinfo['contact_order_email'];
+			$email['subject'] 	= "Nouvelle commande ".$idorder;
+			$email['attach'] 	= $order->file;
+			$email['replyto'] 	= $order_email;
+			$email['msg'] 		= "Bonjour ".$supinfo['name']."!\n\nVoici une nouvelle commande en PJ.\n\n";
+			if(!empty($order->comment)) $email['msg'] .= $order->comment."\n\n"; 
+			$email['msg'] 		.= "Merci de bien vouloir valider la prise en compte de cette commande en cliquant sur ce lien : $link";
+			$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK - ".$user->username."\nEmail : $order_email \nTel : $user->phone";
+
+			$this->mmail->sendEmail($email);
+			$this->db->set('status', 'sent')->set('date', "NOW()", FALSE);
+			$this->db->where('idorder', $idorder)->order_by('date desc')->limit(1);
+			$this->db->update('orders');
+
+			$req_conf = "INSERT INTO orders_confirm SET `date_sent` = NOW(), `key` = '$key', `idorder` = ".$idorder.", `status` = 'sent' ON DUPLICATE KEY UPDATE `date_sent` = NOW(), `key` = '$key'";
+			$this->db->query($req_conf);
 		}
 
-		foreach ($sup as $key => $var) {
-
-			$email 	= array();
-			$cc 	= '';
-			$date_y = '20'.$var['id'][0].$var['id'][1]; 
-			$date_m = $var['id'][2].$var['id'][3];
-			$key 	= md5(microtime().rand());
-			$link 	= 'http://'.$server_name.'/order/confirm/'.$key;
-			$user 	= $this->hmw->getUser($var['userid']);
-
-			if(!empty($var['email'])) {
-				$cc 				= $order_email;
-				if(!empty($var['emailcc'])) $cc .= ','.$var['emailcc'];
-
-				$email['from']		= $order_email;
-				$email['from_name']	= 'HANK';
-				$email['cc'] 		= $cc;
-				$email['to']		= $var['email'];
-				$email['subject'] 	= "Nouvelle commande ".$var['id'];
-				$email['attach'] 	= 'orders/'.$date_y.'/'.$date_m.'/'.$var['id'].'.pdf';
-				$email['replyto'] 	= $order_email;
-				$email['msg'] 		= "Bonjour ".$var['name']."!\n\nVoici une nouvelle commande en PJ.\n\n";
-				if(!empty($var['comt'])) $email['msg'] .= $var['comt']."\n\n"; 
-				$email['msg'] 		.= "Merci de bien vouloir valider la prise en compte de cette commande en cliquant sur ce lien : $link";
-				$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK - ".$var['user']."\nEmail : $order_email \nTel : $user->phone";
-
-				$this->mmail->sendEmail($email);
-				$this->db->set('status', 'sent')->set('date', "NOW()", FALSE);
-				$this->db->where('idorder', $var['idorder'])->order_by('date desc')->limit(1);
-				$this->db->update('orders');
-
-				$req_conf = "INSERT INTO orders_confirm SET `date_sent` = NOW(), `key` = '$key', `idorder` = ".$var['idorder'].", `status` = 'sent' ON DUPLICATE KEY UPDATE `date_sent` = NOW(), `key` = '$key'";
-				$this->db->query($req_conf);
-
-				$disp[] = $var['name'];
-			}
-
-		}
-
-		$data = array('disp' => $disp);
+		$data = array('name' => $supinfo['name']);
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
+
 		$headers = $this->hmw->headerVars(0, "/order/", "Order Sent");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('order/order_sent', $data);
+		$this->load->view('order/order_send', $data);
 		$this->load->view('jq_footer');
 
 	}
@@ -459,209 +566,97 @@ class Order extends CI_Controller {
 		$user = $this->ion_auth->user()->row();
 		$this->load->library('product');
 		$this->load->library('hmw');
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$this->load->helper(array('dompdf', 'file'));		
+		$id_bu					= $this->session->all_userdata()['bu_id'];
+		$post					= $this->input->post();
+		$order					= $this->getOrderData($post['idorder'], $id_bu);
+		$getSupInfo				= $this->product->getSuppliers(null, $post['supplier'], $id_bu);
 
-		$post = $this->input->post();
-		$sup = array();
-		$inc = 0;
+		$html					= '';
+		$pdf					= '';
 
-		//group suppliers
-		foreach ($post as $key => $var) {
-			$ex = @explode('_',$key);
-			if(@$ex[1] == 'SUP') {
-				$sup[] = $var;
-				$inc++;
-			}
+		$info 					= array();
+		$info['date']			= date('d/m/Y H:i');
+		$info['idorder']		= $post['idorder'];
+		$info['user'] 			= $this->hmw->getUser($user->id);
+		$info['buinfo']			= $this->hmw->getBuInfo($id_bu); 		
+		$info['supplier']		= $getSupInfo[$post['supplier']];
+		$info['pdtinfo']		= $this->product->getProducts(null, $post['supplier'], null, null, $id_bu, null);
 
+		$info['cc_email'] 		= $post['ccemail'];
+		$info['comment'] 		= $post['comment'];
+
+
+		$date_y = date('Y');
+		$date_m	= date('m');
+
+		if (!is_dir('orders/'.$date_y)) {
+			mkdir('./orders/' . $date_y, 0777, TRUE);
 		}
 
-		//group products
-		$pdt = array();
-		foreach ($sup as $key2 => $var2) {
-			foreach ($post as $key3 => $var3) {
-				$ex2 = @explode('_',$key3);
-				if(@$ex2[0] == $key2)  {
-					if(@$ex2[2] == 'NAME') $pdt[$key2][$ex2[3]]['name'] 		= $var3;
-					if(@$ex2[2] == 'QTTY') $pdt[$key2][$ex2[3]]['qtty'] 		= $var3;
-					if(@$ex2[2] == 'UNIT') $pdt[$key2][$ex2[3]]['unitname']		= $var3;
-					if(@$ex2[2] == 'PACK') $pdt[$key2][$ex2[3]]['packaging'] 	= $var3;
-					if(@$ex2[2] == 'ATTR') $pdt[$key2][$ex2[3]]['attribut'] 	= $var3;
-					if(@$ex2[2] == 'CODEF') $pdt[$key2][$ex2[3]]['codef']		= $var3;
-					if(@$ex2[2] == 'PRIC') $pdt[$key2][$ex2[3]]['pric']			= $var3;
-					if(@$ex2[2] == 'ATTR') {
-						$pdt[$key2][$ex2[3]]['attribut'] 	= $var3;
-						if($var3 > 0) $pdt[$key2][$ex2[3]]['attributname'] = $this->product->getAttributName($var3);
-					}
-
-				}
-			}
+		if (!is_dir('orders/'.$date_y.'/'.$date_m)) {
+			mkdir('./orders/'.$date_y.'/'.$date_m, 0777, TRUE);
 		}
 
-		$this->load->helper(array('dompdf', 'file'));
-		$order = array();
-		$getBuInfo = $this->hmw->getBuInfo($id_bu);
+		$data = array('info' => $info, 'order' => $order);
+		$html = $this->load->view('order/bdc', $data, true);
+		//$this->load->view('order/bdc', $data); to debug uncomment this line, comment 1 line above and all the following
 
-		for( $i = 0; $i < $inc; ++$i )
-		{
-			$data 				= array();
-			$html				= '';
-			$pdf				= '';
-			$info 				= array();
-			$idorder 			= $post[$i.'_IDORDER'];
-			$id					= $idorder.'_'.$post[$i.'_SUP'];
-			$user 				= $this->hmw->getUser($user->id);
-			$supinfo			= $this->product->getSuppliers(null, $post[$i.'_SUPID'], $id_bu);
+		$pdf = pdf_create($html, '', false);
+		$filename = 'orders/'.$date_y.'/'.$date_m.'/'.$info['idorder'].'_'.strtoupper($info['supplier']['name']).'.pdf';
 
-			$info['date']		= date('d/m/Y H:i');		
-			$info['id']			= $id;
-			$info['idorder']	= $idorder;
-			$info['sup_email'] 	= $post[$i.'_EMAIL'];
-			$info['cc_email'] 	= $post[$i.'_CCEMAIL'];
-			$info['comt'] 		= $post[$i.'_COMT'];
-			$info['sup_name'] 	= $post[$i.'_SUP'];
-			$info['sup_id'] 	= $post[$i.'_SUPID'];
-			$info['dlv_info'] 	= $post[$i.'_DLV_INFO'];
-			$info['dlv_comt'] 	= $post[$i.'_DLV_COMT'];
-			$info['dlv_como'] 	= $post[$i.'_DLV_COMO'];
-			$info['franco'] 	= $post[$i.'_FRANCO'];
-			$info['totalprice'] = $post[$i.'_TOTALPRICE'];	
-			$info['userid'] 	= $user->id;	
-			$info['user'] 		= $user->username;
-			$info['user_tel'] 	= $user->phone;			
-			$info['sup_tel'] 	= $supinfo[$post[$i.'_SUPID']]['contact_order_tel'];
+		//update order 		
+		$this->db->set('comment', $post['comment']);
+		$this->db->set('ccemail', $post['ccemail']);
+		$this->db->set('file', $filename);
+		$this->db->where('idorder', $post['idorder']);
+		$this->db->where('id_bu', $id_bu);
+		$this->db->update('orders')  or die($this->mysqli->error);
 
-			$info['company_info']	= $getBuInfo->delivery_header;
-			$info['delivery_info']	= $getBuInfo->delivery_info;
-			$info['email_order']	= $getBuInfo->email_order;
+		write_file($filename, $pdf);
 
-			$date_y = date('Y');
-			$date_m	= date('m');
-
-			if (!is_dir('orders/'.$date_y)) {
-				mkdir('./orders/' . $date_y, 0777, TRUE);
-
-			}
-
-			if (!is_dir('orders/'.$date_y.'/'.$date_m)) {
-				mkdir('./orders/'.$date_y.'/'.$date_m, 0777, TRUE);
-
-			}
-
-			$data = array('info' => $info, 'products' => $pdt[$i]);
-			$html = $this->load->view('order/bdc', $data, true);
-			$pdf = pdf_create($html, '', false);
-			write_file('orders/'.$date_y.'/'.$date_m.'/'.$id.'.pdf', $pdf);
-			$order[] = array('id' => $id, 'idorder' => $idorder, 'comt' => $info['comt'], 'user' => $user->username, 'userid' => $user->id, 'sup_name' => $info['sup_name'], 'sup_id' => $info['sup_id'], 'sup_email' => $info['sup_email'], 'cc_email' => $info['cc_email']);
-		}
-
-		$data2 = array('order' => $order);
-
-		$data2['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data2['username'] = $this->session->all_userdata()['identity'];
+		$fileencode = str_replace("/", "-", $filename);
+		$data['filename']	= urlencode($fileencode);
+		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
+		$data['username']	= $this->session->all_userdata()['identity'];
 
 		$headers = $this->hmw->headerVars(0, "/order/", "Order Confirm");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('order/order_confirm', $data2);
+		$this->load->view('order/order_confirm', $data);
 		$this->load->view('jq_footer');
 	}
 
-	private function freq()
-	{
-		$freq = array(
-			0 => array ( 'name' => 'previous', 'id' => 0),
-			1 => array ( 'name' => 'high', 'id' => 1),
-			2 => array ( 'name' => 'medium', 'id' => 2),
-			3 => array ( 'name' => 'low', 'id' => 3),
-			1000 => array ( 'name' => 'all', 'id' => 1000)
-			);
+	public function pdfPreview($file) {
+		$filedecode = urldecode($file);
+		$filename = str_replace("-", "/", $filedecode);
+		$im = new imagick($filename);
+		$im->setImageFormat('png');
+		if($im->getNumberImages() > 1) { 
+			$im->previousImage();
+			$im->previousImage();
+		}
+		header('Content-Type: image/png');
+		echo $im;
+	} 
 
-		return $freq;
+	public function downloadOrder($id) {
+
+		$this->load->helper('download');
+		$date_y = '20'.$id[0].$id[1]; 
+		$date_m = $id[2].$id[3];
+		$data = file_get_contents('orders/'.$date_y.'/'.$date_m.'/'.$id.'.pdf');
+		$name = $id.'.pdf';
+		force_download($name, $data);
+
 	}
 
-
-	private function groupOrder($data, $id_bu) 
-	{
-		$this->load->library('product');
-		$products = $this->product->getProducts(null, null, null, null, $id_bu);
-		$this->load->library('ion_auth');
-		$user = $this->ion_auth->user()->row();
-		$ar = array();
-
-		//fill array with suppliers
-		foreach ($data as $key => $var) {
-			$key = $this->clean_number($key);
-			if(is_numeric($key)) {
-				$$products[$key]['supplier_name'] = array($key => $var);
-				$qtty = $this->clean_number($var);
-				if(!empty(trim($var)) AND !is_numeric($qtty)) exit('Quantity has to be numeric, invalid: '.$var);
-
-				$complet[] = array(
-					'supplier' => $products[$key]['supplier_name'], 
-					'supplier_id' => $products[$key]['supplier_id'], 
-					'id' => $key, 
-					'qtty' => $qtty, 
-					'name' => $products[$key]['name'], 
-					'unitname' => $products[$key]['unit_name'],
-					'packaging' => $products[$key]['packaging'],
-					'codef' => $products[$key]['supplier_reference'],
-					'price' => $products[$key]['price'],
-					'attribut' => $data['attribut-'.$key]
-					);				
-			}
-		}
-
-		//group suppliers 
-		$sups = array();
-		foreach ($complet as $h) {
-			if($h['qtty'] > 0) $sups[] = $h['supplier_id'];
-		}
-		$uniqueSups = array_unique($sups);
-
-		//group orders by suppliers
-		$total = array();	
-		foreach ($uniqueSups as $supplier_id) {
-			$insert = '';
-			$idorder = date('ymd').rand(1000, 9000);
-			foreach ($complet as $key2) {
-				if($key2['supplier_id'] == $supplier_id) {
-					if($key2['qtty'] > 0) {
-						$insert = array(
-							'id' => $key2['id'], 
-							'qtty' => $key2['qtty'], 
-							'name' => $key2['name'],
-							'packaging' => $key2['packaging'], 
-							'unitname' => $key2['unitname'], 
-							'codef' => $key2['codef'], 
-							'idorder' => $idorder,
-							'supplier' => $key2['supplier'],
-							'supid' => $key2['supplier_id'],
-							'price' => $key2['price'],
-							'attribut' => $key2['attribut'],
-							'subtotalprice' => $key2['price']*$key2['qtty'] 
-							);
-						$total[$supplier_id][] = $insert;
-					}
-				}
-			}
-			//serialize and insert into db
-			$srl = serialize($total[$supplier_id]);
-			$this->db->set('data', $srl);
-			$this->db->set('idorder', $idorder);
-			$this->db->set('supplier_id', $supplier_id);
-			$this->db->set('user', $user->id);
-			$this->db->set('id_bu', $id_bu);
-			$this->db->insert('orders');	
-		}
-		return $total;
-	}
-	function getprevorder(){
-		$id_bu =  $this->session->all_userdata()['bu_id'];		
-		$data = $this->input->post();
+	private function searchOrder($data, $id_bu, $keylogin=null){
 		$ok=0;
-		$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, c.status as confirm, s.name as supplier_name');
+		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
 		$this->db->from('orders as r');
 		$this->db->join('users as u', 'r.user = u.id');
+		$this->db->join('users as ur', 'r.user_reception = ur.id', 'left');
 		$this->db->join('suppliers as s','s.id = r.supplier_id','left');
 		$this->db->join('orders_confirm as c','r.idorder = c.idorder','left');
 		$this->db->where('r.id_bu', $id_bu);
@@ -691,22 +686,13 @@ class Order extends CI_Controller {
 			$this->db->where('r.date <=',	$data['edate']);
 		}
 
-		$this->db->order_by('r.date desc')->limit(25);
+		$status = array('sent', 'received');
+		if($keylogin) $this->db->where_in('r.status', $status);
+		
+		$this->db->order_by('r.date desc')->limit(50);
 		$rec_res = $this->db->get() or die($this->mysqli->error);
-		$rec = $rec_res->result_array();
-
-		$data = array(
-			'order'	=>	$rec,
-			'bu_name'	=> $this->session->all_userdata()['bu_name'],
-			'username'	=> $this->session->all_userdata()['identity'],
-			'valided'	=> $ok
-			);
-		$headers = $this->hmw->headerVars(0, "/order/previousOrders", "Order prev : search results");
-		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('order/search_results', $data);
-		$this->load->view('jq_footer');
-
+		
+		return $rec_res->result_array();
 	}
 
 	public function clicCheckConfirm($id_bu)
@@ -719,36 +705,34 @@ class Order extends CI_Controller {
 
 			$date_current	= new DateTime();
 
-			$this->db->select('orders_confirm.idorder, orders_confirm.key, orders_confirm.date_sent, suppliers.name, suppliers.contact_order_email, orders.user');
+			$this->db->select('orders_confirm.idorder, orders_confirm.key, orders_confirm.date_sent, suppliers.name, suppliers.contact_order_email, orders.user, orders.ccemail');
 
 			$this->db->join('orders', 'orders_confirm.idorder = orders.idorder', 'left');
 			$this->db->join('suppliers', 'orders.supplier_id = suppliers.id', 'left');
 			$this->db->where('orders_confirm.count_confirm <', 2);
-			$status = array('sent','chased');	
+			$status = array('sent','chased');
 			$this->db->where_in('orders_confirm.status', $status);
 			$this->db->where('orders.id_bu', $id_bu);
 
 			$query = $this->db->get("orders_confirm");
 			$lines = $query->result();
-
 			foreach ($lines as $line) {
 
 				$date_sent		= new DateTime($line->date_sent);
 				$date_sent		->modify('+1 day');
 				$ds 			= $date_sent->format('U');
 				$dc 			= $date_current->format('U');
-
+				
 				if(!empty($line->contact_order_email) AND $ds <= $dc) { 
 
 					$server_name		= $this->hmw->getParam('server_name');
 					$order_email		= $this->hmw->getEmail('order', $id_bu);
 					$user 				= $this->hmw->getUser($line->user);
 					$email 				= array();
-					$cc 				= '';
+					$cc 				= (!empty($line->ccemail)) ? $order_email.','.$line->ccemail : $order_email;
 					$link 				= 'http://'.$server_name.'/order/confirm/'.$line->key;
 					$date_y 			= '20'.$line->idorder[0].$line->idorder[1]; 
 					$date_m 			= $line->idorder[2].$line->idorder[3];
-					$cc 				= $order_email;
 					$email['from']		= $order_email;
 					$email['from_name']	= 'HANK';
 					$email['cc'] 		= $cc;
@@ -772,6 +756,19 @@ class Order extends CI_Controller {
 		}
 
 
+	}
+
+	private function getOrder($id, $id_bu) {
+		$this->db->from('orders')->where('idorder', $id)->where('id_bu', $id_bu);
+		$order_rec_res	= $this->db->get() or die($this->mysqli->error);
+		return $order_rec_res->row();
+	}
+
+	private function getOrderData($id, $id_bu) {
+		$this->db->select('r.user, r.id as rec_id, r.data, r.date')->from('orders as r')->where('r.idorder', $id)->where('id_bu', $id_bu);
+		$order_rec_res	= $this->db->get() or die($this->mysqli->error);
+		$order_rec		= $order_rec_res->row();
+		return unserialize($order_rec->data);	
 	}
 
 	private function clean_number($num) {
