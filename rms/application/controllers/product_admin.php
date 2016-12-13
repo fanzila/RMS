@@ -86,67 +86,6 @@ class Product_admin extends CI_Controller {
 		
 	}
 
-//Old save function (in case there are undetected proble in the new one)	
-/*	public function savebkp()
-	{
-
-		$this->load->library('ion_auth');
-		$id_bu =  $this->session->all_userdata()['bu_id'];
-		
-		$data = $this->input->post();
-		$sqlt = "UPDATE ";
-		$sqle = " WHERE `id` = $data[id]";
-		$reponse = 'ok';
-
-		if($data['id'] == 'create') {
-			$sqlt = "INSERT INTO ";
-			$sqle = "";
-		}
-
-		if(empty($data['id'])) exit();
-
-		$price = $data['price']*1000;
-
-		$sql = "$sqlt products SET
-			name = '".addslashes($data['name'])."',
-			id_supplier = '".$data['id_supplier']."',
-			price = '".$price."',
-			id_unit = '".$data['id_unit']."',
-			packaging = '".$data['packaging']."',
-			id_category = '".$data['id_category']."',
-			active = '".$data['active']."',
-			freq_inventory = '".$data['freq_inventory']."',
-			supplier_reference = '".$data['supplier_reference']."',
-			comment = '".addslashes($data['comment'])."'
-			$sqle";
-
-		$req = $this->db->query($sql) or die($this->mysqli->error);
-		if($data['id'] == 'create') $new_id = $this->db->insert_id();
-		
-			$user = $this->ion_auth->user()->row();
-			
-			if($data['id'] == 'create') $id_product = $new_id;
-			if($data['id'] != 'create') $id_product = $data['id'];
-			
-			$sqlins = "INSERT INTO products_stock SET id_product = $id_product, warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW(), id_bu = $id_bu";
-
-			if($data['id'] == 'create') {
-				$this->db->query($sqlins) or die($this->mysqli->error);		
-			} else {
-				$reqs = $this->db->query("SELECT * FROM products_stock WHERE `id_product` = $data[id]") or die($this->mysqli->error);
-				$rets = $reqs->result_array();
-				if(empty($rets)) {
-					$this->db->query($sqlins) or die($this->mysqli->error);
-				} else {
-					$this->db->query("UPDATE products_stock SET warning = '$data[stock_warning]', mini = '$data[stock_mini]', max = '$data[stock_max]', qtty = '$data[stock_qtty]', last_update_id_user = $user->id, last_update_user = NOW() WHERE id_product = $id_product") or die($this->mysqli->error);
-				}
-		}
-	
-
-		echo json_encode(['reponse' => $reponse]);
-		exit();
-	}*/
-
 	public function save()
 	{
 		$id_bu =  $this->session->all_userdata()['bu_id'];

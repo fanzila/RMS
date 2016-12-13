@@ -3,7 +3,7 @@
 	<div class="row">
 		<div class="col-xs">
 			<div class="box">
-				<a href="/order/previousOrders/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Log</a>
+				<a href="/order/viewOrders/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">ORDERS</a>
 			</div>
 		</div>
 		<?php if($user_groups->level >= 2) { ?>
@@ -40,25 +40,12 @@
 				<?
 			foreach ($suppliers as $varsup) {
 				?>
-				<li><a data-ajax="false" href="/order/viewProducts/1000/0/<?=$varsup['id']?>"><?=strtoupper($varsup['name'])?> 
+				<li><a data-ajax="false" href="/order/viewProducts/0/<?=$varsup['id']?>"><?=strtoupper($varsup['name'])?> 
 					<? if(isset($varsup['last_order'])) { ?><small>  <i>Last order: <?=$varsup['last_order']?> by <?=$varsup['last_order_user']->username?></i></small><? } ?></a></li>
 					<? } ?>
 				</ul>
-				<? } ?>
-				<?php if($user_groups->level >= 1) { ?>
-
-					<ul data-role="listview" data-inset="true" data-filter="false">
-						<li data-role="list-divider">ORDER FREQUENCY</li>
-						<?
-					foreach ($freq as $var) {
-						if($var['name'] != 'previous') {
-							?>
-							<li><a data-ajax="false" href="/order/viewProducts/<?=$var['id']?>"><?=strtoupper($var['name'])?></a></li>
-							<? }  } ?>
-						</ul>
-						<? } ?>						
+				<? } ?>					
 					</div><!-- /content -->
-
 					<div id="view"></div>
 				</div><!-- /page -->
 				<script>

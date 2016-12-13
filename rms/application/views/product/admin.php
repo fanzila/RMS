@@ -13,6 +13,7 @@
 								<? foreach ($suppliers as $sup) { ?>
 									<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected";}?> ><?=$sup['name']?></option>
 								<? } ?>
+								<option value="%">ALL</option>
 							</select>
 						</div>
 						<?if($test==0){?>
@@ -25,6 +26,10 @@
 				<ul data-role="listview" data-inset="true">
 				<? 
 				if(!empty($products)) {
+					$count = count($products);
+					?>
+					<li><?=$count?> product(s)</li>
+					<?
 				foreach ($products as $line) { 
 					?>
 					<li data-role="list-divider"><?=stripslashes($line['name'])?> <small>- <?=$line['id']?></small></li>

@@ -12,7 +12,12 @@
 						<li><a data-ajax="false" href="/checklist/viewckltasks/<?=$var['id']?>"><?=$var['name']?></a></li>
 						<? } ?>
 					</ul>
-				<a href="/checklist/viewcklprevioustasks" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="search" data-mini="true" data-theme="a">Log</a> <? if($keylogin) { ?><a href="#" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="power" data-mini="true" data-theme="a" name="buttonClick" onclick="refreshPage()">Refresh</a><? } ?>
+				<a href="/checklist/viewcklprevioustasks" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="search" data-mini="true" data-theme="a">Log</a> 
+				<!--
+				<? if($keylogin) { ?>
+					<a href="#" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="power" data-mini="true" data-theme="a" name="buttonClick" onclick="refreshPage()">Refresh</a>
+				<? } ?>
+				-->
 		</div><!-- /content -->
 
 		<br /><br />

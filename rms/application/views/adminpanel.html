@@ -29,7 +29,7 @@
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
-						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/order/"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
+						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="<? if($keylogin) { ?>/order/viewOrders/<? } else { ?>/order/<? } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li><?}?>
 						<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff</a></li>
@@ -94,7 +94,7 @@
 					<div>
 						<?$date = new DateTime($ca['last']);
 						$date->add(new DateInterval('PT01H'));?>
-						<?if($userlevel >= 2) { ?>
+						<?if($userlevel >= 3) { ?>
 							Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
 							<br/>
 						<? } ?>
