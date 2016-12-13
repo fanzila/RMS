@@ -241,7 +241,7 @@ class Order extends CI_Controller {
 			$order_rec_res	= $this->db->get() or die($this->mysqli->error);
 			$order_rec		= $order_rec_res->row();
 			$order_prev		= unserialize($order_rec->data);
-			$supplier_id	= $order_prev['supplier'];
+			//$supplier_id	= $order_prev['supplier'];
 			
 			if($type == 'viewreception') $order_recev = unserialize($order_rec->data_reception);
 			
