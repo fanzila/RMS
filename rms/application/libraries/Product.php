@@ -32,9 +32,10 @@ class Product {
 	return $ret;
 }
 
-public function getPosProducts($id_bu) {
+public function getPosProducts($id_bu, $name_filter=null) {
 	$CI =& get_instance();
 	$CI->db->select('*')->from('sales_product')->where('deleted', 0)->where('id_bu', $id_bu);
+	if($name_filter) $CI->db->like('name', "$name_filter", 'both');
 	$req = $CI->db->get() or die($this->mysqli->error);
 	$ret = array();
 	foreach ($req->result_array() as $key) {

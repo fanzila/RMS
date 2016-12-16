@@ -1,6 +1,7 @@
 <?php 
 
 class Cashier {
+	
 	private function debugFile($txt) { 
 		$file = 'orderdebug.txt';
 		$current = file_get_contents($file);
@@ -52,15 +53,37 @@ class Cashier {
 		
 		return $qtty;
 	}
+	
+	public function updateProductStock($idPosPdt, $sales, $id_bu) {
+		$CI = & get_instance(); 
+		$CI->load->database();
+		$debug = false;
+
+		$q_mapping = "SELECT coef, id_product  FROM products_mapping WHERE id_pos='".$idPosPdt."' AND id_bu = $id_bu";
+		$r_mapping = $CI->db->query($q_mapping) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$res_mapping = $r_mapping->result_array();
+
+		foreach ($res_mapping as $mapping) {
+			$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product] AND id_bu = $id_bu") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']." for BU: $id_bu");
+		}
+	}
+
 	public function updateStock($id_bu) {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		$debug = false;
 		
+		if($debug) { 
+			$this->debugFile(@date('Y-m-d H:i:s')." - START UPDATE STOCK for BU: $id_bu"); 
+		}
+		
 		$q_pos_pdt = "SELECT * FROM sales_product WHERE deleted=0 AND id_bu = $id_bu";
 		$r_pos_pdt = $CI->db->query($q_pos_pdt) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$res_pos_pdt = $r_pos_pdt->result_array();
+		
 		$CI->db->query("BEGIN") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message())); 
+		
 		foreach ($res_pos_pdt as $pos_pdt) {
 			
 			$sales = $this->getSalesForProduct($pos_pdt['id_pos'], $id_bu);
@@ -68,19 +91,19 @@ class Cashier {
 				$this->debugFile(@date('Y-m-d H:i:s')." - Found $sales sales for $pos_pdt[name] for BU: $id_bu"); 
 			}
 			
-			$q_mapping = "SELECT coef, id_product  FROM products_mapping WHERE id_pos=$pos_pdt[id] AND id_bu = $id_bu";
-			$r_mapping = $CI->db->query($q_mapping) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			$res_mapping = $r_mapping->result_array();
-			foreach ($res_mapping as $mapping) {	
-				if($sales > 0) {		
-					$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product] AND id_bu = $id_bu") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-					if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']." for BU: $id_bu");
-				}
-			}
+			if($sales > 0) $this->updateProductStock($pos_pdt['id'], $sales, $id_bu);
+			
 		}
 		$CI->db->query("UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' AND id_bu = $id_bu") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		
         $CI->db->query("COMMIT") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' && COMMIT for BU: $id_bu"); 
+		
+		if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' && COMMIT for BU: $id_bu");
+		
+		if($debug) { 
+			$this->debugFile(@date('Y-m-d H:i:s')." - END UPDATE STOCK for BU: $id_bu"); 
+		}
+		 
 	}
 	private function getDoneArchivesList($id_bu) {
 		$CI = & get_instance(); 
@@ -454,6 +477,7 @@ class Cashier {
 		$date['tt']	= $date['Y']."-".$date['m']."-".$date['dd']." ".$date['hh'].":".$date['mn'].":".$date['ss'];
 		return $date;
 	}
+	
 	public function getPaymentMethodName($id, $id_bu) 
 	{
 		$CI = & get_instance(); 

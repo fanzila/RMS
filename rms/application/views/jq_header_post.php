@@ -1,11 +1,7 @@
 </head>
 <body>
 	<?php $dev = false; if($_SERVER['SERVER_NAME'] == 'rms.dev' || $_SERVER['SERVER_NAME'] == 'forkrms.dev') $dev = true; ?>
-	<?if($title!="Order"){?>
-	<div data-role="page" class="nd2-no-menu-swipe">
-	<?}else{?>
-	<div id="orderpage" data-role="page" class="nd2-no-menu-swipe">
-	<?}?>
+	<div data-role="page" id="pageid" class="nd2-no-menu-swipe">
 		<?php if($index==1){
 			include('adminpanel.html');
 		}?>
