@@ -105,14 +105,9 @@ $today = getdate();
 										<li>													
 											<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 												<option value="">User</option>
-												<?
-											foreach ($users as $user) {
-												?>
-												<option value="<?=$user->id?>"><?=$user->first_name?> <?=$user->last_name?></option>
-												<? 
-											}
-											?>
-											?>
+												<? foreach ($users as $user) { ?>
+													<option value="<?=$user->id?>"><?=$user->first_name?> <?=$user->last_name?></option>
+												<? } ?>
 										</select>
 										<li>
 											<input type="submit" name="save" value="SAVE">

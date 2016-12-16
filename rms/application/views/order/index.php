@@ -6,6 +6,11 @@
 				<a href="/order/viewOrders/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">ORDERS</a>
 			</div>
 		</div>
+		<div class="col-xs">
+			<div class="box">
+				<a href="/order/loss/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">LOSS</a>
+			</div>
+		</div>
 		<?php if($user_groups->level >= 2) { ?>
 			<div class="col-xs">
 				<div class="box">
@@ -23,18 +28,21 @@
 						<a href="/crud/suppliers/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Suppliers</a>
 					</div>
 				</div>
+				<!--
 				<div class="col-xs">
 					<div class="box">
 						<a href="/crud/productsAttribut/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Products attribut</a>
 					</div>
 				</div>
-
+				-->
 				<? } ?>
 			</div>
-			<br/>
-
-			<ul id="autocomplete" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..." data-filter-theme="d"></ul>
-			<hr />
+			<ul data-role="listview" data-inset="true" data-filter="false">
+				<li data-role="list-divider">PRODUCTS</li>
+				<li>	
+					<ul id="autocomplete_pdt" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..." data-filter-theme="d"></ul>
+				</li>
+			</ul>
 			<ul data-role="listview" data-inset="true" data-filter="false">
 				<li data-role="list-divider">SUPPLIERS</li>
 				<?
@@ -43,18 +51,19 @@
 				<li><a data-ajax="false" href="/order/viewProducts/0/<?=$varsup['id']?>"><?=strtoupper($varsup['name'])?> 
 					<? if(isset($varsup['last_order'])) { ?><small>  <i>Last order: <?=$varsup['last_order']?> by <?=$varsup['last_order_user']->username?></i></small><? } ?></a></li>
 					<? } ?>
-				</ul>
+			</ul>
 				<? } ?>					
 					</div><!-- /content -->
 					<div id="view"></div>
 				</div><!-- /page -->
 				<script>
-				$( document ).on( "pageinit", "#orderpage", function() {
-					$( "#autocomplete" ).on( "listviewbeforefilter", function ( e, data ) {
+				$( document ).on( "pageinit", "#pageid", function() {
+										
+					$( "#autocomplete_pdt" ).on( "listviewbeforefilter", function ( e, data ) {
 						var $ul = $( this ),
 						$input = $( data.input ),
 						value = $input.val(),
-						html = "";
+						html = "<table width='100%' border='0' cellspacing='0' cellpadding='6'>";
 						$ul.html( "" );
 						if ( value && value.length > 1 ) {
 							$ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
@@ -71,13 +80,16 @@
 							.then( function ( response ) {
 								$.each( response, function ( i, val ) {
 									var res = val.split("|||");	
-									html += "<li><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'><table width='100%' border='0'><tr><td width='40%'>" + res[0] + " </td><td width='40%'> " + res[2] + " </td><td width='10%'> QTTY: " + res[3] + " </td><td width='10%'> Colisage: " + res[6] + " </td><td width='10%'> " + res[4]/1000 + "€ / " + res[5] + "</td></tr></table></a></li>";
+									html += "<tr><td width='40%'><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'>" + res[0] + " </a></td><td width='40%'> " + res[2] + " </td><td width='10%'> QTTY: " + res[3] + " </td><td width='10%'> Colisage: " + res[6] + " </td><td width='10%'> " + res[4]/1000 + "€ / " + res[5] + "</td></tr>";
 								});
+								html += "</table>";
 								$ul.html( html );
 								$ul.listview( "refresh" );
 								$ul.trigger( "updatelayout");
 							});
 						}
 					});
+					
+					
 				});
 				</script>

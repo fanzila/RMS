@@ -55,6 +55,102 @@ class Order extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
+	public function loss() {
+
+		$this->hmw->keyLogin();
+		$user = $this->ion_auth->user()->row();
+		
+		$id_bu					= $this->session->all_userdata()['bu_id'];
+		$post					= $this->input->post();
+		
+		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->where('users.active', 1);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('users.username', 'asc');
+		$query = $this->db->get("users");
+		$users = $query->result();
+		
+		$data = array();
+		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
+		$data['username']	= $this->session->all_userdata()['identity'];
+		$data['keylogin']	= $this->session->all_userdata()['keylogin'];
+		$data['users']		= $users;
+
+		$headers = $this->hmw->headerVars(0, "/order/", "Loss");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('order/loss',$data);
+		$this->load->view('jq_footer');
+	}
+	
+	public function saveLoss()
+	{
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$reponse = 'ok';
+		$data = $this->input->post();
+		$user = $this->ion_auth->user()->row();
+		$this->load->library('cashier');
+			
+		$user_receive = $user->id;
+		if(isset($post['user'])) {
+			if($post['user']) { 
+				$user_receive = $post['user']; 
+			}
+		}	
+		
+		$data['value'] = $this->clean_number($data['value']);
+		if(empty($data['value'])) $value = '0';
+		if(!empty($data['value']) AND !is_numeric($data['value'])) exit('Stock has to be numeric, invalid: '.$data['value']);
+		
+		if($data['type'] == 'ARTICLE') {  
+			$q = "INSERT INTO products_stock (qtty, id_product, last_update_id_user, last_update_user, id_bu) VALUES(-$data[value], $data[id], $user_receive, NOW(), $id_bu) ON DUPLICATE KEY UPDATE qtty=qtty+-$data[value], last_update_id_user=$user_receive, last_update_user=NOW()";
+			$this->db->query($q) or die($this->mysqli->error);
+		} elseif($data['type'] == 'PRODUCT') {
+			$this->cashier->updateProductStock($data['id'], $data['value'], $id_bu);	
+		}		
+		echo json_encode(['reponse' => $reponse]);
+		exit();
+	}
+	
+	public function autoCompLoss(){
+
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+
+		if (isset($_GET['q'])){
+			$q = strtolower($_GET['q']);
+			$row_set = array();
+			$this->db->select('p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, p.packaging AS packaging, puprc.name AS unitname')
+				->from('products AS p')
+				->join('suppliers as s', 'p.id_supplier = s.id')
+				->join('products_unit as puprc', 'p.id_unit = puprc.id')
+				->join('products_stock as ps', 'p.id = ps.id_product', 'left')
+				->like('p.name', "$q", 'both')
+				->where('p.deleted', 0)
+				->where('p.active', 1)
+				->where('ps.id_bu', $id_bu)
+				->order_by('p.name asc')->limit(100);
+			$query = $this->db->get() or die($this->mysqli->error);
+			
+			$products_pos	= $this->product->getPosProducts($id_bu, $q);
+			
+			if($query->num_rows() > 0) {
+				$article = $query->result_array();
+									
+				foreach ($article as $row){
+					$row_set['a'.$row['id']] = htmlentities(stripslashes($row['name']))."|||".$row['id']."|||".$row['sname']."|||".$row['stock']."|||".$row['price']."|||".$row['unitname']."|||".$row['packaging']."|||ARTICLE"; 
+				}
+			}
+			
+			foreach ($products_pos as $rowp){
+				$row_set['p'.$rowp['id']] = htmlentities(stripslashes($rowp['name']))."|||".$rowp['id']."|||-|||-|||-|||PIECE|||1|||PRODUCT"; 
+			}
+			
+			echo $_GET['callback']."(".json_encode($row_set).");";	
+		}
+	}
+	
 	public function autoCompProducts(){
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
@@ -226,7 +322,6 @@ class Order extends CI_Controller {
 	{		
 
 		$this->hmw->keyLogin();
-		$this->load->library('product');
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
 		$order_prev		= null;
@@ -305,8 +400,6 @@ class Order extends CI_Controller {
 	public function detailOrder() {
 
 		$this->hmw->keyLogin();
-		$this->load->library('product');
-		$this->load->library('ion_auth');
 		$user			= $this->ion_auth->user()->row();
 		$stock_update	= false;
 		$post			= $this->input->post();
@@ -442,7 +535,6 @@ class Order extends CI_Controller {
 	public function confirm($key = null) {
 
 		$this->load->library('mmail');
-		$this->load->library('hmw');
 
 		$this->db->from('orders_confirm')->where('key', $key)->limit(1);
 		$res = $this->db->get() or die($this->mysqli->error);
@@ -496,7 +588,6 @@ class Order extends CI_Controller {
 	public function sendOrder() {
 
 		$this->hmw->keyLogin();
-
 		$this->load->helper('download');
 		$this->load->library('mmail');
 		$this->load->helper('file');
@@ -562,10 +653,7 @@ class Order extends CI_Controller {
 	public function confirmOrder() {
 
 		$this->hmw->keyLogin();
-		$this->load->library('ion_auth');
 		$user = $this->ion_auth->user()->row();
-		$this->load->library('product');
-		$this->load->library('hmw');
 		$this->load->helper(array('dompdf', 'file'));		
 		$id_bu					= $this->session->all_userdata()['bu_id'];
 		$post					= $this->input->post();
@@ -697,9 +785,7 @@ class Order extends CI_Controller {
 
 	public function clicCheckConfirm($id_bu)
 	{
-
 		$this->load->library('mmail');
-		$this->load->library('hmw');
 
 		if($this->input->is_cli_request()) {
 
