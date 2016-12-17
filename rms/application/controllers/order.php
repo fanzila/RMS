@@ -136,12 +136,13 @@ class Order extends CI_Controller {
 			$row_set = array();
 			$this->db->select('p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, p.packaging AS packaging, puprc.name AS unitname')
 				->from('products AS p')
-				->join('suppliers as s', 'p.id_supplier = s.id')
+				->join('suppliers as s', 'p.id_supplier = s.id', 'right')
 				->join('products_unit as puprc', 'p.id_unit = puprc.id')
 				->join('products_stock as ps', 'p.id = ps.id_product', 'right')
 				->like('p.name', "$q", 'both')
 				->where('p.deleted', 0)
 				->where('p.active', 1)
+				->where('s.id_bu', $id_bu)
 				->order_by('p.name asc')->limit(100);
 			$query = $this->db->get() or die($this->mysqli->error);
 			
