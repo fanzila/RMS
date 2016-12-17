@@ -2,6 +2,7 @@
 $today = getdate();
 ?>
 </div>
+<script>var addtostock = [];</script>
 <div data-role="content">
 	<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">	
 		<? if($load > 0 AND $type == 'reception') { ?><h3>Order: <?=$load?></h3><? } ?>			
@@ -71,14 +72,18 @@ $today = getdate();
 												<input type="text" name="stock[<?=$line['id']?>]" id="stock-<?=$line['id']?>" class="custom" value="0" style="width:120px" data-clear-btn="true" />
 											</td>
 											<? if($load > 0 && $qtty > 0 && $type == 'reception') { ?>
-												<td><input type="button" id="add<?=$line['id']?>" name="add[<?=$line['id']?>]" class="add" value="OK" data-mini="true" onclick="disableStock(<?=$line['id']?>);" />
+												<td><input type="button" id="add<?=$line['id']?>" name="add[<?=$line['id']?>]" class="add" value="OK" data-mini="true" onclick="AddStock(<?=$line['id']?>);" />
 												</td>
+												<script>
+												addtostock[<?=$line['id']?>] = <?=$qtty?>;
+												</script>
 												<? } ?> 
 												<? } ?>
 											</tr>
 										</table>
 	
 									</li>
+									
 									<? if($load > 0 && $type == 'reception') { ?>
 										<!-- QTTY for reception check status -->
 										<input type="hidden" id="qtty_check[<?=$line['id']?>]" name="qtty_check[<?=$line['id']?>]" value="<?=$qtty?>">
@@ -93,13 +98,22 @@ $today = getdate();
 								</div>
 								<? $qtty = 0; $added_stock = 0; } ?>
 							</ul>
-
+							
 							<? if($type == 'reception') { ?>
-								<label for="comment_reception" data-mini="true" style="background-color:#ffffff">Comments (Only to notify or if problem)</label>
+							<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a"><li><input style="background-color: #49b049;" type="button" id="checkall" name="checkall" value="[CHECK ALL]" onclick="AddStockAll();"></li></ul>
+							<? } ?>
+							
+							<? if($type == 'reception') { ?>
+								<p><small>Comment on order:</small> <?=$comment_order?></p>
+									
+								<label for="comment_reception" data-mini="true" style="background-color:#ffffff">Comments for reception (Only to notify or if problem)</label>
 								<input type="text" name="comment_reception" id="comment_reception" class="custom"  data-clear-btn="true" />
 								<input type="hidden" name="idorder" value="<?=$load?>">
 								<? } ?>
-
+								<? if($type == 'viewreception') { ?>
+									<p><small>Comment on order:</small> <?=$comment_order?></p>
+									<p><small>Comment on reception:</small> <?=$comment_recept?></p> 
+								<? } ?>	
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 									<? if($type == 'reception' AND $keylogin) { ?>
 										<li>													
@@ -113,6 +127,7 @@ $today = getdate();
 											<input type="submit" name="save" value="SAVE">
 										</li>
 									<? } ?>
+									
 									<? if(!$keylogin && $type != 'viewreception') { ?>
 										<li><input type="submit" name="save" value="SAVE"></li>
 									<? } ?>
@@ -147,7 +162,21 @@ $today = getdate();
 						});
 					});
 
-					function disableStock(idl) {
+					function AddStockAll() {
+						jQuery(document).ready(function(){
+							len = addtostock.length;
+							for (i = 0; i < len; i++) {
+								if(addtostock[i]) {
+									qtty = addtostock[i];
+									sum = parseInt(qtty);
+									$('#stock-' + i).val(sum);
+								}
+							}
+							return false; 
+						});
+					}
+					
+					function AddStock(idl) {
 						qtty = $('#qtty-' + idl).val();
 						sum = parseInt(qtty);
 						$('#stock-' + idl).val(sum);

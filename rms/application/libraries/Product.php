@@ -85,7 +85,7 @@ class Product {
 		return $ret;
 	}
 
-	public function getSuppliers($order = null, $idsup = null, $id_bu = null) {
+	public function getSuppliers($order = null, $idsup = null, $id_bu) {
 		$CI =& get_instance();
 		$CI->load->library('hmw');
 
@@ -105,7 +105,7 @@ class Product {
 				->where('s.id_bu', $id_bu);
 
 			if(!empty($idsup)) $CI->db->where('s.id', $idsup);
-			$CI->db->order_by('s.id asc');
+			$CI->db->order_by('s.name asc');
 		}
 		$req = $CI->db->get() or die($this->mysqli->error);
 

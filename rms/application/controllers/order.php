@@ -305,7 +305,7 @@ class Order extends CI_Controller {
 		}
 		
 		$data = array(
-			'suppliers'	=> $this->product->getSuppliers(true, null, $id_bu),
+			'suppliers'	=> $this->product->getSuppliers(null, null, $id_bu),
 			'users'		=> $users,
 			'results'	=> $results,
 			'keylogin'	=> $keylogin,
@@ -342,11 +342,15 @@ class Order extends CI_Controller {
 		$products		= $this->product->getProducts(null, $supplier_id, null, null, $id_bu, true);
 		$stock 			= $this->product->getStock();
 		$attributs		= $this->product->getAttributs();
+		$comment_order 	= '';
+		$comment_recept	= '';
 
 		if($load > 0) {
 			$this->db->from('orders as r')->where('r.idorder', $load)->where('id_bu', $id_bu);
 			$order_rec_res	= $this->db->get() or die($this->mysqli->error);
 			$order_rec		= $order_rec_res->row();
+			$comment_order 	= $order_rec->comment;
+			$comment_recept	= $order_rec->comment_reception;
 			$order_prev		= unserialize($order_rec->data);
 			//$supplier_id	= $order_prev['supplier'];
 			
@@ -390,6 +394,8 @@ class Order extends CI_Controller {
 			'products'			=> $products,
 			'stock'				=> $stock,
 			'attributs'			=> $attributs,
+			'comment_order'		=> $comment_order,
+			'comment_recept'	=> $comment_recept,
 			'users'				=> $users,
 			'supinfo'			=> $supinfo[$supplier_id],
 			'load' 				=> $load, 
