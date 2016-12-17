@@ -14,6 +14,11 @@
 		<?php if($user_groups->level >= 2) { ?>
 			<div class="col-xs">
 				<div class="box">
+					<a href="/crud/StockLog/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Stock log</a>
+				</div>
+			</div>
+			<div class="col-xs">
+				<div class="box">
 					<a href="/product_admin/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products admin</a>
 				</div>
 			</div>
