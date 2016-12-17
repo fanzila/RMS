@@ -2,6 +2,37 @@
 
 class Hmw {
 
+	public function LogRecord($p, $id_bu=null) {
+		
+		$CI = & get_instance();
+		
+		if(!isset($id_bu)) $id_bu = $CI->session->all_userdata()['bu_id'];
+		if(isset($CI->session->all_userdata()['keylogin'])) $keylogin = $CI->session->all_userdata()['keylogin'];
+		
+		$user		= $CI->ion_auth->user()->row();
+		
+		$CI->db->set('type', $p['type']);
+		$CI->db->set('id_bu', $id_bu);
+		
+		if(isset($keylogin)) $CI->db->set('keylogin', $keylogin);
+		if(isset($user->id)) $CI->db->set('user_id', $user->id);
+		
+		if(isset($p['val1'])) $CI->db->set('val1', "$p[val1]");
+		if(isset($p['val2'])) $CI->db->set('val2', "$p[val2]");
+		if(isset($p['val3'])) $CI->db->set('val3', "$p[val3]");
+		if(isset($p['val4'])) $CI->db->set('val4', "$p[val4]");
+		
+		$CI->db->insert('log');
+	}
+	
+
+	public function cleanNumber($num) {
+		$t1 = str_replace ( ',' , '.' , $num);
+		$t2 = trim($t1);
+		//$t3 = preg_replace("/[^0-9,.]/", "", $t2);
+		return $t2;
+	}
+		
 	public function getParam($param) 
 	{
 		$CI = & get_instance(); 

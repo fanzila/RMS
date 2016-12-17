@@ -45,14 +45,14 @@ class Product_admin extends CI_Controller {
 			$command = 'filter';
 		}
 
-		
+
 		$supplier_id = '';
 		$products 	 = '';
 		$postid = $this->input->post('supplier_id');
 		if($command == null && isset($postid)) $supplier_id = 1;
 		if($command == 'filter' && isset($postid)) $supplier_id = $this->input->post('supplier_id');
 		if(!empty($supplier_id) OR !empty($product_id) ) $products = $this->product->getProducts($product_id, $supplier_id, null, null, $id_bu);
-		
+
 		$suppliers 			= $this->product->getSuppliers(null, null, $id_bu);
 		$products_unit 		= $this->product->getProductUnit();
 		$products_category 	= $this->product->getProductCategory();
@@ -69,7 +69,7 @@ class Product_admin extends CI_Controller {
 			);
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-		
+
 		if($command!='create'){
 			$headers = $this->hmw->headerVars(0, "/order/", "Product Admin");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -83,11 +83,12 @@ class Product_admin extends CI_Controller {
 			$this->load->view('product/admin',$data);
 			$this->load->view('jq_footer');
 		}
-		
+
 	}
 
 	public function save()
 	{
+		$this->load->library('product');
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$reponse = 'ok';
 		$data = $this->input->post();
@@ -96,7 +97,7 @@ class Product_admin extends CI_Controller {
 		$user = $this->ion_auth->user()->row();
 		date_default_timezone_set('Europe/Paris');
 		$date = date('Y-m-d H:i:s');
-		
+
 		$this->db->select('name, id_supplier');
 		$this->db->from('products');
 		$this->db->where('name', addslashes($data['name']));
@@ -117,7 +118,9 @@ class Product_admin extends CI_Controller {
 
 		$this->db->trans_start();
 		if($data['id'] == 'create') {
+
 			$reponse = 'okcreate';
+
 			if(isset($test[0])){
 				$test=1;
 			}
@@ -127,7 +130,7 @@ class Product_admin extends CI_Controller {
 				}
 				$new_id = $this->db->insert_id();
 				$id_product = $new_id;
-
+				$previous_stock = 0;
 				$this->db->set('id_product', $id_product);
 				$this->db->set('warning', $data['stock_warning']);
 				$this->db->set('mini', $data['stock_mini']);
@@ -135,7 +138,6 @@ class Product_admin extends CI_Controller {
 				$this->db->set('qtty', $data['stock_qtty']);
 				$this->db->set('last_update_id_user', $user->id);
 				$this->db->set('last_update_user', $date);
-				$this->db->set('id_bu', $id_bu);
 				if(!$this->db->insert('products_stock')) {
 					$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}
@@ -148,36 +150,31 @@ class Product_admin extends CI_Controller {
 				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
 			$id_product = $data['id'];
-
-			$this->db->where('id_product', $data['id']);
-			$reqs = $this->db->get('products_stock') or die($this->mysqli->error);
-			$rets = $reqs->result_array();
-				if(empty($rets)) {
-					$this->db->set('id_product', $id_product);
-					$this->db->set('warning', $data['stock_warning']);
-					$this->db->set('mini', $data['stock_mini']);
-					$this->db->set('max', $data['stock_max']);
-					$this->db->set('qtty', $data['stock_qtty']);
-					$this->db->set('last_update_id_user', $user->id);
-					$this->db->set('last_update_user', $date);
-					$this->db->set('id_bu', $id_bu);
-					if(!$this->db->insert('products_stock')) {
-						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-					}
-				} else {
-					$this->db->set('warning', $data['stock_warning']);
-					$this->db->set('mini', $data['stock_mini']);
-					$this->db->set('max', $data['stock_max']);
-					$this->db->set('qtty', $data['stock_qtty']);
-					$this->db->set('last_update_id_user', $user->id);
-					$this->db->set('last_update_user', $date);					
-					$this->db->where('id_product', $id_product);
-					if(!$this->db->update("products_stock")) {
-						$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-					}
-				}
+			$pdt_info = $this->product->getProducts($id_product, null, null, null, $id_bu);
+			$previous_stock = $pdt_info[$id_product]['stock_qtty'];
+			
+			$this->db->set('warning', $data['stock_warning']);
+			$this->db->set('mini', $data['stock_mini']);
+			$this->db->set('max', $data['stock_max']);
+			$this->db->set('qtty', $data['stock_qtty']);
+			$this->db->set('last_update_id_user', $user->id);
+			$this->db->set('last_update_user', $date);					
+			$this->db->where('id_product', $id_product);
+			if(!$this->db->update("products_stock")) {
+				$response = "Can't place the update sql request, error message: ".$this->db->_error_message();
+			}
 		}
+		
 		$this->db->trans_complete();
+		
+		$p = array(
+			'type' => 'stock_product_admin', 
+			'val1' => "$id_product",
+			'val2' => "$data[stock_qtty]",
+			'val4' => "$previous_stock"
+			);
+		$this->hmw->LogRecord($p);
+		
 		echo json_encode(['reponse' => $reponse]);
 		exit();
 	}
@@ -190,7 +187,7 @@ class Product_admin extends CI_Controller {
 		$tab 			= array();
 		$reponse 		= 'ok';
 		$id_bu			=  $this->session->all_userdata()['bu_id'];
-		
+
 		foreach ($post as $key => $var) {
 			$ex 		= explode('_',$key);
 			$x 			= $ex[2];
@@ -213,11 +210,11 @@ class Product_admin extends CI_Controller {
 			}
 		}
 		$this->db->query("COMMIT") or die($this->mysqli->error);
-		
+
 		echo json_encode(['reponse' => $reponse]);
 		exit();
 	}
-	
+
 	public function mapping()
 	{		
 		$this->load->library('product');
@@ -233,7 +230,7 @@ class Product_admin extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-	 	$headers = $this->hmw->headerVars(0, "/order/", "Product Mapping");
+		$headers = $this->hmw->headerVars(0, "/order/", "Product Mapping");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('product/mapping',$data);

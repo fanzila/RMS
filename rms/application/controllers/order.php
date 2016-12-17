@@ -98,15 +98,28 @@ class Order extends CI_Controller {
 			if($post['user']) { 
 				$user_receive = $post['user']; 
 			}
-		}	
+		}
 		
-		$data['value'] = $this->clean_number($data['value']);
+		$data['value'] = $this->hmw->cleanNumber($data['value']);
 		if(empty($data['value'])) $value = '0';
 		if(!empty($data['value']) AND !is_numeric($data['value'])) exit('Stock has to be numeric, invalid: '.$data['value']);
 		
 		if($data['type'] == 'ARTICLE') {  
-			$q = "INSERT INTO products_stock (qtty, id_product, last_update_id_user, last_update_user, id_bu) VALUES(-$data[value], $data[id], $user_receive, NOW(), $id_bu) ON DUPLICATE KEY UPDATE qtty=qtty+-$data[value], last_update_id_user=$user_receive, last_update_user=NOW()";
+			
+			$pdt_info = $this->product->getProducts($data['id'], null, null, null, $id_bu);
+			$previous_qtty = $pdt_info[$data['id']]['stock_qtty'];
+			
+			$q = "UPDATE products_stock SET qtty=qtty+-$data[value], last_update_id_user=$user_receive, last_update_user=NOW() WHERE id_product = $data[id]";
 			$this->db->query($q) or die($this->mysqli->error);
+			
+			$p = array(
+				'type'	=> 'stock_pos', 
+				'val1'	=> "$data[id]",
+				'val2'	=> "$data[value]",
+				'val4'	=> "$previous_qtty"
+			);
+			$this->hmw->LogRecord($p);
+			
 		} elseif($data['type'] == 'PRODUCT') {
 			$this->cashier->updateProductStock($data['id'], $data['value'], $id_bu);	
 		}		
@@ -125,11 +138,10 @@ class Order extends CI_Controller {
 				->from('products AS p')
 				->join('suppliers as s', 'p.id_supplier = s.id')
 				->join('products_unit as puprc', 'p.id_unit = puprc.id')
-				->join('products_stock as ps', 'p.id = ps.id_product', 'left')
+				->join('products_stock as ps', 'p.id = ps.id_product', 'right')
 				->like('p.name', "$q", 'both')
 				->where('p.deleted', 0)
 				->where('p.active', 1)
-				->where('ps.id_bu', $id_bu)
 				->order_by('p.name asc')->limit(100);
 			$query = $this->db->get() or die($this->mysqli->error);
 			
@@ -160,13 +172,13 @@ class Order extends CI_Controller {
 			$row_set = array();
 			$this->db->select('p.name AS name, p.id AS id, s.name AS sname, ps.qtty AS stock, p.price AS price, p.packaging AS packaging, puprc.name AS unitname')
 				->from('products AS p')
-				->join('suppliers as s', 'p.id_supplier = s.id')
+				->join('suppliers as s', 'p.id_supplier = s.id', 'right')
 				->join('products_unit as puprc', 'p.id_unit = puprc.id')
-				->join('products_stock as ps', 'p.id = ps.id_product', 'left')
+				->join('products_stock as ps', 'p.id = ps.id_product', 'right')
 				->like('p.name', "$q", 'both')
 				->where('p.deleted', 0)
 				->where('p.active', 1)
-				->where('ps.id_bu', $id_bu)
+				->where('s.id_bu', $id_bu)
 				->order_by('p.name asc')->limit(100);
 			$query = $this->db->get() or die($this->mysqli->error);
 			if($query->num_rows() > 0){
@@ -328,7 +340,7 @@ class Order extends CI_Controller {
 		$supinfo		= null;
 		$data_reception = null;
 		$products		= $this->product->getProducts(null, $supplier_id, null, null, $id_bu, true);
-		$stock 			= $this->product->getStock($id_bu);
+		$stock 			= $this->product->getStock();
 		$attributs		= $this->product->getAttributs();
 
 		if($load > 0) {
@@ -413,15 +425,27 @@ class Order extends CI_Controller {
 			//update stock 
 			if($key == 'stock') { 
 				foreach ($var as $id_pdt => $value) {
-					$value = $this->clean_number($value);
+					$value = $this->hmw->cleanNumber($value);
 					if(empty($value)) $value = '0';
 					if(!empty($value) AND !is_numeric($value)) exit('Stock has to be numeric, invalid: '.$value);
-					$q = "INSERT INTO products_stock (qtty, id_product, last_update_id_user, last_update_user, id_bu) VALUES($value, $id_pdt, $user->id, NOW(), $id_bu) ON DUPLICATE KEY UPDATE qtty=qtty+$value, last_update_id_user=$user->id, last_update_user=NOW()";
-					$this->db->query($q) or die($this->mysqli->error);
 					$pdt_info = $this->product->getProducts($id_pdt, null, null, null, $id_bu);
+					$previous_qtty = $pdt_info[$id_pdt]['stock_qtty'];
+					
+					$q = "UPDATE products_stock SET qtty=qtty+$value, last_update_id_user=$user->id, last_update_user=NOW() WHERE id_product = $id_pdt";
+					$this->db->query($q) or die($this->mysqli->error);
+
 					$update_stock[$id_pdt]['stock']	= $value;
 					$update_stock[$id_pdt]['name']	= $pdt_info[$id_pdt]['name'];
-					if(!empty($var) AND $value > 0) { 
+
+					if(!empty($var) AND $value > 0) { 	
+						$p = array(
+							'type' => 'stock_reception', 
+							'val1' => "$id_pdt", 
+							'val2' => "$value", 
+							'val3' => "$post[idorder]", 
+							'val4' => "$previous_qtty"
+						);
+						$this->hmw->LogRecord($p);
 						$stock_update = true;
 						$do_something	= true;
 					}
@@ -857,11 +881,5 @@ class Order extends CI_Controller {
 		return unserialize($order_rec->data);	
 	}
 
-	private function clean_number($num) {
-		$t1 = str_replace ( ',' , '.' , $num);
-		$t2 = trim($t1);
-		//$t3 = preg_replace("/[^0-9,.]/", "", $t2);
-		return $t2;
-	}
 }
 ?>

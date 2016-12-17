@@ -57,6 +57,8 @@ class Cashier {
 	public function updateProductStock($idPosPdt, $sales, $id_bu) {
 		$CI = & get_instance(); 
 		$CI->load->database();
+		$CI->load->library('hmw');
+		$CI->load->library('product');
 		$debug = false;
 
 		$q_mapping = "SELECT coef, id_product  FROM products_mapping WHERE id_pos='".$idPosPdt."' AND id_bu = $id_bu";
@@ -64,8 +66,23 @@ class Cashier {
 		$res_mapping = $r_mapping->result_array();
 
 		foreach ($res_mapping as $mapping) {
-			$CI->db->query("UPDATE products_stock SET qtty = qtty-($sales*$mapping[coef]), last_update_pos = NOW() WHERE id_product = $mapping[id_product] AND id_bu = $id_bu") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			
+			$pdt_info = $CI->product->getProducts($mapping['id_product'], null, null, null, $id_bu);
+			$previous_qtty = $pdt_info[$mapping['id_product']]['stock_qtty'];
+			$qtty = $sales*$mapping['coef'];
+			
+			$CI->db->query("UPDATE products_stock SET qtty = qtty-($qtty), last_update_pos = NOW() WHERE id_product = $mapping[id_product]") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			
 			if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']." for BU: $id_bu");
+			
+			$p = array(
+				'type'	=> 'stock_pos', 
+				'val1'	=> "$mapping[id_product]",
+				'val2'	=> "$qtty",
+				'val4'	=> "$previous_qtty"
+			);
+			$CI->hmw->LogRecord($p, $id_bu);
+			
 		}
 	}
 

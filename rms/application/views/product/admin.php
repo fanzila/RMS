@@ -311,7 +311,8 @@
 														alert('IMPORTANT! For decimal enter a  dot (.) and NOT a comma (,) and please enter numeric value for numeric fields.');
 														return false;
 													}
-													
+													if(done >= 1) { return false; }
+													 
 													$.ajax({
 														url: $(this).attr('action'),
 														type: $(this).attr('method'),

@@ -80,7 +80,7 @@
 							.then( function ( response ) {
 								$.each( response, function ( i, val ) {
 									var res = val.split("|||");	
-									html += "<tr><td width='40%'><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'>" + res[0] + " </a></td><td width='40%'> " + res[2] + " </td><td width='10%'> QTTY: " + res[3] + " </td><td width='10%'> Colisage: " + res[6] + " </td><td width='10%'> " + res[4]/1000 + "€ / " + res[5] + "</td></tr>";
+									html += "<tr bgcolor=''><td style='border: 1px solid #e8e8e8;'><a data-ajax='false' href='/product_admin/index?id_product=" + res[1] + "'>" + res[0] + " </a></td><td style='border: 1px solid #e8e8e8;'> " + res[2] + " </td><td style='border: 1px solid #e8e8e8;'> QTTY: " + res[3] + " </td><td style='border: 1px solid #e8e8e8;'> Colisage: " + res[6] + " </td><td style='border: 1px solid #e8e8e8;'> " + res[4]/1000 + "€ / " + res[5] + "</td></tr>";
 								});
 								html += "</table>";
 								$ul.html( html );

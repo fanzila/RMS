@@ -1,4 +1,3 @@
-
 		</div>
 		<div data-role="content">
 			<div data-role="collapsible-set" data-inset="false" data-filter="true" data-filter-placeholder="Filter discounts">
