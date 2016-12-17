@@ -17,7 +17,7 @@ class Test extends CI_Controller {
 			redirect('auth/login');
 		}
 
-		$active = true; 
+		$active = false; 
 
 		if($active) { 
 			echo "<h1>DB TEST</h1>";
