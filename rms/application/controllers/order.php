@@ -113,7 +113,7 @@ class Order extends CI_Controller {
 			$this->db->query($q) or die($this->mysqli->error);
 			
 			$p = array(
-				'type'	=> 'stock_pos', 
+				'type'	=> 'stock_loss', 
 				'val1'	=> "$data[id]",
 				'val2'	=> "$data[value]",
 				'val4'	=> "$previous_qtty"
@@ -121,7 +121,7 @@ class Order extends CI_Controller {
 			$this->hmw->LogRecord($p);
 			
 		} elseif($data['type'] == 'PRODUCT') {
-			$this->cashier->updateProductStock($data['id'], $data['value'], $id_bu);	
+			$this->cashier->updateProductStock($data['id'], $data['value'], $id_bu, 'stock_loss');	
 		}		
 		echo json_encode(['reponse' => $reponse]);
 		exit();

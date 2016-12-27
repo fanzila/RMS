@@ -54,7 +54,7 @@ class Cashier {
 		return $qtty;
 	}
 	
-	public function updateProductStock($idPosPdt, $sales, $id_bu) {
+	public function updateProductStock($idPosPdt, $sales, $id_bu, $source) {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		$CI->load->library('hmw');
@@ -76,11 +76,11 @@ class Cashier {
 			if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']." for BU: $id_bu");
 			
 			$p = array(
-				'type'	=> 'stock_pos', 
-				'val1'	=> "$mapping[id_product]",
-				'val2'	=> "$qtty",
-				'val4'	=> "$previous_qtty"
-			);
+				'type'		=>  $source, 
+				'val1'		=> "$mapping[id_product]",
+				'val2'		=> "$qtty",
+				'val4'		=> "$previous_qtty"
+				);
 			$CI->hmw->LogRecord($p, $id_bu);
 			
 		}
@@ -108,7 +108,7 @@ class Cashier {
 				$this->debugFile(@date('Y-m-d H:i:s')." - Found $sales sales for $pos_pdt[name] for BU: $id_bu"); 
 			}
 			
-			if($sales > 0) $this->updateProductStock($pos_pdt['id'], $sales, $id_bu);
+			if($sales > 0) $this->updateProductStock($pos_pdt['id'], $sales, $id_bu, 'stock_sales');
 			
 		}
 		$CI->db->query("UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' AND id_bu = $id_bu") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
