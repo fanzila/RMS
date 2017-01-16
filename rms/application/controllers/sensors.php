@@ -17,13 +17,14 @@ class Sensors extends CI_Controller {
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
-		$this->db->select('st.id AS stid, st.id_sensor AS idsensor, st.date, st.temp, s.name, s.correction, sa.lastalarm');
-		$this->db->from('sensors_temp as st')
-			->join('sensors as s', 'st.id_sensor = s.id  ','left')
-			->join('sensors_alarm as sa', 'sa.id_sensor = s.id','left')
-			->where('s.id_bu', $id_bu)
-			->order_by('st.id DESC')
-			->group_by('idsensor');		
+		$this->db->select('st.id AS stid, st.id_sensor AS idsensor, MAX(st.date) as date, st.temp, s.name, s.correction, sa.lastalarm');
+			$this->db->from('sensors_temp as st')
+				->join('sensors as s', 'st.id_sensor = s.id  ','left')
+				->join('sensors_alarm as sa', 'sa.id_sensor = s.id','left')
+				->where('s.id_bu', $id_bu)
+				->order_by('st.id DESC')
+				->group_by('idsensor');
+		
 		$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$info = $r->result_array();
 
