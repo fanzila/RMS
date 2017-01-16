@@ -190,6 +190,8 @@ class Hmw {
 		$CI->load->library('ion_auth');
 		$CI->load->library('hmw');
 		$CI->load->library('session');	
+		$CI->load->library('email');
+		$CI->load->library('mmail');
 
 		$getkey	= $CI->input->get('keylogin');
 		$id_bu	= $CI->input->get('id_bu');
@@ -211,6 +213,17 @@ class Hmw {
 			{
 				redirect('auth/login');
 			}
+			
+		}
+		
+		$data['bu_name'] =  $CI->session->all_userdata()['bu_name'];
+		$data['username'] = $CI->session->all_userdata()['identity'];
+		if(empty($data['username'])) {
+						$email['subject'] 	= "RMS SESSION ERROR";
+						$email['msg'] 		= 'RMS SESSION ERROR';
+						$email['to']		= 'pierre@hankrestaurant.com';
+						$CI->mmail->sendEmail($email);	
+			exit('Erreur d\'un truc, simplement se relogger ou fermer et relancer l\'application RMS, ca va marcher!');
 		}
 	}
 
