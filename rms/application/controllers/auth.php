@@ -51,7 +51,7 @@ class Auth extends CI_Controller {
 						$email['subject'] = 'Open shift @Hank!';
 						$email['msg'] = $txtmessage;
 						$sento .= $userinfo->username." by email at ".$userinfo->email." <br/>";
-						$this->mmail->sendEmail($email) or die ('Error sending email to: '.$email['to']);
+						$this->mmail->sendEmail($email);
 					}
 				}
 				$this->data['message']  = '<b>Message sent to:</b> <br />'.$sento;
