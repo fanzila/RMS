@@ -640,6 +640,8 @@ class Auth extends CI_Controller {
 	function edit_user($id)
 	{
 		$this->data['title'] = "Edit User";
+		$this->load->library('hmw');
+		$id_bu =  $this->session->all_userdata()['bu_id'];
 
 		if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id)))
 		{
@@ -659,6 +661,7 @@ class Auth extends CI_Controller {
 		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'required|valid_email|xss_clean');
 		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'exact_length[12]|numeric|xss_clean');
 		$this->form_validation->set_rules('comment', 'Enter a valid comment', 'xss_clean');
+		$this->form_validation->set_rules('iban', 'Enter a valid IBAN', 'xss_clean');
 		$this->form_validation->set_rules('groups', $this->lang->line('edit_user_validation_groups_label'), 'xss_clean');
 		$this->form_validation->set_rules('bus', $this->lang->line('edit_user_validation_bus_label'), 'xss_clean');
 
@@ -685,7 +688,9 @@ class Auth extends CI_Controller {
 					'username'   => $this->input->post('username'),
 					'email'		 => $this->input->post('email'),
 					'phone'      => $this->input->post('phone'),
-					'comment'      => $this->input->post('comment')
+					'comment'      => $this->input->post('comment'),
+					'iban'      => $this->input->post('iban'),
+					'door_open'      => $this->input->post('door_open')
 					);
 
 				//update the password if it was posted
@@ -693,6 +698,7 @@ class Auth extends CI_Controller {
 				{
 					$data['password'] = $this->input->post('password');
 				}
+				
 
 				$this->ion_auth->update($user->id, $data);
 
@@ -789,6 +795,13 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('phone', $user->phone),
 			);
+		$this->data['iban'] = array(
+			'name'  => 'iban',
+			'id'    => 'iban',
+			'type'  => 'text',
+			'data-clear-btn' => "true",
+			'value' => $this->form_validation->set_value('iban', $user->iban),
+			);
 		$this->data['comment'] = array(
 			'name'  => 'comment',
 			'id'    => 'comment',
@@ -808,9 +821,12 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'type' => 'password'
 			);
-
-
+			
 		$this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
+		
+		$data['door_device'] = null;
+		$buinfo = $this->hmw->getBuInfo($id_bu);
+		if(isset($buinfo->door_device)) $this->data['door_device'] = $buinfo->door_device;
 
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 		$this->load->view('jq_header_pre', $headers['header_pre']);

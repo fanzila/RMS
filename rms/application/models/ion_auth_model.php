@@ -1736,7 +1736,7 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('extra_where');
 		$this->db->update($this->tables['users'], $data, array('id' => $user->id));
-
+		
 		if ($this->db->trans_status() === FALSE)
 		{
 			$this->db->trans_rollback();
@@ -1750,6 +1750,7 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events(array('post_update_user', 'post_update_user_successful'));
 		$this->set_message('update_successful');
+		
 		return TRUE;
 	}
 
@@ -1966,7 +1967,7 @@ class Ion_auth_model extends CI_Model
 
 		//get the user
 		$this->trigger_events('extra_where');
-		$query = $this->db->select($this->identity_column.', id, username, email, last_login, current_bu_id')
+		$query = $this->db->select($this->identity_column.', id, username, email, last_login, door_open, current_bu_id')
 		                  ->where($this->identity_column, get_cookie($this->config->item('identity_cookie_name', 'ion_auth')))
 		                  ->where('remember_code', get_cookie($this->config->item('remember_cookie_name', 'ion_auth')))
 		                  ->limit(1)

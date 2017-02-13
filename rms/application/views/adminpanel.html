@@ -26,6 +26,9 @@
 						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li><? } ?>
 						<li><a rel="external" data-ajax="false" href="/book/"><i class="zmdi zmdi-book zmd-fw"></i> Play Book</a></li>
 						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li><? } ?>
+						<? if(!$keylogin AND !empty($user_door) AND !empty($door_device)) {	?>
+							<li><a rel="external" data-ajax="false" href="/door/"><i class="zmdi zmdi-email zmd-fw"></i>Door</a></li>
+						<? } ?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
 						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>

@@ -242,15 +242,17 @@ class Hmw {
 		$CI = & get_instance();
 		
 		if($index!=-1){
-			$user		= $CI->ion_auth->user()->row();
-			$bus_list	= $CI->hmw->getBus(null, $user->id);
-			$user_groups = $CI->ion_auth->get_users_groups()->result();
+			$user			= $CI->ion_auth->user()->row();
+			$bus_list		= $CI->hmw->getBus(null, $user->id);
+			$user_groups	= $CI->ion_auth->get_users_groups()->result();
 
-			$bu_id		= $CI->session->all_userdata()['bu_id'];
-			$keylogin 	= $CI->session->all_userdata()['keylogin'];
-			$bu_name	= $CI->session->all_userdata()['bu_name'];
-			$username	= $CI->session->all_userdata()['identity'];
+			$bu_id			= $CI->session->all_userdata()['bu_id'];
+			$keylogin 		= $CI->session->all_userdata()['keylogin'];
+			$bu_name		= $CI->session->all_userdata()['bu_name'];
+			$username		= $CI->session->all_userdata()['identity'];
 
+			$buinfo 		= $CI->hmw->getBuInfo($bu_id);
+	
 			$CI->db->select('val')->from('bank_balance');
 			$bal_res = $CI->db->get();
 			$bal = $bal_res->row_array();
@@ -258,6 +260,9 @@ class Hmw {
 			$CI->db->from('turnover')->order_by('date desc')->where('id_bu',$bu_id)->limit(1);
 		 	$bal_ca = $CI->db->get();
 			$ca = $bal_ca->row_array();
+
+			$door_device = null;
+			if(isset($buinfo->door_device)) $door_device = $buinfo->door_device;
 
 			$headers = array(
 				'header_pre'	=> array(
@@ -277,9 +282,12 @@ class Hmw {
 					'groupname' 	=> $user_groups[0]->name,
 					'userlevel' 	=> $user_groups[0]->level,
 					'username'		=> $username,
-					'user_id'		=> $user->id
+					'user_id'		=> $user->id,
+					'door_device'	=> $door_device,
+					'user_door'		=> $user->door_open
 					)
 				);
+				
 			}else{
 				$headers = array(
 				'header_pre'	=> array(

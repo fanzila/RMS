@@ -53,6 +53,11 @@ echo form_open(uri_string(), $attributes);
             <?php echo lang('edit_user_password_confirm_label', 'password_confirm');?>
             <?php echo form_input($password_confirm);?>
       </p>
+
+      <p>
+            IBAN
+            <?php echo form_input($iban);?>
+      </p>
     </div>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-7">
@@ -110,6 +115,22 @@ echo form_open(uri_string(), $attributes);
       <?php echo form_hidden($csrf); ?>
 </div>
 </div>
+
+<?php if ($this->ion_auth->is_admin()): ?>
+	<?php if ($door_device): ?>	
+		<div class="col-xs-6 col-sm-6 col-md-6">
+			<div class="box">
+          		<h3>Open door (BU specific)</h3> 
+				<label class="checkbox">
+					<select name="door_open">
+				  		<option value="0" <?if(!$user->door_open) {?>selected<? } ?>>NO</option>
+				  		<option value="1" <?if($user->door_open) {?>selected<? } ?>>YES</option>
+					</select>
+				</label>
+			</div>
+		</div>
+	<?php endif ?>
+<?php endif ?>
 <div class="col-xs-12 col-sm-12 col-md-12">
   <p><?php echo form_submit('submit', lang('edit_user_submit_btn'));?></p>
 </div>
