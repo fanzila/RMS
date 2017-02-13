@@ -14,6 +14,7 @@
 <table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
 		<thead>
 			<tr class="ui-bar-d">
+				<th>ID</th>
 				<th>Device</th>
 				<th>Temp</th>
 				<th data-priority="1">Last check</th>
@@ -23,6 +24,7 @@
 		<tbody>
 			<?foreach ($current as $key => $val) { ?>
 				<tr>
+					<td><?=$val['sid']?></td>
 					<td><?=$val['name']?></td>
 					<td><?=$val['temp']+$val['correction']?></td>
 					<td><?=$val['date']?></td>

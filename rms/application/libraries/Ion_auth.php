@@ -174,7 +174,7 @@ class Ion_auth
 					$email['mailtype']	= 'html';
 					$email['msg'] = $message;
 				
-					$this->mmail->sendEmail($email);
+					$this->mmail->sendEmail($email) or die ('error sending email');
 					return TRUE;
 
 

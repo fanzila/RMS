@@ -17,7 +17,7 @@ class Sensors extends CI_Controller {
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
-		$this->db->select('st.id AS stid, st.id_sensor AS idsensor, MAX(st.date) as date, st.temp, s.name, s.correction, sa.lastalarm');
+		$this->db->select('s.id AS sid, st.id AS stid, st.id_sensor AS idsensor, MAX(st.date) as date, st.temp, s.name, s.correction, sa.lastalarm');
 			$this->db->from('sensors_temp as st')
 				->join('sensors as s', 'st.id_sensor = s.id  ','left')
 				->join('sensors_alarm as sa', 'sa.id_sensor = s.id','left')
