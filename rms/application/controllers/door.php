@@ -73,8 +73,8 @@ class Door extends CI_Controller {
 --compressed';
 			}
 
-			//exec($command_init, $output, $ret);
-			//exec($command_2nd, $output, $status);
+			exec($command_init, $output, $ret);
+			exec($command_2nd, $output, $status);
 			$msg = $ret. ' R: '.$output[0];
 			$log['type'] = 'door';
 			$this->hmw->LogRecord($log, $id_bu);
