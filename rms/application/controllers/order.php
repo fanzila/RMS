@@ -829,6 +829,7 @@ class Order extends CI_Controller {
 			$this->db->where('orders_confirm.count_confirm <', 2);
 			$status = array('sent','chased');
 			$this->db->where_in('orders_confirm.status', $status);
+			$this->db->where('suppliers.no_chased_email', false);
 			$this->db->where('orders.id_bu', $id_bu);
 
 			$query = $this->db->get("orders_confirm");
