@@ -171,7 +171,7 @@ class Sensors extends CI_Controller {
 					$correction	= $is[0]->correction;				
 
 					// "AND $temp != 85" is a cludge for wrong data collecting by 1-wire which report sometimes, for unknown reason, 85 instead of minus something...
-					if(($temp >= $max OR $temp <= $min) AND $temp != 85) {
+					if(($temp >= $max OR $temp <= $min) AND $temp != 85 AND $temp > -100 AND $temp < 100) {
 
 						$buinfo = $this->hmw->getBuInfo($id_bu);
 						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."° at ".$is[0]->date."\n 
