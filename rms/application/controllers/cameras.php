@@ -52,7 +52,8 @@ class Cameras extends CI_Controller {
 		$row = $res->result();
 		$i = 1;
 		
-		$local 		= false;
+		$local1		= false;
+		$local2		= false;
 		$ip 		= $this->input->ip_address();
 		$ca 		= array();
 		$data		= array();
@@ -68,12 +69,13 @@ class Cameras extends CI_Controller {
 	 	$bal_ca = $this->db->get();
 		$ca[2] = $bal_ca->row_array();
 
+		if($ip == $buinfo1->net_ip) $local1 = true;
+		if($ip == $buinfo2->net_ip) $local2 = true;
 		
-		if($ip == $buinfo1->net_ip OR $ip == $buinfo2->net_ip) $local = true;
-
 		foreach ($row as $key => $var) {
 			$url['cam'.$i] = $var->adress;
-			if($local) $url['cam'.$i] = $var->adress_local;
+			if($local1 AND $var->id_bu == 1) $url['cam'.$i] = $var->adress_local;
+			if($local2 AND $var->id_bu == 2) $url['cam'.$i] = $var->adress_local;
 			$i++;	
 		}
 		
