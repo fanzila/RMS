@@ -425,7 +425,7 @@ class Pm extends CI_Controller {
 		$managers = null;
 		foreach ($users as $user) {
 			$test = $this->ion_auth->get_users_groups($user->id)->result();
-			if($test[0]->level >= 1){
+			if($test[0]->level >= 2){
 				$managers ? $managers .=';'.$user->username : $managers .=''.$user->username;
 			}
 		}
