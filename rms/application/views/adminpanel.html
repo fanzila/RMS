@@ -16,7 +16,7 @@
 					<div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 						<h3>Main</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
-						<? if($userlevel >= 2){?>
+						<? if($keylogin || $userlevel >= 1) { ?>
 							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
 						<? } ?>		
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
@@ -26,24 +26,26 @@
 						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li><? } ?>
 						<li><a rel="external" data-ajax="false" href="/book/"><i class="zmdi zmdi-book zmd-fw"></i> Play Book</a></li>
 						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li><? } ?>
-						<? if(!$keylogin AND !empty($user_door) AND !empty($door_device)) {	?>
+						<? /** if(!$keylogin AND !empty($user_door) AND !empty($door_device)) {	?>
 							<li><a rel="external" data-ajax="false" href="/door/"><i class="zmdi zmdi-lock zmd-fw"></i>Door</a></li>
-						<? } ?>
-						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
-						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
-						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
-						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="<? if($keylogin) { ?>/order/viewOrders/<? } else { ?>/order/<? } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
-						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>
-						<? if($keylogin || $userlevel >= 2) { ?><li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li><?}?>
+						<? } **/ ?>
+						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
+						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
+						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
+						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="<? if($keylogin) { ?>/order/viewOrders/<? } else { ?>/order/<? } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
+						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>
+						<li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li>
 						<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff</a></li>
 						<? if($userlevel >= 2){?>
 							<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
-							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 							<li><a rel="external" data-ajax="false" href="/skills/admin/"><i class="zmdi zmdi-star zmd-fw"></i> Skills management</a></li>	
+						<?}?>
+						<? if($userlevel >= 1){?>								
+							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 						<?}?>
 						</ul>
 					</div>
-					<? if($userlevel >= 1){?>
+					<? if($userlevel >= 2){?>
 						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 							<h3>Tools</h3>
 							<ul data-role="listview" data-icon="false">
@@ -59,15 +61,17 @@
 							</ul>
 						</div>
 					<?}?>
-					<?if($userlevel >= 3){?>
+					<?if($userlevel >= 2){?>
 						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 							<h3>Admin</h3>
 							<ul data-role="listview" data-icon="false">
 								<li><a rel="external" data-ajax="false" href="/reminder/admin">Reminder tasks management</a></li>
-
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklists/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Checklists management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklistTasks/"><i class="fa fa-hdd-o"></i> Checklists tasks management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/discount/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Discounts</a></li>
+								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliers/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers</a></li>
+								<?if($userlevel >= 4){?>
+								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
+								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklists/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Checklists management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/products/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsUnit/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsUnit</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsStock/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsStock</a></li>
@@ -86,8 +90,7 @@
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/skills_record/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Skills record</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/skills_record_item/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Skills record item</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/skills_sub_category/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Skills sub_category</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliers/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
+								<?}?>
 							</ul>
 						</div>
 					<?}?>
@@ -97,7 +100,7 @@
 					<div>
 						<?$date = new DateTime($ca['last']);
 						$date->add(new DateInterval('PT01H'));?>
-						<?if($userlevel >= 3) { ?>
+						<?if($userlevel >= 4) { ?>
 							Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
 							<br/>
 						<? } ?>

@@ -383,7 +383,11 @@ class Pm extends CI_Controller {
 					}			
 					$query = $this->db->get("users");
 					
-					foreach ($query->result() as $row) {
+					$results = $query->result();
+
+					if(count($results) <= 1) exit('No recipient found (found only '.count($results).').');
+					
+					foreach ($results as $row) {
 						$key 	= md5(microtime().rand());
 						$email['from']		= 'noreply@hankrestaurant.com';
 						$email['from_name']	= 'RMS';

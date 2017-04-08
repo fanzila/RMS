@@ -79,7 +79,7 @@ echo form_open(uri_string(), $attributes);
                         break;
                         }
                     }
-				if($group['id'] == 1 AND $current_user_groups[0]->level < 3) { 
+				if(($group['id'] == 1 OR $group['id'] == 6) AND $current_user_groups[0]->level < 3) { 
 					echo ""; 
 				} else {
                 ?>

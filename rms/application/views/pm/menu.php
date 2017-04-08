@@ -9,7 +9,9 @@
 			<!--<a data-ajax="false" href="<php echo site_url()."/pm/messages/".MSG_UNREAD?>">Unread</a> &nbsp;&nbsp;&nbsp; -->
 			<a data-ajax="false" href="<?php echo site_url()."/pm/messages/".MSG_SENT?>"><i class="zmdi zmdi-mail-send zmd-fw"></i>Sent</a> &nbsp;&nbsp;&nbsp;
 			<a data-ajax="false" href="<?php echo site_url()."/pm/messages/".MSG_DELETED?>"><i class="zmdi zmdi-archive zmd-fw"></i>Archived</a> &nbsp;&nbsp;&nbsp;
+			<? if($userlevel >= 2){?>
 			<a data-ajax="false" href="<?php echo site_url()."/pm/send"?>"><i class="zmdi zmdi-plus-circle-o zmd-fw"></i>New Report</a>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<? } ?>
 		<? } ?>
 	</td>
 	</tr>

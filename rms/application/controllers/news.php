@@ -87,9 +87,8 @@ class News extends CI_Controller {
 		}
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 1)
+		if ($group_info[0]->level < 2)
 		{
-			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
 			redirect('/news/');
 		}
 

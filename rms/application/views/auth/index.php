@@ -25,7 +25,7 @@
 			<th><?php echo lang('index_groups_th');?></th>
 			<th>BU</th>
 				<? if($users['0']->groups['0']->level >= 3) { ?>
-			<th data-priority="6"><?php echo lang('index_status_th');?> | Delete</th>
+			<th data-priority="6"><?php echo lang('index_status_th');?> <? if($user_groups->level >= 10) { ?> | Delete <? } ?></th>
 				<? } ?>
 			<th data-priority="5"><?php echo lang('index_action_th');?></th>
 				<? } ?>
@@ -46,7 +46,8 @@
 				<?$test_real = $this->ion_auth->is_real_admin($current_user->id);?>
 				<?$test_fake = $this->ion_auth->is_admin($current_user->id);?>
 				<?php foreach ($user->groups as $group):?>
-					<?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_group/".$group->id, htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')) ;?><br />
+					<? if($user_groups->level >= 5) { ?><?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_group/".$group->id, htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')) ;?> <? } else { ?> <?=htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')?><? } ?>
+					<br />
                 <?php endforeach?>
 			</td>
 			<td>
@@ -56,7 +57,7 @@
 			</td>
 			<td><?php $attributes = array('rel' => 'external', 'data-ajax' => 'false');
 			if($test_real || ($test_fake && $group->name != 'admin')){
-				echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($users['0']->groups['0']->level >= 3) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? }} ?></td>
+				echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($user_groups->level >= 5) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? }} ?></td>
 			
 			<td><?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_user/".$user->id, 'Edit', $attributes) ;?></td>
 			<? } ?>

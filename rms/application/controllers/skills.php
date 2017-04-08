@@ -35,6 +35,7 @@ class Skills extends CI_Controller {
 			redirect('news', 'refresh');
 		}
 
+		//TODO change somewhere here for disabling disabled users in sponsor
 		$current_user = $this->ion_auth->get_user_id();
 		if($id!= null && $id!=$current_user){
 			$this->db->select('sr.id, us.id as id_sponsor, u.id as id_user')
@@ -42,6 +43,7 @@ class Skills extends CI_Controller {
 				->join('users as us', 'us.id = id_sponsor', 'left')
 				->join('users as u', 'u.id = id_user', 'left')
 				->where('id_user', $id);
+				
 			$res 	= $this->db->get() or die($this->mysqli->error);
 			$skills_records = $res->result();
 			if($skills_records!=null){

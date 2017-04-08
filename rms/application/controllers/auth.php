@@ -83,7 +83,8 @@ class Auth extends CI_Controller {
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
 
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
+		$group_info		= $this->ion_auth_model->get_users_groups()->result();
+		$user_groups	= $this->ion_auth->get_users_groups()->result();
 
 		if (!$this->ion_auth->logged_in())
 		{
@@ -103,9 +104,10 @@ class Auth extends CI_Controller {
 				$this->data['users'][$k]->bus 		= $this->ion_auth->get_users_bus($user->id)->result();
 			}
 
-			$this->data['username'] = $this->session->all_userdata()['identity'];
-			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['username']		= $this->session->all_userdata()['identity'];
+			$this->data['bu_name']		= $this->session->all_userdata()['bu_name'];
 			$this->data['current_user'] = $this->ion_auth->user()->row();
+			$this->data['user_groups']	= $user_groups[0];
 
 			$headers = $this->hmw->headerVars(1, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
