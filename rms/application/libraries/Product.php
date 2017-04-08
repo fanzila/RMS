@@ -110,8 +110,10 @@ class Product {
 		$req = $CI->db->get() or die($this->mysqli->error);
 
 		$ret = array();
+		$orders_status = array('sent', 'received');
+		
 		foreach ($req->result_array() as $key) {
-			$CI->db->select('date, user')->from('orders')->where('supplier_id', $key["id"])->where('status', 'sent')->where('id_bu', $id_bu)->order_by('date desc')->limit(1);
+			$CI->db->select('date, user')->from('orders')->where('supplier_id', $key["id"])->where_in('status', $orders_status)->where('id_bu', $id_bu)->order_by('date desc')->limit(1);
 			$reql = $CI->db->get() or die($this->mysqli->error);
 			$rowl = $reql->result_array();
 			$ret[$key['id']] = $key;
