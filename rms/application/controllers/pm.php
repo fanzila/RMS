@@ -385,7 +385,7 @@ class Pm extends CI_Controller {
 					
 					$results = $query->result();
 
-					if(count($results) <= 1) exit('No recipient found (found only '.count($results).').');
+					//if(count($results) <= 1) exit('No recipient found (found only '.count($results).').');
 					
 					foreach ($results as $row) {
 						$key 	= md5(microtime().rand());
