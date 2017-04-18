@@ -12,64 +12,64 @@
 <? } ?>						
 										
 <div class="row">
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b>Username</b>
 		</div>
 	</div>
 	
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b>Phone</b>
 		</div>
 	</div>
 
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b><?php echo lang('index_email_th');?></b>
 		</div>
 	</div>
 	
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b><?php echo lang('index_fname_th');?></b>
 		</div>
 	</div>	
 	
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b><?php echo lang('index_lname_th');?></b>
 		</div>
 	</div>
 	
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b>Comment</b>
 		</div>
 	</div>
 	
 	<? if($users['0']->groups['0']->level >= 2) { ?>
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b><?php echo lang('index_groups_th');?></b>
 		</div>
 	</div>
 	
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b>BU</b>
 		</div>
 	</div>
 	
 	<? if($users['0']->groups['0']->level >= 3) { ?>
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b><?php echo lang('index_status_th');?> <? if($user_groups->level >= 10) { ?> | Delete <? } ?></b>
 		</div>
 	</div>
 	<? } ?>
 	
-	<div class="col-md">
+	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b><?php echo lang('index_action_th');?></b>
 		</div>
@@ -78,46 +78,46 @@
 </div>
 <?php foreach ($users as $user):?>
 	<? $bgcolor = ""; if($user->active == 0) $bgcolor = "#aaaaaa"; ?>
-	<div class="row" style="background-color: <?=$bgcolor?>; border: 1px solid silver;">
+	<div class="row" style="background-color: <?=$bgcolor?>; border: 1px solid silver; margin: 5px;">
 
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php echo htmlspecialchars($user->username,ENT_QUOTES,'UTF-8');?>
 			</div>
 		</div>
 		
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php echo htmlspecialchars($user->phone,ENT_QUOTES,'UTF-8');?>
 			</div>
 		</div>
 				
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php echo htmlspecialchars($user->email,ENT_QUOTES,'UTF-8');?>
 			</div>
 		</div>
 		
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php echo htmlspecialchars($user->first_name,ENT_QUOTES,'UTF-8');?>
 			</div>
 		</div>
 		
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php echo htmlspecialchars($user->last_name,ENT_QUOTES,'UTF-8');?>
 			</div>
 		</div>
 		
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php echo htmlspecialchars($user->comment,ENT_QUOTES,'UTF-8');?>
 			</div>
 		</div>
 		
 		<? if($users['0']->groups['0']->level >= 2) { ?>
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?$test_real = $this->ion_auth->is_real_admin($current_user->id);?>
 				<?$test_fake = $this->ion_auth->is_admin($current_user->id);?>
@@ -128,7 +128,7 @@
 			</div>
 		</div>
 		
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 					<?php foreach ($user->bus as $bu):?>
 						<?=htmlspecialchars($bu->name)?><br />
@@ -136,7 +136,7 @@
 			</div>
 		</div>
 		
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php $attributes = array('rel' => 'external', 'data-ajax' => 'false');
 				if($test_real || ($test_fake && $group->name != 'admin')){
@@ -144,7 +144,7 @@
 			</div>
 		</div>		
 
-		<div class="col-md">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_user/".$user->id, 'Edit', $attributes) ;?>
 			</div>
