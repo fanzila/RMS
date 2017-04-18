@@ -11,15 +11,14 @@
 	</ul>
 <? } ?>
 
-
-<table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
+<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
 	<thead>
 		<tr class="ui-bar-d">
 			<th>Username</th>
+			<th data-priority="5">Phone</th>
+			<th data-priority="4"><?php echo lang('index_email_th');?></th>
 			<th data-priority="1"><?php echo lang('index_fname_th');?></th>
 			<th data-priority="3"><?php echo lang('index_lname_th');?></th>
-			<th data-priority="4"><?php echo lang('index_email_th');?></th>
-			<th data-priority="5">Phone</th>
 			<th data-priority="6">Comment</th>
 				<? if($users['0']->groups['0']->level >= 2) { ?>
 			<th><?php echo lang('index_groups_th');?></th>
@@ -36,10 +35,10 @@
 		<? $bgcolor = ""; if($user->active == 0) $bgcolor = "#aaaaaa"; ?>
 		<tr style="background-color: <?=$bgcolor?>">
 			<td><?php echo htmlspecialchars($user->username,ENT_QUOTES,'UTF-8');?></td>
+			<td><?php echo htmlspecialchars($user->phone,ENT_QUOTES,'UTF-8');?></td>
+            <td><?php echo htmlspecialchars($user->email,ENT_QUOTES,'UTF-8');?></td>
             <td><?php echo htmlspecialchars($user->first_name,ENT_QUOTES,'UTF-8');?></td>
             <td><?php echo htmlspecialchars($user->last_name,ENT_QUOTES,'UTF-8');?></td>
-            <td><?php echo htmlspecialchars($user->email,ENT_QUOTES,'UTF-8');?></td>
-			<td><?php echo htmlspecialchars($user->phone,ENT_QUOTES,'UTF-8');?></td>
 			<td><?php echo htmlspecialchars($user->comment,ENT_QUOTES,'UTF-8');?></td>
 			<? if($users['0']->groups['0']->level >= 2) { ?>
 			<td>
