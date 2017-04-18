@@ -78,9 +78,9 @@
 </div>
 <?php foreach ($users as $user):?>
 	<? $bgcolor = ""; if($user->active == 0) $bgcolor = "#aaaaaa"; ?>
-	<div class="row" style="background-color: <?=$bgcolor?>; border: 1px solid red;">
+	<div class="row" style="background-color: <?=$bgcolor?>; border: 1px solid silver;">
 
-		<div class="col-md" style="border: 1px solid red;">
+		<div class="col-md">
 			<div class="box">
 				<?php echo htmlspecialchars($user->username,ENT_QUOTES,'UTF-8');?>
 			</div>
@@ -92,7 +92,7 @@
 			</div>
 		</div>
 				
-		<div class="col-md" style="border: 1px solid red;">
+		<div class="col-md">
 			<div class="box">
 				<?php echo htmlspecialchars($user->email,ENT_QUOTES,'UTF-8');?>
 			</div>
