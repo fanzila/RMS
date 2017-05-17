@@ -65,7 +65,7 @@
 												<tr><td colspan="2" style="background-color: #fbf19e;">Repeating</td></tr>
 												<tr>
 													<td>
-														<label for="mstart" id="label">Start (datetime format YYYY-MM-DD HH:MN:SS):</label>
+														<label for="mstart" id="label">Start: <br /> (datetime format YYYY-MM-DD HH:MN:SS)</label>
 														<input id="mstart" type="text" name="mstart" value="" data-clear-btn="true" />
 													</td>
 													<td>
@@ -74,42 +74,6 @@
 														<input id="repeat_interval" type="text" name="repeat_interval" value="" data-clear-btn="true" />
 													</td>
 												</tr>
-
-												<tr>
-													<td>
-														<label for="repeat_year" id="label">Repeat year (YYYY or * or null):</label>
-														<input id="repeat_year" type="text" name="repeat_year" value="" data-clear-btn="true" />
-													</td>
-													<td>
-														<label for="repeat_month" id="label">Repeat month (MM or * or null):</label>
-														<input id="repeat_month" type="text" name="repeat_month" value="" data-clear-btn="true" />
-													</td>
-												</tr>
-
-												<tr>
-													<td>
-														<label for="repeat_day" id="label">Repeat day (DD or * or null):</label>
-														<input id="repeat_day" type="text" name="repeat_day" value="" data-clear-btn="true" />
-													</td>
-													<td>
-														<label for="repeat_week" id="label">Repeat week (WW or * or null):</label>
-														<input id="repeat_week" type="text" name="repeat_week" value="" data-clear-btn="true" />
-													</td>
-												</tr>
-
-												<tr>
-													<td>
-														<label for="repeat_weekday" id="label">Repeat weekday (WD or * or null):</label>
-														<input id="repeat_weekday" type="text" name="repeat_weekday" value="" data-clear-btn="true" />
-													</td>
-													<td>
-														About repeat year, month, day, week, weekday : put either a repeat interval and repeat_* = null <br />
-														OR no repeat interval and a value on one or more repeat_*. <br />
-														Ex: a daily task : repeat interval = 0, repeat_* = *. <br />
-														Every 10 days tasks : repeat interval =  864000, repeat_* = null.
-													</td>
-												</tr>
-
 											</table>
 											<input type="hidden" name="id" value="create">
 											<input type="submit" id="sub" name="submit" value="Save">
@@ -224,7 +188,7 @@
 												<tr><td colspan="2" style="background-color: #fbf19e;">Repeating</td></tr>
 												<tr>
 													<td>
-														<label for="mstart-<?=$line->tid?>" id="label-<?=$line->tid?>">Start (datetime format YYYY-MM-DD HH:MN:SS):</label>
+														<label for="mstart-<?=$line->tid?>" id="label-<?=$line->tid?>">Start: <br /> (datetime format YYYY-MM-DD HH:MN:SS)</label>
 														<input id="mstart-<?=$line->tid?>" type="text" name="mstart" value="<?=$line->mstart?>" data-clear-btn="true" />
 													</td>
 													<td>
@@ -233,39 +197,8 @@
 														<input id="repeat_interval-<?=$line->tid?>" type="text" name="repeat_interval" value="<?=$line->repeat_interval?>" data-clear-btn="true" />
 													</td>
 												</tr>
-												<tr>
-													<td>
-														<label for="repeat_year-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat year (YYYY or * or null):</label>
-														<input id="repeat_year-<?=$line->tid?>" type="text" name="repeat_year" value="<?=$line->repeat_year?>" data-clear-btn="true" />
-													</td>
-													<td>
-														<label for="repeat_month-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat month (MM or * or null):</label>
-														<input id="repeat_month-<?=$line->tid?>" type="text" name="repeat_month" value="<?=$line->repeat_month?>">
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<label for="repeat_day-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat day (DD or * or null):</label>
-														<input id="repeat_day-<?=$line->tid?>" type="text" name="repeat_day" value="<?=$line->repeat_day?>" data-clear-btn="true" />
-													</td>
-													<td>
-														<label for="repeat_week-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat week (WW or * or null):</label>
-														<input id="repeat_week-<?=$line->tid?>" type="text" name="repeat_week" value="<?=$line->repeat_week?>" data-clear-btn="true" />
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<label for="repeat_weekday-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat weekday (WD or * or null):</label>
-														<input id="repeat_weekday-<?=$line->tid?>" type="text" name="repeat_weekday" value="<?=$line->repeat_weekday?>" data-clear-btn="true" />
-													</td>
-													<td>
-														About repeat year, month, day, week, weekday : put either a repeat interval and repeat_* = null <br />
-														OR no repeat interval and a value on one or more repeat_*. <br />
-														Ex: a daily task : repeat interval = 0, repeat_* = *. <br />
-														Every 10 days tasks : repeat interval =  864000, repeat_* = null.
-													</td>
-												</tr>
 											</table>
+											
 											<input type="hidden" name="id" value="<?=$line->tid?>">
 											<input type="submit" id="sub<?=$line->tid?>" name="submit" value="Save">
 										</table>

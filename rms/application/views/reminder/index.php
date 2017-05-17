@@ -24,12 +24,12 @@
 								if($line->priority == 1) $bkg_color = "#e0e0e0";
 
 								$overdue = null;
-								if(($line->overdue > 0) && empty($line->repeat_year) && empty($line->repeat_month) && empty($line->repeat_day) && empty($line->repeat_week) && empty($line->repeat_weekday)) {
+								if($line->overdue > 0) {
 									$overdue = "overdue: $line->overdue day(s)";
 									$font_color = "#ff5b50";
 								}
 
-								if(($line->overdue < 0) && empty($line->repeat_year) && empty($line->repeat_month) && empty($line->repeat_day) && empty($line->repeat_week) && empty($line->repeat_weekday)) {
+								if($line->overdue < 0) {
 									$overdue = "due in: ".abs($line->overdue)." day(s)";
 									$font_color = "#4a7b50";
 								}

@@ -840,6 +840,7 @@ class Order extends CI_Controller {
 				$date_sent		->modify('+1 day');
 				$ds 			= $date_sent->format('U');
 				$dc 			= $date_current->format('U');
+				//TODO if today == sun or sat == don't send 
 				
 				if(!empty($line->contact_order_email) AND $ds <= $dc) { 
 
