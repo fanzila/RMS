@@ -46,7 +46,7 @@
 <?if(isset($url['cam8'])) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/8"></iframe>			
 <? } ?>
-
+<hr>
 <div class="row">
 	<div class="col-md" style="margin: 3px;">
 		<div class="box">
