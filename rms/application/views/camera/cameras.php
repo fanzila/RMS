@@ -65,13 +65,13 @@ foreach($p AS $r) {
 
 	<div class="row" style="background-color: #FFF; border: 1px solid silver; margin: 5px;">	
 
-		<div class="col-md" style="margin: 3px;" style="background-color: #FFF; border: 1px solid silver; margin: 5px;">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<img src="<?=$avatars_url?><?=$avatar?>"> <?=$r['employee_name'];?> <small>(<?=$r['schedule_name'];?>)</small>
 			</div>
 		</div>
 
-		<div class="col-md" style="margin: 3px;" style="background-color: #FFF; border: 1px solid silver; margin: 5px;">
+		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?=$r['shift_start']['time'];?> - <?=$r['shift_end']['time'];?>
 			</div>
