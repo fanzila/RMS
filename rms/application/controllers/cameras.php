@@ -79,12 +79,52 @@ class Cameras extends CI_Controller {
 			$i++;	
 		}
 		
+		$planning = $this->planning();
+	
 		$data['url'] = $url;
 		$data['ca'] = $ca;
+		$data['planning'] = $planning;
+	
 		$session_data['cam'] = $url;
 		$this->session->set_userdata($session_data);
 		
 		$this->load->view('camera/cameras', $data);
+	}
+	
+	private function planning() 
+	{
+	
+		$this->load->library('hmw');
+		$this->load->library('shiftplanning');
+	
+		$sp_key		= $this->hmw->getParam('sp_key'); 
+		$sp_user	= $this->hmw->getParam('sp_user');
+		$sp_pass	= $this->hmw->getParam('sp_pass');
+	
+		/* set the developer key on class initialization */
+		$shiftplanning = new shiftplanning(array('key' => $sp_key));
+
+		$session = $shiftplanning->getSession( );
+		if( !$session ) {
+			// perform a single API call to authenticate a user
+			$response = $shiftplanning->doLogin(
+			array('username' => $sp_user, 'password' => $sp_pass));
+
+				if( $response['status']['code'] == 1 )
+				{// check to make sure that login was successful
+					$session = $shiftplanning->getSession( );	// return the session data after successful login
+				} else {
+					echo " CANT GET SESSION".$response['status']['text'] . "--" . $response['status']['error'];
+				}
+		}
+
+		if( $session ) {
+			$response = $shiftplanning->setRequest(array(array('module' => 'dashboard.onnow', 'method' => 'GET')));
+			$send_message = $shiftplanning->getResponse(0);	// returns the response/data for the first api call (index=0)
+			
+			$r = $shiftplanning->getResponse(0);
+			return $r;		
+		}
 	}
 	
 	public function frame($num)
