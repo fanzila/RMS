@@ -25,7 +25,7 @@
 	$bgcolor = '#f7bf35';
 	if($info_bu->id == 2) $bgcolor = '#e15849'; 
 	?>
-	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">[<?=$info_bu->name?>] | ARCH: <?=number_format($ca[1]['amount']/1000, 0, ',', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=number_format($ca[2]['amount']/1000, 0, ',', ' ')?>€ <small><?=$ca[2]['last']?></small> - <small><a href="/cameras/index/onebu/1">Current BU view only</a></small></div>
+	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">[<a href="/"><?=$info_bu->name?></a>] | ARCH: <?=number_format($ca[1]['amount']/1000, 0, ',', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=number_format($ca[2]['amount']/1000, 0, ',', ' ')?>€ <small><?=$ca[2]['last']?></small> - <small><a href="/cameras/index/onebu/1">Current BU view only</a></small></div>
 <?if(isset($url['cam1'])) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/1"></iframe>
 <? } ?>
@@ -49,7 +49,14 @@
 <? } ?>
 <?if(isset($url['cam8'])) { ?>
 	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/8"></iframe>			
-<? } ?>
+<? } 
+$avatars_url = 'https://s3.amazonaws.com/uf.shiftplanning.com/';
+$p = $planning['data'];
+$bu_postion_id = explode (',',$info_bu->humanity_positions);
+$i=false;
+if($p) {
+	
+	?>
 <hr>
 <div class="row">
 	<div class="col-md" style="margin: 3px;">
@@ -59,14 +66,12 @@
 	</div>
 </div>		
 <?			
-$avatars_url = 'https://s3.amazonaws.com/uf.shiftplanning.com/';
-$p = $planning['data'];
-$bu_postion_id = explode (',',$info_bu->humanity_positions);
-$i=false;
 foreach($p AS $r) {
-	$av_json_decode = json_decode($r['employee_avatar_url']);
-	$avatar = $av_json_decode->small;
-	$pos = in_array ( $r['schedule_id'], $bu_postion_id);	
+	if(!empty($r['employee_avatar_url'])) {
+		$av_json_decode = json_decode($r['employee_avatar_url']);
+		$avatar = $av_json_decode->small;
+	}
+	$pos = in_array ($r['schedule_id'], $bu_postion_id);	
 	if($pos) {
 		$i=true;
 	?>
@@ -74,13 +79,14 @@ foreach($p AS $r) {
 	<div class="row" style="background-color: #FFF; border: 1px solid silver; margin: 5px;">	
 		<div class="col-md" style="margin: 3px;">
 			<div class="box">
-				<img src="<?=$avatars_url?><?=$avatar?>"> <?=$r['employee_name'];?> <small>(<?=$r['schedule_name'];?>)</small> | <?=$r['shift_start']['time'];?> - <?=$r['shift_end']['time'];?>
+				<? if(!empty($r['employee_avatar_url'])) { ?><img src="<?=$avatars_url?><?=$avatar?>"><? } ?> <?=$r['employee_name'];?> <small>(<?=$r['schedule_name'];?>)</small> | <?=$r['shift_start']['time'];?> - <?=$r['shift_end']['time'];?>
 			</div>
 		</div>
 	</div>
 	<?
 	}
 }
-if(!$i) { ?><p>No one.</p><? } ?>
+if(!$i) { ?><p>No one.</p><? }
+} ?>
 </body>
 </html>
