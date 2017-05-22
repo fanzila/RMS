@@ -57,7 +57,6 @@ class Cameras extends CI_Controller {
 		$ip 		= $this->input->ip_address();
 		$ca 		= array();
 		$data		= array();
-		//$id_bu 		= $this->session->all_userdata()['bu_id'];
 		$buinfo1 	= $this->hmw->getBuInfo(1);
 		$buinfo2 	= $this->hmw->getBuInfo(2);
 		
@@ -78,16 +77,16 @@ class Cameras extends CI_Controller {
 			if($local2 AND $var->id_bu == 2) $url['cam'.$i] = $var->adress_local;
 			$i++;	
 		}
-		
-		$planning = $this->planning();
-	
-		$data['url'] = $url;
-		$data['ca'] = $ca;
-		$data['planning'] = $planning;
-	
+				
+		$info_current_bu 	= $this->hmw->getBuInfo($this->session->all_userdata()['bu_id']);
+		$planning 			= $this->planning();
+		$data['info_bu'] 	= $info_current_bu;
+		$data['url'] 		= $url;
+		$data['ca']			= $ca;
+		$data['planning'] 	= $planning;
 		$session_data['cam'] = $url;
-		$this->session->set_userdata($session_data);
 		
+		$this->session->set_userdata($session_data);
 		$this->load->view('camera/cameras', $data);
 	}
 	
@@ -119,9 +118,13 @@ class Cameras extends CI_Controller {
 		}
 
 		if( $session ) {
-			$response = $shiftplanning->setRequest(array(array('module' => 'dashboard.onnow', 'method' => 'GET')));
-			$send_message = $shiftplanning->getResponse(0);	// returns the response/data for the first api call (index=0)
-			
+			$response = $shiftplanning->setRequest(
+				array(
+					array('module' => 'dashboard.onnow', 'method' => 'GET'),
+					array('module' => 'location.locations', 'method' => 'GET')
+				)
+			);
+			//print_r($shiftplanning->getResponse(1));
 			$r = $shiftplanning->getResponse(0);
 			return $r;		
 		}
