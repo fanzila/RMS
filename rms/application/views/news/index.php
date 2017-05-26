@@ -27,8 +27,8 @@
 						'style' => "max-height: 300px; max-width: 300px;"
 				);?>
 				<?echo img($image_properties);?>
-			<?}?>
-		<?php echo $news_item->text; ?></li>
+			<?}?>	
+		<p><font color="#000"><?php echo nl2br($news_item->text); ?></font></p></li>
 		<?php endforeach; ?>
 		<? } ?>
 </ul>

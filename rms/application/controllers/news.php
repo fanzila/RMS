@@ -177,7 +177,7 @@ class News extends CI_Controller {
 					$email['mailtype']	= 'html';
 					
 					if ($checkUpload){
-						$msg = '<img src="http://rms.hankrestaurant.com/public/pictures/'.$picName.'" class="img-responsive" style="max-height: 300px; max-width: 300px;" alt=""/><br/>';
+						$msg = '<img src="http://'.$server_name.'/public/pictures/'.$picName.'" class="img-responsive" style="max-height: 300px; max-width: 300px;" alt=""/><br /><br />';
 						$msg .= $this->input->post('text');
 					}else{
 						$msg = $this->input->post('text');
