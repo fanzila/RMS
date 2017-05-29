@@ -24,7 +24,7 @@ class Sensors extends CI_Controller {
 				->where('s.id_bu', $id_bu)
 				->order_by('st.id DESC')
 				->group_by('idsensor');
-		
+
 		$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$info = $r->result_array();
 
@@ -51,7 +51,7 @@ class Sensors extends CI_Controller {
 			$sensor	= $ex[0];
 			$temp 	= $ex[2];
 
-			$req = array ( 
+			$req = array (
 				'date'		=> $date,
 				'temp'		=> $temp,
 				'id_sensor'	=> $sensor
@@ -64,6 +64,60 @@ class Sensors extends CI_Controller {
 
 			$this->db->where("date < DATE_ADD(NOW(), INTERVAL -10 DAY)");
 			$r = $this->db->delete('sensors_temp') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		}
+	}
+
+	public function checkForOngoingDelay($id_sensor)
+	{
+		$currentDate = date('Y-m-d H:i:s');
+		$this->db->select_max('date_fin');
+		$this->db->from('sensors_alarm_pause');
+		$this->db->where('id_sensor' => $id_sensor, 'date_fin >=' => $currentDate);
+		$res = $this->db->get() or die('ERROR ' .$this->db->error_message().error_log('ERROR '.$this->db->_error_message()));
+		if (isset($res)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function setDelay($id_sensor, $delay)
+	{
+		$currentDate = new DateTime('now');
+		$cfd = $this->checkForOngoingDelay($id_sensor);
+		if ($delay != -1) {
+			$dateToSet = $currentDate->add(new DateInterval('PT' . $delay . 'S'));
+			if ($cfd === true) {
+				$this->data->message('Pause déjà active, veuillez la réinitialiser');
+			} else {
+					$dataToInsert = array (
+						'id_sensor' => $id_sensor,
+						'id_user_pause' => $this->ion_auth->user()->row()->id,
+						'date_fin' => $dateToSet->format('Y-m-d H:i:s'),
+						'date_last_action' => $currentDate->format('Y-m-d H:i:s')
+					);
+					if (!$this->db->insert('sensors_alarm_pause', $dataToInsert)) {
+						error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
+						exit();
+					}
+			}
+		} else {
+				$this->db->select('id');
+				$this->db->from('sensors_alarm_pause');
+				$this->db->where('id_sensor' => $id_sensor, 'date_fin >=' => $currentDate);
+				$res = $this->db->get() or die('ERROR '.$this->db->error_message().error_log('ERROR '.$this->db->_error_message()));
+
+				$dataToInsert = array (
+						'id_user_pause' => $this->ion_auth->user()->row()->id,
+						'date_fin' => $currentDate->format('Y-m-d H:i:s'),
+						'date_last_action' => $currentDate->format('Y-m-d H:i:s')
+					);
+
+					$this->db->where('id', $id);
+					if (!$this->db->update('sensors_alarm_pause', $dataToInsert)) {
+						error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
+						exit();
+					}
 		}
 	}
 
@@ -114,7 +168,7 @@ class Sensors extends CI_Controller {
 					$email['subject'] 	= $buinfo->name." Sensor '".$is[0]->name."' error!";
 					$email['msg'] 		= $msg;
 					foreach ($query->result() as $row) {
-						$email['to']	= $row->email;	
+						$email['to']	= $row->email;
 						$this->mmail->sendEmail($email);
 					}
 					$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -128,15 +182,10 @@ class Sensors extends CI_Controller {
 		}
 	}
 
-
-
-
-
 	//cd /var/www/hank/rms/rms && php index.php sensors cliCheck 1 #every 5 mn
 	//cd /var/www/hank/rms/assets/1wire.sh #every 5 mn
 	public function cliCheck($id_bu)
 	{
-
 		if($this->input->is_cli_request()) {
 			$this->db->from('sensors_alarm as sa')
 				->join('sensors as s', 's.id = sa.id_sensor')
@@ -168,13 +217,12 @@ class Sensors extends CI_Controller {
 				if(!empty($is)) {
 
 					$temp		= $is[0]->temp; // + $correction;
-					$correction	= $is[0]->correction;				
+					$correction	= $is[0]->correction;
 
 					// "AND $temp != 85" is a cludge for wrong data collecting by 1-wire which report sometimes, for unknown reason, 85 instead of minus something...
-					if(($temp >= $max OR $temp <= $min) AND $temp != 85 AND $temp > -100 AND $temp < 100) {
-
+					if(($temp >= $max OR $temp <= $min) AND ($temp != 85 AND $temp > -100 AND $temp < 100)) {
 						$buinfo = $this->hmw->getBuInfo($id_bu);
-						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."° at ".$is[0]->date."\n 
+						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."° at ".$is[0]->date."\n
 							The temperature should be max: ".$max."° and min: ".$min."°";
 
 						$this->hmw->sendNotif($msg, $id_bu);
@@ -193,7 +241,7 @@ class Sensors extends CI_Controller {
 						$email['msg'] 		= $msg;
 
 						foreach ($query->result() as $row) {
-							$email['to']	= $row->email;	
+							$email['to']	= $row->email;
 							$this->mmail->sendEmail($email);
 						}
 						$this->db->set('lastalarm', "NOW()", FALSE)->where('id_sensor', $val['id_sensor']);

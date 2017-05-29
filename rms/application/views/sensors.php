@@ -1,7 +1,7 @@
 
-	<!-- <link class="include" rel="stylesheet" type="text/css" href="/public/jqplot/jquery.jqplot.css" /> 
+	<!-- <link class="include" rel="stylesheet" type="text/css" href="/public/jqplot/jquery.jqplot.css" />
 	<link rel="stylesheet" type="text/css" href="/public/jqplot/examples.css" /> -->
-	<!-- 	
+	<!--
 	<link type="text/css" rel="stylesheet" href="/public/jqplot/syntaxhighlighter/styles/shCoreDefault.min.css" />
     <link type="text/css" rel="stylesheet" href="/public/jqplot/syntaxhighlighter/styles/shThemejqPlot.min.css" />
 	-->
@@ -19,6 +19,7 @@
 				<th>Temp</th>
 				<th data-priority="1">Last check</th>
 				<th data-priority="3">Last alarm</th>
+				<th>Pause alarm</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -29,6 +30,19 @@
 					<td><?=$val['temp']+$val['correction']?></td>
 					<td><?=$val['date']?></td>
 					<td><?=$val['lastalarm']?></td>
+					<td>
+						<form action="/sensors/" method="post">
+							<select name=<?='s_'.$val['sid']?>>
+								<option value="-1">placeholder stop</option>
+								<option value="3600">1h</option>
+								<option value="10800">3h</option>
+								<option value="28800">8h</option>
+								<option value="172800">2 jrs</option>
+								<option value="864000">10 jrs</option>
+							</select>
+							<input type="submit" name="submit_pause" value="valider"/>
+						</form>
+					</td>
 				</tr>
 			<? } ?>
 		</tbody>
@@ -39,16 +53,16 @@
 <h3>Last 12h</h3>
 
 <div class="example-plot" id="chart1"></div>
-		
+
 
 <script type="text/javascript" language="javascript">
 
 $(document).ready(function(){
     var line1 = [[1,6.5], [5,9.2], [8,14], [12,19.65]];
     var line2 = [[1,3.5], [2,6.2], [3,7], [4,18]];
- 
+
 	$.jqplot('chart1',  [line1,line2],
-	{ 
+	{
 
 	  axes:{
 		yaxis:{min:-30, max:40},
@@ -61,11 +75,11 @@ $(document).ready(function(){
 	        xoffset: 12,        // pixel offset of the legend box from the x (or x2) axis.
 	        yoffset: 12,        // pixel offset of the legend box from the y (or y2) axis.
 	    }
-	
-	});
-	
 
- 
+	});
+
+
+
 });
 </script>
 -->
