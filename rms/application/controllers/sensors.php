@@ -40,7 +40,7 @@ class Sensors extends CI_Controller {
 				$data['msg'] = '<script>alert("Delay set");</script>';
 			}
 			else {
-				$data['msg'] = '<scriptaW>alert("Re-enabled alarm");</script>';
+				$data['msg'] = '<script>alert("Re-enabled alarm");</script>';
 			}
 		}
 
@@ -146,6 +146,8 @@ class Sensors extends CI_Controller {
 						error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
 						exit();
 					}
+					$this->db->where("date_fin < DATE_ADD(NOW(), INTERVAL -90 DAY)");
+					$r = $this->db->delete('sensors_alarm_pause') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 					return (1);
 			}
 		} else {
