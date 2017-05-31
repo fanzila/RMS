@@ -33,7 +33,15 @@ class Sensors extends CI_Controller {
 				AND $this->input->post('s_id') !== false) {
 			$delay = $this->input->post('delayVal');
 			$s_id = $this->input->post('s_id');
-			$this->setDelay($s_id, $delay);
+			$delayStatus = $this->setDelay($s_id, $delay);
+			if ($delayStatus == 0) {
+				$data['msg'] = '<script>alert("Delay already active, please reinitialize it first");</script>';
+			} else if ($delayStatus == 1) {
+				$data['msg'] = '<script>alert("Delay set");</script>';
+			}
+			else {
+				$data['msg'] = '<scriptaW>alert("Re-enabled alarm");</script>';
+			}
 		}
 
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
@@ -126,7 +134,7 @@ class Sensors extends CI_Controller {
 		if ($delay != 0) {
 			$dateToSet->add(new DateInterval('PT' . $delay . 'S'));
 			if ($cfd === true) {
-				$this->data['message'] = 'Pause déjà active, veuillez la réinitialiser';
+				return (0);
 			} else {
 					$dataToInsert = array (
 						'id_sensor' => $id_sensor,
@@ -138,6 +146,7 @@ class Sensors extends CI_Controller {
 						error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
 						exit();
 					}
+					return (1);
 			}
 		} else {
 				$this->db->select('id');
@@ -157,6 +166,7 @@ class Sensors extends CI_Controller {
 						error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
 						exit();
 					}
+				return (2);
 		}
 	}
 

@@ -10,7 +10,11 @@
 	</div>
 	<div data-role="content" data-theme="a">
 <h3>Current temperature</h3>
-
+<?
+if (isset($msg)) {
+	echo $msg;
+}
+?>
 <table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
 		<thead>
 			<tr class="ui-bar-d">
@@ -35,13 +39,13 @@
 					<td>
 						<form action="/sensors/" method="post">
 							<select name="delayVal">
-								<option <?if ($val['ongoingDelay'] == 0) {echo 'selected';}?> disabled>Choisir une durée</option>
-								<option value="0">Réactiver alarme</option>
+								<option <?if ($val['ongoingDelay'] == 0) {echo 'selected';}?> disabled>Choose Delay</option>
+								<option value="0">Re-enable alarm</option>
 								<option value="3600" <?if ($val['ongoingDelay'] > 0 AND $val['ongoingDelay'] <= 3600) {echo 'selected';}?>>1h</option>
 								<option value="10800" <?if ($val['ongoingDelay'] > 3600 AND $val['ongoingDelay'] <= 10800) {echo 'selected';}?>>3h</option>
 								<option value="28800" <?if ($val['ongoingDelay'] > 10800 AND $val['ongoingDelay'] <= 28800) {echo 'selected';}?>>8h</option>
-								<option value="172800" <?if ($val['ongoingDelay'] > 28800 AND $val['ongoingDelay'] <= 172800) {echo 'selected';}?>>2 jrs</option>
-								<option value="864000" <?if ($val['ongoingDelay'] > 172800 AND $val['ongoingDelay'] <= 864000) {echo 'selected';}?>>10 jrs</option>
+								<option value="172800" <?if ($val['ongoingDelay'] > 28800 AND $val['ongoingDelay'] <= 172800) {echo 'selected';}?>>2 days</option>
+								<option value="864000" <?if ($val['ongoingDelay'] > 172800 AND $val['ongoingDelay'] <= 864000) {echo 'selected';}?>>10 days</option>
 							</select>
 							<input type="hidden" name="s_id" value=<?=$val['sid']?>>
 							<input type="submit" name="submit_pause" value="valider"/>
