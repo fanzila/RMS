@@ -19,6 +19,7 @@
 				<th>Temp</th>
 				<th data-priority="1">Last check</th>
 				<th data-priority="3">Last alarm</th>
+				<th>Current end of pause</th>
 				<th>Pause alarm</th>
 			</tr>
 		</thead>
@@ -30,16 +31,19 @@
 					<td><?=$val['temp']+$val['correction']?></td>
 					<td><?=$val['date']?></td>
 					<td><?=$val['lastalarm']?></td>
+					<td><?=$val['date_fin']?></td>
 					<td>
 						<form action="/sensors/" method="post">
-							<select name=<?='s_'.$val['sid']?>>
-								<option value="-1">placeholder stop</option>
-								<option value="3600">1h</option>
-								<option value="10800">3h</option>
-								<option value="28800">8h</option>
-								<option value="172800">2 jrs</option>
-								<option value="864000">10 jrs</option>
+							<select name="delayVal">
+								<option <?if ($val['ongoingDelay'] == 0) {echo 'selected';}?> disabled>Choisir une durée</option>
+								<option value="0">Réactiver alarme</option>
+								<option value="3600" <?if ($val['ongoingDelay'] > 0 AND $val['ongoingDelay'] <= 3600) {echo 'selected';}?>>1h</option>
+								<option value="10800" <?if ($val['ongoingDelay'] > 3600 AND $val['ongoingDelay'] <= 10800) {echo 'selected';}?>>3h</option>
+								<option value="28800" <?if ($val['ongoingDelay'] > 10800 AND $val['ongoingDelay'] <= 28800) {echo 'selected';}?>>8h</option>
+								<option value="172800" <?if ($val['ongoingDelay'] > 28800 AND $val['ongoingDelay'] <= 172800) {echo 'selected';}?>>2 jrs</option>
+								<option value="864000" <?if ($val['ongoingDelay'] > 172800 AND $val['ongoingDelay'] <= 864000) {echo 'selected';}?>>10 jrs</option>
 							</select>
+							<input type="hidden" name="s_id" value=<?=$val['sid']?>>
 							<input type="submit" name="submit_pause" value="valider"/>
 						</form>
 					</td>
@@ -47,7 +51,6 @@
 			<? } ?>
 		</tbody>
 </table>
-
 <!--
 <hr>
 <h3>Last 12h</h3>

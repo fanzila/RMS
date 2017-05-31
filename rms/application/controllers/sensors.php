@@ -17,10 +17,11 @@ class Sensors extends CI_Controller {
 
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 
-		$this->db->select('s.id AS sid, st.id AS stid, st.id_sensor AS idsensor, MAX(st.date) as date, st.temp, s.name, s.correction, sa.lastalarm');
+		$this->db->select('s.id AS sid, st.id AS stid, st.id_sensor AS idsensor, MAX(st.date) as date, st.temp, s.name, s.correction, sa.lastalarm, MAX(sap.date_fin) as date_fin');
 			$this->db->from('sensors_temp as st')
 				->join('sensors as s', 'st.id_sensor = s.id  ','left')
 				->join('sensors_alarm as sa', 'sa.id_sensor = s.id','left')
+				->join('sensors_alarm_pause as sap', 'sap.id_sensor = s.id', 'left')
 				->where('s.id_bu', $id_bu)
 				->order_by('st.id DESC')
 				->group_by('idsensor');
@@ -28,10 +29,26 @@ class Sensors extends CI_Controller {
 		$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$info = $r->result_array();
 
+		if ($this->input->post('submit_pause') !== false AND $this->input->post('delayVal') !== false
+				AND $this->input->post('s_id') !== false) {
+			$delay = $this->input->post('delayVal');
+			$s_id = $this->input->post('s_id');
+			$this->setDelay($s_id, $delay);
+		}
+
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
 		$data['current'] 	= $info;
+		foreach ($data['current'] as $key => &$val) {
+			if ($this->checkForOngoingDelay($val['sid']) === true) {
+				$val['ongoingDelay'] = $this->getOngoingDelay($val['sid']);
+			}
+			else {
+				$val['ongoingDelay'] = NULL;
+				$val['date_fin'] = NULL;
+			}
+		}
 		$data['title'] 		= 'Sensors';
 		$data['keylogin']	= $this->session->userdata('keylogin');
 
@@ -67,14 +84,34 @@ class Sensors extends CI_Controller {
 		}
 	}
 
+	public function getOngoingDelay($id_sensor)
+	{
+		$currentDate = new DateTime('now');
+		$this->db->select_max('date_fin');
+		$this->db->from('sensors_alarm_pause');
+		$whereArray = array ('id_sensor' => $id_sensor, 'date_fin >' => $currentDate->format('Y-m-d H:i:s'));
+		$this->db->where($whereArray);
+		$query = $this->db->get() or die('ERROR ' .$this->db->error_message().error_log('ERROR '.$this->db->_error_message()));
+		$res = $query->result_array()[0]['date_fin'];
+		if (isset($res)) {
+			$endDate = DateTime::CreateFromFormat('Y-m-d H:i:s', $res);
+			$delay = abs($endDate->getTimestamp()-$currentDate->getTimestamp());
+			return ($delay);
+		} else {
+			return 0;
+		}
+	}
+
 	public function checkForOngoingDelay($id_sensor)
 	{
 		$currentDate = date('Y-m-d H:i:s');
 		$this->db->select_max('date_fin');
 		$this->db->from('sensors_alarm_pause');
-		$this->db->where('id_sensor' => $id_sensor, 'date_fin >=' => $currentDate);
-		$res = $this->db->get() or die('ERROR ' .$this->db->error_message().error_log('ERROR '.$this->db->_error_message()));
-		if (isset($res)) {
+		$whereArray = array ('id_sensor' => $id_sensor, 'date_fin >' => $currentDate);
+		$this->db->where($whereArray);
+		$query = $this->db->get() or die('ERROR ' .$this->db->error_message().error_log('ERROR '.$this->db->_error_message()));
+		$res = $query->result_array()[0];
+		if (isset($res) AND isset($res['date_fin'])) {
 			return true;
 		} else {
 			return false;
@@ -84,11 +121,12 @@ class Sensors extends CI_Controller {
 	public function setDelay($id_sensor, $delay)
 	{
 		$currentDate = new DateTime('now');
+		$dateToSet = new DateTime('now');
 		$cfd = $this->checkForOngoingDelay($id_sensor);
-		if ($delay != -1) {
-			$dateToSet = $currentDate->add(new DateInterval('PT' . $delay . 'S'));
+		if ($delay != 0) {
+			$dateToSet->add(new DateInterval('PT' . $delay . 'S'));
 			if ($cfd === true) {
-				$this->data->message('Pause déjà active, veuillez la réinitialiser');
+				$this->data['message'] = 'Pause déjà active, veuillez la réinitialiser';
 			} else {
 					$dataToInsert = array (
 						'id_sensor' => $id_sensor,
@@ -104,15 +142,16 @@ class Sensors extends CI_Controller {
 		} else {
 				$this->db->select('id');
 				$this->db->from('sensors_alarm_pause');
-				$this->db->where('id_sensor' => $id_sensor, 'date_fin >=' => $currentDate);
-				$res = $this->db->get() or die('ERROR '.$this->db->error_message().error_log('ERROR '.$this->db->_error_message()));
-
+				$whereCond = "id_sensor = " . $id_sensor . " AND date_fin > NOW()";
+				$this->db->where($whereCond);
+				$this->db->limit(1);
+				$query = $this->db->get() or die('ERROR '.$this->db->error_message().error_log('ERROR '.$this->db->_error_message()));
+				$id = $query->row()->id;
 				$dataToInsert = array (
 						'id_user_pause' => $this->ion_auth->user()->row()->id,
 						'date_fin' => $currentDate->format('Y-m-d H:i:s'),
 						'date_last_action' => $currentDate->format('Y-m-d H:i:s')
 					);
-
 					$this->db->where('id', $id);
 					if (!$this->db->update('sensors_alarm_pause', $dataToInsert)) {
 						error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
@@ -199,6 +238,7 @@ class Sensors extends CI_Controller {
 				$msg	= '';
 				$max    = $val['max'];
 				$min    = $val['min'];
+				$s_id   = $val['id_sensor'];
 
 				$this->db->select('st.temp, st.date, s.name, s.correction as correction')
 					->from('sensors_temp as st')
@@ -220,10 +260,11 @@ class Sensors extends CI_Controller {
 					$correction	= $is[0]->correction;
 
 					// "AND $temp != 85" is a cludge for wrong data collecting by 1-wire which report sometimes, for unknown reason, 85 instead of minus something...
-					if(($temp >= $max OR $temp <= $min) AND ($temp != 85 AND $temp > -100 AND $temp < 100)) {
+					if(($temp >= $max OR $temp <= $min) AND ($temp != 85 AND $temp > -100 AND $temp < 100) AND ($this->checkForOngoingDelay($s_id) == false)) {
 						$buinfo = $this->hmw->getBuInfo($id_bu);
 						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."° at ".$is[0]->date."\n
 							The temperature should be max: ".$max."° and min: ".$min."°";
+						echo "notif sent";
 
 						$this->hmw->sendNotif($msg, $id_bu);
 
@@ -246,6 +287,8 @@ class Sensors extends CI_Controller {
 						}
 						$this->db->set('lastalarm', "NOW()", FALSE)->where('id_sensor', $val['id_sensor']);
 						$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+					} else if ($this->checkForOngoingDelay($s_id) == true) {
+						echo "alarm delayed";
 					}
 				}
 			}
