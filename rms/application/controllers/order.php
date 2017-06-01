@@ -871,7 +871,7 @@ class Order extends CI_Controller {
 							$date_to_send = new DateTime('now');
 							$mod = "next monday " . $date_sent->format('H:i:s');
 							$date_to_send->modify($mod);
-							$req_conf = "UPDATE orders_confirm SET `date_sent` = '" . $date_to_send->format('Y-m-d H:i:s') . "', count_confirm = count_confirm+1 WHERE `idorder` = $line->idorder";
+							$req_conf = "UPDATE orders_confirm SET `date_sent` = '" . $date_to_send->format('Y-m-d H:i:s') . "' WHERE `idorder` = $line->idorder";
 							$this->db->query($req_conf);
 						}
 				}
