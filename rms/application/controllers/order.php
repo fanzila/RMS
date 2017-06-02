@@ -397,6 +397,8 @@ class Order extends CI_Controller {
 				}
 
 			}
+			$products = $this->sortArray($products);
+			//uasort($products, array($this, "sortProductOrder"));
 			//print_r($products);
 		}
 
