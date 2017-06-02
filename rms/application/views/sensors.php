@@ -32,7 +32,11 @@ if (isset($msg)) {
 				<tr>
 					<td><?=$val['sid']?></td>
 					<td><?=$val['name']?></td>
-					<td><?=$val['temp']+$val['correction']?></td>
+					<td>
+					<? if($val['temp'] == 3333) { ?><font color="red"><b>Alert!<br />No sensor value!</b></font><? } else { ?> 
+					<?=$val['temp']+$val['correction']?>
+					<? } ?>
+					</td>
 					<td><?=$val['date']?></td>
 					<td><?=$val['lastalarm']?></td>
 					<td><?=$val['date_fin']?></td>

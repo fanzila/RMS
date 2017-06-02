@@ -69,13 +69,18 @@ class Sensors extends CI_Controller {
 
 	public function record()
 	{
+		if(!isset($_POST['data'])) exit('No data provided');
+		if(empty($_POST['data'])) exit('No data provided');
+		
 		$data = json_decode($_POST['data']);
 		foreach ($data as $key => $val) {
 			$ex 	= explode("|",$val);
 			$date	= $ex[1];
 			$sensor	= $ex[0];
 			$temp 	= $ex[2];
-
+		
+			if(empty($temp)) $temp = 3333;
+			
 			$req = array (
 				'date'		=> $date,
 				'temp'		=> $temp,
