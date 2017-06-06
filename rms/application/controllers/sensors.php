@@ -14,21 +14,7 @@ class Sensors extends CI_Controller {
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$this->hmw->keyLogin();
-
-		$id_bu =  $this->session->all_userdata()['bu_id'];
-
-		$this->db->select('s.id AS sid, st.id AS stid, st.id_sensor AS idsensor, MAX(st.date) as date, st.temp, s.name, s.correction, sa.lastalarm, MAX(sap.date_fin) as date_fin');
-			$this->db->from('sensors_temp as st')
-				->join('sensors as s', 'st.id_sensor = s.id  ','left')
-				->join('sensors_alarm as sa', 'sa.id_sensor = s.id','left')
-				->join('sensors_alarm_pause as sap', 'sap.id_sensor = s.id', 'left')
-				->where('s.id_bu', $id_bu)
-				->order_by('st.id DESC')
-				->group_by('idsensor');
-
-		$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		$info = $r->result_array();
-
+		
 		if ($this->input->post('submit_pause') !== false AND $this->input->post('delayVal') !== false
 				AND $this->input->post('s_id') !== false) {
 			$delay = $this->input->post('delayVal');
@@ -43,6 +29,23 @@ class Sensors extends CI_Controller {
 				$data['msg'] = '<script>alert("Re-enabled alarm");</script>';
 			}
 		}
+
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$query = "SELECT `s`.`id` as sid, stid, idsensor, `date`, stsub.temp, s.name, s.correction, sa.lastalarm, MAX(sap.date_fin) as date_fin\n"
+    . "FROM (SELECT `st`.`id` as stid, `st`.`id_sensor` as idsensor, `st`.date as date, `st`.`temp`\n"
+    . " FROM `sensors_temp` as `st`\n"
+    . " ORDER BY stid DESC) as stsub\n"
+    . "LEFT JOIN sensors as s\n"
+    . "ON `s`.`id` = stsub.idsensor\n"
+    . "LEFT JOIN `sensors_alarm` as sa \n"
+    . "ON `sa`.`id_sensor` = `s`.`id` \n"
+    . "LEFT JOIN `sensors_alarm_pause` as sap \n"
+    . "ON `sap`.`id_sensor` = `s`.`id`\n"
+    . "WHERE `s`.`id_bu` =" . $id_bu . "\n"
+    . "GROUP BY idsensor\n"
+    . "ORDER BY stid DESC";
+		$r = $this->db->query($query) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$info = $r->result_array();
 
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
