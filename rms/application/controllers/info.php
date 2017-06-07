@@ -15,10 +15,7 @@ class Info extends CI_Controller {
 
 	public function index($login=null)
 	{
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		
 		$this->hmw->keyLogin();

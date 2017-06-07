@@ -81,10 +81,7 @@ class News extends CI_Controller {
 	{
 
 		$error=0;
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 2)

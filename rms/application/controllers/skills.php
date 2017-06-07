@@ -31,9 +31,7 @@ class Skills extends CI_Controller {
 
 	public function index($id = null, $back=null)
 	{
-		if(!$this->ion_auth->logged_in()){
-			redirect('news', 'refresh');
-		}
+		$this->hmw->isLoggedIn();
 
 		//TODO change somewhere here for disabling disabled users in sponsor
 		$current_user = $this->ion_auth->get_user_id();
@@ -56,9 +54,7 @@ class Skills extends CI_Controller {
 				$bypass_sponsor=0;
 			}
 			if($bypass_sponsor==0 && (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id))){
-				if(!$this->ion_auth->logged_in()){
-					redirect('news', 'refresh');
-				}
+				$this->hmw->isLoggedIn();
 				redirect('skills', 'refresh');
 			}else{
 				$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -140,9 +136,7 @@ class Skills extends CI_Controller {
 	public function admin()
 	{
 		if (!$this->ion_auth->is_admin()) {
-			if(!$this->ion_auth->logged_in()){
-				redirect('news', 'refresh');
-			}
+			$this->hmw->isLoggedIn();
 			redirect('skills', 'refresh');
 		}
 		$this->hmw->changeBu();// GENERIC changement de Bu
@@ -249,9 +243,7 @@ class Skills extends CI_Controller {
 
 	public function start()
 	{
-		if (!$this->ion_auth->logged_in()) {
-				redirect('news', 'refresh');
-		}
+		$this->hmw->isLoggedIn();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$bu_name	= $this->session->all_userdata()['bu_name'];

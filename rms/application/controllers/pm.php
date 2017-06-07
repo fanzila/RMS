@@ -129,10 +129,7 @@ class Pm extends CI_Controller {
 	 */
 	function index()
 	{
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 		$this->messages();
 	}
 
@@ -205,10 +202,7 @@ class Pm extends CI_Controller {
 	 */
 	function messages($type = MSG_NONDELETED)
 	{
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1 &&($type==1 || $type==2))
@@ -294,10 +288,7 @@ class Pm extends CI_Controller {
 	 */
 	function send($recipients = NULL, $subject = NULL, $body = NULL)
 	{
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1)
