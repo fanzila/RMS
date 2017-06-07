@@ -323,6 +323,28 @@ class Order extends CI_Controller {
 		$this->load->view('order/order_view',$data);
 		$this->load->view('jq_footer');
 	}
+	
+	private function sortArray($array) {
+		$high = array();
+		$medium = array();
+		$low = array();
+		foreach ($array as $value) {
+			if ($value['freq_inventory'] == 'high') {
+				array_push($high, $value);
+			}
+			else if ($value['freq_inventory'] == 'medium') {
+				array_push($medium, $value);
+			}
+			else {
+				array_push($low, $value);
+			}
+		}
+		uasort($high, array($this, "sortProductOrder"));
+		uasort($medium, array($this, "sortProductOrder"));
+		uasort($low, array($this, "sortProductOrder"));
+		$productsFinal = array_merge($high, $medium, $low);
+		return ($productsFinal);
+	}
 
 	private function sortProductOrder($a, $b) {
 		if(isset($b['stock']) && $b['stock'] > 0) {
@@ -375,8 +397,8 @@ class Order extends CI_Controller {
 				}
 
 			}
-
-			uasort($products, array($this, "sortProductOrder"));
+			$products = $this->sortArray($products);
+			//uasort($products, array($this, "sortProductOrder"));
 			//print_r($products);
 		}
 

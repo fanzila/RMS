@@ -52,13 +52,17 @@ class Cameras extends CI_Controller {
 		$row = $res->result();
 		$i = 1;
 		
-		$local1		= false;
-		$local2		= false;
-		$ip 		= $this->input->ip_address();
-		$ca 		= array();
-		$data		= array();
-		$buinfo1 	= $this->hmw->getBuInfo(1);
-		$buinfo2 	= $this->hmw->getBuInfo(2);
+		$local1			= false;
+		$local2			= false;
+		$ip 			= $this->input->ip_address();
+		$ca 			= array();
+		$data			= array();
+		$bu_postion_id	= array();
+		$buname 		= array();
+		$buinfo1 		= $this->hmw->getBuInfo(1);
+		$buinfo2 		= $this->hmw->getBuInfo(2);
+
+		
 		
 		$this->db->from('turnover')->order_by('date desc')->where('id_bu',1)->limit(1);
 	 	$bal_ca = $this->db->get();
@@ -77,14 +81,21 @@ class Cameras extends CI_Controller {
 			if($local2 AND $var->id_bu == 2) $url['cam'.$i] = $var->adress_local;
 			$i++;	
 		}
-				
-		$info_current_bu 	= $this->hmw->getBuInfo($this->session->all_userdata()['bu_id']);
-		$planning 			= $this->planning();
-		$data['info_bu'] 	= $info_current_bu;
-		$data['url'] 		= $url;
-		$data['ca']			= $ca;
-		$data['planning'] 	= $planning;
-		$session_data['cam'] = $url;
+
+		$bu_postion_id[1]		= explode (',',$buinfo1->humanity_positions);
+		$bu_postion_id[2]		= explode (',',$buinfo2->humanity_positions);
+		$buname[1] 				= $buinfo1->name;
+		$buname[2]				= $buinfo2->name;
+		
+		$info_current_bu 		= $this->hmw->getBuInfo($this->session->all_userdata()['bu_id']);
+		$planning 				= $this->planning();
+		$data['bu_postion_id'] 	= $bu_postion_id;
+		$data['info_bu'] 		= $info_current_bu;
+		$data['buname'] 		= $buname;
+		$data['url'] 			= $url;
+		$data['ca']				= $ca;
+		$data['planning'] 		= $planning;
+		$session_data['cam'] 	= $url;
 		
 		$this->session->set_userdata($session_data);
 		$this->load->view('camera/cameras', $data);
