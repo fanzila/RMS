@@ -683,6 +683,10 @@ class Order extends CI_Controller {
 			$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK - ".$user->username."\nEmail : $order_email \nTel : $user->phone";
 
 			$this->mmail->sendEmail($email);
+			if (!empty($supinfo['contact_order_tel']) AND isset($post['SMSSupplier']) AND $post['SMSSupplier'] == "on") {
+				$msg = 'Une commande HANK vient d\'être envoyée, merci de bien vouloir consulter vos emails.';
+				$this->hmw->sendSms($supinfo['contact_order_tel'], $msg);
+			}
 			$this->db->set('status', 'sent')->set('date', "NOW()", FALSE);
 			$this->db->where('idorder', $idorder)->order_by('date desc')->limit(1);
 			$this->db->update('orders');
@@ -723,6 +727,7 @@ class Order extends CI_Controller {
 		$info['buinfo']			= $this->hmw->getBuInfo($id_bu);
 		$info['supplier']		= $getSupInfo[$post['supplier']];
 		$info['pdtinfo']		= $this->product->getProducts(null, $post['supplier'], null, null, $id_bu, null);
+		$info['valid_number'] = $this->validateSupplierTel($info['supplier']['contact_order_tel']);
 
 		$info['cc_email'] 		= $post['ccemail'];
 		$info['comment'] 		= $post['comment'];
@@ -792,6 +797,16 @@ class Order extends CI_Controller {
 
 	}
 
+	private function validateSupplierTel($number)
+	{
+		$pattern = '/(^\+33\d{9}$)/';
+		if (preg_match($pattern, $number) == 1) {
+			return (true);
+		} else {
+			return (false);
+		}
+	}
+	
 	private function searchOrder($data, $id_bu, $keylogin=null){
 		$ok=0;
 		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
