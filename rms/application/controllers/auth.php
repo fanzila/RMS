@@ -26,7 +26,7 @@ class Auth extends CI_Controller {
 		$this->load->library("hmw");
 		$this->load->library('mmail');
 
-		if (!$this->hmw->isLoggedIn() == true)
+		if ($this->hmw->isLoggedIn() == true)
 		{
 			$txtmessage = $this->input->post('txtmessage');
 			$this->data['message']  = '';
