@@ -10,7 +10,7 @@ class Crud extends CI_Controller {
 		$this->load->helper('url');
 
 		$this->load->library('grocery_CRUD');
-		
+		$this->load->library('hmw');
 		$this->load->library('ion_auth');
 
 		$this->hmw->isLoggedIn();
