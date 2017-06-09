@@ -184,6 +184,18 @@ class Hmw {
 		curl_close($ch);
 	}
 	
+	public function isLoggedIn() {
+		$CI = & get_instance();
+		$CI->load->library('ion_auth');
+		
+		if (!$CI->ion_auth->logged_in()) {
+				$CI->session->set_userdata('pageBeforeLogin', current_url());
+				redirect('auth/login');
+		} else {
+			return (true);
+		}
+	}
+	
 	public function keyLogin() {
 
 		$CI = & get_instance(); 
@@ -211,6 +223,7 @@ class Hmw {
 
 			if (!$CI->ion_auth->logged_in())
 			{
+				$CI->session->set_userdata('pageBeforeLogin', current_url());
 				redirect('auth/login');
 			}
 			
