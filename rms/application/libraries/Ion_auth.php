@@ -394,7 +394,12 @@ class Ion_auth
 	public function logout()
 	{
 		$this->ion_auth_model->trigger_events('logout');
-
+		
+		$remember_code = get_cookie($this->config->item('remember_cookie_name', 'ion_auth'));
+		if ($this->ion_auth_model->logout_db($remember_code) === FALSE) {
+			$this->set_message('logout_unsuccessful');
+			return (FALSE);
+		}
 		$identity = $this->config->item('identity', 'ion_auth');
                 $this->session->unset_userdata( array($identity => '', 'id' => '', 'user_id' => '') );
 
