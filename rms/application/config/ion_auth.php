@@ -33,7 +33,7 @@ $config['tables']['users_groups']    = 'users_groups';
 $config['tables']['bus']    		 = 'bus';
 $config['tables']['users_bus']    	 = 'users_bus';
 $config['tables']['login_attempts']  = 'login_attempts';
-
+$config['tables']['users_remember']  = 'users_remember'; 
 /*
  | Users table column and Group table column you want to join WITH.
  |

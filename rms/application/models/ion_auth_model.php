@@ -598,21 +598,20 @@ class Ion_auth_model extends CI_Model
 		}
 
 		$result = $query->row();
-
+		
 		$new = $this->hash_password($new, $result->salt);
 
 		//store the new password and reset the remember code so all remembered instances have to re-login
 		//also clear the forgotten password code
 		$data = array(
 		    'password' => $new,
-		    'remember_code' => NULL,
 		    'forgotten_password_code' => NULL,
-		    'forgotten_password_time' => NULL,
+		    'forgotten_password_time' => NULL
 		);
 
 		$this->trigger_events('extra_where');
 		$this->db->update($this->tables['users'], $data, array($this->identity_column => $identity));
-
+		$this->db->delete($this->tables['users_remember'], array('user_id' => $result->id));
 		$return = $this->db->affected_rows() == 1;
 		if ($return)
 		{
@@ -661,12 +660,12 @@ class Ion_auth_model extends CI_Model
 			//store the new password and reset the remember code so all remembered instances have to re-login
 			$hashed_new_password  = $this->hash_password($new, $user->salt);
 			$data = array(
-			    'password' => $hashed_new_password,
-			    'remember_code' => NULL,
+			    'password' => $hashed_new_password
 			);
 
 			$this->trigger_events('extra_where');
-
+			$this->db->delete($this->tables['users_remember'], array('user_id' => $user->id));
+	
 			$successfully_changed_password_in_db = $this->db->update($this->tables['users'], $data, array($this->identity_column => $identity));
 			if ($successfully_changed_password_in_db)
 			{
@@ -1893,6 +1892,25 @@ class Ion_auth_model extends CI_Model
 	}
 
 	/**
+	* if_remember_db
+	*
+	* @return mixed
+	* @author Nael Awayes
+	**/
+	private function if_remember_db($id, $code) {
+		$this->db->select('id')
+		->from($this->tables['users_remember'])
+		->where(array('user_id' => $id, 'remember_code' => $code));
+		$query = $this->db->get();
+		$res = $query->result_array();
+		if ((count($res) != 1) || empty($res)) {
+			return (FALSE);
+		} else {
+			return ($id);
+		}
+	}
+	
+	/**
 	 * remember_user
 	 *
 	 * @return bool
@@ -1908,11 +1926,13 @@ class Ion_auth_model extends CI_Model
 		}
 
 		$user = $this->user($id)->row();
-
+		$code = get_cookie($this->config->item('remember_cookie_name', 'ion_auth'));
 		$salt = $this->salt();
-
-		$this->db->update($this->tables['users'], array('remember_code' => $salt), array('id' => $id));
-
+		if (($isRemembered = $this->if_remember_db($id, $code)) == FALSE) {
+			$this->db->insert($this->tables['users_remember'], array('user_id' => $id, 'remember_code' => $salt));
+		} else {
+			$this->db->update($this->tables['users_remember'], array('remember_code' => $salt), array('id' => $isRemembered));
+		}
 		if ($this->db->affected_rows() > -1)
 		{
 			// if the user_expire is set to zero we'll set the expiration two years from now.
@@ -1967,9 +1987,10 @@ class Ion_auth_model extends CI_Model
 
 		//get the user
 		$this->trigger_events('extra_where');
-		$query = $this->db->select($this->identity_column.', id, username, email, last_login, door_open, current_bu_id')
+		$query = $this->db->select($this->identity_column.', users.id, username, email, last_login, door_open, current_bu_id')
+											->join('users_remember', 'users.id = users_remember.user_id')
 		                  ->where($this->identity_column, get_cookie($this->config->item('identity_cookie_name', 'ion_auth')))
-		                  ->where('remember_code', get_cookie($this->config->item('remember_cookie_name', 'ion_auth')))
+		                  ->where('users_remember.remember_code', get_cookie($this->config->item('remember_cookie_name', 'ion_auth')))
 		                  ->limit(1)
 		                  ->get($this->tables['users']);
 
@@ -1999,6 +2020,21 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events(array('post_login_remembered_user', 'post_login_remembered_user_unsuccessful'));
 		return FALSE;
+	}
+	
+	/**
+	* logout_db
+	*
+	* @return boolq
+	* @author Nael Awayes
+	**/
+	public function logout_db($code)
+	{
+		if (isset($code) && !empty($code)) {
+			$this->db->delete('users_remember', array('remember_code' => $code));
+		} else {
+			return (FALSE);
+		}
 	}
 
 
