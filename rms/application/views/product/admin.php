@@ -155,6 +155,13 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
+										<small>Stock management</small>
+										<select id="stock_management" name="manage_stock" data-mini="true">
+											<option value="1" <?if ($line['manage_stock'] === "1") { echo " selected"; } ?>>Yes</option>
+											<option value="0" <?if ($line['manage_stock'] === "0") { echo " selected"; } ?>>No</option>
+										</select>
+								<div class="col-md">
+									<div class="box">
 										<small>Comment</small><br/>
 										<input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true" data-clear-btn="true" />
 									</div>

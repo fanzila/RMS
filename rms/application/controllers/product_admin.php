@@ -115,6 +115,7 @@ class Product_admin extends CI_Controller {
 		$this->db->set('freq_inventory', $data['freq_inventory']);
 		$this->db->set('supplier_reference', $data['supplier_reference']);
 		$this->db->set('comment', addslashes($data['comment']));
+		$this->db->set('manage_stock', $data['manage_stock']);
 
 		$this->db->trans_start();
 		if($data['id'] == 'create') {
