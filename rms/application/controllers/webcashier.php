@@ -219,7 +219,7 @@ class webCashier extends CI_Controller {
 					As tu bien cloture la caisse ? <br />
 					Si oui attends quelques minutes, la page de cloture va bientot s'afficher. <br />
 					Ou alors, tu as deja entre tes donnees.</h2>
-					Dernière cloture faite pour : $archive_date
+					Derniere cloture faite pour : $archive_date
 					<h2><a href='/webcashier/'>Retour</a></h2>
 					<p><small><a href='/webcashier/movement/close?force=1'>Voir l'interface</a></small></p>";
 					exit();

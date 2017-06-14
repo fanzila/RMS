@@ -238,7 +238,7 @@ class Order extends CI_Controller {
 					$info = $this->hmw->getBuInfo($id_bu);
 					$this->load->library('mmail');
 
-					$msg = "WARINING! ".$info->name." CASHPAD NOT CLOSED!";
+					$msg = "WARNING! ".$info->name." CASHPAD NOT CLOSED!";
 
 					//get manager2 + admin email of this BU
 					$this->db->select('users.username, users.email, users.id');
