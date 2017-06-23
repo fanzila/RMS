@@ -270,7 +270,7 @@
 							</div>
 							<div class="modal-body">
 								<div class="row">
-									<table class="ui-responsive table table-bordered">
+									<table class="ui-responsive table table-bordered historytable">
 										<thead>
 											<tr>
 												<th>ID</th>
@@ -526,7 +526,14 @@
 												window.onclick = function(event) {
 	    										if (event.target == modal) {
 	        									modal.style.display = "none";
-	    										}
+														for (i = 0; i < inputs.length; i += 1) {
+															inputs[i].disabled = false;
+														}
+														for (i = 0; i < selects.length; i += 1) {
+															selects[i].disabled = false;
+														}
+														document.body.classList.remove("modal-open");
+													}
 												}
 												modal.style.display = "none";
 												document.body.classList.remove("modal-open");
