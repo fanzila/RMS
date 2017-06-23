@@ -1,7 +1,7 @@
 <?php
 
 class Product {
-
+	
 	public function getProducts($id = null, $supplier_id = null, $order = null, $term = null, $id_bu, $active = null) {
 
 		$CI =& get_instance();
@@ -28,7 +28,142 @@ class Product {
 		foreach ($req->result_array() as $key) {
 			$ret[$key['id']] = $key;
 		}
+		return $ret;
+	}
+	
+	public function isManaged($product_id) {
+		
+		$CI = & get_instance();
+		
+		$CI->db->select('manage_stock');
+		$CI->db->from('products');
+		$CI->db->where('id', $product_id);
+		$row = $CI->db->get()->row_array();
+		if ($row['manage_stock']) {
+			return (true);
+		}
+		else {
+			return (false);
+		}
+	}
+	
+	public function getProductHistory($pdt_id) 
+	{
+		$CI =& get_instance();
+		$CI->db->select('sh.*, u.username, p.name');
+		$CI->db->from('stock_history AS sh');
+		$CI->db->join('users AS u', 'u.id = sh.id_user');
+		$CI->db->join('products AS p', 'p.id = sh.id_product');
+		$CI->db->where('sh.id_product', $pdt_id);
+		$CI->db->where('p.manage_stock', '1');
+		$CI->db->order_by('date_inv', 'DESC');
+		$CI->db->order_by('id', 'DESC');
+		$ret = $CI->db->get()->result_array();
+		return ($ret);
+	}
+	
+	public function countProductHistory($pdt_id) 
+	{
+		$hist = $this->getProductHistory($pdt_id);
+		return (count($hist));
+	}
+	
+	public function getProductsWithFilters($id= null, $order = null, $id_bu, $filters = null, $page = 1) 
+	{
+		$CI =& get_instance();
+		$sqladd = '';
+		
+		$CI->db->select('p.id, s.id as supplier_id, p.supplier_reference, pc.name AS category_name, p.name AS name, s.name AS supplier_name, p.price, p.active, p.id_category, puprc.name AS unit_name, p.id_unit AS id_unit, p.packaging AS packaging, p.freq_inventory, p.comment, ps.mini AS stock_mini, ps.max AS stock_max, ps.qtty AS stock_qtty, ps.warning AS stock_warning, ps.last_update_user AS last_update_user, ps.last_update_pos AS last_update_pos, u.username AS last_update_user_name, p.manage_stock')->from('products AS p')->join('suppliers AS s', 'p.id_supplier = s.id')->join('products_unit AS puprc', 'p.id_unit = puprc.id')->join('products_category AS pc','p.id_category = pc.id','left')->join('products_stock AS ps','p.id = ps.id_product','right')->join('users AS u','ps.last_update_id_user = u.id','left');
+		if (isset($filters) && !empty($filters)) {
+			foreach ($filters as $key => $value) {
+				if ($value != "" && $key != 'p.name' && $key != 'p.supplier_reference') {
+					$CI->db->where($key, $value);
+				}
+			}
+			if ($filters['p.name'] != "" ) {
+				$CI->db->like('p.name', $filters['p.name']);
+			}
+			if ($filters['p.supplier_reference'] != "") {
+				$CI->db->like('p.supplier_reference', $filters['p.supplier_reference']);
+			}
+		}
+		if($id) $sqladd = $CI->db->where('p.deleted', 0)->where('p.id', $id);
+		$CI->db->where('s.id_bu', $id_bu);
+		$ordersql = "p.`active` DESC";
+		if($order) $ordersql = $order; 
 
+
+		$CI->db->order_by("$ordersql, p.id_supplier ASC");
+		if ($page == 1) {
+			$CI->db->limit(20);
+		} else {
+			$offset = 20 * ($page - 1);
+			$CI->db->limit(20, $offset);
+		}
+		$req = $CI->db->get() or die($this->mysqli->error);
+		$ret = array();
+		foreach ($req->result_array() as $key) {
+			$ret[$key['id']] = $key;
+		}
+		return $ret;
+	}
+	
+	public function countProductsWithFilters($id= null, $order = null, $id_bu, $filters = null) {
+		$CI =& get_instance();
+		$sqladd = '';
+		
+		$CI->db->select('p.id, s.id as supplier_id, p.supplier_reference, pc.name AS category_name, p.name AS name, s.name AS supplier_name, p.price, p.active, p.id_category, puprc.name AS unit_name, p.id_unit AS id_unit, p.packaging AS packaging, p.freq_inventory, p.comment, ps.mini AS stock_mini, ps.max AS stock_max, ps.qtty AS stock_qtty, ps.warning AS stock_warning, ps.last_update_user AS last_update_user, ps.last_update_pos AS last_update_pos, u.username AS last_update_user_name, p.manage_stock')->from('products AS p')->join('suppliers AS s', 'p.id_supplier = s.id')->join('products_unit AS puprc', 'p.id_unit = puprc.id')->join('products_category AS pc','p.id_category = pc.id','left')->join('products_stock AS ps','p.id = ps.id_product','right')->join('users AS u','ps.last_update_id_user = u.id','left');
+		if (isset($filters) && !empty($filters)) {
+			foreach ($filters as $key => $value) {
+				if ($value != "" && $key != 'p.name' && $key != 'p.supplier_reference') {
+					$CI->db->where($key, $value);
+				}
+			}
+			if ($filters['p.name'] != "" ) {
+				$CI->db->like('p.name', $filters['p.name']);
+			}
+			if ($filters['p.supplier_reference'] != "") {
+				$CI->db->like('p.supplier_reference', $filters['p.supplier_reference']);
+			}
+		}
+		if($id) $sqladd = $CI->db->where('p.deleted', 0)->where('p.id', $id);
+		$CI->db->where('s.id_bu', $id_bu);
+		$ordersql = "p.`active` DESC";
+		if($order) $ordersql = $order; 
+
+
+		$CI->db->order_by("$ordersql, p.id_supplier ASC")->limit(10000);
+		$count = $CI->db->count_all_results();
+		return $count;
+	}
+	
+	public function getManagedProducts($id = null, $supplier_id = null, $order = null, $term = null, $id_bu, $active = null) {
+
+		$CI =& get_instance();
+		$sqladd = '';
+
+		$CI->db->select('p.id, s.id as supplier_id, p.supplier_reference, pc.name AS category_name, p.name AS name, s.name AS supplier_name, p.price, p.active, p.id_category, puprc.name AS unit_name, p.id_unit AS id_unit, p.packaging AS packaging, p.freq_inventory, p.comment, ps.mini AS stock_mini, ps.max AS stock_max, ps.qtty AS stock_qtty, ps.warning AS stock_warning, ps.last_update_user AS last_update_user, ps.last_update_pos AS last_update_pos, u.username AS last_update_user_name, p.manage_stock')->from('products AS p')->join('suppliers AS s', 'p.id_supplier = s.id')->join('products_unit AS puprc', 'p.id_unit = puprc.id')->join('products_category AS pc','p.id_category = pc.id','left')->join('products_stock AS ps','p.id = ps.id_product','right')->join('users AS u','ps.last_update_id_user = u.id','left');
+		if($id) $sqladd = $CI->db->where('p.deleted', 0)->where('p.id', $id);
+		if($active) $CI->db->where('p.active', true);
+		if($supplier_id != null && $supplier_id != '%') $CI->db->where('p.deleted', 0)->where('s.id', $supplier_id);
+		if($supplier_id != null && $supplier_id == '%') $CI->db->where('p.deleted', 0)->where('p.active', true);
+		if($term != null){
+			$array = array('p.name' => $term);
+			$CI->db->where('p.deleted', 0)->like($array);
+		}
+		$CI->db->where('s.id_bu', $id_bu);
+		$CI->db->where('p.manage_stock', 1);
+		$ordersql = "p.`active` DESC"; 
+		if($order) $ordersql = $order; 
+
+
+		$CI->db->order_by("$ordersql, p.id_supplier ASC")->limit(10000);
+		$req = $CI->db->get() or die($this->mysqli->error);
+
+		$ret = array();
+		foreach ($req->result_array() as $key) {
+			$ret[$key['id']] = $key;
+		}
 		return $ret;
 	}
 

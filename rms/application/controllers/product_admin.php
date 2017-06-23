@@ -30,7 +30,7 @@ class Product_admin extends CI_Controller {
 		$this->hmw->keyLogin();
 	}
 
-	public function index($command = null)
+	public function index($command = null, $page = 1)
 	{		
 		$id_bu	=  $this->session->all_userdata()['bu_id'];
 		$this->load->library('product');
@@ -44,19 +44,42 @@ class Product_admin extends CI_Controller {
 			$product_id = $_GET['id_product']; 
 			$command = 'filter';
 		}
-
-
+		$cat_id = '';
 		$supplier_id = '';
 		$products 	 = '';
 		$postid = $this->input->post('supplier_id');
+		$postfreq = $this->input->post('freq');
+		$postcat_id = $this->input->post('pdt_cat_id');
+		$postinput_ref = $this->input->post('supplier_reference');
+		$postpdt_name = $this->input->post('pdt_name');
+		$postpdt_active = $this->input->post('pdt_active');
+		$poststock_manage = $this->input->post('stock_manage');
+		$postpdt_unit = $this->input->post('pdt_unit');
+		$postmanage_only = $this->input->post('managed_only');
+		
+		$filters = array();
 		if($command == null && isset($postid)) $supplier_id = 1;
-		if($command == 'filter' && isset($postid)) $supplier_id = $this->input->post('supplier_id');
-		if(!empty($supplier_id) OR !empty($product_id) ) $products = $this->product->getProducts($product_id, $supplier_id, null, null, $id_bu);
-
+		if($command == 'filter' && isset($postid)) $filters['p.id_supplier'] = $this->input->post('supplier_id');
+		if ($command == 'filter' && isset($postfreq)) $filters['p.freq_inventory'] = $this->input->post('freq');
+		if ($command == 'filter' && isset($postcat_id)) $filters['p.id_category'] = $this->input->post('pdt_cat_id');
+		if ($command == 'filter' && isset($postinput_ref)) $filters['p.supplier_reference'] = $this->input->post('supplier_reference');
+		if ($command == 'filter' && isset($postpdt_name)) $filters['p.name'] = $this->input->post('pdt_name');
+		if ($command == 'filter' && isset($poststock_manage)) $filters['p.manage_stock'] = $this->input->post('stock_manage');
+		if ($command == 'filter' && isset($postpdt_active)) $filters['p.active'] = $this->input->post('pdt_active');
+		if ($command == 'filter' && isset($postpdt_unit)) $filters['p.id_unit'] = $this->input->post('pdt_unit');
+		if ($postmanage_only == 'on') {
+			$filters['manage_stock'] = '1';
+		}
+		if (!empty($filters)) {
+			$products = $this->product->getProductsWithFilters($product_id, null, $id_bu, $filters, $page);
+		} else if (!empty($product_id)) {
+			$products = $this->product->getProducts($product_id, $supplier_id, null, null, $id_bu);
+		}
+		
+		$total_products = $this->product->countProductsWithFilters($product_id, null, $id_bu, $filters);
 		$suppliers 			= $this->product->getSuppliers(null, null, $id_bu);
 		$products_unit 		= $this->product->getProductUnit();
 		$products_category 	= $this->product->getProductCategory();
-
 
 		$data = array(
 			'msg'				=> $msg,
@@ -65,7 +88,17 @@ class Product_admin extends CI_Controller {
 			'suppliers'			=> $suppliers,
 			'supplier_id'		=> $supplier_id,
 			'products_unit' 	=> $products_unit,
-			'products_category' => $products_category
+			'products_category' => $products_category,
+			'freq' => $postfreq,
+			'cat_id' => $postcat_id,
+			'input_ref' => $postinput_ref,
+			'pdt_name' => $postpdt_name,
+			'pdt_active' => $postpdt_active,
+			'stock_manage' => $poststock_manage,
+			'pdt_unit' => $postpdt_unit,
+			'managed_only' => $postmanage_only,
+			'current_page' => $page,
+			'total_products' => $total_products
 			);
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
@@ -176,10 +209,48 @@ class Product_admin extends CI_Controller {
 			);
 		$this->hmw->LogRecord($p);
 		
+		if ($this->product->isManaged($id_product)) {
+			
+			$historyEntry = array(
+				'id_user' => $user->id,
+				'id_product' => $id_product,
+				'date_inv' => $date,
+				'stock_theorical' => $previous_stock,
+				'stock_real' => $data['stock_qtty']
+			);
+			if (!$this->db->insert('stock_history', $historyEntry)) {
+				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+			}
+			$sql = "DELETE FROM stock_history WHERE id_product = $id_product AND
+							id NOT IN
+							(SELECT * FROM
+							(SELECT id FROM stock_history order by id desc limit 100)
+ 							as temp)";
+			$this->db->query($sql);
+		}
+		
 		echo json_encode(['reponse' => $reponse]);
 		exit();
 	}
 
+
+	public function tableProductHistory($pdt_id)
+	{
+		$this->load->library('product');
+		$hist = $this->product->getProductHistory($pdt_id);
+		foreach ($hist as $historyline) { 
+				$delta = $historyline['stock_real'] - $historyline['stock_theorical']; 
+		 echo "<tr>
+		 <td>" . $historyline['id'] . "</td>
+		 <td>" . $historyline['username'] . "</td>
+		 <td>" . $historyline['name'] . "</td>
+		 <td>" . $historyline['date_inv'] . "</td>
+		 <td>" . $historyline['stock_theorical'] . "</td>
+		 <td>" . $historyline['stock_real'] . "</td>
+		 <td>" . $delta . "</td>
+		 </tr>";
+		 }
+	}
 
 	public function save_mapping()
 	{		
@@ -221,7 +292,7 @@ class Product_admin extends CI_Controller {
 		$this->load->library('product');
 		$id_bu			=  $this->session->all_userdata()['bu_id'];
 		$products_pos	= $this->product->getPosProducts($id_bu);
-		$products 		= $this->product->getProducts(null, null, 'p.name', null, $id_bu);
+		$products 		= $this->product->getManagedProducts(null, null, 'p.name', null, $id_bu);
 		$mapping		= $this->product->getMapping($id_bu);
 		$data = array(
 			'products_pos'		=> $products_pos,
