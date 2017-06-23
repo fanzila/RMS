@@ -207,7 +207,8 @@ class Hmw {
 
 		$getkey	= $CI->input->get('keylogin');
 		$id_bu	= $CI->input->get('id_bu');
-
+		$type		= $CI->input->get('type');
+		
 		if(!empty($getkey)) {
 			$keyl = $this->getParam('keylogin');
 			if($getkey == $keyl) {
@@ -215,6 +216,12 @@ class Hmw {
 				$user = $this->getParam('keylogin_user_'.$id_bu);
 				$pass = $this->getParam('keylogin_pass_'.$id_bu);
 				
+				if ($type == 'kitchen') {
+					$CI->session->set_userdata('type', 'kictchen');
+				}
+				else if ($type == 'service') {
+					$CI->session->set_userdata('type', 'service');
+				}
 				//login($user, $pass, remember, keylogin);
 				$CI->ion_auth->login($user, $pass, true, true);
 			}

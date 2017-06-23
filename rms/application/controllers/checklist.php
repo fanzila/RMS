@@ -57,6 +57,7 @@ class Checklist extends CI_Controller {
 
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
+		$type = $this->session->userdata('type');
 
 		$headers = $this->hmw->headerVars(1, "/checklist/", "Checklist");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -73,8 +74,11 @@ class Checklist extends CI_Controller {
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		
-
-		$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users as u', 'r.user = u.id')->where('c.id_bu', $id_bu)->order_by('r.date desc')->limit(50);
+		if (isset($type)) {
+			$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users as u', 'r.user = u.id')->where(array('c.id_bu' => $id_bu, 'c.type' => $type))->order_by('r.date desc')->limit(50);
+		} else {
+			$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name, c.type')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users as u', 'r.user = u.id')->where('c.id_bu', $id_bu)->order_by('r.date desc')->limit(50);
+		}
 		$checklist_rec_res = $this->db->get() or die($this->mysqli->error);
 		$checklist_rec = $checklist_rec_res->result_array();
 

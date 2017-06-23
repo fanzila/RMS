@@ -20,7 +20,7 @@
 							<div class="box"><?=$title?></div>
 						</div>
 						<div class="col-xs">
-							<div class="box"><?=$bu_name?> | <?=$username?></div>
+							<div class="box"><?=$bu_name?> | <?=$username?> <?if (isset($_SESSION['type'])) { echo " - " . $this->session->userdata('type');}?></div>
 						</div>
 						<div class="col-xs-1">
 							<div class="box"></div>
