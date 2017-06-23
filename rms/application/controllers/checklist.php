@@ -241,7 +241,7 @@ class Checklist extends CI_Controller {
 			$query = $this->db->get("checklists");
 			$info = $query->result();
 
-			$msg = "WARINING! ".$info[0]->bname." No ".$info[0]->cname." checklist have been created!";
+			$msg = "WARNING! ".$info[0]->bname." No ".$info[0]->cname." checklist have been created!";
 
 			$this->db->select("DATE(date)")->from('checklist_records as cr')
 				->join('checklists as c','c.id = cr.id_checklist','left')
