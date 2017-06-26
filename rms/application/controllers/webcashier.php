@@ -258,9 +258,10 @@ class webCashier extends CI_Controller {
 			$userid = $this->input->post('user');
 		}
 		
-		if(empty($this->input->post('mov'))) exit('Error, empty movement, please try again.');
+		$postmov = $this->input->post('mov');
+		if(empty($postmov)) exit('Error, empty movement, please try again.');
 		
-		$this->db->set('movement', $this->input->post('mov'))
+		$this->db->set('movement', $postmov)
 		->set('id_user', $userid)
 		->set('comment', addslashes($this->input->post('comment')))
 		->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))
