@@ -189,10 +189,14 @@ class Cashier {
 		$archives_list = $this->getDoneArchivesList($id_bu);
 		foreach ($files as $line) {
 			if($line[0] == 2 ) {
-				//search if file already done
-				$key = array_key_exists($line, $archives_list);
-				if($key == null) {
-					$this->insertArchives($line, $id_bu);
+				//ignore non-db file
+				$ex	= explode('.', $line);
+				if($ex[1] == 'db') {
+					//search if file already done
+					$key = array_key_exists($line, $archives_list);
+					if($key == null) {
+						$this->insertArchives($line, $id_bu);
+					}
 				}
 			}
 		}
