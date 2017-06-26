@@ -311,7 +311,7 @@ class Cashier {
 			
 			case 'updateUsers':
 			foreach ($CI->hmw->getUsers() as $key) {
-				$sql 	= "SELECT ID FROM USER WHERE lower(NAME)='".strtolower($key->username)."'";
+				$sql 	= "SELECT ID FROM USER WHERE lower(NAME)='".strtolower($key->username)."' AND DELETED != 1";
 				$result = $db->query($sql);
 				$res	= $result->fetchArray(SQLITE3_ASSOC);
 				if(is_array($res)) {
