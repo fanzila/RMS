@@ -451,23 +451,29 @@ class Cashier {
 		$CI->load->library("hmw");
 		if(isset($datein)) $dateseek = $this->getPosArchivesDatetime($datein);
 		$dir	= $this->getPosArchivesDir($id_bu);
+
 		if(empty($dir)) exit('No db found for BU ID '.$id_bu);
-		$files	= scandir($dir, 0);
-		$line2	= null;
+		$files		= scandir($dir, 0);
+		$line2		= null;
+		$line 		= null;
+		$endline 	= null;
+		
 		foreach ($files as $line) {
 			if($line[0] == 2 ) {
-				$ex			= explode('.', $line);
-				$date		= $this->getPosArchivesDatetime($ex[0]);
-				$day 		= $date['Y']."-".$date['m']."-".$date['dd'];
+				$ex	= explode('.', $line);
+				if($ex[1] == 'db') { $endline = $line; }
+
+				$date	= $this->getPosArchivesDatetime($ex[0]);
+				$day 	= $date['Y']."-".$date['m']."-".$date['dd'];
 				if(isset($datein)) $dayseek	= $dateseek['Y']."-".$dateseek['m']."-".$dateseek['dd'];
 				if(isset($datein)) {
-					if($day == $dayseek) $line2 = $line;
+					if($day == $dayseek) $line2 = $endline;
 				}
 			}
 		}
 		if(isset($datein) AND empty($line2)) return null;
-		if(isset($line2)) $line = $line2;
-		return $line;
+		if(isset($line2)) $endline = $line2;
+		return $endline;
 	}
 	
 	private function getPosArchivesDir($id_bu) {
