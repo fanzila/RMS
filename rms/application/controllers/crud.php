@@ -47,7 +47,7 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-		$crud->fields('id','name','active','order','id_bu');
+		$crud->fields('id','name','active','order','id_bu','type');
         $crud->set_table('checklists');
         $output = $crud->render();
  
@@ -113,8 +113,8 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-		$crud->columns('id','task', 'comment', 'active', 'priority', 'id_bu');
-		$crud->required_fields('task', 'prority', 'active');
+		$crud->columns('id','task', 'comment', 'active', 'priority', 'id_bu', 'type');
+		$crud->required_fields('task', 'prority', 'active', 'type');
         $crud->set_table('rmd_tasks');
         $output = $crud->render();
  
