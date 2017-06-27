@@ -258,7 +258,16 @@ class webCashier extends CI_Controller {
 			$userid = $this->input->post('user');
 		}
 		
-		$this->db->set('movement', $this->input->post('mov'))->set('id_user', $userid)->set('comment', addslashes($this->input->post('comment')))->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))->set('id_bu', $id_bu);
+		$postmov = $this->input->post('mov');
+		if(empty($postmov)) exit('Error, empty movement, please try again.');
+		
+		$this->db->set('movement', $postmov)
+		->set('id_user', $userid)
+		->set('comment', addslashes($this->input->post('comment')))
+		->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))
+		->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
+		->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))
+		->set('id_bu', $id_bu);
 		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
