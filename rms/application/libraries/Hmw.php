@@ -221,7 +221,7 @@ class Hmw {
 				if ($type == 'kitchen') {
 					$CI->session->set_userdata('type', 'kitchen');
 				}
-				else if ($type == 'service') {
+				else if ($type == 'service' || $type == false) {
 					$CI->session->set_userdata('type', 'service');
 				}
 				//login($user, $pass, remember, keylogin);
