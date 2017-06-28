@@ -224,7 +224,7 @@ class Reminder extends CI_Controller {
 						return false;
 					}
 					
-				$this->hmw->sendNotif("Reminder: ".$row->task, $id_bu);	
+				$this->hmw->sendNotif("Reminder: ".$row->task, $id_bu, $row->type);
 				
 				}
 			}

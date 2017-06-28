@@ -161,14 +161,16 @@ class Hmw {
 		$CI->mmail->sendEmail($sms);
 	}
 	
-	public function sendNotif($msg, $id_bu) {
-
+	public function sendNotif($msg, $id_bu, $devParam = null) {
+		
 		$address	= $this->getParam('pushover_address');
 		$token		= $this->getParam('pushover_token');
 		$user		= $this->getParam('pushover_user');
 		$buinfo 	= $this->getBuInfo($id_bu);
-		$device		= $buinfo->pushover_device;
-		
+		$device = $buinfo->pushover_device;
+		if ($devParam === 'kitchen') {
+			$device = $device . '-KITCHEN';
+		}
 		curl_setopt_array(
 			$ch = curl_init(), array(
 				CURLOPT_URL => $address,
@@ -207,7 +209,8 @@ class Hmw {
 
 		$getkey	= $CI->input->get('keylogin');
 		$id_bu	= $CI->input->get('id_bu');
-
+		$type		= $CI->input->get('type');
+		
 		if(!empty($getkey)) {
 			$keyl = $this->getParam('keylogin');
 			if($getkey == $keyl) {
@@ -215,6 +218,12 @@ class Hmw {
 				$user = $this->getParam('keylogin_user_'.$id_bu);
 				$pass = $this->getParam('keylogin_pass_'.$id_bu);
 				
+				if ($type == 'kitchen') {
+					$CI->session->set_userdata('type', 'kitchen');
+				}
+				else if ($type == 'service' || $type == false) {
+					$CI->session->set_userdata('type', 'service');
+				}
 				//login($user, $pass, remember, keylogin);
 				$CI->ion_auth->login($user, $pass, true, true);
 			}
