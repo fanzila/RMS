@@ -167,10 +167,12 @@ class Hmw {
 		$token		= $this->getParam('pushover_token');
 		$user		= $this->getParam('pushover_user');
 		$buinfo 	= $this->getBuInfo($id_bu);
-		$device = $buinfo->pushover_device;
+		$device 	= $buinfo->pushover_device;
+		
 		if ($devParam === 'kitchen') {
-			$device = $device . '-KITCHEN';
+			$device = $buinfo->pushover_device_kitchen;
 		}
+		
 		curl_setopt_array(
 			$ch = curl_init(), array(
 				CURLOPT_URL => $address,
