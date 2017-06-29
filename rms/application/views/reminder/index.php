@@ -72,8 +72,8 @@
 			var ul = document.getElementById('ReminderUL');
 			var h3Service = document.createElement('h3');
 			var h3Kitchen = document.createElement('h3');
-			h3Service.innerHTML = 'Service Reminders :';
-			h3Kitchen.innerHTML = 'Kitchen Reminders :';
+			h3Service.innerHTML = 'Service Reminders';
+			h3Kitchen.innerHTML = 'Kitchen Reminders';
 			var serviceDiv = document.createElement('div');
 			var kitchenDiv = document.createElement('div');
 			var user = document.getElementById('user');
