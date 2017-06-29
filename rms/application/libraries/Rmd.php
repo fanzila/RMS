@@ -16,7 +16,7 @@ class Rmd extends CI_Controller  {
 	{
 		$CI =& get_instance();
 		
-		$CI->db->select('T.id as tid, T.task as ttask, T.comment as tcomment, T.active as tactive, T.priority as tpriority T.type as type, N.start as nstart, N.end as nend, N.interval as ninterval, N.last as nlast, M.start as mstart, repeat_interval');
+		$CI->db->select('T.id as tid, T.task as ttask, T.comment as tcomment, T.active as tactive, T.priority as tpriority, T.type as type, N.start as nstart, N.end as nend, N.interval as ninterval, N.last as nlast, M.start as mstart, repeat_interval');
 		$CI->db->from('rmd_tasks as T');
 		$CI->db->join('rmd_notif as N', 'N.id_task = T.id');
 		$CI->db->join('rmd_meta as M', 'M.id_task = T.id');
