@@ -133,6 +133,22 @@ class Skills extends CI_Controller {
 		}
 	}
 	
+	public function general()
+	{
+		if (!$this->ion_auth->is_admin()) {
+			$this->hmw->isLoggedIn();
+			redirect('skills', 'refresh');
+		}
+		$this->hmw->changeBu();
+		$id_bu = $this->session->all_userdata()['bu_id'];
+		
+		$headers = $this->hmw->headerVars(1, "/skills/general", "CRUD Skills");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('skills/general');
+		$this->load->view('jq_footer');
+	}
+	
 	public function admin()
 	{
 		if (!$this->ion_auth->is_admin()) {
