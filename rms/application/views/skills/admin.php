@@ -1,7 +1,7 @@
 		</div>
 		<div data-role="content">
 			<div data-role="collapsible-set" data-inset="true">
-				<div data-role="collapsible" style="background-color : #e0e0e0">
+				<div data-role="collapsible" style="background-color : #f8f8f9">
 					<h1>Create a sponsoring link</h1>
 					<?$attributes = array('id' => "sponsorship", 'name' => "sponsorship");
 					echo form_open("skills/save", $attributes);?>
@@ -55,7 +55,7 @@
 						</table>
 					</form>
 				</div><!--/collapsible-->
-				<div data-role="collapsible" style="background-color : #ffffff">
+				<div data-role="collapsible" style="background-color : #f8f8f9">
 					<h1>Sponsors map</h1>
 					<table style="background-color : #f0f0f0" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter...">
 						<thead>
@@ -78,7 +78,7 @@
 						</tbody>
 					</table>
 				</div>
-				<div data-role="collapsible" style="background-color : #e0e0e0">
+				<div data-role="collapsible" style="background-color : #f8f8f9">
 					<h1>Skills map</h1>
 					<table style="background-color : #fff" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter...">
 						<thead>
@@ -133,9 +133,9 @@
 						</tbody>
 					</table>
 				</div>
-				<div data-role="collapsible" style="background-color : #fff">
+				<div data-role="collapsible" style="background-color : #f8f8f9">
 					<h1>Skills by person</h1>					
-					<ul data-role="listview" data-inset="true" data-filter="true" style="background-color : #e0e0e0">
+					<ul data-role="listview" data-inset="true" data-filter="true" style="background-color : #f8f8f9">
 						<?$ok=0;?>
 						<?foreach ($users as $user) {?>
 							<?$ok=0;?>
@@ -153,104 +153,7 @@
 						<?}?>
 					</ul>
 				</div>
-				<?php if($level >= 3) { ?>
-				<div data-role="collapsible" style="background-color : #e0e0e0">
-					<h1>Add New Skills</h1>
-					<?$attributes = array('id' => "skill", 'name' => "skill");
-					echo form_open("skills/create/skill/", $attributes);?>
-						<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-							<tr>
-								<td colspan="3" style="background-color: #fbf19e;">Topic to create :
-								</td>
-							</tr>
-							<tr>
-								<td width="8%"><label for="name[1]" id="label">Topic:</label></td>
-								<td width="82%"><input type="text" id="name[1]" name="name[1]" value="" data-clear-btn="true" /></td>
-								<td width="10%">
-									<?$attributes = array('id' => "sub-skill", 'name' => "submit");
-									echo form_submit($attributes, 'Save');?>
-								</td>
-							</tr>
-						</table>
-					</form>
-					<?$attributes = array('id' => "cat", 'name' => "cat");
-						echo form_open("skills/create/cat", $attributes);?>
-					<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-						<tr>
-							<td colspan="3" style="background-color: #fbf19e;">Category to create :
-							</td>
-						</tr>
-						<tr>
-							<td width="8%"><label for="name[2]" id="label">Category:</label></td>
-							<td width="82%"><input type="text" id="name[2]" name="name[2]" value="" data-clear-btn="true" /></td>
-							<td width="10%">
-								<?$attributes = array('id' => "sub-cat", 'name' => "submit");
-								echo form_submit($attributes, 'Save');?>
-							</td>
-						</tr>
-					</table>
-					</form>
-					<?$attributes = array('id' => "subcat", 'name' => "subcat");
-					echo form_open("skills/create/subcat", $attributes);?>
-					<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-						<tr>
-							<td colspan="3" style="background-color: #fbf19e;">Sub-category to create :
-							</td>
-						</tr>
-						<tr>
-							<td width="8%"><label for="name[3]" id="label">Sub-Category:</label></td>
-							<td width="82%"><input type="text" id="name[3]" name="name[3]" value="" data-clear-btn="true" /></td>
-							<td width="10%">
-								<?$attributes = array('id' => "sub-subcat", 'name' => "submit");
-								echo form_submit($attributes, 'Save');?>
-							</td>
-						</tr>
-					</table>
-					</form>
-
-					<?$attributes = array('id' => "skills_item", 'name' => "skills_item");
-					echo form_open("skills/createItem", $attributes);?>
-						<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-							<tr>
-								<td colspan="3" style="background-color: #fbf19e;">Skill item to create :
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<select style="background-color:#a1ff7c" name="s_skill" id="s_skill" data-inline="true" data-theme="a" required>
-										<option value="">Select a Topic</option>
-										<?foreach ($skills as $skill) {?>
-											<option value="<?=$skill->id?>"><?=$skill->name?></option>
-										<? } ?>
-									</select>
-									<select style="background-color:#a1ff7c" name="s_cat" id="s_cat" data-inline="true" data-theme="a" required>
-										<option value="">Select a category</option>
-										<?foreach ($skills_categories as $skills_category) {?>
-											<option value="<?=$skills_category->id?>"><?=$skills_category->name?></option>
-										<? } ?>
-									</select>
-									<select style="background-color:#a1ff7c" name="s_subcat" id="s_subcat" data-inline="true" data-theme="a" required>
-										<option value="">Select a sub-category</option>
-										<?foreach ($skills_sub_categories as $skills_sub_category) {?>
-											<option value="<?=$skills_sub_category->id?>"><?=$skills_sub_category->name?></option>
-										<? } ?>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="s_item" name="s_item" value="" /></td>
-							</tr>
-							<tr>
-								<td>
-									<?$attributes = array('id' => "s_sub", 'name' => "submit");
-									echo form_submit($attributes, 'Save');?>
-								</td>
-							</tr>
-						</table>
-					</form>					
-				</div>
-				<?php } ?>
-				<div data-role="collapsible" style="background-color : #ffffff">
+				<div data-role="collapsible" style="background-color : #f8f8f9">
 					<h1>Log</h1>
 					<table style="background-color : #f0f0f0" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter logs">
 						<thead>
@@ -282,6 +185,10 @@
 						</tbody>
 					</table>
 				</div>
+
+				<?php if($level >= 3) { ?>
+					<p><a href="/skills/general/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Manage Skills</a></p>
+				<?php } ?>
 
 			</div><!--/collapsible set-->
 		</div><!-- /content -->

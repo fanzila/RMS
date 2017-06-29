@@ -9,7 +9,7 @@
 			<ul id="ChecklistsUL" data-role="listview" data-inset="true">
 						<?
 							if ($type == false) { ?>
-								<h3>Service Checklists :</h3>
+								<h3>Service Checklists</h3>
 								<div id="service-div">
 									<ul data-role="listview" data-inset="true">
 									<? 	$servVars = 0;
@@ -26,7 +26,7 @@
 									</ul>
 								</div>
 								
-								<h3 id="h3Kitchen">Kitchen Checklists :</h3>
+								<h3 id="h3Kitchen">Kitchen Checklists</h3>
 								<div id="kitchen-div">
 									<ul data-role="listview" data-inset="true">
 									<? 	$kitchenVars = 0;
