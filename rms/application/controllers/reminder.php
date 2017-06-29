@@ -136,8 +136,7 @@ class Reminder extends CI_Controller {
 			$sqle = "";
 		}
 		
-		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], id_bu = $id_bu $sqle ";
-		
+		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], type = '$data[type]'', id_bu = $id_bu $sqle ";
 		$this->db->trans_start();
 		if (!$this->db->query($sql_tasks)) {
 			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
