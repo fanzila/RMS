@@ -16,7 +16,7 @@
 					<div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 						<h3>Main</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
-						<? if($keylogin || $userlevel >= 1) { ?>
+						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?>
 							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
 						<? } ?>		
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
@@ -29,8 +29,8 @@
 						<? /** if(!$keylogin AND !empty($user_door) AND !empty($door_device)) {	?>
 							<li><a rel="external" data-ajax="false" href="/door/"><i class="zmdi zmdi-lock zmd-fw"></i>Door</a></li>
 						<? } **/ ?>
-						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
-						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
+						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
+						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
 						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
 						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="<? if($keylogin) { ?>/order/viewOrders/<? } else { ?>/order/<? } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
 						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>

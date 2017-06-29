@@ -58,10 +58,11 @@ class Checklist extends CI_Controller {
 			'keylogin'		=> $this->session->userdata('keylogin'),	
 			'checklists'	=> $checklists);
 
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
-		$data['type'] = $type;
-		$headers = $this->hmw->headerVars(1, "/checklist/", "Checklist");
+		$data['bu_name'] 	=  $this->session->all_userdata()['bu_name'];
+		$data['username'] 	= $this->session->all_userdata()['identity'];
+		$data['type'] 		= $type;
+		$headers 			= $this->hmw->headerVars(1, "/checklist/", "Checklist");
+		
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('checklist/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
