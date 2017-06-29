@@ -8,7 +8,7 @@
 					</ul>
 					<? } ?>
 					<form id="tasks" name="tasks" method="post" action="/reminder/">
-						<ul id="ReminderUL">
+						<ul id="ReminderUL" data-role="listview" data-inset="true">
 							<li style="list-style-type: none;">
 								<? if($view != 'all') { ?><input type="button" rel="external" data-inline="true" data-theme="a" data-ajax="false" name="view" onClick="javascript:location.href='/reminder/index/view/all'" value="All tasks"><? } ?>
 								<? if($view == 'all') { ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/reminder/'" value="Overdue tasks"><? } ?><input type="button" rel="external" data-ajax="false" data-inline="true" data-theme="a" name="view" onClick="javascript:location.href='/reminder/log'" value="Log"></li>	
@@ -45,6 +45,7 @@
 									<label style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if ($line->interval > 0) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?></label>
 								<? 	}
 									} ?>
+									<br />
 									<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 										<option value="0">User</option>
 										<?

@@ -11,6 +11,7 @@
 							if ($type == false) { ?>
 								<h3>Service Checklists :</h3>
 								<div id="service-div">
+									<ul data-role="listview" data-inset="true">
 									<? 	$servVars = 0;
 											foreach ($checklists as $var) {
 												if ($var['type'] == 'service') {
@@ -22,10 +23,12 @@
 										if ($servVars == 0) { 
 											echo "<span>No checklists available</span>";
 										} ?>
+									</ul>
 								</div>
 								
 								<h3 id="h3Kitchen">Kitchen Checklists :</h3>
 								<div id="kitchen-div">
+									<ul data-role="listview" data-inset="true">
 									<? 	$kitchenVars = 0;
 											foreach ($checklists as $var) {
 												if ($var['type'] == 'kitchen') {
@@ -45,6 +48,7 @@
 									<?
 									}
 									?>
+								</ul>
 								</div>
 						<?} else { 
 									$varCount = 0;
@@ -57,7 +61,8 @@
 												echo "<span>No checklists available</span>";
 											}
 							}?>
-			</ul>
+							</ul>
+				<br />
 				<a href="/checklist/viewcklprevioustasks" rel="external" data-ajax="false" data-role="button" data-inline="true" data-icon="search" data-mini="true" data-theme="a">Log</a> 
 				<!--
 				<? if($keylogin) { ?>
