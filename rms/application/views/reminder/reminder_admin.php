@@ -6,7 +6,7 @@
 			?>
 									<form id="task" name="task" method="post" action="/reminder/adminSave">
 										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-											<tr><td colspan="2" style="background-color: #fbf19e;">Task info</td></tr>
+											<tr><td colspan="3" style="background-color: #fbf19e;">Task info</td></tr>
 											<tr>
 												<td>
 													<label for="name" id="label">Name:</label>
@@ -33,6 +33,13 @@
 														<option value="2">Normal</option>
 														<option value="1">Low</option>
 														<option value="3">High</option>
+													</select>
+												</td>
+												<td>
+													<label for="type" id="type">Type:</label>
+													<select id="type" name="type">
+														<option value="service" selected>Service</option>
+														<option value="kitchen">Kitchen</option>
 													</select>
 												</td>
 											</tr>
@@ -133,7 +140,7 @@
 								<li>
 									<form id="task<?=$line->tid?>" name="task<?=$line->tid?>" method="post" action="/reminder/adminSave">
 										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-											<tr><td colspan="2" style="background-color: #fbf19e;">Task info</td></tr>
+											<tr><td colspan="3" style="background-color: #fbf19e;">Task info</td></tr>
 											<tr>
 												<td>
 													<label for="name-<?=$line->tid?>" id="label-<?=$line->tid?>">Name:</label>
@@ -158,6 +165,13 @@
 														<option value="2" <? if($line->tpriority == 2) echo "selected"; ?> >Normal</option>
 														<option value="1" <? if($line->tpriority == 1) echo "selected"; ?>>Low</option>
 														<option value="3" <? if($line->tpriority == 3) echo "selected"; ?>>High</option>
+													</select>
+												</td>
+												<td>
+													<label for="type-<?=$line->tid?>" id="label-<?=$line->tid?>">Type:</label>
+													<select id="type-<?=$line->tid?>" name="type">
+														<option value="service" <? if($line->ttype == 'service') echo 'selected'; ?> >Service</option>
+														<option value="kitchen" <? if($line->ttype == 'kitchen') echo 'selected'; ?>>Kitchen</option>
 													</select>
 												</td>
 											</tr>
