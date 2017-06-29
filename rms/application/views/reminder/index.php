@@ -97,7 +97,8 @@
 					kitchenDiv.appendChild(kitchen[i]);
 				}
 			} else {
-				kitchenDiv.innerHTML = 'No reminders';
+				kitchenDiv.parentNode.removeChild(kitchenDiv);
+				h3Kitchen.parentNode.removeChild(h3Kitchen);
 			}
 		</script>
 		<? } ?>
