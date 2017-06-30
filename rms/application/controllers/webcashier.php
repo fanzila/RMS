@@ -201,7 +201,7 @@ class webCashier extends CI_Controller {
 			$data['force'] = 0;
 			
 			$param_pos_info['id_bu'] = $id_bu;
-							
+
 			if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
 				$data['archive_file'] = $d['file'];
 				$data['archive_date'] = $archive_date;
@@ -283,7 +283,13 @@ class webCashier extends CI_Controller {
 			}
 			
 			if($this->input->post('mov') != 'safe_in' AND $this->input->post('mov') != 'safe_out') {
-				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'))+$this->cashier->clean_number($this->input->post('notes1'));
+				$bills = ($this->cashier->clean_number(($this->input->post('100Bill') * 100))) + 
+								 ($this->cashier->clean_number(($this->input->post('50Bill') * 50))) +
+								 ($this->cashier->clean_number(($this->input->post('20Bill') * 20))) +
+								 ($this->cashier->clean_number(($this->input->post('10Bill') * 10))) +
+								 ($this->cashier->clean_number(($this->input->post('5Bill') * 5)));
+				
+				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'))+$this->cashier->clean_number($bills);
 				$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cbemv'))+$this->cashier->clean_number($this->input->post('cbcless'));
 			}
 
