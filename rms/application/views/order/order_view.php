@@ -69,7 +69,7 @@
 								<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/viewProducts/<?=$rec['idorder']?>/<?=$rec['supplier_id']?>/reception">Reception</a></li>
 							<? } ?>
 							<?if($rec['status'] == 'received') { ?>
-								<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/viewProducts/<?=$rec['idorder']?>/<?=$rec['supplier_id']?>/viewreception">View reception</a></li>
+								<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/viewProducts/<?=$rec['idorder']?>/<?=$rec['supplier_id']?>/viewreception">View/Edit reception</a></li>
 							<? } ?>
 						<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/downloadOrder/<?=$rec['idorder']?>_<?=$rec['supplier_name']?>">View BDC</a></li>
 						<?}?>

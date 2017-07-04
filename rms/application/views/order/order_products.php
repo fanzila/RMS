@@ -65,6 +65,15 @@ $today = getdate();
 										?>
 										<td><span class="zmdi <?=$icon?>"></span><font color="<?=$fontcolor?>"> Received qtty:</font></td>
 										<td><font color="<?=$fontcolor?>"><?=$added_stock?></font></td>
+										<td><span>&nbsp;&nbsp;&nbsp;</span></td>
+										<td>
+											<small>Modify reception: </small>
+											<input type="text" style="width:120px" name="editQtty[<?=$line['id']?>]" id="editQtty-<?=$line['id']?>" class="custom" data-mini="true" data-clear-btn="true">
+										</td>
+										<td><span>&nbsp;&nbsp;&nbsp;</span></td>
+										<td>
+											<small>Comment: </small><small style="color: red;"> <? if (isset($unsrl_order['pdt'][$line['id']]['comment'])) echo $unsrl_order['pdt'][$line['id']]['comment'];?></small>
+										</td>
 										<? } ?> 
 										<? if($load > 0 && $type == 'reception') { ?>
 											<td><small>Received: </small></td>
@@ -73,6 +82,10 @@ $today = getdate();
 											</td>
 											<? if($load > 0 && $qtty > 0 && $type == 'reception') { ?>
 												<td><input type="button" id="add<?=$line['id']?>" name="add[<?=$line['id']?>]" class="add" value="OK" data-mini="true" onclick="AddStock(<?=$line['id']?>);" />
+												</td>
+												<td>
+													<small>Comment product:</small>
+													<input type="text" id="comment-<?=$line['id']?>" name="comment[<?=$line['id']?>]" class="custom" data-mini="true" data-clear-btn="true" style="width:500px"/>
 												</td>
 												<script>
 												addtostock[<?=$line['id']?>] = <?=$qtty?>;
@@ -129,6 +142,12 @@ $today = getdate();
 									<? } ?>
 									
 									<? if(!$keylogin && $type != 'viewreception') { ?>
+										<li><input type="submit" name="save" value="SAVE"></li>
+									<? } else if (!$keylogin && $type == 'viewreception') { ?>
+										<input type="hidden" name="editReception" value="true">
+										<input type="hidden" name="srl_order_post" value='<?=serialize($unsrl_order)?>'>
+										<input type="hidden" name="id_order" value='<?=$load?>'>
+										<input type="hidden" name="current_url" value=<?=current_url()?>>
 										<li><input type="submit" name="save" value="SAVE"></li>
 									<? } ?>
 									</ul>
