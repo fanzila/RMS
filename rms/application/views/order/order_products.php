@@ -169,6 +169,15 @@ $today = getdate();
 									<input type="hidden" name="action" value="save_order">
 									<input type="hidden" name="type" value="<?=$type?>">
 								</form>
+								<? if (!$keylogin && $type == 'viewreception') { ?>
+									<form id="order" name="order" class="order" method="post" action="/order/cancelReception/"  data-ajax="false" onsubmit="return confirm('Do you really want to cancel the reception of this order ?')">
+										<input type="hidden" name="cancelReception" value="true">
+										<input type="hidden" name="srl_order_post" value='<?=serialize($unsrl_order)?>'>
+										<input type="hidden" name="id_order" value='<?=$load?>'>
+										<input type="hidden" name="current_url" value=<?=current_url()?>>
+										<input style="background-color: #e33030;" type="submit" name="save" value="CANCEL RECEPTION">
+									</form>
+								<? } ?>
 							</div><!-- /theme -->
 						</div><!-- /content -->
 					</div><!-- /page -->
