@@ -409,7 +409,8 @@ class Order extends CI_Controller {
 		$query = $this->db->get("users");
 		$users = $query->result();
 		
-		 if ($type != 'reception') $products = $this->sortArray($products);
+		if ($type != 'reception') $products = $this->sortArray($products);
+		
 		$data = array(
 			'products'			=> $products,
 			'stock'				=> $stock,
@@ -436,7 +437,29 @@ class Order extends CI_Controller {
 
 	}
 	
+	public function cancelReception() {
+		
+		$post = $this->input->post();
+		$unsrl_order = unserialize($post['srl_order_post']);
+		foreach ($unsrl_order['pdt'] as $key => $val) {
+			$received = $val['stock'];
+			$this->db->select('qtty');
+			$this->db->where('id_product', $key);
+			$current_stock = $this->db->get('products_stock')->row_array();
+			$new_stock = $current_stock;
+			$new_stock['qtty'] = $current_stock['qtty'] - $received;
+			$this->db->where('id_product', $key);
+			$this->db->update('products_stock', $new_stock);
+		}
+		$array_cancel = array('data_reception' => null, 'status' => 'sent');
+		$this->db->where('idorder', $post['id_order']);
+		$this->db->update('orders', $array_cancel);
+		redirect('order/viewOrders', 'refresh');
+		die();
+	}
+	
 	public function editReception($post) {
+		
 		$unsrl_order = unserialize($post['srl_order_post']);
 		$editQtty = $post['editQtty'];
 		foreach ($editQtty as $key => $val) {
