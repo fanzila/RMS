@@ -11,7 +11,7 @@
 								<div class="col-md">
 									<div class="box">
 										<?$test=0;?>
-										<select name="supplier_id"  data-mini="true" onchange="this.form.submit()">
+										<select name="supplier_id" id="filter-supID" data-mini="true" onchange="this.form.submit()">
 											<option value="">SUPPLIER</option>
 											<? foreach ($suppliers as $sup) { ?>
 												<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected";}?> ><?=$sup['name']?></option>
@@ -22,7 +22,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="freq" data-mini="true" onchange="this.form.submit()">
+										<select name="freq" id="filter-freq" data-mini="true" onchange="this.form.submit()">
 											<option value="">FREQUENCY</option>
 											<option value="high" <? if(isset($freq) && $freq == 'high') { echo "selected";}?> >high</option>
 											<option value="medium" <? if(isset($freq) && $freq == 'medium') { echo "selected";}?> >medium</option>
@@ -33,7 +33,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="pdt_cat_id" data-mini="true" onchange="this.form.submit()">
+										<select name="pdt_cat_id" id="filter-pdt-cat" data-mini="true" onchange="this.form.submit()">
 											<option value="">CATEGORY</option>
 											<? foreach ($products_category as $cat) { ?>
 											<option value="<?=$cat['id']?>" <? if($cat['id'] === $cat_id) { echo "selected";}?> ><?=$cat['name']?></option>	
@@ -43,7 +43,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="pdt_active" data-mini="true" onchange="this.form.submit()">
+										<select name="pdt_active" id="filter-pdt-active" data-mini="true" onchange="this.form.submit()">
 											<option value="">ACTIVE</option>
 											<option value="1" <? if (isset($pdt_active) && $pdt_active === "1") {echo "selected" ;}?>>Yes</option>
 											<option value="0" <? if (isset($pdt_active) && $pdt_active === "0") {echo "selected" ;}?>>No</option>
@@ -52,7 +52,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="stock_manage" data-mini="true" onchange="this.form.submit()">
+										<select name="stock_manage" id="filter-stock-manage" data-mini="true" onchange="this.form.submit()">
 											<option value="">MANAGE STOCK</option>
 											<option value="1" <? if (isset($stock_manage) && $stock_manage === "1") {echo "selected" ;}?>>Yes</option>
 											<option value="0" <? if (isset($stock_manage) && $stock_manage === "0") {echo "selected" ;}?>>No</option>
@@ -61,7 +61,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="pdt_unit" data-mini="true" onchange="this.form.submit()">
+										<select name="pdt_unit" id="filter-pdt-unit" data-mini="true" onchange="this.form.submit()">
 											<option value="">PRODUCT UNIT</option>
 											<? foreach ($products_unit as $unit) { ?>
 												<option value="<?=$unit['id']?>" <? if($unit['id'] === $pdt_unit) { echo "selected";}?> ><?=$unit['name']?></option>	
@@ -74,19 +74,19 @@
 								<div class="col-md">
 									<div class="box">
 										<small>Supplier Ref</small>
-										<input type="text" name="supplier_reference" value="<?=$input_ref?>" data-mini="true" data-clear-btn="true" />
+										<input type="text" name="supplier_reference" id="filter-supRef" value="<?=$input_ref?>" data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 								<div class="col-md">
 									<div class="box">
 										<small>Name</small>
-										<input type="text" name="pdt_name" value="<?=$pdt_name?>" data-mini="true" data-clear-btn="true" />
+										<input type="text" name="pdt_name" id="filter-supName" value="<?=$pdt_name?>" data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 								<div class="col-md">
 									<div class="box">
 										<small>Manage Stock Only</small>
-										<input type="checkbox" name="managed_only" <?if ($managed_only == "on") {echo "checked ";}?> data-mini="true" onchange="this.form.submit()" />
+										<input type="checkbox" name="managed_only" id="manage-only" <?if ($managed_only == "on") {echo "checked ";}?> data-mini="true" onchange="this.form.submit()" />
 									</div>
 								</div>
 							</div>
@@ -300,7 +300,7 @@
 						if ($i == $current_page) { ?>
 								<span><?=$i?></span>
 					<? 	} else {?>
-							<a href="/product_admin/index/filter/<?=$i?>"><?=$i?></a>
+							<a href="/product_admin/index/filter/<?=$i?>" onclick="resendFilters(<?=$i?>)"><?=$i?></a>
 				<?
 					}
 					$i += 1;	
@@ -537,6 +537,13 @@
 												}
 												modal.style.display = "none";
 												document.body.classList.remove("modal-open");
+											}
+											
+											function resendFilters(page) {
+												var form = document.getElementById("filter");
+												form.action = "/product_admin/index/filter/" + page;
+												console.log(form.action);
+												form.submit();
 											}
 																						
 											</script>

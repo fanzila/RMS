@@ -86,7 +86,7 @@ class Product_admin extends CI_Controller {
 			'command'			=> $command,
 			'products'			=> $products,
 			'suppliers'			=> $suppliers,
-			'supplier_id'		=> $supplier_id,
+			'supplier_id'		=> $postid,
 			'products_unit' 	=> $products_unit,
 			'products_category' => $products_category,
 			'freq' => $postfreq,
