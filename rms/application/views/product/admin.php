@@ -294,19 +294,29 @@
 				</ul>
 				<?
 				if (isset($total_pages)) { ?>
-					<span>Pages : </span>
+					<div style="margin-top: 50px;">
+					<span style="margin: 5px; margin-right: 30px;">Pages : </span>
 				<?	$i = 1;
+					if ($current_page > 1) { ?>
+						<a style="margin-right: 30px; cursor: pointer;" onclick="resendFilters(<?=($current_page - 1)?>)">&larr; Previous</a>
+					<?
+					}
 					while ($i <= $total_pages) { 
 						if ($i == $current_page) { ?>
-								<span><?=$i?></span>
+						<span style="margin: 5px;"><?=$i?></span>
 					<? 	} else {?>
-							<a href="/product_admin/index/filter/<?=$i?>" onclick="resendFilters(<?=$i?>)"><?=$i?></a>
+							<a onclick="resendFilters(<?=$i?>)" style="cursor: pointer; margin: 5px;"><?=$i?></a>
 				<?
 					}
 					$i += 1;	
 					}
+					if ($current_page < $total_pages) { ?>
+						<a style="margin-left: 30px; cursor: pointer;" onclick="resendFilters(<?=($current_page + 1)?>)">Next &rarr;</a>
+					<?
 					}
-				} 
+				} ?>
+			</div>
+			<?	} 
 				?>
 				
 							<? if($command == 'create') { ?>
