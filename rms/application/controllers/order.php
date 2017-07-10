@@ -339,9 +339,6 @@ class Order extends CI_Controller {
 				array_push($low, $value);
 			}
 		}
-		uasort($high, array($this, "sortProductOrder"));
-		uasort($medium, array($this, "sortProductOrder"));
-		uasort($low, array($this, "sortProductOrder"));
 		$productsFinal = array_merge($high, $medium, $low);
 		return ($productsFinal);
 	}
@@ -397,8 +394,7 @@ class Order extends CI_Controller {
 				}
 
 			}
-			$products = $this->sortArray($products);
-			//uasort($products, array($this, "sortProductOrder"));
+			uasort($products, array($this, "sortProductOrder"));
 			//print_r($products);
 		}
 
@@ -412,7 +408,9 @@ class Order extends CI_Controller {
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
-
+		
+		if ($type != 'reception') $products = $this->sortArray($products);
+		
 		$data = array(
 			'products'			=> $products,
 			'stock'				=> $stock,
@@ -422,9 +420,10 @@ class Order extends CI_Controller {
 			'users'				=> $users,
 			'supinfo'			=> $supinfo[$supplier_id],
 			'load' 				=> $load,
-			'type'				=> $type
+			'type'				=> $type,
 			);
-
+		
+		if (isset($order_recev)) $data['unsrl_order'] = $order_recev;
 		$title 				= "Order ".$supinfo[$supplier_id]['name'];
 		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
@@ -436,6 +435,51 @@ class Order extends CI_Controller {
 		$this->load->view('order/order_products',$data);
 		$this->load->view('jq_footer');
 
+	}
+	
+	public function cancelReception() {
+		
+		$post = $this->input->post();
+		$unsrl_order = unserialize($post['srl_order_post']);
+		foreach ($unsrl_order['pdt'] as $key => $val) {
+			$received = $val['stock'];
+			$this->db->select('qtty');
+			$this->db->where('id_product', $key);
+			$current_stock = $this->db->get('products_stock')->row_array();
+			$new_stock = $current_stock;
+			$new_stock['qtty'] = $current_stock['qtty'] - $received;
+			$this->db->where('id_product', $key);
+			$this->db->update('products_stock', $new_stock);
+		}
+		$array_cancel = array('data_reception' => null, 'status' => 'sent');
+		$this->db->where('idorder', $post['id_order']);
+		$this->db->update('orders', $array_cancel);
+		redirect('order/viewOrders', 'refresh');
+		die();
+	}
+	
+	public function editReception($post) {
+		
+		$unsrl_order = unserialize($post['srl_order_post']);
+		$editQtty = $post['editQtty'];
+		foreach ($editQtty as $key => $val) {
+			if (!empty($val)) {
+				$diff = $unsrl_order['pdt'][$key]['stock'] - $val;
+				$this->db->select('qtty');
+				$this->db->where('id_product', $key);
+				$current_stock = $this->db->get('products_stock')->row_array();
+				$new_stock = $current_stock;
+				$new_stock['qtty'] = $current_stock['qtty'] - $diff;
+				$this->db->where('id_product', $key);
+				$this->db->update('products_stock', $new_stock);
+				$unsrl_order['pdt'][$key]['stock'] = $val;
+			}
+		}
+		$srl = serialize($unsrl_order);
+		$array_order = array('data_reception' => $srl);
+		$this->db->where('idorder', $post['id_order']);
+		$this->db->update('orders', $array_order);
+		redirect($post['current_url'], 'refresh');
 	}
 
 	public function detailOrder() {
@@ -449,6 +493,11 @@ class Order extends CI_Controller {
 		$do_something	= false;
 
 		if(empty($post)) exit('Nothing to process, go back');
+		
+		if (isset($post['editReception']) && $post['editReception'] == true) {
+			$this->editReception($post);
+			return;
+		}
 		foreach ($post as $key => $var) {
 
 			//update stock
@@ -535,7 +584,8 @@ class Order extends CI_Controller {
 								'name' => $post['pdt_name'][$id_pdt],
 								'price' => $post['price'][$id_pdt],
 								'stock' => $post['stock'][$id_pdt],
-								'subtotal' => $post['price'][$id_pdt]*$value
+								'subtotal' => $post['price'][$id_pdt]*$value,
+								'comment' => $post['comment'][$id_pdt]
 								);
 						}
 
