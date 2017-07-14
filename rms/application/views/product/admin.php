@@ -200,7 +200,7 @@
 							<div class="row">
 								<div class="col-md">
 									<div class="box">
-										<small>Stock qtty</small><br/>
+										<small>Stock qtty /pièce</small><br/>
 										<input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=round($line['stock_qtty'],2)?>"  data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
