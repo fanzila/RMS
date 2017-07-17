@@ -35,14 +35,14 @@
 								<?if($mov != 'safe') { ?><td>Cashpad amount</td><? } ?>
 								<?if($mov != 'safe') { ?><td>Balance</td><? } ?>
 							</tr>
-							<?php $total = 0; foreach ($m['pay'] as $m2): ?>
+							<?php $total = 0; $total_user = 0; foreach ($m['pay'] as $m2): ?>
 								<? 
-								$total += $m2['amount_pos'];
+								$total += $m2['amount_pos']; $total_user += $m2['amount_user'];
 								?>
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
 								<tr>
 									<td><?=$m2['name']?></td>
-									<td><? if($m2['id'] != 12 AND $m2['id'] != 11 AND $m2['id'] != 5) { echo $m2['amount_user']; if($m2['id'] == 3) { echo " TR"; } else { echo "€"; }  } else { echo "-"; } ?></td>
+									<td><? if($m2['id'] != 12 AND $m2['id'] != 11 AND $m2['id'] != 5) { echo $m2['amount_user']. "€"; } else { echo "-"; } ?></td>
 									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 9) { echo $m2['amount_pos']."€"; } else { echo "-"; } ?></td><? } ?>
 									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 3 AND $m2['id'] != 1) { echo $m2['amount_pos']-$m2['amount_user']."€"; } else echo "-"; ?></td><? } ?>
 								</tr>						
@@ -94,6 +94,36 @@
 		<tr><td><?=$cusers?></td></tr>
 		<?php endforeach; ?>
 	</table>
+	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+		<tr style="background-color: #fbf19e;"><td colspan="6">Cash Drawer Opened</td></tr>
+		<tr style="background-color: #fbf19e;">
+			<td>Date</td>
+			<td>User</td>
+			<td>Terminal</td>
+		</tr>
+	<?php foreach ($m['cashDrawerOpened'] as $mov): ?> 
+		<tr>
+			<td><?=$mov['DATE']?></td>
+			<td><?= $mov['USER']?></td>
+			<td><?=$mov['TERMINAL']?></td>
+		</tr>
+	<?php endforeach; ?>
+</table>
+<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+	<tr style="background-color: #fbf19e;"><td colspan="6">Cancelled Receipts</td></tr>
+	<tr style="background-color: #fbf19e;">
+		<td>Receipt Closure Date</td>
+		<td>User</td>
+		<td>Reason</td>
+	</tr>
+<?php foreach ($m['cancelledReceipts'] as $mov): ?> 
+	<tr>
+		<td><?=$mov['DATE_CLOSED']?></td>
+		<td><?= $mov['OWNER']?></td>
+		<td><?=$mov['CANCELLATION_REASON']?></td>
+	</tr>
+<?php endforeach; ?>
+</table>
 	<? } ?>	
 				</li>
 			</ul>

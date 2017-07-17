@@ -50,6 +50,26 @@ class webCashier extends CI_Controller {
 		echo json_encode(['reponse' => $reponse]);
 	}
 	
+	// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckClose 1
+	
+	public function cliCheckClose($id_bu) 
+	{
+		$currentDate =  date('Y-m-d');
+		
+		$this->db->select('date');
+		$this->db->from('pos_movements');
+		$this->db->where('movement', 'close');
+		$this->db->order_by('date', 'DESC');
+		$result = $this->db->get();
+		$lastCloseDate = $result->row()->date;
+		$createDate = new DateTime($lastCloseDate);
+		$strip = $createDate->format('Y-m-d');
+		if ($strip < $currentDate) {
+			
+		} else {
+		}
+	}
+	
 	public function safe()
 	{
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
@@ -134,6 +154,8 @@ class webCashier extends CI_Controller {
 				$param['id_bu'] = $id_bu;
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
 				$lines[$m['id']]['cashmovements'] 	= $this->cashier->posInfo('getMovements', $param);
+				$lines[$m['id']]['cashDrawerOpened'] = $this->cashier->getArchivedDrawerOpenedEvents($id_bu, $m['closing_file']);
+				$lines[$m['id']]['cancelledReceipts'] = $this->cashier->getArchivedCancelledReceipts($id_bu, $m['closing_file']);
 			}
 		}
 
@@ -305,6 +327,7 @@ class webCashier extends CI_Controller {
 		}
 
 		if($this->input->post('mov') == 'close') {
+			$this->cashier->InsertTerminals($id_bu);
 			$this->closing($this->input->post('archive'), $pmid);
 		}
 

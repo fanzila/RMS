@@ -54,6 +54,84 @@ class Cashier {
 		return $qtty;
 	}
 	
+	public function getDrawerOpenedEvents($id_bu) {
+		$file	= $this->getPosDbDir($id_bu);
+		$db		= new SQLite3($file);
+		
+		$query = 'SELECT LE.ID, U.NAME, LE.TERMINAL, LE.DATE FROM LOGEVENT AS LE JOIN USER AS U ON LE.USER = U.ID WHERE LE.CONTENT = \'{"type":"cashDrawerOpened"}\'';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			array_push($result_array, $row_array);
+		}
+		return ($result_array);
+	}
+	
+	public function getCancelledReceipts($id_bu) {
+		$file = $this->GetPosDbDir($id_bu);
+		$db   = new SQLite3($file);
+		
+		$query = 'SELECT R.ID U.NAME, R.DATE_CLOSED, R.CANCELLATION_REASON FROM RECEIPT AS R JOIN USER AS U ON R.OWNER = U.ID WHERE R.CANCELLED = 1';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			array_push($result_array, $row_array);
+		}
+		return ($result_array);
+	}
+	
+	public function getArchivedCancelledReceipts($id_bu) {
+		$file = $this->GetPosDbDir($id_bu);
+		$db = new SQLite3($file);
+		
+		$query = 'SELECT R.ID, R.OWNER, R.DATE_CLOSED, R.CANCELLATION_REASON FROM RECEIPT AS R WHERE R.CANCELLED = 1';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			$q = "SELECT username FROM users AS u 
+			LEFT JOIN users_pos AS up ON u.id = up.id_user
+			WHERE up.id_pos = '".$row_array['OWNER']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if($o) { 
+				$row_array['OWNER'] = $o['0']['username'];
+			}
+			array_push($result_array, $row_array);
+		}
+		return ($result_array);
+	}
+	
+	public function getArchivedDrawerOpenedEvents($id_bu, $file) {
+		$CI = & get_instance();
+		$CI->load->database();
+		
+		$dir = $this->getPosArchivesDir($id_bu);
+		$path	= $dir."/".$file;
+		$db = new SQLite3($path);
+		
+		$query = 'SELECT LE.ID, LE.USER, LE.TERMINAL, LE.DATE FROM ARCHIVEDLOGEVENT AS LE WHERE LE.CONTENT = \'{"type":"cashDrawerOpened"}\'';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			$q = "SELECT username FROM users AS u 
+			LEFT JOIN users_pos AS up ON u.id = up.id_user
+			WHERE up.id_pos = '".$row_array['USER']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if($o) { 
+				$row_array['USER'] = $o['0']['username'];
+			}
+			$q = "SELECT name FROM terminal_pos WHERE id = '".$row_array['TERMINAL']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if ($o) {
+				$row_array['TERMINAL'] = $o['0']['name'];
+			}
+			array_push($result_array, $row_array);
+		}
+		return ($result_array);
+	}
+	
 	public function updateProductStock($idPosPdt, $sales, $id_bu, $source) {
 		$CI = & get_instance(); 
 		$CI->load->database();
@@ -265,6 +343,33 @@ class Cashier {
 			$r_customer = $CI->db->query($q_customer) or die($this->db->_error_message());
 		}
 	}
+	
+	
+	// public function openArchivedReceipt() {
+	// 	$CI = & get_instance();
+	// 	$CI->load->database();
+	// 	$CI->load->library();
+	// 	
+	// 	$db = new SQLite3();	
+	// 	$sqlar 	= "SELECT * FROM ARCHIVEDRECEIPTPAYMENT";
+	// 	$result = $db->query($sqlar);
+	// 	$res 	= array();
+	// 	while($row=$result->fetchArray(SQLITE3_ASSOC)){
+	// 		$q = "SELECT username FROM users AS u 
+	// 		LEFT JOIN users_pos AS up ON u.id = up.id_user
+	// 		WHERE up.id_pos = '".$row['USER']."'";
+	// 		$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+	// 		$o = $r->result_array();
+	// 		if($o) { 
+	// 			$res[] = $o['0']['username']; 
+	// 		} else {
+	// 			$res[] = $row['USER'];
+	// 		}
+	// 	}
+	// 	return $res;
+	// }
+	// 
+	
 	public function posInfo($action, $param = null) {
 		$CI = & get_instance(); 
 		$CI->load->database();
@@ -375,6 +480,25 @@ class Cashier {
 			break;
 		}
 	}
+	
+	public function InsertTerminals($id_bu) {
+		$CI = & get_instance();
+		$CI->load->database();
+		$file = $this->getPosDbDir($id_bu);
+		$db = new SQLite3($file);
+		
+		$q = "SELECT ID, NAME, MODEL FROM TERMINAL WHERE DELETED = 0";
+		$result = $db->query($q);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			array_push($result_array, $row_array);
+		}
+		foreach ($result_array as $line) {
+			$q = "INSERT INTO terminal_pos(id, name, model, id_bu) VALUES ('".$line['ID']."','".$line['NAME']."','".$line['MODEL']."',".$id_bu.") ON DUPLICATE KEY UPDATE id=id";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		}
+	}
+	
 	public function calc($action, $id_bu) {
 		$CI = & get_instance(); 
 		$CI->load->database();
