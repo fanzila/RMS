@@ -80,11 +80,15 @@ class Cashier {
 		return ($result_array);
 	}
 	
-	public function getArchivedCancelledReceipts($id_bu) {
-		$file = $this->GetPosDbDir($id_bu);
-		$db = new SQLite3($file);
+	public function getArchivedCancelledReceipts($id_bu, $file) {
+		$CI = & get_instance();
+		$CI->load->database();
 		
-		$query = 'SELECT R.ID, R.OWNER, R.DATE_CLOSED, R.CANCELLATION_REASON FROM RECEIPT AS R WHERE R.CANCELLED = 1';
+		$dir = $this->getPosArchivesDir($id_bu);
+		$path	= $dir."/".$file;
+		$db = new SQLite3($path);
+		
+		$query = 'SELECT R.ID, R.OWNER, R.DATE_CLOSED, R.CANCELLATION_REASON FROM ARCHIVEDRECEIPT AS R WHERE R.CANCELLED = 1';
 		$result = $db->query($query);
 		$result_array = array();
 		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
@@ -130,6 +134,51 @@ class Cashier {
 			array_push($result_array, $row_array);
 		}
 		return ($result_array);
+	}
+	
+	public function countAllArchivedReceipts($id_bu, $file) {
+		$CI = & get_instance();
+		$CI->load->database();
+		
+		$dir = $this->getPosArchivesDir($id_bu);
+		$path	= $dir."/".$file;
+		$db = new SQLite3($path);
+		
+		$query = 'SELECT count(R.ID) AS count FROM ARCHIVEDRECEIPT AS R';
+		$result = $db->query($query);
+		$count = $result->fetchArray(SQLITE3_ASSOC)['count'];
+		return ($count);
+	}
+	
+	public function userActionStats($id_bu, $file) {
+		$CI = & get_instance();
+		$CI->load->database();
+		
+		$dir = $this->getPosArchivesDir($id_bu);
+		$path = $dir."/".$file;
+		$db = new SQLite3($path);
+		
+		$query = 'SELECT count(R.ID) AS count, R.OWNER AS owner, R.DATE_CLOSED AS date_closed FROM ARCHIVEDRECEIPT AS R GROUP BY OWNER ORDER BY count DESC';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			$q = "SELECT username FROM users AS u 
+			LEFT JOIN users_pos AS up ON u.id = up.id_user
+			WHERE up.id_pos = '".$row_array['owner']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if($o) { 
+				$row_array['owner'] = $o['0']['username'];
+			}
+			array_push($result_array, $row_array);
+		}
+		$total_actions = $this->countAllArchivedReceipts($id_bu, $file);
+		$stats = array();
+		$stats = $result_array;
+		foreach ($result_array as $key => $line) {
+			$stats[$key]['percent'] = number_format($line['count'] / $total_actions * 100, 0) . "%";
+		}
+		return ($stats);
 	}
 	
 	public function updateProductStock($idPosPdt, $sales, $id_bu, $source) {

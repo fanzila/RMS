@@ -124,6 +124,26 @@
 	</tr>
 <?php endforeach; ?>
 </table>
+<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+	<tr style="background-color: #fbf19e;"><td colspan="6">User Actions : </td></tr>
+	<tr>
+		<td colspan="6">Total : <?=$m['total_actions']?></td>
+	</tr>
+	<tr style="background-color: #fbf19e;">
+		<td>Receipt Closure Date</td>
+		<td>User</td>
+		<td>Nb</td>
+		<td>Percent</td>
+	</tr>
+<?php foreach ($m['userActionStats'] as $mov): ?> 
+	<tr>
+		<td><?=$mov['date_closed']?></td>
+		<td><?= $mov['owner']?></td>
+		<td><?=$mov['count']?></td>
+		<td><?=$mov['percent']?></td>
+	</tr>
+<?php endforeach; ?>
+</table>
 	<? } ?>	
 				</li>
 			</ul>
