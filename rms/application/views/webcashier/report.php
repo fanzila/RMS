@@ -48,7 +48,13 @@
 								</tr>						
 							<?php endforeach; ?>
 						</table>
-						<? if($mov == 'close') { ?><small>Total Cashpad amount: <?=$total?>€</small><? } ?>
+						<? if($mov == 'close') { ?>
+							<small>Total Cashpad amount: <?=$total?>€   </small>
+							<small> Total User amount: <?=$total_user?>€</small>
+							<? if ($total_user - $total != 0) { ?>
+								<p style="color: red;">Diff : <?=$total_user - $total?>€</p>
+						<? 	}
+							} ?>
 
 	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']; ?> 
 		<? if($check_amount < 0 ) { ?><p style="color : red; font: bold 16px Arial, Verdana, sans-serif;">ALERT! <?=$check_amount?>€ cash missing!</p>
