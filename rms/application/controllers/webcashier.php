@@ -41,12 +41,35 @@ class webCashier extends CI_Controller {
 
 	public function save_report_comment()
 	{
+		$id_bu = $this->session->userdata('bu_id');
 		$reponse = 'ok';
 		$data = $this->input->post();
 		$this->db->set('comment_report', $data['comment-'.$data['id']]);
 		$this->db->where('id', $data['id']);
 		if(!$this->db->update('pos_movements')) {
 			$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+		}
+		
+		$this->db->select('movement, date');
+		$this->db->where('id', $data['id']);
+		$mov = $this->db->get('pos_movements')->row_array();
+		$this->db->select('users.username, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->join('users_groups', 'users.id = users_groups.user_id');
+		$this->db->where('users.active', 1);
+		$this->db->where_in('users_groups.group_id', array(1,4));
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$query = $this->db->get("users");
+		
+		$this->db->select('name');
+		$this->db->where('id', $id_bu);
+		$bu_name = $this->db->get('bus')->row_array()['name'];
+		$email['subject'] 	= 'WARNING '.$bu_name.': New comment on report';
+		$email['msg'] 		= 'Comment on report for '.$bu_name.' on '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']];
+		foreach ($query->result() as $row) {
+			$email['to']	= $row->email;	
+			$this->mmail->sendEmail($email);
 		}
 		echo json_encode(['reponse' => $reponse]);
 	}
@@ -145,7 +168,7 @@ class webCashier extends CI_Controller {
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
 		
-		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report')
+		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.diff')
 			->from('pos_movements as pm')
 			->join('users as u', 'u.id = pm.id_user', 'left')
 			->where('pm.id_bu', $id_bu)
@@ -246,7 +269,7 @@ class webCashier extends CI_Controller {
 			if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
 				$data['archive_file'] = $d['file'];
 				$data['archive_date'] = $archive_date;
-				
+				$this->cashier->InsertTerminals($id_bu);
 				$this->cashier->posInfo('updateUsers', $param_pos_info);
 			} else {
 				$force = $this->input->get('force');
@@ -254,6 +277,7 @@ class webCashier extends CI_Controller {
 					$data['archive_date'] = $archive_date;
 					$data['force'] = 1;
 					$this->cashier->posInfo('updateUsers', $param_pos_info);
+					$this->cashier->InsertTerminals($id_bu);
 				} else {
 					header("Refresh:20");
 					echo "<h2>Impossible de trouver une cloture.<br />
@@ -346,7 +370,35 @@ class webCashier extends CI_Controller {
 		}
 
 		if($this->input->post('mov') == 'close') {
-			$this->cashier->InsertTerminals($id_bu);
+			$cashpad_amount = $this->cashier->posInfo('cashfloat', $param_pos_info);
+			$cash_user = $pay[1]['man'];
+			$cb_balance = 0;
+			$tr_balance = 0;
+			$chq_balance = 0;
+			if (isset($pay[2]['pos'])) $cb_balance = ($pay[2]['pos'] - $pay[2]['man']);
+			if (isset($pay[3]['pos'])) $tr_balance = $pay[3]['pos'] - $pay[3]['man'];
+			if (isset($pay[4]['pos'])) $chq_balance = $pay[4]['pos'] - $pay[4]['man'];
+			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
+			if ($diff < 0) {
+				$this->db->select('users.username, users.email, users.id');
+				$this->db->distinct('users.username');
+				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+				$this->db->join('users_groups', 'users.id = users_groups.user_id');
+				$this->db->where('users.active', 1);
+				$this->db->where_in('users_groups.group_id', array(1,4));
+				$this->db->where('users_bus.bu_id', $id_bu);
+				$query = $this->db->get("users");
+				
+				$this->db->select('name');
+				$this->db->where('id', $id_bu);
+				$bu_name = $this->db->get('bus')->row_array()['name'];
+				$email['subject'] 	= 'WARNING '.$bu_name.': Cashier close diff';
+				$email['msg'] 		= 'Cashier '.$bu_name.' : diff == ' . $diff;
+				foreach ($query->result() as $row) {
+					$email['to']	= $row->email;	
+					$this->mmail->sendEmail($email);
+				}
+			}
 			$this->closing($this->input->post('archive'), $pmid);
 		}
 

@@ -60,7 +60,7 @@
 		</select>
 		<input type="hidden" name="mov" value="<?=$mov?>" />
 		<input type="hidden" name="archive" value="<?=$archive_file?>" />
-		<?if(empty($force)) { ?><input type="button" name="save" onClick="validator();" value="SAVE"><? } ?>
+		<input type="button" name="save" onClick="validator();" value="SAVE">
 	</form>
 </div>
 </div>

@@ -35,9 +35,11 @@
 								<?if($mov != 'safe') { ?><td>Cashpad amount</td><? } ?>
 								<?if($mov != 'safe') { ?><td>Balance</td><? } ?>
 							</tr>
-							<?php $total = 0; $total_user = 0; foreach ($m['pay'] as $m2): ?>
+							<?php $total = 0; $diff = $m['mov']['pos_cash_amount']; foreach ($m['pay'] as $m2): ?>
 								<? 
-								$total += $m2['amount_pos']; $total_user += $m2['amount_user'];
+								$total += $m2['amount_pos'];
+								if ($m2['id'] == 1) $diff = $diff - $m2['amount_user'];
+								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_pos']-$m2['amount_user']);
 								?>
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
 								<tr>
@@ -50,9 +52,8 @@
 						</table>
 						<? if($mov == 'close') { ?>
 							<small>Total Cashpad amount: <?=$total?>€   </small>
-							<small> Total User amount: <?=$total_user?>€</small>
-							<? if ($total_user - $total != 0) { ?>
-								<p style="color: red;">Diff : <?=$total_user - $total?>€</p>
+							<? if ($diff != 0) { ?>
+								<p style="color: red;">Diff: <?=$diff?>€</p>
 						<? 	}
 							} ?>
 
