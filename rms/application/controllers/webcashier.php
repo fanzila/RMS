@@ -44,10 +44,34 @@ class webCashier extends CI_Controller {
 		$id_bu = $this->session->userdata('bu_id');
 		$reponse = 'ok';
 		$data = $this->input->post();
+
+		$this->db->select('name');
+		$this->db->where('id', $id_bu);
+		$bu_name = $this->db->get('bus')->row_array()['name'];
+		$subject = "WARNING $bu_name : New comment on report";
+		
 		$this->db->set('comment_report', $data['comment-'.$data['id']]);
 		$this->db->where('id', $data['id']);
+		
 		if(!$this->db->update('pos_movements')) {
 			$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+		}
+		
+		if (isset($data['validate-'.$data['id']])) {
+			$this->db->set('status', 'validated');
+			$this->db->where('id', $data['id']);
+			if (!$this->db->update('pos_movements')) {
+				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+			}
+			$subject .= " (Director Validated)";
+		} else {
+			if ($data['diff'] != '0') {
+				$this->db->set('status', 'error');
+				$this->db->where('id', $data['id']);
+				if (!$this->db->update('pos_movements')) {
+					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+			}
 		}
 		
 		$this->db->select('movement, date');
@@ -62,10 +86,7 @@ class webCashier extends CI_Controller {
 		$this->db->where('users_bus.bu_id', $id_bu);
 		$query = $this->db->get("users");
 		
-		$this->db->select('name');
-		$this->db->where('id', $id_bu);
-		$bu_name = $this->db->get('bus')->row_array()['name'];
-		$email['subject'] 	= 'WARNING '.$bu_name.': New comment on report';
+		$email['subject'] 	= $subject;
 		$email['msg'] 		= 'Comment on report for '.$bu_name.' on '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']];
 		foreach ($query->result() as $row) {
 			$email['to']	= $row->email;	
@@ -158,6 +179,7 @@ class webCashier extends CI_Controller {
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$data['username']		= $user->username;
 		$data['user_groups']	= $user_groups[0];
+		$data['all_user_groups'] = $user_groups;
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= 'Cashier reports';
 		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount', $id_bu);
@@ -168,7 +190,7 @@ class webCashier extends CI_Controller {
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
 		
-		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.diff')
+		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.status')
 			->from('pos_movements as pm')
 			->join('users as u', 'u.id = pm.id_user', 'left')
 			->where('pm.id_bu', $id_bu)
@@ -379,25 +401,30 @@ class webCashier extends CI_Controller {
 			if (isset($pay[3]['pos'])) $tr_balance = $pay[3]['pos'] - $pay[3]['man'];
 			if (isset($pay[4]['pos'])) $chq_balance = $pay[4]['pos'] - $pay[4]['man'];
 			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
-			if ($diff < 0) {
-				$this->db->select('users.username, users.email, users.id');
-				$this->db->distinct('users.username');
-				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-				$this->db->join('users_groups', 'users.id = users_groups.user_id');
-				$this->db->where('users.active', 1);
-				$this->db->where_in('users_groups.group_id', array(1,4));
-				$this->db->where('users_bus.bu_id', $id_bu);
-				$query = $this->db->get("users");
-				
-				$this->db->select('name');
-				$this->db->where('id', $id_bu);
-				$bu_name = $this->db->get('bus')->row_array()['name'];
-				$email['subject'] 	= 'WARNING '.$bu_name.': Cashier close diff';
-				$email['msg'] 		= 'Cashier '.$bu_name.' : diff == ' . $diff;
-				foreach ($query->result() as $row) {
-					$email['to']	= $row->email;	
-					$this->mmail->sendEmail($email);
+			if ($diff != 0) {
+				if ($diff < 0) {
+					$this->db->select('users.username, users.email, users.id');
+					$this->db->distinct('users.username');
+					$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+					$this->db->join('users_groups', 'users.id = users_groups.user_id');
+					$this->db->where('users.active', 1);
+					$this->db->where_in('users_groups.group_id', array(1,4));
+					$this->db->where('users_bus.bu_id', $id_bu);
+					$query = $this->db->get("users");
+					
+					$this->db->select('name');
+					$this->db->where('id', $id_bu);
+					$bu_name = $this->db->get('bus')->row_array()['name'];
+					$email['subject'] 	= 'WARNING '.$bu_name.': Cashier close difference';
+					$email['msg'] 		= 'Cashier '.$bu_name.' : difference == ' . $diff;
+					foreach ($query->result() as $row) {
+						$email['to']	= $row->email;	
+						$this->mmail->sendEmail($email);
+					}
 				}
+				$this->db->set('status', 'error');
+				$this->db->where('id', $pmid);
+				$this->db->update('pos_movements');
 			}
 			$this->closing($this->input->post('archive'), $pmid);
 		}
