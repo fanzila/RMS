@@ -131,6 +131,60 @@ class webCashier extends CI_Controller {
 		}
 	}
 	
+	public function cliAlertSafe($id_bu) {
+		$currentAmount = $this->cashier->calc('safe_current_cash_amount', $id_bu);
+		
+		if ($currentAmount < 1) {
+			$this->db->select('users.username, users.email, users.id');
+			$this->db->distinct('users.username');
+			$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+			$this->db->join('users_groups', 'users.id = users_groups.user_id');
+			$this->db->join('groups', 'users_groups.group_id = groups.id');
+			$this->db->where('users.active', 1);
+			$this->db->where('groups.level', 3);
+			$this->db->where('users_bus.bu_id', $id_bu);
+			$query = $this->db->get("users");
+			
+			$this->db->select('name');
+			$this->db->where('id', $id_bu);
+			$bu_name = $this->db->get('bus')->row_array()['name'];
+			
+			$email['subject'] 	= 'WARNING '.$bu_name.': Safe cash under 1 €';
+			$email['msg'] 		= 'Safe '.$bu_name.' cash amount is '.$currentAmount.' €';
+			foreach ($query->result() as $row) {
+				
+				$email['to']	= $row->email;	
+				$this->mmail->sendEmail($email);
+			}
+		} else {
+			$this->db->select('cashier_alert_amount_safe');
+			$this->db->from('bus');
+			$this->db->where('id', $id_bu);
+			$cashierAlertAmountSafe = $this->db->get()->row_array()['cashier_alert_amount_safe'];
+			
+			if ($currentAmount > $cashierAlertAmountSafe) {
+				$this->db->select('users.username, users.email, users.id');
+				$this->db->distinct('users.username');
+				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+				$this->db->join('users_groups', 'users.id = users_groups.user_id');
+				$this->db->where('users.active', 1);
+				$this->db->where_in('users_groups.group_id', array(3));
+				$this->db->where('users_bus.bu_id', $id_bu);
+				$query = $this->db->get("users");
+				
+				$this->db->select('name');
+				$this->db->where('id', $id_bu);
+				$bu_name = $this->db->get('bus')->row_array()['name'];
+				$email['subject'] 	= 'WARNING '.$bu_name.': Safe cash is above '.$cashierAlertAmountSafe.' €';
+				$email['msg'] 		= 'Safe '.$bu_name.' cash amount is '.$currentAmount;
+				foreach ($query->result() as $row) {
+					$email['to']	= $row->email;	
+					$this->mmail->sendEmail($email);
+				}
+			}
+		}
+	}
+	
 	public function safe()
 	{
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
