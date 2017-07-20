@@ -28,11 +28,9 @@
 									</tr>
 									<tr>
 									<td>Billets:</td>
-									<td><small>100€</small><input maxlength="10" type="text" name="100Bill" id="basic" data-clear-btn="true" /></td>
-									<td><small>50€</small><input maxlength="10" type="text" name="50Bill" id="basic" data-clear-btn="true" /></td>
-									<td><small>20€</small><input maxlength="10" type="text" name="20Bill" id="basic" data-clear-btn="true" /></td>
-									<td><small>10€</small><input maxlength="10" type="text" name="10Bill" id="basic" data-clear-btn="true" /></td>
-									<td><small>5€</small><input maxlength="10" type="text" name="5Bill" id="basic" data-clear-btn="true" /></td>
+									<td><small>20€</small><input maxlength="10" type="text" name="20Bill" id="basic" data-clear-btn="false" /></td>
+									<td><small>10€</small><input maxlength="10" type="text" name="10Bill" id="basic" data-clear-btn="false" /></td>
+									<td><small>5€</small><input maxlength="10" type="text" name="5Bill" id="basic" data-clear-btn="false" /></td>
 								</tr></table>
 							<? } elseif($mode->id == 2) { ?>
 									<table border="0" cellpadding="2" width="100%"><tr>
