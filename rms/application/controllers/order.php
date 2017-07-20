@@ -450,16 +450,20 @@ class Order extends CI_Controller {
 	public function cancelReception() {
 		
 		$post = $this->input->post();
-		$unsrl_order = unserialize($post['srl_order_post']);
-		foreach ($unsrl_order['pdt'] as $key => $val) {
-			$received = $val['stock'];
-			$this->db->select('qtty');
-			$this->db->where('id_product', $key);
-			$current_stock = $this->db->get('products_stock')->row_array();
-			$new_stock = $current_stock;
-			$new_stock['qtty'] = $current_stock['qtty'] - $received;
-			$this->db->where('id_product', $key);
-			$this->db->update('products_stock', $new_stock);
+		if (isset($post['srl_order_post'])) {
+			$unsrl_order = unserialize($post['srl_order_post']);
+			foreach ($unsrl_order['pdt'] as $key => $val) {
+				if (isset($val['stock'])) {
+					$received = $val['stock'];
+					$this->db->select('qtty');
+					$this->db->where('id_product', $key);
+					$current_stock = $this->db->get('products_stock')->row_array();
+					$new_stock = $current_stock;
+					$new_stock['qtty'] = $current_stock['qtty'] - $received;
+					$this->db->where('id_product', $key);
+					$this->db->update('products_stock', $new_stock);
+				}
+			}
 		}
 		$array_cancel = array('data_reception' => null, 'status' => 'sent');
 		$this->db->where('idorder', $post['id_order']);
@@ -594,11 +598,10 @@ class Order extends CI_Controller {
 								'name' => $post['pdt_name'][$id_pdt],
 								'price' => $post['price'][$id_pdt],
 								'stock' => $post['stock'][$id_pdt],
-								'subtotal' => $post['price'][$id_pdt]*$value,
-								'comment' => $post['comment'][$id_pdt]
+								'subtotal' => $post['price'][$id_pdt]*$value
 								);
 						}
-
+							$order_reception['pdt'][$id_pdt]['comment'] = $post['comment'][$id_pdt];
 							if($post['qtty_check'][$id_pdt] != $post['stock'][$id_pdt]) {
 								$status_reception = false;
 							}
