@@ -434,7 +434,7 @@ class Order extends CI_Controller {
 		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
 		$data['keylogin']	= $this->session->userdata('keylogin');
-		if ($type == 'reception' || $type == 'order') {
+		if ($type == 'reception' || $type == 'order' || $type == 'viewreception') {
 		$headers = $this->hmw->headerVars(0, "/order/viewOrders/", $title);
 		$_POST['prev_page'] = 'reception-order';
 	} else {
@@ -641,7 +641,7 @@ class Order extends CI_Controller {
 
 		if(!$do_something) exit('Empty form, go back');
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Detail");
+		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Detail");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_detail',$data);
@@ -762,7 +762,7 @@ class Order extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Sent");
+		$headers = $this->hmw->headerVars(0, "/order/ViewOrders", "Order Sent");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_send', $data);
