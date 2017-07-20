@@ -584,10 +584,11 @@ class Order extends CI_Controller {
 								'name' => $post['pdt_name'][$id_pdt],
 								'price' => $post['price'][$id_pdt],
 								'stock' => $post['stock'][$id_pdt],
-								'subtotal' => $post['price'][$id_pdt]*$value
+								'subtotal' => $post['price'][$id_pdt]*$value,
+								'comment' => $post['comment'][$id_pdt]
 								);
 						}
-						$order_reception['pdt'][$id_pdt]['comment'] = $post['comment'][$id_pdt];
+
 							if($post['qtty_check'][$id_pdt] != $post['stock'][$id_pdt]) {
 								$status_reception = false;
 							}
