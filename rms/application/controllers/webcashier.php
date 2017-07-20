@@ -131,6 +131,8 @@ class webCashier extends CI_Controller {
 		}
 	}
 	
+	// cd /var/www/hank/rms/rms && php index.php webcashier cliAlertSafe 1
+	
 	public function cliAlertSafe($id_bu) {
 		$currentAmount = $this->cashier->calc('safe_current_cash_amount', $id_bu);
 		
