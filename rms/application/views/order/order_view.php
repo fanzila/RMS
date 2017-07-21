@@ -44,6 +44,7 @@
 					</tr>
 					<tr>
 						<td colspan="6">
+							<input type="hidden" id="filters" name="keep_filters" value="true">
 							<?$attributes = array('id' => "sub", 'name' => "submit");
 							echo form_submit($attributes, 'Search');?>
 						</td>

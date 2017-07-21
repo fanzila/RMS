@@ -271,6 +271,7 @@ class Order extends CI_Controller {
 	{
 		$this->hmw->keyLogin();
 		$this->load->library('session');
+		$this->load->library('user_agent');
 		
 		$id_bu 		= $this->session->all_userdata()['bu_id'];
 		$keylogin 	= $this->session->all_userdata()['keylogin'];
@@ -318,7 +319,15 @@ class Order extends CI_Controller {
 			'search'	=> $search,
 			'links'		=> $this->pagination->create_links()
 			);
-		$data['filters'] = $this->session->userdata('filters');
+		if (($this->session->userdata('keep_filters') === 'true') || $post['keep_filters'] == 'true')
+		{
+			if ($this->session->userdata('filters') !== null) {
+				$data['filters'] = $this->session->userdata('filters');
+			}
+			$this->session->unset_userdata('keep_filters');
+		} else {
+			$this->session->unset_userdata('filters');
+		}
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
@@ -436,7 +445,7 @@ class Order extends CI_Controller {
 		$data['keylogin']	= $this->session->userdata('keylogin');
 		if ($type == 'reception' || $type == 'order' || $type == 'viewreception') {
 		$headers = $this->hmw->headerVars(0, "/order/viewOrders/", $title);
-		$_POST['prev_page'] = 'reception-order';
+		$this->session->set_userdata('keep_filters', 'true');
 	} else {
 		$headers = $this->hmw->headerVars(0, "/order/", $title);
 	}
@@ -635,6 +644,8 @@ class Order extends CI_Controller {
 			'pdtinfo'		=> $pdtinfo,
 			'type'			=> $post['type'],
 			'update_stock' 	=> $update_stock);
+			
+		$this->session->set_userdata('keep_filters', 'true');
 
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
@@ -762,6 +773,8 @@ class Order extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
+		$this->session->set_userdata('keep_filters', 'true');
+
 		$headers = $this->hmw->headerVars(0, "/order/ViewOrders", "Order Sent");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -828,8 +841,10 @@ class Order extends CI_Controller {
 		$data['filename']	= urlencode($fileencode);
 		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
+		
+		$this->session->set_userdata('keep_filters', 'true');
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Confirm");
+		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Confirm");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_confirm', $data);
