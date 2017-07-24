@@ -18,7 +18,7 @@
 			if($m['mov']['movement'] == 'open') $mov = 'open';
 			if($m['mov']['movement'] == 'close') $mov = 'close';
 			?>
-			<div data-role="collapsible" style="background-color: <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "rgba(255, 0, 0, 0.6)";} else if ($m['mov']['status'] == 'validated') { echo "rgba(255, 0, 0, 0.4)";}?>">
+			<div data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "rgba(255, 0, 0, 0.6)";} else if ($m['mov']['status'] == 'validated') { echo "rgba(255, 0, 0, 0.4)";}} else { echo "rgb(220, 220, 220)";}?>">
 				<h2>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'ymd'); echo $m['mov']['id'] ?> - <?=strtoupper($m['mov']['movement'])?></h2>
 
 				<ul data-role="listview" data-theme="d" data-divider-theme="d">
@@ -68,7 +68,7 @@
 		echo form_open("webcashier/save_report_comment", $attributes);?>
 			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" value="<?=$m['mov']['comment_report']?>" />
 			<? foreach ($all_user_groups as $user_group) {
-			 if ($user_group->level >= 3) { ?>
+			 if ($user_group->level >= 3 && $mov == 'close') { ?>
 			 <div class="box">
 					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?>" />
 					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance Directeur</label>
@@ -179,9 +179,12 @@
 						function validate(idl) {
 							var $form = $('#report' + idl);
 							var done = 0;
+							
 							$form.on('submit', function() {
 																					
 								var comment = $('#comment-' + idl).val();
+							
+								if (done >= 1) { return (false); }
 								
 								$.ajax({
 									url: $(this).attr('action'),
