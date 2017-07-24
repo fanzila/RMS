@@ -65,7 +65,7 @@ class webCashier extends CI_Controller {
 			}
 			$subject .= " (Director Validated)";
 		} else {
-			if ($data['diff'] != '0') {
+			if ($data['diff-'.$data['id']] != '0') {
 				$this->db->set('status', 'error');
 				$this->db->where('id', $data['id']);
 				if (!$this->db->update('pos_movements')) {
@@ -446,6 +446,12 @@ class webCashier extends CI_Controller {
 		}
 
 		if($this->input->post('mov') == 'close') {
+			
+			$this->db->select('cashier_alert_amount_close');
+			$this->db=>from('bus');
+			$this->db->where('id', $id_bu);
+			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
+			
 			$cashpad_amount = $this->cashier->posInfo('cashfloat', $param_pos_info);
 			$cash_user = $pay[1]['man'];
 			$cb_balance = 0;
@@ -456,7 +462,7 @@ class webCashier extends CI_Controller {
 			if (isset($pay[4]['pos'])) $chq_balance = $pay[4]['pos'] - $pay[4]['man'];
 			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
 			if ($diff != 0) {
-				if ($diff < 0) {
+				if ($diff > $alert_amount) {
 					$this->db->select('users.username, users.email, users.id');
 					$this->db->distinct('users.username');
 					$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
