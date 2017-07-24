@@ -448,7 +448,7 @@ class webCashier extends CI_Controller {
 		if($this->input->post('mov') == 'close') {
 			
 			$this->db->select('cashier_alert_amount_close');
-			$this->db=>from('bus');
+			$this->db->from('bus');
 			$this->db->where('id', $id_bu);
 			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
 			
