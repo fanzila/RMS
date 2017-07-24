@@ -270,6 +270,9 @@ class Order extends CI_Controller {
 	public function viewOrders()
 	{
 		$this->hmw->keyLogin();
+		$this->load->library('session');
+		$this->load->library('user_agent');
+		
 		$id_bu 		= $this->session->all_userdata()['bu_id'];
 		$keylogin 	= $this->session->all_userdata()['keylogin'];
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -298,13 +301,16 @@ class Order extends CI_Controller {
 		$post  = $this->input->post();
 
 		if(isset($post['search'])) {
+			foreach ($post as $key => $val) {
+				$filters[$key] = $val;
+			}
+			$this->session->set_userdata('filters', $filters);
 			$results	= $this->searchOrder($post, $id_bu, $keylogin);
 			$search		= true;
 		} else {
 			$results	= $this->order_model->get_list($config["per_page"], $page, $keylogin);
 			$search		= false;
 		}
-
 		$data = array(
 			'suppliers'	=> $this->product->getSuppliers(null, null, $id_bu),
 			'users'		=> $users,
@@ -313,6 +319,15 @@ class Order extends CI_Controller {
 			'search'	=> $search,
 			'links'		=> $this->pagination->create_links()
 			);
+		if (($this->session->userdata('keep_filters') === 'true') || $post['keep_filters'] == 'true')
+		{
+			if ($this->session->userdata('filters') !== null) {
+				$data['filters'] = $this->session->userdata('filters');
+			}
+			$this->session->unset_userdata('keep_filters');
+		} else {
+			$this->session->unset_userdata('filters');
+		}
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
@@ -428,8 +443,12 @@ class Order extends CI_Controller {
 		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
 		$data['keylogin']	= $this->session->userdata('keylogin');
-
+		if ($type == 'reception' || $type == 'order' || $type == 'viewreception') {
+		$headers = $this->hmw->headerVars(0, "/order/viewOrders/", $title);
+		$this->session->set_userdata('keep_filters', 'true');
+	} else {
 		$headers = $this->hmw->headerVars(0, "/order/", $title);
+	}
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_products',$data);
@@ -440,16 +459,20 @@ class Order extends CI_Controller {
 	public function cancelReception() {
 		
 		$post = $this->input->post();
-		$unsrl_order = unserialize($post['srl_order_post']);
-		foreach ($unsrl_order['pdt'] as $key => $val) {
-			$received = $val['stock'];
-			$this->db->select('qtty');
-			$this->db->where('id_product', $key);
-			$current_stock = $this->db->get('products_stock')->row_array();
-			$new_stock = $current_stock;
-			$new_stock['qtty'] = $current_stock['qtty'] - $received;
-			$this->db->where('id_product', $key);
-			$this->db->update('products_stock', $new_stock);
+		if (isset($post['srl_order_post'])) {
+			$unsrl_order = unserialize($post['srl_order_post']);
+			foreach ($unsrl_order['pdt'] as $key => $val) {
+				if (isset($val['stock'])) {
+					$received = $val['stock'];
+					$this->db->select('qtty');
+					$this->db->where('id_product', $key);
+					$current_stock = $this->db->get('products_stock')->row_array();
+					$new_stock = $current_stock;
+					$new_stock['qtty'] = $current_stock['qtty'] - $received;
+					$this->db->where('id_product', $key);
+					$this->db->update('products_stock', $new_stock);
+				}
+			}
 		}
 		$array_cancel = array('data_reception' => null, 'status' => 'sent');
 		$this->db->where('idorder', $post['id_order']);
@@ -584,11 +607,10 @@ class Order extends CI_Controller {
 								'name' => $post['pdt_name'][$id_pdt],
 								'price' => $post['price'][$id_pdt],
 								'stock' => $post['stock'][$id_pdt],
-								'subtotal' => $post['price'][$id_pdt]*$value,
-								'comment' => $post['comment'][$id_pdt]
+								'subtotal' => $post['price'][$id_pdt]*$value
 								);
 						}
-
+							$order_reception['pdt'][$id_pdt]['comment'] = $post['comment'][$id_pdt];
 							if($post['qtty_check'][$id_pdt] != $post['stock'][$id_pdt]) {
 								$status_reception = false;
 							}
@@ -622,13 +644,15 @@ class Order extends CI_Controller {
 			'pdtinfo'		=> $pdtinfo,
 			'type'			=> $post['type'],
 			'update_stock' 	=> $update_stock);
+			
+		$this->session->set_userdata('keep_filters', 'true');
 
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
 		if(!$do_something) exit('Empty form, go back');
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Detail");
+		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Detail");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_detail',$data);
@@ -749,7 +773,9 @@ class Order extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Sent");
+		$this->session->set_userdata('keep_filters', 'true');
+
+		$headers = $this->hmw->headerVars(0, "/order/ViewOrders", "Order Sent");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_send', $data);
@@ -815,8 +841,10 @@ class Order extends CI_Controller {
 		$data['filename']	= urlencode($fileencode);
 		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
+		
+		$this->session->set_userdata('keep_filters', 'true');
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Confirm");
+		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Confirm");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_confirm', $data);

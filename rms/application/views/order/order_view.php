@@ -12,7 +12,7 @@
 							<select name="supplier" id="supplier" data-mini="true">
 								<option value="">Select a supplier</option>
 								<? foreach ($suppliers as $sup) { ?>
-									<option value="<?=$sup['name']?>"><?=$sup['name']?></option>
+									<option value="<?=$sup['name']?>" <?if (isset($filters) && isset($filters['supplier']) && $filters['supplier'] == $sup['name']) echo 'selected';?>><?=$sup['name']?></option>
 								<? } ?>
 							</select>
 						</td>
@@ -20,7 +20,7 @@
 							<select name="user" id="user" data-mini="true">
 								<option value="">Select a user</option>
 								<?foreach ($users as $user) {?>
-									<option value="<?=$user->username?>"><?=$user->first_name?> <?=$user->last_name?>
+									<option value="<?=$user->username?>" <?if (isset($filters) && isset($filters['user']) && $filters['user'] == $user->username) echo 'selected';?>><?=$user->first_name?> <?=$user->last_name?>
 									</option>
 								<?}?>
 							</select>
@@ -28,22 +28,23 @@
 						<td colspan="2">
 							<select id="status" name="status" data-mini="true">
 								<option value="">Select a status</option>
-								<option value="sent">Sent</option>
-								<? if(!$keylogin) { ?><option value="draft">Draft</option><? } ?>
-								<option value="received">Received</option>
+								<option value="sent"<?if (isset($filters) && isset($filters['status']) && $filters['status'] == 'sent') echo 'selected';?>>Sent</option>
+								<? if(!$keylogin) { ?><option value="draft" <?if (isset($filters) && isset($filters['status']) && $filters['status'] == 'draft') echo 'selected';?>>Draft</option><? } ?>
+								<option value="received" <?if (isset($filters) && isset($filters['status']) && $filters['status'] == 'received') echo 'selected';?>>Received</option>
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<td><label for="idorder" id="label">ID :</label></td>
-						<td><input type="text" id="idorder" name="idorder" value="" data-clear-btn="true" /></td>
+						<td><input type="text" id="idorder" name="idorder" value="<?if (isset($filters) && isset($filters['idorder'])) echo $filters['idorder'];?>" data-clear-btn="true" /></td>
 						<td><label for="sdate" id="label">Order date from the :</label></td>
-						<td><input type="text" data-role="date" id="sdate" name="sdate" value="" data-clear-btn="true" /></td>
+						<td><input type="text" data-role="date" id="sdate" name="sdate" value="<?if (isset($filters) && isset($filters['sdate'])) echo $filters['sdate'];?>" data-clear-btn="true" /></td>
 						<td><label for="edate" id="label">To the :</label></td>
-						<td><input type="text" data-role="date" id="edate" name="edate" value="" data-clear-btn="true" /></td>
+						<td><input type="text" data-role="date" id="edate" name="edate" value="<?if (isset($filters) && isset($filters['edate'])) echo $filters['edate'];?>" data-clear-btn="true" /></td>
 					</tr>
 					<tr>
 						<td colspan="6">
+							<input type="hidden" id="filters" name="keep_filters" value="true">
 							<?$attributes = array('id' => "sub", 'name' => "submit");
 							echo form_submit($attributes, 'Search');?>
 						</td>
