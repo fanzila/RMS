@@ -463,23 +463,37 @@ class webCashier extends CI_Controller {
 			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
 			if ($diff != 0) {
 				if ($diff > $alert_amount) {
-					$this->db->select('users.username, users.email, users.id');
-					$this->db->distinct('users.username');
-					$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-					$this->db->join('users_groups', 'users.id = users_groups.user_id');
-					$this->db->where('users.active', 1);
-					$this->db->where_in('users_groups.group_id', array(1,4));
-					$this->db->where('users_bus.bu_id', $id_bu);
-					$query = $this->db->get("users");
-					
-					$this->db->select('name');
-					$this->db->where('id', $id_bu);
-					$bu_name = $this->db->get('bus')->row_array()['name'];
-					$email['subject'] 	= 'WARNING '.$bu_name.': Cashier close difference';
-					$email['msg'] 		= 'Cashier '.$bu_name.' : difference == ' . $diff;
-					foreach ($query->result() as $row) {
-						$email['to']	= $row->email;	
-						$this->mmail->sendEmail($email);
+					if (!$this->input->post('retry')) {
+						$form_values = $this->input->post();
+						$this->session->set_flashdata('form_values', $form_values);
+						$pay_values = $pay;
+						foreach ($pay as $key => $value) {
+							$this->db->select('*')->from('pos_payments_type')->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
+							$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+							$payment = $r->row_array();
+							$pay_values[$key]['name'] = $payment['name'];
+						}
+						$this->session->set_flashdata('pay_values', $pay_values);
+						redirect('/webcashier/movement/close');
+					} else {
+						$this->db->select('users.username, users.email, users.id');
+						$this->db->distinct('users.username');
+						$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+						$this->db->join('users_groups', 'users.id = users_groups.user_id');
+						$this->db->where('users.active', 1);
+						$this->db->where_in('users_groups.group_id', array(1,4));
+						$this->db->where('users_bus.bu_id', $id_bu);
+						$query = $this->db->get("users");
+						
+						$this->db->select('name');
+						$this->db->where('id', $id_bu);
+						$bu_name = $this->db->get('bus')->row_array()['name'];
+						$email['subject'] 	= 'WARNING '.$bu_name.': Cashier close difference';
+						$email['msg'] 		= 'Cashier '.$bu_name.' : difference == ' . $diff;
+						foreach ($query->result() as $row) {
+							$email['to']	= $row->email;	
+							$this->mmail->sendEmail($email);
+						}
 					}
 				}
 				$this->db->set('status', 'error');
