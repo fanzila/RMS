@@ -30,8 +30,8 @@
 							<li><a rel="external" data-ajax="false" href="/door/"><i class="zmdi zmdi-lock zmd-fw"></i>Door</a></li>
 						<? } **/ ?>
 						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
-						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
-						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
+						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
+						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
 						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="<? if($keylogin) { ?>/order/viewOrders/<? } else { ?>/order/<? } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
 						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>
 						<li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li>
