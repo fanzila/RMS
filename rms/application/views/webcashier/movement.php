@@ -7,13 +7,13 @@
 					<tr style="background-color: #fbf19e;">
 						<td>Payment type</td>
 						<td>User amount</td>
-						<td>Cashpad amount</td>
+						<td>Turnover by Payment type</td>
 					</tr>
 						<? foreach ($pay_values as $key => $value) { ?>
 						<tr>
 							<td><?=$value['name']?></td>
 							<td><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo "No user input value"; }?></td>
-							<td><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "Couldn't get cashpad value"; }?></td>
+							<td><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "0"; }?></td>
 						</tr>
 					<? }?>
 				</table>
@@ -73,10 +73,12 @@
 			}	
 			?>
 		</select>
+		<label style="background-color: white;" for="blc">Ignore Error and continue closing</label>
+		<input type="checkbox" name="blc" id="blc">
 		<input type="hidden" name="mov" value="<?=$mov?>" />
 		<input type="hidden" name="archive" value="<?=$archive_file?>" />
-		<? if ($this->session->flashdata('form_values')) { ?>
-				<input type="hidden" name="retry" value="true" />
+		<? foreach ($closure_data['ca'] as $pos) { ?>
+			<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
 		<? } ?>
 		<?if(empty($force)) { ?><input type="button" onClick="validator();" name="save" value="SAVE"><? } ?>
 	</form>

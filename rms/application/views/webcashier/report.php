@@ -39,14 +39,14 @@
 								<? 
 								$total += $m2['amount_pos'];
 								if ($m2['id'] == 1) $diff = $diff - $m2['amount_user'];
-								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_pos']-$m2['amount_user']);
+								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
 								<tr>
 									<td><?=$m2['name']?></td>
 									<td><? if($m2['id'] != 12 AND $m2['id'] != 11 AND $m2['id'] != 5) { echo $m2['amount_user']. "€"; } else { echo "-"; } ?></td>
 									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 9) { echo $m2['amount_pos']."€"; } else { echo "-"; } ?></td><? } ?>
-									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 1) { echo $m2['amount_pos']-$m2['amount_user']."€"; } else echo "-"; ?></td><? } ?>
+									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 1) { echo $m2['amount_user']-$m2['amount_pos']."€"; } else echo "-"; ?></td><? } ?>
 								</tr>						
 							<?php endforeach; ?>
 						</table>

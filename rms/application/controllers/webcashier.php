@@ -268,6 +268,7 @@ class webCashier extends CI_Controller {
 			$lines[$m['id']]['pay'] = $res_pp;
 				
 			if($m['movement'] == 'close') {
+				if (empty($m['closing_file'])) exit ("No closing file");
 				$param = array('closing_file' =>  $m['closing_file']);
 				$param['id_bu'] = $id_bu;
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
@@ -345,6 +346,7 @@ class webCashier extends CI_Controller {
 			$param_pos_info['id_bu'] = $id_bu;
 
 			if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
+				$data['closure_data'] = $d;
 				$data['archive_file'] = $d['file'];
 				$data['archive_date'] = $archive_date;
 				$this->cashier->InsertTerminals($id_bu);
@@ -450,26 +452,23 @@ class webCashier extends CI_Controller {
 			$this->db->select('cashier_alert_amount_close');
 			$this->db->from('bus');
 			$this->db->where('id', $id_bu);
-			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
+			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
 			
 			$cashpad_amount = $this->cashier->posInfo('cashfloat', $param_pos_info);
 			$cash_user = $pay[1]['man'];
-			$cb_balance = 0;
-			$tr_balance = 0;
-			$chq_balance = 0;
-			if (isset($pay[2]['pos'])) $cb_balance = ($pay[2]['pos'] - $pay[2]['man']);
-			if (isset($pay[3]['pos'])) $tr_balance = $pay[3]['pos'] - $pay[3]['man'];
-			if (isset($pay[4]['pos'])) $chq_balance = $pay[4]['pos'] - $pay[4]['man'];
+			$cb_balance = ($pay[2]['man'] - $pay[2]['pos']);
+		 	$tr_balance = $pay[3]['man'] - $pay[3]['pos'];
+			$chq_balance = $pay[4]['man'] - $pay[4]['pos'];
 			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
 			if ($diff != 0) {
-				if ($diff > $alert_amount) {
-					if (!$this->input->post('retry')) {
+				if ($diff < $alert_amount) {
+					if (!$this->input->post('blc')) {
 						$form_values = $this->input->post();
 						$this->session->set_flashdata('form_values', $form_values);
 						$pay_values = $pay;
 						foreach ($pay as $key => $value) {
-							$this->db->select('*')->from('pos_payments_type')->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
-							$r = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+							$this->db->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
+							$r = $this->db->get('pos_payments_type') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 							$payment = $r->row_array();
 							$pay_values[$key]['name'] = $payment['name'];
 						}
@@ -537,10 +536,13 @@ class webCashier extends CI_Controller {
 			$this->db->update('pos_payments');
 			$af  = $this->db->affected_rows();
 
-			if(empty($af)) {
+			$this->db->select('amount_pos')->where('id_movement', $pmid)->where('amount_pos != 0');
+			$pos_payments = $this->db->get('pos_payments');
+			
+			if(empty($af) && empty($pos_payments)) {
 				$this->db->set('amount_pos', $val['SUM'])->set('id_movement', $pmid)->set('id_payment', $val['IDMETHOD']);
 				$this->db->insert('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			}	
+			}
 		}
 
 		$this->db->set('closing_file', $file)->set('closing_id', $d['seqid'])->where('id', $pmid)->where('id_bu', $id_bu);
