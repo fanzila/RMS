@@ -78,7 +78,7 @@
 		<input type="hidden" name="mov" value="<?=$mov?>" />
 		<input type="hidden" name="archive" value="<?=$archive_file?>" />
 		<? foreach ($closure_data['ca'] as $pos) { ?>
-			<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
+			<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?if (isset($pos['SUM'])) { echo $pos['SUM']; } else { echo '0';}?>">
 		<? } ?>
 		<?if(empty($force)) { ?><input type="button" onClick="validator();" name="save" value="SAVE"><? } ?>
 	</form>
