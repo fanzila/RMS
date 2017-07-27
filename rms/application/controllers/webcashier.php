@@ -446,7 +446,17 @@ class webCashier extends CI_Controller {
 				$rpp = $this->db->get('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}
 		}
-
+		
+		$pay_values = $pay;
+		foreach ($pay as $key => $value) {
+			$this->db->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
+			$r = $this->db->get('pos_payments_type') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$payment = $r->row_array();
+			$pay_values[$key]['name'] = $payment['name'];
+			if(!isset($value['man']) OR empty($value['man']) ) $pay_values[$key]['man'] = 0;
+			if(!isset($value['pos']) OR empty($value['pos']) ) $pay_values[$key]['pos'] = 0;
+		}
+		
 		if($this->input->post('mov') == 'close') {
 			
 			$this->db->select('cashier_alert_amount_close');
@@ -455,23 +465,16 @@ class webCashier extends CI_Controller {
 			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
 			
 			$cashpad_amount = $this->cashier->posInfo('cashfloat', $param_pos_info);
-			$cash_user = $pay[1]['man'];
-			$cb_balance = ($pay[2]['man'] - $pay[2]['pos']);
-		 	$tr_balance = $pay[3]['man'] - $pay[3]['pos'];
-			$chq_balance = $pay[4]['man'] - $pay[4]['pos'];
+			$cash_user = $pay_values[1]['man'];
+			$cb_balance = $pay_values[2]['man'] - $pay_values[2]['pos'];
+		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];
+			$chq_balance = $pay_values[4]['man'] - $pay_values[4]['pos'];
 			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
 			if ($diff != 0) {
 				if ($diff < $alert_amount) {
 					if (!$this->input->post('blc')) {
 						$form_values = $this->input->post();
 						$this->session->set_flashdata('form_values', $form_values);
-						$pay_values = $pay;
-						foreach ($pay as $key => $value) {
-							$this->db->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
-							$r = $this->db->get('pos_payments_type') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-							$payment = $r->row_array();
-							$pay_values[$key]['name'] = $payment['name'];
-						}
 						$this->session->set_flashdata('pay_values', $pay_values);
 						
 						$this->db->where('id', $pmid);
