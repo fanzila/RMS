@@ -215,9 +215,10 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
-	public function report()
+	public function report($page = 1)
 	{
-
+		
+		$this->load->library('pagination');
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 2)
 		{
@@ -226,10 +227,24 @@ class webCashier extends CI_Controller {
 		}
 
 		$data = array();
+		if ($this->input->post('type')) {	$filters['type'] = $this->input->post('type'); } else {	$filters['type'] = ""; }
+		if ($this->input->post('user')) {	$filters['user-id'] = $this->input->post('user');	}	else { $filters['user-id'] = ""; }
+		if ($this->input->post('sdate')) { $filters['sdate'] = $this->input->post('sdate'); } else { $filters['sdate'] = ""; }
+		if ($this->input->post('edate')) { $filters['edate'] = $this->input->post('edate'); } else { $filters['edate'] = ""; }
+		$data['filter'] = $filters;
 
 		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
+		
+		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->where('users.active', 1);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('users.username', 'asc'); 
+		$query = $this->db->get("users");
+		$data['users'] = $query->result_array();
 
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
@@ -246,16 +261,31 @@ class webCashier extends CI_Controller {
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
 		
+		$config_pages['base_url'] = base_url() . 'webcashier/report/';
+		$config_pages['per_page'] = 10;
+		
+		
 		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.status')
 			->from('pos_movements as pm')
 			->join('users as u', 'u.id = pm.id_user', 'left')
-			->where('pm.id_bu', $id_bu)
-			->order_by('pm.id desc')
-			->limit(300);
+			->where('pm.id_bu', $id_bu);
+			if (!empty($filters['type'])) $this->db->where('pm.movement', $filters['type']);
+			if (!empty($filters['user-id'])) $this->db->where('u.id', $filters['user-id']);
+			if (!empty($filters['sdate'])) $this->db->where('pm.date >= ', $filters['sdate']);
+			if (!empty($filters['edate'])) $this->db->where('pm.date <= ', $filters['edate']);
+			$this->db->order_by('pm.id desc');
+			if ($page == 1) {
+				$this->db->limit($config_pages['per_page']);
+			} else {
+				$this->db->limit($config_pages['per_page'], $page);
+			}
 		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		
 		$res_pm = $r_pm->result_array();
+		$config_pages['total_rows'] = $this->db->query('SELECT FOUND_ROWS() AS COUNT')->row()->COUNT;
 		
+		$this->pagination->initialize($config_pages);
+			
 		foreach ($res_pm as $key_pm => $m) {
 			$this->db->from('pos_payments as pp')
 					->join('pos_payments_type as ppt', 'pp.id_payment = ppt.id')
@@ -286,6 +316,7 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/report',$data);
 		$this->load->view('webcashier/jq_footer_spe');
+		$this->load->view('webcashier/jq_footer_report.php');
 		$this->load->view('jq_footer');
 	}
 

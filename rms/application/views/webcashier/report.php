@@ -1,5 +1,5 @@
 	</div>
-
+	
 	<div data-role="content" data-theme="a">
 		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=number_format($safe_cash,  2, '.', ' ')?>€ |  Safe TR num: <?=$safe_tr?> | Monthly TO: <?=number_format($monthly_to,  2, '.', ' ')?>€</h4>
 		<p>Daily Cashpad cash movements</p>
@@ -9,6 +9,47 @@
 		<?php endforeach; ?>
 		<? if(empty($live_movements)) { ?>No movement<? } ?>
 		</ul>
+		<br>
+		<br>
+		<form id="filter" name="filter" method="post" data-ajax="false" action="/webcashier/report/filter">
+			<div class="row">
+				<div class="col-md">
+					<div class="box">
+						<select name="type" id="filter-type">
+							<option value="">TYPE</option>
+							<option value="open" <?if ($filter['type'] == 'open') echo "selected";?>>OPEN</option>
+							<option value="close" <?if ($filter['type'] == 'close') echo "selected";?>>CLOSE</option>
+							<option value="safe_in" <?if ($filter['type'] == 'safe_in') echo "selected";?>>SAFE IN</option> 
+						</select>
+					</div>
+				</div>
+					<div class="col-md">
+						<div class="box">
+							<select name="user" id="filter-user">
+								<option value="">USER</option>
+								<? foreach ($users as $user) { ?>
+									<option value="<?=$user['id']?>" <?if ($filter['user-id'] == $user['id']) echo "selected";?>><?=$user['username']?></option>
+								<? } ?>
+							</select>
+						</div>
+					</div>
+					<div class="col-md">
+						<div class="box">
+							<label for="sdate" id="label">Movement date from the : </label>
+							<input type="text" data-role="date" id="sdate" name="sdate" value="<?=$filter['sdate']?>" data-clear-btn="true" />
+						</div>
+					</div>
+					<div class="col-md">
+						<div class="box">
+							<label for="edate" id="label">To the : </label>
+							<input type="text" data-role="date" id="edate" name="edate" value="<?=$filter['edate']?>" data-clear-btn="true" />
+						</div>
+					</div>
+			</div>
+			<input type="submit" name="sub" value="FILTER" />
+		</form>
+		<br>
+		<br>
 		<h2>Movements</h2>
 		
 		<?php foreach ($lines as $m): ?>
@@ -70,7 +111,7 @@
 			<? foreach ($all_user_groups as $user_group) {
 			 if ($user_group->level >= 3 && $mov == 'close') { ?>
 			 <div class="box">
-					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?>" />
+					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?> />
 					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance Directeur</label>
 			 </div>
 			 <? break;
@@ -166,6 +207,7 @@
 			</ul>
 		</div> <!-- end collapsible -->
 	<?php endforeach; ?>
+	<?= $this->pagination->create_links(); ?>
 </div> <!-- end content -->
 </div> <!-- end page -->
 
@@ -225,4 +267,14 @@
 								return false;
 							});
 						}
+						</script>
+						<script>
+							$(document).ready(function() {
+							$("#edate").datepicker({ dateFormat: 'yy-mm-dd' });
+							});
+						</script>
+						<script>
+							$(document).ready(function() {
+							$("#sdate").datepicker({ dateFormat: 'yy-mm-dd' });
+							});
 						</script>

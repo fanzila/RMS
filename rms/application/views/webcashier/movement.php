@@ -73,14 +73,18 @@
 			}	
 			?>
 		</select>
-		<label style="background-color: white;" for="blc">Ignore Error and continue closing</label>
-		<input type="checkbox" name="blc" id="blc">
 		<input type="hidden" name="mov" value="<?=$mov?>" />
 		<input type="hidden" name="archive" value="<?=$archive_file?>" />
-		<? foreach ($closure_data['ca'] as $pos) { ?>
-			<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
-		<? } ?>
-		<?if(empty($force)) { ?><input type="button" onClick="validator();" name="save" value="SAVE"><? } ?>
+		<?if(empty($force)) { ?>
+			
+			<? if ($mov == 'close') { ?>
+				<label style="background-color: white;" for="blc">Ignore Error and continue closing</label>
+				<input type="checkbox" name="blc" id="blc">
+				<? foreach ($closure_data['ca'] as $pos) { ?>
+						<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
+				<? } 
+					} ?>
+			<input type="button" onClick="validator();" name="save" value="SAVE"><? } ?>
 	</form>
 </div>
 </div>

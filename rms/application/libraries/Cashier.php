@@ -99,6 +99,15 @@ class Cashier {
 			$o = $r->result_array();
 			if($o) { 
 				$row_array['OWNER'] = $o['0']['username'];
+			} else {
+				$file = $this->getPosDbDir($id_bu);
+				$db = new SQLite3($file);
+				$sql = "SELECT NAME FROM USER WHERE ID = '".$row_array['OWNER']."'";
+				$r2 = $db->query($sql);
+				$row2=$r2->fetchArray(SQLITE3_ASSOC);
+				if (isset($row2['NAME'])) {
+					$row_array['OWNER'] = $row2['NAME']. " (cashpad username) ";
+				}
 			}
 			array_push($result_array, $row_array);
 		}
@@ -124,6 +133,15 @@ class Cashier {
 			$o = $r->result_array();
 			if($o) { 
 				$row_array['USER'] = $o['0']['username'];
+			} else {
+				$file = $this->getPosDbDir($id_bu);
+				$db = new SQLite3($file);
+				$sql = "SELECT NAME FROM USER WHERE ID = '".$row_array['USER']."'";
+				$r2 = $db->query($sql);
+				$row2=$r2->fetchArray(SQLITE3_ASSOC);
+				if (isset($row2['NAME'])) {
+					$row_array['USER'] = $row2['NAME']. " (cashpad username) ";
+				}
 			}
 			$q = "SELECT name FROM terminal_pos WHERE id = '".$row_array['TERMINAL']."'";
 			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -169,6 +187,15 @@ class Cashier {
 			$o = $r->result_array();
 			if($o) { 
 				$row_array['owner'] = $o['0']['username'];
+			} else {
+				$file2 = $this->getPosDbDir($id_bu);
+				$db2 = new SQLite3($file2);
+				$sql = "SELECT NAME FROM USER WHERE ID = '".$row_array['owner']."'";
+				$r2 = $db2->query($sql);
+				$row2=$r2->fetchArray(SQLITE3_ASSOC);
+				if (isset($row2['NAME'])) {
+					$row_array['owner'] = $row2['NAME']. " (cashpad username) ";
+				}
 			}
 			array_push($result_array, $row_array);
 		}
@@ -522,7 +549,16 @@ class Cashier {
 				if($o) { 
 					$res[] = $o['0']['username']; 
 				} else {
-					$res[] = $row['USER'];
+					$file = $this->getPosDbDir($param['id_bu']);
+					$db = new SQLite3($file);
+					$sql = "SELECT NAME FROM USER WHERE ID = '".$row['USER']."'";
+					$r2 = $db->query($sql);
+					$row2=$r2->fetchArray(SQLITE3_ASSOC);
+					if (isset($row2['NAME'])) {
+						$res[] = $row2['NAME']. " (cashpad username) ";
+					} else {
+						$res[] = $row['USER'];
+					}
 				}
 			}
 			return $res;
