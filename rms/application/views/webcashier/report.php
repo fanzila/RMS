@@ -11,7 +11,7 @@
 		</ul>
 		<br>
 		<br>
-		<form id="filter" name="filter" method="post" data-ajax="false" action="/webcashier/report/filter">
+		<form id="filter" name="filter" method="post" data-ajax="false" action="/webcashier/report/">
 			<div class="row">
 				<div class="col-md">
 					<div class="box">
@@ -207,7 +207,9 @@
 			</ul>
 		</div> <!-- end collapsible -->
 	<?php endforeach; ?>
-	<?= $this->pagination->create_links(); ?>
+	<div id="pages">
+		<?= $this->pagination->create_links(); ?>
+	</div>
 </div> <!-- end content -->
 </div> <!-- end page -->
 
@@ -216,6 +218,12 @@
 						
 						function isNumeric(n) {
 							return !isNaN(parseFloat(n)) && isFinite(n);
+						}
+						
+						function resendFilters(page) {
+							var form = document.getElementById("filter");
+							form.action = "/webcashier/report/" + page;
+							form.submit();
 						}
 						
 						function validate(idl) {
@@ -278,3 +286,14 @@
 							$("#sdate").datepicker({ dateFormat: 'yy-mm-dd' });
 							});
 						</script>
+						<script>
+							var pages = document.getElementById("pages");
+							for (var i = 0; i < pages.childNodes.length; i += 1) {
+								if ('href' in pages.childNodes[i]) {
+									var array = pages.childNodes[i].href.split('/');
+									var pagenumber = array[(array.length - 1)];
+									pages.childNodes[i].setAttribute('onclick','resendFilters(' + pagenumber + ')');
+									
+								}
+							}
+							</script>

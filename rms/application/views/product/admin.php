@@ -552,7 +552,6 @@
 											function resendFilters(page) {
 												var form = document.getElementById("filter");
 												form.action = "/product_admin/index/filter/" + page;
-												console.log(form.action);
 												form.submit();
 											}
 																						

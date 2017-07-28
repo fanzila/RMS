@@ -263,9 +263,9 @@ class webCashier extends CI_Controller {
 		
 		$config_pages['base_url'] = base_url() . 'webcashier/report/';
 		$config_pages['per_page'] = 10;
+		$config_pages['use_page_numbers'] = TRUE;
 		
-		
-		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.status')
+		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.status, pm.employees_sp')
 			->from('pos_movements as pm')
 			->join('users as u', 'u.id = pm.id_user', 'left')
 			->where('pm.id_bu', $id_bu);
@@ -274,18 +274,15 @@ class webCashier extends CI_Controller {
 			if (!empty($filters['sdate'])) $this->db->where('pm.date >= ', $filters['sdate']);
 			if (!empty($filters['edate'])) $this->db->where('pm.date <= ', $filters['edate']);
 			$this->db->order_by('pm.id desc');
-			if ($page == 1) {
-				$this->db->limit($config_pages['per_page']);
-			} else {
-				$this->db->limit($config_pages['per_page'], $page);
-			}
+			$this->db->limit(300);
 		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		
 		$res_pm = $r_pm->result_array();
-		$config_pages['total_rows'] = $this->db->query('SELECT FOUND_ROWS() AS COUNT')->row()->COUNT;
-		
+		$offset = $config_pages['per_page'] * ($page - 1);
+		$config_pages['total_rows'] = $r_pm->num_rows();
+		$res_pm = array_slice($res_pm, $offset, $config_pages['per_page']);
 		$this->pagination->initialize($config_pages);
-			
+		
 		foreach ($res_pm as $key_pm => $m) {
 			$this->db->from('pos_payments as pp')
 					->join('pos_payments_type as ppt', 'pp.id_payment = ppt.id')
@@ -409,6 +406,46 @@ class webCashier extends CI_Controller {
 		$this->load->view('webcashier/jq_footer_spe');
 		$this->load->view('jq_footer');
 	}
+	
+	private function planning() 
+	{
+	
+		$this->load->library('hmw');
+		$this->load->library('shiftplanning');
+	
+		$sp_key		= $this->hmw->getParam('sp_key'); 
+		$sp_user	= $this->hmw->getParam('sp_user');
+		$sp_pass	= $this->hmw->getParam('sp_pass');
+	
+		/* set the developer key on class initialization */
+		$shiftplanning = new shiftplanning(array('key' => $sp_key));
+
+		$session = $shiftplanning->getSession( );
+		if( !$session ) {
+			// perform a single API call to authenticate a user
+			$response = $shiftplanning->doLogin(
+			array('username' => $sp_user, 'password' => $sp_pass));
+
+				if( $response['status']['code'] == 1 )
+				{// check to make sure that login was successful
+					$session = $shiftplanning->getSession( );	// return the session data after successful login
+				} else {
+					echo " CANT GET SESSION".$response['status']['text'] . "--" . $response['status']['error'];
+				}
+		}
+
+		if( $session ) {
+			$response = $shiftplanning->setRequest(
+				array(
+					array('module' => 'dashboard.onnow', 'method' => 'GET'),
+					array('module' => 'location.locations', 'method' => 'GET')
+				)
+			);
+			//print_r($shiftplanning->getResponse(1));
+			$r = $shiftplanning->getResponse(0);
+			return $r;		
+		}
+	}
 
 	public function save()
 	{
@@ -427,7 +464,15 @@ class webCashier extends CI_Controller {
 		$id_bu			 		= $this->session->all_userdata()['bu_id'];
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
+		$planning = $this->planning();
 		
+		$employees_sp = array();
+		$buinfo = $this->hmw->getBuInfo($id_bu);
+		$bu_position_id = explode (',',$buinfo->humanity_positions);
+		foreach ($planning['data'] as $line) {
+			if (in_array ($line['schedule_id'], $bu_position_id)) 
+			array_push($employees_sp, $line['employee_name']);
+		}
 		if(empty($userpost)) { 
 			$userid = $user->id; 
 		} else {
@@ -443,7 +488,8 @@ class webCashier extends CI_Controller {
 		->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))
 		->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
 		->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))
-		->set('id_bu', $id_bu);
+		->set('id_bu', $id_bu)
+		->set('employees_sp', serialize($employees_sp));
 		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
