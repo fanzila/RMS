@@ -493,7 +493,7 @@ class webCashier extends CI_Controller {
 		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
-		$payid = date('y-m-d/').$pmid;
+		$payid = date('d/m-').$pmid;
 		$pay = array();
 
 		if($this->input->post('mov')) { 
