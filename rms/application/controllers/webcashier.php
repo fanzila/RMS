@@ -278,6 +278,10 @@ class webCashier extends CI_Controller {
 		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		
 		$res_pm = $r_pm->result_array();
+		$temp_sp = $res_pm;
+		foreach ($temp_sp as $key => $line) {
+			$res_pm[$key]['employees_sp'] = unserialize($line['employees_sp']);
+		}
 		$offset = $config_pages['per_page'] * ($page - 1);
 		$config_pages['total_rows'] = $r_pm->num_rows();
 		$res_pm = array_slice($res_pm, $offset, $config_pages['per_page']);

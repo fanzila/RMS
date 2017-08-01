@@ -12,8 +12,14 @@
 						<? foreach ($pay_values as $key => $value) { ?>
 						<tr>
 							<td><?=$value['name']?></td>
-							<td><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo "No user input value"; }?></td>
-							<td><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "0"; }?></td>
+							<? if ($value['name'] == 'Cashout' || $value['name'] == 'cashout') { ?>
+								<td> - </td>
+								<td> - </td>
+							<? } else { ?>
+							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo ""; }?></td>
+							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "0"; }?></td>
+							<? }?>
+							
 						</tr>
 					<? }?>
 				</table>

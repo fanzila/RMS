@@ -70,7 +70,7 @@
 						<p>Cashpad cash: <?=$m['mov']['pos_cash_amount']?>€ | Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_num']?></p>
 			
 						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-							<tr style="background-color: #fbf19e;">
+							<tr style="background-color: #bfbfbf;">
 								<td>Payment type</td>
 								<td>User amount</td>
 								<?if($mov != 'safe') { ?><td>Cashpad amount</td><? } ?>
@@ -124,8 +124,8 @@
 </div>
 <? if($mov =='close') { ?>		
 		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-			<tr style="background-color: #fbf19e;"><td colspan="6">POS Movements</td></tr>
-			<tr style="background-color: #fbf19e;">
+			<tr style="background-color: #bfbfbf;"><td colspan="6">POS Movements</td></tr>
+			<tr style="background-color: #bfbfbf;">
 				<td>Date</td>
 				<td>User</td>
 				<td>Amount</td>
@@ -145,7 +145,7 @@
 		<?php endforeach; ?>
 	</table>
 	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-		<tr style="background-color: #fbf19e;">
+		<tr style="background-color: #bfbfbf;">
 			<td>Users</td>
 		</tr>
 	<?php foreach ($m['close_users'] as $cusers): ?> 
@@ -153,8 +153,8 @@
 		<?php endforeach; ?>
 	</table>
 	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-		<tr style="background-color: #fbf19e;"><td colspan="6">Cash Drawer Opened</td></tr>
-		<tr style="background-color: #fbf19e;">
+		<tr style="background-color: #bfbfbf;"><td colspan="6">Cash Drawer Opened</td></tr>
+		<tr style="background-color: #bfbfbf;">
 			<td>Date</td>
 			<td>User</td>
 			<td>Terminal</td>
@@ -168,8 +168,8 @@
 	<?php endforeach; ?>
 </table>
 <table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-	<tr style="background-color: #fbf19e;"><td colspan="6">Cancelled Receipts</td></tr>
-	<tr style="background-color: #fbf19e;">
+	<tr style="background-color: #bfbfbf;"><td colspan="6">Cancelled Receipts</td></tr>
+	<tr style="background-color: #bfbfbf;">
 		<td>Receipt Closure Date</td>
 		<td>User</td>
 		<td>Reason</td>
@@ -183,11 +183,11 @@
 <?php endforeach; ?>
 </table>
 <table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-	<tr style="background-color: #fbf19e;"><td colspan="6">User Actions : </td></tr>
+	<tr style="background-color: #bfbfbf;"><td colspan="6">User Actions : </td></tr>
 	<tr>
 		<td colspan="6">Total : <?=$m['total_actions']?></td>
 	</tr>
-	<tr style="background-color: #fbf19e;">
+	<tr style="background-color: #bfbfbf;">
 		<td>Receipt Closure Date</td>
 		<td>User</td>
 		<td>Nb</td>
@@ -202,7 +202,18 @@
 	</tr>
 <?php endforeach; ?>
 </table>
-	<? } ?>	
+<? if (isset($m['mov']['employees_sp']) && !empty($m['mov']['employees_sp'])) { ?>
+<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+	<tr style="background-color: #bfbfbf;"><td colspan="6">Users Planning: </td></tr>
+			<? foreach ($m['mov']['employees_sp'] as $emp) { ?>
+		<tr>
+			<td><?=$emp?></td>
+		</tr> 
+	<?
+			} ?>
+</table>
+<?  }
+	} ?>	
 				</li>
 			</ul>
 		</div> <!-- end collapsible -->
@@ -222,7 +233,9 @@
 						
 						function resendFilters(page) {
 							var form = document.getElementById("filter");
-							form.action = "/webcashier/report/" + page;
+							if (typeof page !== 'undefined') {
+								form.action = "/webcashier/report/" + page;
+							}
 							form.submit();
 						}
 						
