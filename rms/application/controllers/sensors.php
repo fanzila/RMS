@@ -286,7 +286,7 @@ class Sensors extends CI_Controller {
 						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."° at ".$is[0]->date."\n
 The temperature should be max: ".$max."° and min: ".$min."°";
 
-						$msg_notif = "Problème de température pour FRIGO OU CONGEL : '".$is[0]->name."'\n
+						$msg_notif = "Problème de température pour : '".$is[0]->name."'\n
 Température = ".$temp."°\n 
 ==> VOUS DEVEZ AGIR <==";
 							
