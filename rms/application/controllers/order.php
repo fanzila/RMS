@@ -298,7 +298,7 @@ class Order extends CI_Controller {
 		$this->pagination->initialize($config);
 
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-		$post  = $this->input->post();
+		$post  = $this->input->get();
 
 		if(isset($post['search'])) {
 			foreach ($post as $key => $val) {
@@ -328,15 +328,31 @@ class Order extends CI_Controller {
 		} else {
 			$this->session->unset_userdata('filters');
 		}
+
+		$referrer	= $this->agent->referrer();
+		$ref_ex 	= explode('/', $referrer);
+		if(!isset($ref_ex['4'])) $ref_ex['4'] = 'NONE';
+		
+		if(isset($data['filters']) && ($ref_ex['4'] != 'viewOrders' OR $ref_ex == 'NONE') && $this->session->userdata('reset_filters') != true) {
+			$location = '/order/viewOrders?'.http_build_query($data['filters']);	
+			$this->session->unset_userdata('filters');
+			$this->session->unset_userdata('keep_filters');
+			$this->session->set_userdata('reset_filters', true);
+			header('Location: '.$location);
+			exit();
+		}
+	
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-
+				
 		$headers = $this->hmw->headerVars(0, "/order/", "Orders");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('order/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_view',$data);
 		$this->load->view('jq_footer');
+		
+		$this->session->unset_userdata('reset_filters');		
 	}
 	
 	private function sortArray($array) {

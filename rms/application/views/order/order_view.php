@@ -1,6 +1,6 @@
 		</div>
 		<div data-role="content" data-theme="a">
-			<?$attributes = array('id' => "logOrder", 'name' => "logOrder", 'data-ajax' => "false");
+			<?$attributes = array('id' => "logOrder", 'name' => "logOrder", 'data-ajax' => "false", 'method'=> 'get');
 			echo form_open("order/viewOrders", $attributes);?>
 				<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 					<tr>
