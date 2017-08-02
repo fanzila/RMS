@@ -108,11 +108,11 @@ class Cashier {
 			WHERE up.id_pos = '".$row_array['OWNER']."'";
 			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o = $r->result_array();
+			$file2 = $this->getPosDbDir($id_bu);
+			$db = new SQLite3($file2);
 			if($o) { 
 				$row_array['OWNER'] = $o['0']['username'];
 			} else {
-				$file2 = $this->getPosDbDir($id_bu);
-				$db = new SQLite3($file2);
 				$sql = "SELECT NAME FROM USER WHERE ID = '".$row_array['OWNER']."'";
 				$r2 = $db->query($sql);
 				$row2=$r2->fetchArray(SQLITE3_ASSOC);
@@ -126,11 +126,11 @@ class Cashier {
 			WHERE up.id_pos = '".$row_array['USER_CANCEL']."'";
 			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o = $r->result_array();
+			$file2 = $this->getPosDbDir($id_bu);
+			$db = new SQLite3($file2);
 			if($o) { 
 				$row_array['USER_CANCEL'] = $o['0']['username'];
 			} else {
-				$file2 = $this->getPosDbDir($id_bu);
-				$db = new SQLite3($file2);
 				$sql = "SELECT NAME FROM USER WHERE ID = '".$row_array['USER_CANCEL']."'";
 				$r2 = $db->query($sql);
 				$row2=$r2->fetchArray(SQLITE3_ASSOC);
