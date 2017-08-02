@@ -143,8 +143,9 @@ class Cashier {
 				$content = $row_array['CONTENT'];
 				foreach ($content as $key => $line) {
 					if (isset($line['PRODUCT'])) {
+						$bdd = new SQLite3($file);
 						$sql = "SELECT NAME FROM PRODUCT WHERE ID = '".$line['PRODUCT']."'";
-						$r2 = $db->query($sql);
+						$r2 = $bdd->query($sql);
 						$row2=$r2->fetchArray(SQLITE3_ASSOC);
 						if (isset($row2['NAME'])) {
 							$row_array['CONTENT'][$key]['NAME'] = $row2['NAME'];
