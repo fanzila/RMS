@@ -324,9 +324,9 @@ class Order extends CI_Controller {
 			if ($this->session->userdata('filters') !== null) {
 				$data['filters'] = $this->session->userdata('filters');
 			}
-			$this->session->unset_userdata('keep_filters');
+			//$this->session->unset_userdata('keep_filters');
 		} else {
-			$this->session->unset_userdata('filters');
+			//$this->session->unset_userdata('filters');
 		}
 
 		$referrer	= $this->agent->referrer();
