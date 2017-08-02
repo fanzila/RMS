@@ -88,10 +88,21 @@ class Cashier {
 		$path	= $dir."/".$file;
 		$db = new SQLite3($path);
 		
-		$query = 'SELECT R.ID, R.OWNER, R.DATE_CLOSED, R.CANCELLATION_REASON FROM ARCHIVEDRECEIPT AS R WHERE R.CANCELLED = 1';
+		$query = 'SELECT R.ID, R.PERIOD_ID, R.OWNER, R.DATE_CLOSED, R.CANCELLATION_REASON, R.NOTE, R.AMOUNT_TOTAL FROM ARCHIVEDRECEIPT AS R WHERE R.CANCELLED = 1';
 		$result = $db->query($query);
 		$result_array = array();
 		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			$arrecit = new SQLite3($path);
+			$q = 'SELECT C.PRODUCT, C.PRICE_INCL_TAXES, C.QUANTITY FROM ARCHIVEDRECEIPTITEM AS C WHERE C.ARCHIVEDRECEIPT ="'.$row_array['ID'].'"';
+			$result2 = $arrecit->query($q);
+			$row_array['CONTENT'] = array();
+			while ($row = $result2->fetchArray(SQLITE3_ASSOC)) {
+				array_push($row_array['CONTENT'], $row);
+			}
+			$q = 'SELECT USER FROM ARCHIVEDLOGEVENT WHERE RECEIPT = "'.$row_array['ID'].'"';
+			$result3 = $arrecit->query($q);
+			$row_array['USER_CANCEL'] = $result3->fetchArray(SQLITE3_ASSOC)['USER'];
+			
 			$q = "SELECT username FROM users AS u 
 			LEFT JOIN users_pos AS up ON u.id = up.id_user
 			WHERE up.id_pos = '".$row_array['OWNER']."'";
@@ -107,6 +118,44 @@ class Cashier {
 				$row2=$r2->fetchArray(SQLITE3_ASSOC);
 				if (isset($row2['NAME'])) {
 					$row_array['OWNER'] = $row2['NAME']. " (cashpad username) ";
+				}
+			}
+			
+			$q = "SELECT username FROM users AS u 
+			LEFT JOIN users_pos AS up ON u.id = up.id_user
+			WHERE up.id_pos = '".$row_array['USER_CANCEL']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if($o) { 
+				$row_array['USER_CANCEL'] = $o['0']['username'];
+			} else {
+				$file = $this->getPosDbDir($id_bu);
+				$db = new SQLite3($file);
+				$sql = "SELECT NAME FROM USER WHERE ID = '".$row_array['USER_CANCEL']."'";
+				$r2 = $db->query($sql);
+				$row2=$r2->fetchArray(SQLITE3_ASSOC);
+				if (isset($row2['NAME'])) {
+					$row_array['USER_CANCEL'] = $row2['NAME']. " (cashpad username) ";
+				}
+			}
+			$row_array['AMOUNT_TOTAL'] /= 1000;
+			if (!empty($row_array['CONTENT'])) {
+				$content = $row_array['CONTENT'];
+				foreach ($content as $key => $line) {
+					if (isset($line['PRODUCT'])) {
+						$sql = "SELECT NAME FROM PRODUCT WHERE ID = '".$line['PRODUCT']."'";
+						$r2 = $db->query($sql);
+						$row2=$r2->fetchArray(SQLITE3_ASSOC);
+						if (isset($row2['NAME'])) {
+							$row_array['CONTENT'][$key]['NAME'] = $row2['NAME'];
+						}	
+					}
+					if (isset($line['PRICE_INCL_TAXES'])) {
+						$row_array['CONTENT'][$key]['PRICE_INCL_TAXES'] /= 1000;
+					}
+					if (isset($line['QUANTITY'])) {
+						$row_array['CONTENT'][$key]['QUANTITY'] /= 1000;
+					}
 				}
 			}
 			array_push($result_array, $row_array);

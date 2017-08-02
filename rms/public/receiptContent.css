@@ -1,0 +1,33 @@
+.cancelledReceiptsContent {
+  border: 1px solid lightgray;
+  display: none;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.historytable th, .historytable td {
+  border: 1px solid lightgray;
+}
+
+.close {
+  color: black;
+  float: right;
+  font-size: 20pt;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: lightgray;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+th, td {
+  padding: 10px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}

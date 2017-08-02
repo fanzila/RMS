@@ -1,5 +1,6 @@
+	<link rel="stylesheet" href="/public/receiptContent.css" />
 	</div>
-	
+
 	<div data-role="content" data-theme="a">
 		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=number_format($safe_cash,  2, '.', ' ')?>€ |  Safe TR num: <?=$safe_tr?> | Monthly TO: <?=number_format($monthly_to,  2, '.', ' ')?>€</h4>
 		<p>Daily Cashpad cash movements</p>
@@ -122,9 +123,10 @@
 			<input type="hidden" name="diff-<?=$m['mov']['id']?>" id="diff-<?=$m['mov']['id']?>" value="<?=$diff?>">
 		</form>
 </div>
-<? if($mov =='close') { ?>		
+<? if($mov =='close') { ?>
+	<div data-role="collapsible">
+		<h3>POS Movements</h3>
 		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-			<tr style="background-color: #bfbfbf;"><td colspan="6">POS Movements</td></tr>
 			<tr style="background-color: #bfbfbf;">
 				<td>Date</td>
 				<td>User</td>
@@ -143,47 +145,87 @@
 				<td><? if($mov['customer_first_name']) { echo $mov['customer_first_name'].".".$mov['customer_last_name']; } ?></td>
 			</tr>
 		<?php endforeach; ?>
-	</table>
-	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-		<tr style="background-color: #bfbfbf;">
-			<td>Users</td>
-		</tr>
-	<?php foreach ($m['close_users'] as $cusers): ?> 
-		<tr><td><?=$cusers?></td></tr>
+		</table>
+	</div>
+	<div data-role="collapsible">
+		<h3>Users</h3>
+		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+		<?php foreach ($m['close_users'] as $cusers): ?> 
+			<tr><td><?=$cusers?></td></tr>
+			<?php endforeach; ?>
+		</table>
+	</div>
+	<div data-role="collapsible">
+		<h3>Cash Drawer Opened</h3>
+		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+			<tr style="background-color: #bfbfbf;">
+				<td>Date</td>
+				<td>User</td>
+				<td>Terminal</td>
+			</tr>
+		<?php foreach ($m['cashDrawerOpened'] as $mov): ?> 
+			<tr>
+				<td><?=$mov['DATE']?></td>
+				<td><?= $mov['USER']?></td>
+				<td><?=$mov['TERMINAL']?></td>
+			</tr>
 		<?php endforeach; ?>
-	</table>
+		</table>
+	</div>
+<div data-role="collapsible">
+	<h3>Cancelled Receipts</h3>
 	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-		<tr style="background-color: #bfbfbf;"><td colspan="6">Cash Drawer Opened</td></tr>
 		<tr style="background-color: #bfbfbf;">
-			<td>Date</td>
-			<td>User</td>
-			<td>Terminal</td>
+			<td>ID (period)</td>
+			<td>Receipt Closure Date</td>
+			<td>User (Created)</td>
+			<td>User (Cancelled)</td>
+			<td>Reason</td>
+			<td>Total Amount</td>
+			<td></td>
 		</tr>
-	<?php foreach ($m['cashDrawerOpened'] as $mov): ?> 
-		<tr>
-			<td><?=$mov['DATE']?></td>
-			<td><?= $mov['USER']?></td>
-			<td><?=$mov['TERMINAL']?></td>
+	<?php foreach ($m['cancelledReceipts'] as $mov): ?> 
+		<tr id="tr_<?=$mov['ID']?>">
+			<td><?=$mov['PERIOD_ID']?></td>
+			<td><?=$mov['DATE_CLOSED']?></td>
+			<td><?=$mov['OWNER']?></td>
+			<td><?=$mov['USER_CANCEL']?></td>
+			<td><?=$mov['CANCELLATION_REASON']?></td>
+			<td><?=$mov['AMOUNT_TOTAL']?></td>
+			<td><button onclick="receipt_content('<?=$mov['ID']?>')">CONTENT</button>
 		</tr>
 	<?php endforeach; ?>
+	</table>
+<?php foreach ($m['cancelledReceipts'] as $mov): ?>
+<div id="cancelledReceiptsContent_<?=$mov['ID']?>" class="cancelledReceiptsContent">
+	<span class="close" onclick="close_receipt_content('<?=$mov['ID']?>')">&times;</span>
+	<table class="ui-responsive table table-bordered historytable">
+		<thead>
+			<tr>
+				<th>Produit</th>
+				<th>Quantité</th>
+				<th>Prix Unitaire</th>
+				<th>Prix Total</th>
+			</tr>
+		</thead>
+		<tbody id="tbl-body_<?=$mov['ID']?>">
+			<? foreach ($mov['CONTENT'] as $line) { ?>
+				<tr>
+					<td><?=$line['NAME']?></td>
+					<td><?=$line['QUANTITY']?></td>
+					<td><?=$line['PRICE_INCL_TAXES']?></td>
+					<td><?=$line['PRICE_INCL_TAXES'] * $line['QUANTITY']?></td>
+				</tr>
+		<? } ?>
+	</tbody>
 </table>
+<span>Note : <? if (isset($mov['NOTE'])) echo $mov['NOTE']; else echo "<strong>NO NOTE FOR THIS RECEIPT</strong>";?></span>
+</div>
+<?php endforeach;?>
+</div>
+<div data-role="collapsible">
+	<h3>User Actions</h3>
 <table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-	<tr style="background-color: #bfbfbf;"><td colspan="6">Cancelled Receipts</td></tr>
-	<tr style="background-color: #bfbfbf;">
-		<td>Receipt Closure Date</td>
-		<td>User</td>
-		<td>Reason</td>
-	</tr>
-<?php foreach ($m['cancelledReceipts'] as $mov): ?> 
-	<tr>
-		<td><?=$mov['DATE_CLOSED']?></td>
-		<td><?= $mov['OWNER']?></td>
-		<td><?=$mov['CANCELLATION_REASON']?></td>
-	</tr>
-<?php endforeach; ?>
-</table>
-<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-	<tr style="background-color: #bfbfbf;"><td colspan="6">User Actions : </td></tr>
 	<tr>
 		<td colspan="6">Total : <?=$m['total_actions']?></td>
 	</tr>
@@ -202,16 +244,19 @@
 	</tr>
 <?php endforeach; ?>
 </table>
+</div>
 <? if (isset($m['mov']['employees_sp']) && !empty($m['mov']['employees_sp'])) { ?>
-<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-	<tr style="background-color: #bfbfbf;"><td colspan="6">Users Planning: </td></tr>
-			<? foreach ($m['mov']['employees_sp'] as $emp) { ?>
-		<tr>
-			<td><?=$emp?></td>
-		</tr> 
-	<?
-			} ?>
-</table>
+<div data-role="collapsible">
+	<h3>Users Planning</h3>
+	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+				<? foreach ($m['mov']['employees_sp'] as $emp) { ?>
+			<tr>
+				<td><?=$emp?></td>
+			</tr> 
+		<?
+				} ?>
+	</table>
+</div>
 <?  }
 	} ?>	
 				</li>
@@ -309,4 +354,37 @@
 									
 								}
 							}
+							</script>
+							<!-- Modal Script -->
+							<script>
+							function receipt_content(id_receipt) {
+								var id = 'cancelledReceiptsContent_'.concat(id_receipt);
+								var div = document.getElementById(id);
+								var id2 = 'tr_'.concat(id_receipt);
+								var tr = document.getElementById(id2);
+								var others = document.getElementsByClassName('cancelledReceiptsContent');
+								
+									for (i = 0; i < others.length; i += 1) {
+										if (others[i].style.display == "block") {
+											others[i].style.display = "none";
+											otherId = others[i].id;
+											otherIdReceipt = 'tr_' + otherId.split("_")[1];
+											otherTr = document.getElementById(otherIdReceipt);
+											otherTr.style.backgroundColor = "white";
+										}
+									}
+									
+								tr.style.backgroundColor = 'lightgreen';
+								div.style.display = "block";
+							}
+							
+							function close_receipt_content(id_receipt) {
+								var id = 'cancelledReceiptsContent_'.concat(id_receipt);
+								var div = document.getElementById(id);
+								var id2 = 'tr_'.concat(id_receipt);
+								var tr = document.getElementById(id2);
+								tr.removeAttribute('style');
+								div.style.display = "none";
+							}
+							
 							</script>
