@@ -111,8 +111,8 @@ class Cashier {
 			if($o) { 
 				$row_array['OWNER'] = $o['0']['username'];
 			} else {
-				$file = $this->getPosDbDir($id_bu);
-				$db = new SQLite3($file);
+				$file2 = $this->getPosDbDir($id_bu);
+				$db = new SQLite3($file2);
 				$sql = "SELECT NAME FROM USER WHERE ID = '".$row_array['OWNER']."'";
 				$r2 = $db->query($sql);
 				$row2=$r2->fetchArray(SQLITE3_ASSOC);
@@ -129,8 +129,8 @@ class Cashier {
 			if($o) { 
 				$row_array['USER_CANCEL'] = $o['0']['username'];
 			} else {
-				$file = $this->getPosDbDir($id_bu);
-				$db = new SQLite3($file);
+				$file2 = $this->getPosDbDir($id_bu);
+				$db = new SQLite3($file2);
 				$sql = "SELECT NAME FROM USER WHERE ID = '".$row_array['USER_CANCEL']."'";
 				$r2 = $db->query($sql);
 				$row2=$r2->fetchArray(SQLITE3_ASSOC);
@@ -143,7 +143,7 @@ class Cashier {
 				$content = $row_array['CONTENT'];
 				foreach ($content as $key => $line) {
 					if (isset($line['PRODUCT'])) {
-						$bdd = new SQLite3($file);
+						$bdd = new SQLite3($file2);
 						$sql = "SELECT NAME FROM PRODUCT WHERE ID = '".$line['PRODUCT']."'";
 						$r2 = $bdd->query($sql);
 						$row2=$r2->fetchArray(SQLITE3_ASSOC);
