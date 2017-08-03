@@ -295,6 +295,8 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
+				$crud->where('j2a4a26d2.active', 1);
+				$crud->where('jf49c3c84.active', 1);
         $crud->columns('id', 'id_sponsor', 'id_user');
         $crud->set_relation('id_sponsor', 'users', 'username');
 				$crud->set_relation('id_user', 'users', 'username');
@@ -313,6 +315,7 @@ class Crud extends CI_Controller {
 		$crud->set_theme('bootstrap');
 		
         //$crud->columns('id', 'id_skills_record', 'date');
+				$crud->where('active', 1);
         $crud->required_fields('id', 'id_skills_record', 'date');
         $crud->set_table('skills_log');
 				$crud->set_relation('id_user', 'users', 'username');
