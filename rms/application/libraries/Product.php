@@ -200,7 +200,7 @@ class Product {
 
 	public function getMapping($id_bu) {
 		$CI =& get_instance();
-		$CI->db->select('*')->from('products_mapping')->where('id_bu', $id_bu);
+		$CI->db->select('*')->from('products_mapping')->join('products', 'products.id = products_mapping.id_product')->where('id_bu', $id_bu)->where('products.active', 1);
 		$req = $CI->db->get() or die($this->mysqli->error);
 		$ret = array();
 		foreach ($req->result_array() as $key) {
