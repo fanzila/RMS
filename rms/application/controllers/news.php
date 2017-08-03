@@ -81,15 +81,11 @@ class News extends CI_Controller {
 	{
 
 		$error=0;
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 1)
+		if ($group_info[0]->level < 2)
 		{
-			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
 			redirect('/news/');
 		}
 
@@ -178,7 +174,7 @@ class News extends CI_Controller {
 					$email['mailtype']	= 'html';
 					
 					if ($checkUpload){
-						$msg = '<img src="http://rms.hankrestaurant.com/public/pictures/'.$picName.'" class="img-responsive" style="max-height: 300px; max-width: 300px;" alt=""/><br/>';
+						$msg = '<img src="http://'.$server_name.'/public/pictures/'.$picName.'" class="img-responsive" style="max-height: 300px; max-width: 300px;" alt=""/><br /><br />';
 						$msg .= $this->input->post('text');
 					}else{
 						$msg = $this->input->post('text');

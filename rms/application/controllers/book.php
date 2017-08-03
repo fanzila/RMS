@@ -35,7 +35,7 @@ class Book extends CI_Controller {
 			'bu_name'	=> $this->session->all_userdata()['bu_name']
 			);
 
-		$headers = $this->hmw->headerVars(1, "/news/index/", "News");
+		$headers = $this->hmw->headerVars(1, "/news/index/", "Play Book");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('book',$data);

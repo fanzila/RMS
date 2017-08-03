@@ -26,12 +26,7 @@ class Auth extends CI_Controller {
 		$this->load->library("hmw");
 		$this->load->library('mmail');
 
-		if (!$this->ion_auth->logged_in())
-		{
-			//redirect them to the login page
-			redirect('auth/login', 'refresh');
-		}
-		else
+		if ($this->hmw->isLoggedIn() == true)
 		{
 			$txtmessage = $this->input->post('txtmessage');
 			$this->data['message']  = '';
@@ -83,15 +78,10 @@ class Auth extends CI_Controller {
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
 
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
+		$group_info		= $this->ion_auth_model->get_users_groups()->result();
+		$user_groups	= $this->ion_auth->get_users_groups()->result();
 
-		if (!$this->ion_auth->logged_in())
-		{
-			//redirect them to the login page
-			redirect('auth/login', 'refresh');
-		}
-		else
-		{
+		if ($this->hmw->isLoggedIn() == true) {
 			//set the flash data error message if there is one
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
@@ -103,9 +93,10 @@ class Auth extends CI_Controller {
 				$this->data['users'][$k]->bus 		= $this->ion_auth->get_users_bus($user->id)->result();
 			}
 
-			$this->data['username'] = $this->session->all_userdata()['identity'];
-			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['username']		= $this->session->all_userdata()['identity'];
+			$this->data['bu_name']		= $this->session->all_userdata()['bu_name'];
 			$this->data['current_user'] = $this->ion_auth->user()->row();
+			$this->data['user_groups']	= $user_groups[0];
 
 			$headers = $this->hmw->headerVars(1, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -137,7 +128,11 @@ class Auth extends CI_Controller {
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				//redirect('/', 'refresh');
 				//set BU
-				redirect('/news/index/welcome/');
+				if ($this->session->userdata('pageBeforeLogin') !== NULL) {
+					redirect($this->session->userdata('pageBeforeLogin'));
+				} else {
+					redirect('/news/index/welcome/');
+				}
 			}
 			else
 			{
@@ -189,10 +184,7 @@ class Auth extends CI_Controller {
 		$this->form_validation->set_rules('new', $this->lang->line('change_password_validation_new_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[new_confirm]');
 		$this->form_validation->set_rules('new_confirm', $this->lang->line('change_password_validation_new_password_confirm_label'), 'required');
 
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login', 'refresh');
-		}
+		$this->hmw->isLoggedIn();
 
 		$user = $this->ion_auth->user()->row();
 
@@ -508,8 +500,10 @@ class Auth extends CI_Controller {
 		$this->load->library('mmail');
 
 		$this->data['title'] = "Create User";
-
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+		
+		$this->hmw->isLoggedIn();
+		
+		if (!$this->ion_auth->is_admin())
 		{
 			redirect('auth', 'refresh');
 		}
@@ -640,8 +634,12 @@ class Auth extends CI_Controller {
 	function edit_user($id)
 	{
 		$this->data['title'] = "Edit User";
-
-		if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id)))
+		$this->load->library('hmw');
+		$id_bu =  $this->session->all_userdata()['bu_id'];
+		
+		$this->hmw->isLoggedIn();
+		
+		if (!$this->ion_auth->is_admin() && !$this->ion_auth->user()->row()->id == $id)
 		{
 			redirect('auth', 'refresh');
 		}
@@ -659,6 +657,7 @@ class Auth extends CI_Controller {
 		$this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'required|valid_email|xss_clean');
 		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'exact_length[12]|numeric|xss_clean');
 		$this->form_validation->set_rules('comment', 'Enter a valid comment', 'xss_clean');
+		$this->form_validation->set_rules('iban', 'Enter a valid IBAN', 'xss_clean');
 		$this->form_validation->set_rules('groups', $this->lang->line('edit_user_validation_groups_label'), 'xss_clean');
 		$this->form_validation->set_rules('bus', $this->lang->line('edit_user_validation_bus_label'), 'xss_clean');
 
@@ -685,7 +684,9 @@ class Auth extends CI_Controller {
 					'username'   => $this->input->post('username'),
 					'email'		 => $this->input->post('email'),
 					'phone'      => $this->input->post('phone'),
-					'comment'      => $this->input->post('comment')
+					'comment'      => $this->input->post('comment'),
+					'iban'      => $this->input->post('iban'),
+					'door_open'      => $this->input->post('door_open')
 					);
 
 				//update the password if it was posted
@@ -693,6 +694,7 @@ class Auth extends CI_Controller {
 				{
 					$data['password'] = $this->input->post('password');
 				}
+				
 
 				$this->ion_auth->update($user->id, $data);
 
@@ -789,6 +791,13 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'value' => $this->form_validation->set_value('phone', $user->phone),
 			);
+		$this->data['iban'] = array(
+			'name'  => 'iban',
+			'id'    => 'iban',
+			'type'  => 'text',
+			'data-clear-btn' => "true",
+			'value' => $this->form_validation->set_value('iban', $user->iban),
+			);
 		$this->data['comment'] = array(
 			'name'  => 'comment',
 			'id'    => 'comment',
@@ -808,9 +817,12 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'type' => 'password'
 			);
-
-
+			
 		$this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
+		
+		$data['door_device'] = null;
+		$buinfo = $this->hmw->getBuInfo($id_bu);
+		if(isset($buinfo->door_device)) $this->data['door_device'] = $buinfo->door_device;
 
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -823,8 +835,10 @@ class Auth extends CI_Controller {
 	function create_group()
 	{
 		$this->data['title'] = $this->lang->line('create_group_title');
-
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+		
+		$this->hmw->isLoggedIn();
+		
+		if (!$this->ion_auth->is_admin())
 		{
 			redirect('auth', 'refresh');
 		}
@@ -887,7 +901,9 @@ class Auth extends CI_Controller {
 
 		$this->data['title'] = $this->lang->line('edit_group_title');
 
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+		$this->hmw->isLoggedIn();
+		
+		if (!$this->ion_auth->is_admin())
 		{
 			redirect('auth', 'refresh');
 		}
@@ -952,7 +968,9 @@ class Auth extends CI_Controller {
 	{
 		$this->data['title'] = "Edit User";
 
-		if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id)))
+		$this->hmw->isLoggedIn();
+		
+		if (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id))
 		{
 			redirect('auth', 'refresh');
 		}

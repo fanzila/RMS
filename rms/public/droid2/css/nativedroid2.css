@@ -38,22 +38,6 @@ body {
 	text-shadow: none !important;
 }
 
-body p,
-body h1,
-body h2,
-body h3,
-body h4,
-body h5,
-body h6,
-body blockquote,
-body a,
-body button {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-}
 
 body.nd2-ready {
 	opacity: 1;

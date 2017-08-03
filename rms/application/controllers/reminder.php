@@ -47,7 +47,7 @@ class Reminder extends CI_Controller {
 
 				$ex = explode('_', $key);
 				if($ex[0] == 'task') {
-					$req_up 	= "UPDATE rmd_meta SET `start` = NOW() WHERE id_task = ". $ex[1]." AND ( repeat_year ='' AND repeat_month  ='' AND repeat_day  ='' AND repeat_week  ='' AND repeat_weekday  ='')";
+					$req_up 	= "UPDATE rmd_meta SET `start` = NOW() WHERE id_task = ". $ex[1];
 					$req_ins	= "INSERT INTO rmd_log SET `id_user` = ".$form['user'].", `date` = NOW(), `id_task` = ".$ex[1];
 
 					if(!$this->db->query($req_up)) {
@@ -136,8 +136,7 @@ class Reminder extends CI_Controller {
 			$sqle = "";
 		}
 		
-		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], id_bu = $id_bu $sqle ";
-		
+		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], type = '".$data['type']."', id_bu = $id_bu $sqle ";
 		$this->db->trans_start();
 		if (!$this->db->query($sql_tasks)) {
 			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
@@ -150,7 +149,7 @@ class Reminder extends CI_Controller {
 		 
 		$sql_notif = "$sqlt rmd_notif SET `start` = '".$data['nstart']."', `end` = '".$data['nend']."', `interval` = '".$data['ninterval']."', `last` = '".$data['nlast']."' $sqln";
 		
-		$sql_meta = "$sqlt rmd_meta SET `start` = '".$data['mstart']."', repeat_interval = '".$data['repeat_interval']."', repeat_year = '".$data['repeat_year']."', repeat_month = '".$data['repeat_month']."', repeat_day = '".$data['repeat_day']."', repeat_week = '".$data['repeat_week']."', repeat_weekday = '".$data['repeat_weekday']."' $sqln";		
+		$sql_meta = "$sqlt rmd_meta SET `start` = '".$data['mstart']."', repeat_interval = '".$data['repeat_interval']."' $sqln";		
 
 		if (!$this->db->query($sql_notif)) {
 			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
@@ -223,7 +222,8 @@ class Reminder extends CI_Controller {
 						echo $this->db->error;
 						return false;
 					}
-				$this->hmw->sendNotif("Reminder: ".$row->task, $id_bu);	
+					
+				$this->hmw->sendNotif("Reminder: ".$row->task, $id_bu, $row->type);
 				
 				}
 			}

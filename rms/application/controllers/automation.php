@@ -11,12 +11,16 @@ class Automation extends CI_Controller {
 	public function alarm($status)
 	{
 		$key = $this->hmw->getParam('keylogin');
-		if($_GET['key'] != $key) exit('error A');
+		if($_GET['key'] != $key) exit('error KEY');
 
+		$idbu = $this->hmw->getParam('idbu');
+		if(!isset($_GET['idbu'])) exit('error EMPTYBU');
+		
 		if($status == 'alert') {
 			//turn OFF alarm
 			$cmd = array(
 				'key'	=> $key,
+				'idbu'	=> $idbu,
 				'order' => 'chacun', 
 				'module' => 'switch', // or 'dimmer'
 				'value' => 'off', // or '1' to '255'
@@ -26,29 +30,31 @@ class Automation extends CI_Controller {
 			//turn ON lights
 			$cmd = array(
 				'key'	=> $key,
+				'idbu'	=> $idbu,
 				'order' => 'chacun', 
 				'module' => 'switch', // or 'dimmer'
 				'value' => 'on', // or '1' to '255'
 				'id' => '4');
-			$this->hmw->callbox($cmd);
+			//$this->hmw->callbox($cmd);
 			
 			//turn ON ampli
 			$cmd = array(
 				'key'	=> $key,
+				'idbu'	=> $idbu,
 				'order' => 'chacun', 
 				'module' => 'switch', // or 'dimmer'
 				'value' => 'on', // or '1' to '255'
 				'id' => '6');
-			$this->hmw->callbox($cmd);
+			//$this->hmw->callbox($cmd);
 		
 			//send sms IFFTT
 			$ifttmakerkey = $this->hmw->getParam('ifttmakerkey');
 			$url = "https://maker.ifttt.com/trigger/SendSMS/with/key/$ifttmakerkey?value1=alarm_trigered";
-			$this->callUrl($url);
+			//$this->callUrl($url);
 		
 			//Active alarm sound
 			$url = "https://maker.ifttt.com/trigger/AlarmToCall/with/key/$ifttmakerkey";
-			$this->callUrl($url);
+			//$this->callUrl($url);
 		
 			//log event //todo create log table
 		
@@ -59,7 +65,7 @@ class Automation extends CI_Controller {
 				'jingle' => null, 
 				'type' => 'audio', //or 'text'
 				'message' => 'alarm.mp3'); // or text : 'Good morning planet.'
-			$this->hmw->callbox($cmd);
+			//$this->hmw->callbox($cmd);
 		}
 		
 		if($status == 'enable') {
@@ -79,7 +85,7 @@ class Automation extends CI_Controller {
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,30);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$server_output = curl_exec($ch);
+		//$server_output = curl_exec($ch);
 		//var_dump($server_output);
 		curl_close ($ch);
 	}

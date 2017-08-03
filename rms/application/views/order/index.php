@@ -11,12 +11,13 @@
 				<a href="/order/loss/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">LOSS</a>
 			</div>
 		</div>
-		<?php if($user_groups->level >= 2) { ?>
+		<?php if($user_groups->level >= 1) { ?>
 			<div class="col-xs">
 				<div class="box">
 					<a href="/crud/StockLog/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Stock log</a>
 				</div>
 			</div>
+			<?php if($user_groups->level >= 2) { ?>
 			<div class="col-xs">
 				<div class="box">
 					<a href="/product_admin/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products admin</a>
@@ -27,7 +28,6 @@
 					<a href="/product_admin/mapping/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products mapping</a>
 				</div>
 			</div>
-			<?php if($user_groups->level >= 2) { ?>
 				<div class="col-xs">
 					<div class="box">
 						<a href="/crud/suppliers/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Suppliers</a>
@@ -43,7 +43,7 @@
 				<? } ?>
 			</div>
 			<ul data-role="listview" data-inset="true" data-filter="false">
-				<li data-role="list-divider">PRODUCTS</li>
+				<li data-role="list-divider">ARTICLES</li>
 				<li>	
 					<ul id="autocomplete_pdt" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..." data-filter-theme="d"></ul>
 				</li>

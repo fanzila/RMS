@@ -20,8 +20,17 @@
 						<td width="40%">
 							<? if($mode->id == 1) { ?>
 								<table border="0" cellpadding="2" width="100%"><tr>
-									<td>Pièces: <input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" /></td>
-									<td>Billets: <input maxlength="10" type="text" name="notes1" id="basic" data-clear-btn="true" /></td>
+									<td>Pièces:</td>
+									<td><input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" /></td>
+									</tr>
+									<tr>
+										<td> </td>
+									</tr>
+									<tr>
+									<td>Billets:</td>
+									<td><small>20€</small><input maxlength="10" type="text" name="20Bill" id="basic" data-clear-btn="false" /></td>
+									<td><small>10€</small><input maxlength="10" type="text" name="10Bill" id="basic" data-clear-btn="false" /></td>
+									<td><small>5€</small><input maxlength="10" type="text" name="5Bill" id="basic" data-clear-btn="false" /></td>
 								</tr></table>
 							<? } elseif($mode->id == 2) { ?>
 									<table border="0" cellpadding="2" width="100%"><tr>

@@ -54,7 +54,134 @@ class Cashier {
 		return $qtty;
 	}
 	
-	public function updateProductStock($idPosPdt, $sales, $id_bu) {
+	public function getDrawerOpenedEvents($id_bu) {
+		$file	= $this->getPosDbDir($id_bu);
+		$db		= new SQLite3($file);
+		
+		$query = 'SELECT LE.ID, U.NAME, LE.TERMINAL, LE.DATE FROM LOGEVENT AS LE JOIN USER AS U ON LE.USER = U.ID WHERE LE.CONTENT = \'{"type":"cashDrawerOpened"}\'';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			array_push($result_array, $row_array);
+		}
+		return ($result_array);
+	}
+	
+	public function getCancelledReceipts($id_bu) {
+		$file = $this->GetPosDbDir($id_bu);
+		$db   = new SQLite3($file);
+		
+		$query = 'SELECT R.ID U.NAME, R.DATE_CLOSED, R.CANCELLATION_REASON FROM RECEIPT AS R JOIN USER AS U ON R.OWNER = U.ID WHERE R.CANCELLED = 1';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			array_push($result_array, $row_array);
+		}
+		return ($result_array);
+	}
+	
+	public function getArchivedCancelledReceipts($id_bu, $file) {
+		$CI = & get_instance();
+		$CI->load->database();
+		
+		$dir = $this->getPosArchivesDir($id_bu);
+		$path	= $dir."/".$file;
+		$db = new SQLite3($path);
+		
+		$query = 'SELECT R.ID, R.OWNER, R.DATE_CLOSED, R.CANCELLATION_REASON FROM ARCHIVEDRECEIPT AS R WHERE R.CANCELLED = 1';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			$q = "SELECT username FROM users AS u 
+			LEFT JOIN users_pos AS up ON u.id = up.id_user
+			WHERE up.id_pos = '".$row_array['OWNER']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if($o) { 
+				$row_array['OWNER'] = $o['0']['username'];
+			}
+			array_push($result_array, $row_array);
+		}
+		return ($result_array);
+	}
+	
+	public function getArchivedDrawerOpenedEvents($id_bu, $file) {
+		$CI = & get_instance();
+		$CI->load->database();
+		
+		$dir = $this->getPosArchivesDir($id_bu);
+		$path	= $dir."/".$file;
+		$db = new SQLite3($path);
+		
+		$query = 'SELECT LE.ID, LE.USER, LE.TERMINAL, LE.DATE FROM ARCHIVEDLOGEVENT AS LE WHERE LE.CONTENT = \'{"type":"cashDrawerOpened"}\'';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			$q = "SELECT username FROM users AS u 
+			LEFT JOIN users_pos AS up ON u.id = up.id_user
+			WHERE up.id_pos = '".$row_array['USER']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if($o) { 
+				$row_array['USER'] = $o['0']['username'];
+			}
+			$q = "SELECT name FROM terminal_pos WHERE id = '".$row_array['TERMINAL']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if ($o) {
+				$row_array['TERMINAL'] = $o['0']['name'];
+			}
+			array_push($result_array, $row_array);
+		}
+		return ($result_array);
+	}
+	
+	public function countAllArchivedReceipts($id_bu, $file) {
+		$CI = & get_instance();
+		$CI->load->database();
+		
+		$dir = $this->getPosArchivesDir($id_bu);
+		$path	= $dir."/".$file;
+		$db = new SQLite3($path);
+		
+		$query = 'SELECT count(R.ID) AS count FROM ARCHIVEDRECEIPT AS R';
+		$result = $db->query($query);
+		$count = $result->fetchArray(SQLITE3_ASSOC)['count'];
+		return ($count);
+	}
+	
+	public function userActionStats($id_bu, $file) {
+		$CI = & get_instance();
+		$CI->load->database();
+		
+		$dir = $this->getPosArchivesDir($id_bu);
+		$path = $dir."/".$file;
+		$db = new SQLite3($path);
+		
+		$query = 'SELECT count(R.ID) AS count, R.OWNER AS owner, R.DATE_CLOSED AS date_closed FROM ARCHIVEDRECEIPT AS R GROUP BY OWNER ORDER BY count DESC';
+		$result = $db->query($query);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			$q = "SELECT username FROM users AS u 
+			LEFT JOIN users_pos AS up ON u.id = up.id_user
+			WHERE up.id_pos = '".$row_array['owner']."'";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o = $r->result_array();
+			if($o) { 
+				$row_array['owner'] = $o['0']['username'];
+			}
+			array_push($result_array, $row_array);
+		}
+		$total_actions = $this->countAllArchivedReceipts($id_bu, $file);
+		$stats = array();
+		$stats = $result_array;
+		foreach ($result_array as $key => $line) {
+			$stats[$key]['percent'] = number_format($line['count'] / $total_actions * 100, 0) . "%";
+		}
+		return ($stats);
+	}
+	
+	public function updateProductStock($idPosPdt, $sales, $id_bu, $source) {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		$CI->load->library('hmw');
@@ -76,11 +203,11 @@ class Cashier {
 			if($debug) $this->debugFile(@date('Y-m-d H:i:s')." - Mapping coef: $mapping[coef] - update for id_product : $mapping[id_product] set qtty = qtty-".$sales*$mapping['coef']." for BU: $id_bu");
 			
 			$p = array(
-				'type'	=> 'stock_pos', 
-				'val1'	=> "$mapping[id_product]",
-				'val2'	=> "$qtty",
-				'val4'	=> "$previous_qtty"
-			);
+				'type'		=>  $source, 
+				'val1'		=> "$mapping[id_product]",
+				'val2'		=> "$qtty",
+				'val4'		=> "$previous_qtty"
+				);
 			$CI->hmw->LogRecord($p, $id_bu);
 			
 		}
@@ -108,7 +235,7 @@ class Cashier {
 				$this->debugFile(@date('Y-m-d H:i:s')." - Found $sales sales for $pos_pdt[name] for BU: $id_bu"); 
 			}
 			
-			if($sales > 0) $this->updateProductStock($pos_pdt['id'], $sales, $id_bu);
+			if($sales > 0) $this->updateProductStock($pos_pdt['id'], $sales, $id_bu, 'stock_sales');
 			
 		}
 		$CI->db->query("UPDATE sales_receipt SET done = 1 WHERE date_closed != '0000-00-00' AND id_bu = $id_bu") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -189,10 +316,14 @@ class Cashier {
 		$archives_list = $this->getDoneArchivesList($id_bu);
 		foreach ($files as $line) {
 			if($line[0] == 2 ) {
-				//search if file already done
-				$key = array_key_exists($line, $archives_list);
-				if($key == null) {
-					$this->insertArchives($line, $id_bu);
+				//ignore non-db file
+				$ex	= explode('.', $line);
+				if($ex[1] == 'db') {
+					//search if file already done
+					$key = array_key_exists($line, $archives_list);
+					if($key == null) {
+						$this->insertArchives($line, $id_bu);
+					}
 				}
 			}
 		}
@@ -261,6 +392,33 @@ class Cashier {
 			$r_customer = $CI->db->query($q_customer) or die($this->db->_error_message());
 		}
 	}
+	
+	
+	// public function openArchivedReceipt() {
+	// 	$CI = & get_instance();
+	// 	$CI->load->database();
+	// 	$CI->load->library();
+	// 	
+	// 	$db = new SQLite3();	
+	// 	$sqlar 	= "SELECT * FROM ARCHIVEDRECEIPTPAYMENT";
+	// 	$result = $db->query($sqlar);
+	// 	$res 	= array();
+	// 	while($row=$result->fetchArray(SQLITE3_ASSOC)){
+	// 		$q = "SELECT username FROM users AS u 
+	// 		LEFT JOIN users_pos AS up ON u.id = up.id_user
+	// 		WHERE up.id_pos = '".$row['USER']."'";
+	// 		$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+	// 		$o = $r->result_array();
+	// 		if($o) { 
+	// 			$res[] = $o['0']['username']; 
+	// 		} else {
+	// 			$res[] = $row['USER'];
+	// 		}
+	// 	}
+	// 	return $res;
+	// }
+	// 
+	
 	public function posInfo($action, $param = null) {
 		$CI = & get_instance(); 
 		$CI->load->database();
@@ -307,7 +465,7 @@ class Cashier {
 			
 			case 'updateUsers':
 			foreach ($CI->hmw->getUsers() as $key) {
-				$sql 	= "SELECT ID FROM USER WHERE lower(NAME)='".strtolower($key->username)."'";
+				$sql 	= "SELECT ID FROM USER WHERE lower(NAME)='".strtolower($key->username)."' AND DELETED != 1";
 				$result = $db->query($sql);
 				$res	= $result->fetchArray(SQLITE3_ASSOC);
 				if(is_array($res)) {
@@ -371,6 +529,25 @@ class Cashier {
 			break;
 		}
 	}
+	
+	public function InsertTerminals($id_bu) {
+		$CI = & get_instance();
+		$CI->load->database();
+		$file = $this->getPosDbDir($id_bu);
+		$db = new SQLite3($file);
+		
+		$q = "SELECT ID, NAME, MODEL FROM TERMINAL WHERE DELETED = 0";
+		$result = $db->query($q);
+		$result_array = array();
+		while ($row_array = $result->fetchArray(SQLITE3_ASSOC)) {
+			array_push($result_array, $row_array);
+		}
+		foreach ($result_array as $line) {
+			$q = "INSERT INTO terminal_pos(id, name, model, id_bu) VALUES ('".$line['ID']."','".$line['NAME']."','".$line['MODEL']."',".$id_bu.") ON DUPLICATE KEY UPDATE id=id";
+			$r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		}
+	}
+	
 	public function calc($action, $id_bu) {
 		$CI = & get_instance(); 
 		$CI->load->database();
@@ -447,23 +624,29 @@ class Cashier {
 		$CI->load->library("hmw");
 		if(isset($datein)) $dateseek = $this->getPosArchivesDatetime($datein);
 		$dir	= $this->getPosArchivesDir($id_bu);
+
 		if(empty($dir)) exit('No db found for BU ID '.$id_bu);
-		$files	= scandir($dir, 0);
-		$line2	= null;
+		$files		= scandir($dir, 0);
+		$line2		= null;
+		$line 		= null;
+		$endline 	= null;
+		
 		foreach ($files as $line) {
 			if($line[0] == 2 ) {
-				$ex			= explode('.', $line);
-				$date		= $this->getPosArchivesDatetime($ex[0]);
-				$day 		= $date['Y']."-".$date['m']."-".$date['dd'];
+				$ex	= explode('.', $line);
+				if($ex[1] == 'db') { $endline = $line; }
+
+				$date	= $this->getPosArchivesDatetime($ex[0]);
+				$day 	= $date['Y']."-".$date['m']."-".$date['dd'];
 				if(isset($datein)) $dayseek	= $dateseek['Y']."-".$dateseek['m']."-".$dateseek['dd'];
 				if(isset($datein)) {
-					if($day == $dayseek) $line2 = $line;
+					if($day == $dayseek) $line2 = $endline;
 				}
 			}
 		}
 		if(isset($datein) AND empty($line2)) return null;
-		if(isset($line2)) $line = $line2;
-		return $line;
+		if(isset($line2)) $endline = $line2;
+		return $endline;
 	}
 	
 	private function getPosArchivesDir($id_bu) {

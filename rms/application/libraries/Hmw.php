@@ -161,13 +161,17 @@ class Hmw {
 		$CI->mmail->sendEmail($sms);
 	}
 	
-	public function sendNotif($msg, $id_bu) {
-
+	public function sendNotif($msg, $id_bu, $devParam = null) {
+		
 		$address	= $this->getParam('pushover_address');
 		$token		= $this->getParam('pushover_token');
 		$user		= $this->getParam('pushover_user');
 		$buinfo 	= $this->getBuInfo($id_bu);
-		$device		= $buinfo->pushover_device;
+		$device 	= $buinfo->pushover_device;
+		
+		if ($devParam === 'kitchen') {
+			$device = $buinfo->pushover_device_kitchen;
+		}
 		
 		curl_setopt_array(
 			$ch = curl_init(), array(
@@ -184,16 +188,31 @@ class Hmw {
 		curl_close($ch);
 	}
 	
+	public function isLoggedIn() {
+		$CI = & get_instance();
+		$CI->load->library('ion_auth');
+		
+		if (!$CI->ion_auth->logged_in()) {
+				$CI->session->set_userdata('pageBeforeLogin', current_url());
+				redirect('auth/login');
+		} else {
+			return (true);
+		}
+	}
+	
 	public function keyLogin() {
 
 		$CI = & get_instance(); 
 		$CI->load->library('ion_auth');
 		$CI->load->library('hmw');
 		$CI->load->library('session');	
+		$CI->load->library('email');
+		$CI->load->library('mmail');
 
 		$getkey	= $CI->input->get('keylogin');
 		$id_bu	= $CI->input->get('id_bu');
-
+		$type		= $CI->input->get('type');
+		
 		if(!empty($getkey)) {
 			$keyl = $this->getParam('keylogin');
 			if($getkey == $keyl) {
@@ -201,6 +220,12 @@ class Hmw {
 				$user = $this->getParam('keylogin_user_'.$id_bu);
 				$pass = $this->getParam('keylogin_pass_'.$id_bu);
 				
+				if ($type == 'kitchen') {
+					$CI->session->set_userdata('type', 'kitchen');
+				}
+				else if ($type == 'service' || $type == false) {
+					$CI->session->set_userdata('type', 'service');
+				}
 				//login($user, $pass, remember, keylogin);
 				$CI->ion_auth->login($user, $pass, true, true);
 			}
@@ -209,8 +234,20 @@ class Hmw {
 
 			if (!$CI->ion_auth->logged_in())
 			{
+				$CI->session->set_userdata('pageBeforeLogin', current_url());
 				redirect('auth/login');
 			}
+			
+		}
+		
+		$data['bu_name'] =  $CI->session->all_userdata()['bu_name'];
+		$data['username'] = $CI->session->all_userdata()['identity'];
+		if(empty($data['username'])) {
+						$email['subject'] 	= "RMS SESSION ERROR";
+						$email['msg'] 		= 'RMS SESSION ERROR';
+						$email['to']		= 'pierre@hankrestaurant.com';
+						$CI->mmail->sendEmail($email);	
+			exit('Erreur d\'un truc, simplement se relogger ou fermer et relancer l\'application RMS, ca va marcher!');
 		}
 	}
 
@@ -229,15 +266,17 @@ class Hmw {
 		$CI = & get_instance();
 		
 		if($index!=-1){
-			$user		= $CI->ion_auth->user()->row();
-			$bus_list	= $CI->hmw->getBus(null, $user->id);
-			$user_groups = $CI->ion_auth->get_users_groups()->result();
+			$user			= $CI->ion_auth->user()->row();
+			$bus_list		= $CI->hmw->getBus(null, $user->id);
+			$user_groups	= $CI->ion_auth->get_users_groups()->result();
 
-			$bu_id		= $CI->session->all_userdata()['bu_id'];
-			$keylogin 	= $CI->session->all_userdata()['keylogin'];
-			$bu_name	= $CI->session->all_userdata()['bu_name'];
-			$username	= $CI->session->all_userdata()['identity'];
+			$bu_id			= $CI->session->all_userdata()['bu_id'];
+			$keylogin 		= $CI->session->all_userdata()['keylogin'];
+			$bu_name		= $CI->session->all_userdata()['bu_name'];
+			$username		= $CI->session->all_userdata()['identity'];
 
+			$buinfo 		= $CI->hmw->getBuInfo($bu_id);
+	
 			$CI->db->select('val')->from('bank_balance');
 			$bal_res = $CI->db->get();
 			$bal = $bal_res->row_array();
@@ -245,6 +284,9 @@ class Hmw {
 			$CI->db->from('turnover')->order_by('date desc')->where('id_bu',$bu_id)->limit(1);
 		 	$bal_ca = $CI->db->get();
 			$ca = $bal_ca->row_array();
+
+			$door_device = null;
+			if(isset($buinfo->door_device)) $door_device = $buinfo->door_device;
 
 			$headers = array(
 				'header_pre'	=> array(
@@ -264,9 +306,12 @@ class Hmw {
 					'groupname' 	=> $user_groups[0]->name,
 					'userlevel' 	=> $user_groups[0]->level,
 					'username'		=> $username,
-					'user_id'		=> $user->id
+					'user_id'		=> $user->id,
+					'door_device'	=> $door_device,
+					'user_door'		=> $user->door_open
 					)
 				);
+				
 			}else{
 				$headers = array(
 				'header_pre'	=> array(

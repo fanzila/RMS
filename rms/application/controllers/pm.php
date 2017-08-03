@@ -129,10 +129,7 @@ class Pm extends CI_Controller {
 	 */
 	function index()
 	{
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 		$this->messages();
 	}
 
@@ -205,10 +202,7 @@ class Pm extends CI_Controller {
 	 */
 	function messages($type = MSG_NONDELETED)
 	{
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1 &&($type==1 || $type==2))
@@ -294,10 +288,7 @@ class Pm extends CI_Controller {
 	 */
 	function send($recipients = NULL, $subject = NULL, $body = NULL)
 	{
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1)
@@ -383,7 +374,11 @@ class Pm extends CI_Controller {
 					}			
 					$query = $this->db->get("users");
 					
-					foreach ($query->result() as $row) {
+					$results = $query->result();
+
+					//if(count($results) <= 1) exit('No recipient found (found only '.count($results).').');
+					
+					foreach ($results as $row) {
 						$key 	= md5(microtime().rand());
 						$email['from']		= 'noreply@hankrestaurant.com';
 						$email['from_name']	= 'RMS';
@@ -421,7 +416,7 @@ class Pm extends CI_Controller {
 		$managers = null;
 		foreach ($users as $user) {
 			$test = $this->ion_auth->get_users_groups($user->id)->result();
-			if($test[0]->level >= 1){
+			if($test[0]->level >= 2){
 				$managers ? $managers .=';'.$user->username : $managers .=''.$user->username;
 			}
 		}

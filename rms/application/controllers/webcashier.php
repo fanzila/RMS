@@ -6,6 +6,7 @@ class webCashier extends CI_Controller {
 		parent::__construct();
 		@$this->load->library('ion_auth');
 		$this->load->library("hmw");
+		$this->load->library("mmail");
 		$this->load->library("cashier");
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
@@ -48,6 +49,42 @@ class webCashier extends CI_Controller {
 			$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 		}
 		echo json_encode(['reponse' => $reponse]);
+	}
+	
+	// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckClose 1
+	
+	public function cliCheckClose($id_bu) 
+	{
+		$currentDate =  date('Y-m-d');
+		
+		$this->db->select('date');
+		$this->db->from('pos_movements');
+		$this->db->where('movement', 'close');
+		$this->db->order_by('date', 'DESC');
+		$result = $this->db->get();
+		$lastCloseDate = $result->row()->date;
+		$createDate = new DateTime($lastCloseDate);
+		$strip = $createDate->format('Y-m-d');
+		if ($strip < $currentDate) {
+			$this->db->select('users.username, users.email, users.id');
+			$this->db->distinct('users.username');
+			$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+			$this->db->join('users_groups', 'users.id = users_groups.user_id');
+			$this->db->where('users.active', 1);
+			$this->db->where_in('users_groups.group_id', array(1,4));
+			$this->db->where('users_bus.bu_id', $id_bu);
+			$query = $this->db->get("users");
+			
+			$this->db->select('name');
+			$this->db->where('id', $id_bu);
+			$bu_name = $this->db->get('bus')->row_array()['name'];
+			$email['subject'] 	= 'WARNING '.$bu_name.': No close for this evening';
+			$email['msg'] 		= 'Cashier '.$bu_name.' wasn\'t closed this evening';
+			foreach ($query->result() as $row) {
+				$email['to']	= $row->email;	
+				$this->mmail->sendEmail($email);
+			}
+		}
 	}
 	
 	public function safe()
@@ -134,6 +171,10 @@ class webCashier extends CI_Controller {
 				$param['id_bu'] = $id_bu;
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
 				$lines[$m['id']]['cashmovements'] 	= $this->cashier->posInfo('getMovements', $param);
+				$lines[$m['id']]['cashDrawerOpened'] = $this->cashier->getArchivedDrawerOpenedEvents($id_bu, $m['closing_file']);
+				$lines[$m['id']]['cancelledReceipts'] = $this->cashier->getArchivedCancelledReceipts($id_bu, $m['closing_file']);
+				$lines[$m['id']]['userActionStats'] = $this->cashier->userActionStats($id_bu, $m['closing_file']);
+				$lines[$m['id']]['total_actions'] = $this->cashier->countAllArchivedReceipts($id_bu, $m['closing_file']);
 			}
 		}
 
@@ -201,7 +242,7 @@ class webCashier extends CI_Controller {
 			$data['force'] = 0;
 			
 			$param_pos_info['id_bu'] = $id_bu;
-							
+
 			if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
 				$data['archive_file'] = $d['file'];
 				$data['archive_date'] = $archive_date;
@@ -219,7 +260,7 @@ class webCashier extends CI_Controller {
 					As tu bien cloture la caisse ? <br />
 					Si oui attends quelques minutes, la page de cloture va bientot s'afficher. <br />
 					Ou alors, tu as deja entre tes donnees.</h2>
-					Dernière cloture faite pour : $archive_date
+					Derniere cloture faite pour : $archive_date
 					<h2><a href='/webcashier/'>Retour</a></h2>
 					<p><small><a href='/webcashier/movement/close?force=1'>Voir l'interface</a></small></p>";
 					exit();
@@ -258,7 +299,16 @@ class webCashier extends CI_Controller {
 			$userid = $this->input->post('user');
 		}
 		
-		$this->db->set('movement', $this->input->post('mov'))->set('id_user', $userid)->set('comment', addslashes($this->input->post('comment')))->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))->set('id_bu', $id_bu);
+		$postmov = $this->input->post('mov');
+		if(empty($postmov)) exit('Error, empty movement, please try again.');
+		
+		$this->db->set('movement', $postmov)
+		->set('id_user', $userid)
+		->set('comment', addslashes($this->input->post('comment')))
+		->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))
+		->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
+		->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))
+		->set('id_bu', $id_bu);
 		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
@@ -274,7 +324,11 @@ class webCashier extends CI_Controller {
 			}
 			
 			if($this->input->post('mov') != 'safe_in' AND $this->input->post('mov') != 'safe_out') {
-				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'))+$this->cashier->clean_number($this->input->post('notes1'));
+				$bills = ($this->cashier->clean_number(($this->input->post('20Bill') * 20))) +
+								 ($this->cashier->clean_number(($this->input->post('10Bill') * 10))) +
+								 ($this->cashier->clean_number(($this->input->post('5Bill') * 5)));
+				
+				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'))+$this->cashier->clean_number($bills);
 				$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cbemv'))+$this->cashier->clean_number($this->input->post('cbcless'));
 			}
 
@@ -290,6 +344,7 @@ class webCashier extends CI_Controller {
 		}
 
 		if($this->input->post('mov') == 'close') {
+			$this->cashier->InsertTerminals($id_bu);
 			$this->closing($this->input->post('archive'), $pmid);
 		}
 

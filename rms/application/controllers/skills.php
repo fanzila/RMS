@@ -31,10 +31,9 @@ class Skills extends CI_Controller {
 
 	public function index($id = null, $back=null)
 	{
-		if(!$this->ion_auth->logged_in()){
-			redirect('news', 'refresh');
-		}
+		$this->hmw->isLoggedIn();
 
+		//TODO change somewhere here for disabling disabled users in sponsor
 		$current_user = $this->ion_auth->get_user_id();
 		if($id!= null && $id!=$current_user){
 			$this->db->select('sr.id, us.id as id_sponsor, u.id as id_user')
@@ -42,6 +41,7 @@ class Skills extends CI_Controller {
 				->join('users as us', 'us.id = id_sponsor', 'left')
 				->join('users as u', 'u.id = id_user', 'left')
 				->where('id_user', $id);
+				
 			$res 	= $this->db->get() or die($this->mysqli->error);
 			$skills_records = $res->result();
 			if($skills_records!=null){
@@ -54,9 +54,7 @@ class Skills extends CI_Controller {
 				$bypass_sponsor=0;
 			}
 			if($bypass_sponsor==0 && (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id))){
-				if(!$this->ion_auth->logged_in()){
-					redirect('news', 'refresh');
-				}
+				$this->hmw->isLoggedIn();
 				redirect('skills', 'refresh');
 			}else{
 				$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -136,12 +134,26 @@ class Skills extends CI_Controller {
 		}
 	}
 	
+	public function general()
+	{
+		if (!$this->ion_auth->is_admin()) {
+			$this->hmw->isLoggedIn();
+			redirect('skills', 'refresh');
+		}
+		$this->hmw->changeBu();
+		$id_bu = $this->session->all_userdata()['bu_id'];
+		
+		$headers = $this->hmw->headerVars(1, "/skills/general", "Manage Skills");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('skills/general');
+		$this->load->view('jq_footer');
+	}
+	
 	public function admin()
 	{
 		if (!$this->ion_auth->is_admin()) {
-			if(!$this->ion_auth->logged_in()){
-				redirect('news', 'refresh');
-			}
+			$this->hmw->isLoggedIn();
 			redirect('skills', 'refresh');
 		}
 		$this->hmw->changeBu();// GENERIC changement de Bu
@@ -250,9 +262,7 @@ class Skills extends CI_Controller {
 
 	public function start()
 	{
-		if (!$this->ion_auth->logged_in()) {
-				redirect('news', 'refresh');
-		}
+		$this->hmw->isLoggedIn();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$bu_name	= $this->session->all_userdata()['bu_name'];

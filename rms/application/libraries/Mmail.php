@@ -11,7 +11,7 @@ class Mmail {
 		
 		$config = array();
 		$config['charset'] = 'utf-8';
-		$config['mailtype'] = 'text';
+		$config['mailtype'] = 'html';
 		$config['crlf'] = "\n";
 		$config['newline'] = "\n";
 		
@@ -33,8 +33,7 @@ class Mmail {
 		if(isset($email['replyto'])) $CI->email->reply_to($email['replyto'], 'HANK');
 		if(isset($email['attach'])) $CI->email->attach($email['attach']);
 		$CI->email->subject($email['subject']);
-		$CI->email->message($email['msg']);
-
+		$CI->email->message(nl2br($email['msg']));
 		$CI->email->send();
 	}
 }

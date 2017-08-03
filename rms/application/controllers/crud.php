@@ -10,13 +10,10 @@ class Crud extends CI_Controller {
 		$this->load->helper('url');
 
 		$this->load->library('grocery_CRUD');
-		
+		$this->load->library('hmw');
 		$this->load->library('ion_auth');
 
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth/login');
-		}
+		$this->hmw->isLoggedIn();
 
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1)
@@ -50,7 +47,7 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-		$crud->fields('id','name','active','order','id_bu');
+		$crud->fields('id','name','active','order','id_bu','type');
         $crud->set_table('checklists');
         $output = $crud->render();
  
@@ -116,8 +113,8 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-		$crud->columns('id','task', 'comment', 'active', 'priority', 'id_bu');
-		$crud->required_fields('task', 'prority', 'active');
+		$crud->columns('id','task', 'comment', 'active', 'priority', 'id_bu', 'type');
+		$crud->required_fields('task', 'prority', 'active', 'type');
         $crud->set_table('rmd_tasks');
         $output = $crud->render();
  
@@ -266,7 +263,7 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'name', 'deleted');
+        $crud->columns('id', 'name', 'order', 'deleted');
         $crud->required_fields('id', 'name');
         $crud->set_table('skills');
         $output = $crud->render();
@@ -279,9 +276,15 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat', 'deleted');
+        $crud->columns('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat', 'order', 'deleted');
         $crud->required_fields('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat');
-        $crud->set_table('skills_item');
+    		$crud->set_relation('id_skills', 'skills', 'name');
+		    $crud->set_relation('id_cat', 'skills_category', 'name');
+        $crud->set_relation('id_sub_cat', 'skills_sub_category', 'name');
+				$crud->display_as('id_skills', 'Skills');
+				$crud->display_as('id_cat', 'Category');
+				$crud->display_as('id_sub_cat', 'Sub-category');
+				$crud->set_table('skills_item');
         $output = $crud->render();
  
         $this->_example_output($output); 
@@ -293,7 +296,11 @@ class Crud extends CI_Controller {
 		$crud->set_theme('bootstrap');
 		
         $crud->columns('id', 'id_sponsor', 'id_user');
-        $crud->required_fields('id', 'id_sponsor', 'id_user');
+        $crud->set_relation('id_sponsor', 'users', 'username');
+				$crud->set_relation('id_user', 'users', 'username');
+				$crud->display_as('id_sponsor', 'Sponsor');
+				$crud->display_as('id_user', 'Users');
+				$crud->required_fields('id', 'sponsor', 'id_user');
         $crud->set_table('skills_record');
         $output = $crud->render();
  
@@ -305,9 +312,14 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'id_skills_record', 'date');
+        //$crud->columns('id', 'id_skills_record', 'date');
         $crud->required_fields('id', 'id_skills_record', 'date');
         $crud->set_table('skills_log');
+				$crud->set_relation('id_user', 'users', 'username');
+				$crud->display_as('id_user', 'username');
+				$crud->unset_add();
+    		$crud->unset_edit();
+    		$crud->unset_delete();
         $output = $crud->render();
  
         $this->_example_output($output); 
@@ -346,6 +358,8 @@ class Crud extends CI_Controller {
 		
         $crud->columns('id', 'id_skills_record', 'id_skills_item', 'checked', 'comment');
         $crud->required_fields('id', 'id_skills_record', 'id_skills_item', 'checked');
+				$crud->set_relation('id_skills_item', 'skills_item', 'name');
+				$crud->display_as('id_skills_item', 'Skills item');
         $crud->set_table('skills_record_item');
         $output = $crud->render();
  
