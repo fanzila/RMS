@@ -63,6 +63,7 @@ class Skills extends CI_Controller {
 				$this->db->distinct('users.username');
 				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 				$this->db->where('users.id', $id);
+				$this->db->where('users.active', 1);
 				$this->db->order_by('users.username', 'asc');
 				$query = $this->db->get("users");
 				$user = $query->result();
@@ -218,6 +219,8 @@ class Skills extends CI_Controller {
 			->join('skills_record as sr', 'sr.id = sl.id_skills_record')
 			->join('users as uv', 'uv.id = sr.id_user', 'left')
 			->where('sl.bu_id', $id_bu)
+			->where('u.active', 1)
+			->where('uv.active', 1)
 			->order_by('date desc')
 			->limit(100);
 		$res 	= $this->db->get() or die($this->mysqli->error);
@@ -257,7 +260,8 @@ class Skills extends CI_Controller {
 		$this->db->select('sr.id, us.id as id_sponsor, u.first_name, u.last_name, u.id as id_user')
 			->from('skills_record as sr')
 			->join('users as us', 'us.id = id_sponsor', 'left')
-			->join('users as u', 'u.id = id_user', 'left');
+			->join('users as u', 'u.id = id_user', 'left')
+			->where('u.active', 1);
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_records = $res->result();
 
