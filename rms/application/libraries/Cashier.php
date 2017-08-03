@@ -579,7 +579,20 @@ class Cashier {
 				LEFT JOIN sales_customers AS sc2 ON sc2.pos_id = sc.customer
 				WHERE archive = '".$param['closing_file']."' AND ppt.id_bu = ".$param['id_bu']." GROUP BY sc.id ";
 			$r_mov = $CI->db->query($q_mov) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			return $r_mov->result_array();
+			$o = $r_mov->result_array();
+			foreach ($r_mov->result_array() as $key => $value) {
+				if (empty($value['username'])) {
+					$file = $this->getPosDbDir($param['id_bu']);
+					$db = new SQLite3($file);
+					$sql = "SELECT NAME FROM USER WHERE ID = '".$value['user']."'";
+					$r2 = $db->query($sql);
+					$row2=$r2->fetchArray(SQLITE3_ASSOC);
+					if (isset($row2['NAME'])) {
+						$o[$key]['user'] = $row2['NAME']. " (cashpad username) ";
+					}
+				}
+			}
+			return $o;
 			break;
 			
 			case 'getUsers':
