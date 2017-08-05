@@ -26,7 +26,7 @@ $today = getdate();
 						<br />Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ | Colisage: <?=$line['packaging']?>  <br />
 						<? if(!empty($line['supplier_reference'])) { ?>Ref. supplier: <?=$line['supplier_reference']?> | <? } ?> <? if(!empty($line['comment'])) { ?> Comment: <?=$line['comment']?> <? } ?>
 						<? if($line['manage_stock']) { ?>
-						Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <? } ?>
+						<br />Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <? } ?>
 					</label>
 			
 					<table border="0" cellpadding="2">
