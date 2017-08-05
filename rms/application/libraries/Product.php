@@ -277,6 +277,7 @@ class Product {
 	public function getProductUnit() {
 		$CI =& get_instance();
 		$CI->db->select('*')->from('products_unit');
+		$CI->db->order_by("name", "asc");
 		$req = $CI->db->get() or die($this->mysqli->error);
 		$ret = array();
 		foreach ($req->result_array() as $key) {
