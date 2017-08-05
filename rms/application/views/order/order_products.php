@@ -20,14 +20,16 @@ $today = getdate();
 				}
 			}
 			?>
-			<div id='hide-<?=$line['id']?>' class="hide-<?=$hide?>">
+			<div id='hide-<?=$line['id']?>' class="hide-<?=$hide?>" style="border: 1px solid lightgray; padding: 8px; margin-bottom: 10px;">
 				<li>
 					<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper($line['name'])?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
-						<br />Colisage: <?=$line['packaging']?>  | Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ <br />
-						Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <br /> Ref. supplier: <?=$line['supplier_reference']?> | Comment: <?=$line['comment']?>
+						<br />Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ | Colisage: <?=$line['packaging']?>  <br />
+						<? if(!empty($line['supplier_reference'])) { ?>Ref. supplier: <?=$line['supplier_reference']?> | <? } ?> <? if(!empty($line['comment'])) { ?> Comment: <?=$line['comment']?> <? } ?>
+						<? if($line['manage_stock']) { ?>
+						<br />Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <? } ?>
 					</label>
 			
-					<table cellpadding="4">
+					<table border="0" cellpadding="2">
 						<tr>
 									<td>
 										<? 
@@ -40,11 +42,12 @@ $today = getdate();
 												}
 											}
 										}
+										$nbcolis = 'x';
+										if($type == 'viewreception') $nbcolis = $qtty/$line['packaging'];
 										if($type != 'reception' AND $type != 'viewreception') { ?>
-											
-										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" value="<?=$qtty?>" data-clear-btn="true" />
+										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" data-inline="true" value="<?=$qtty?>" data-clear-btn="true" /> </td><td><small>unité(s)</small>
 										<? } else { ?><input type="hidden" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" value="<?=$qtty?>" />
-										<small>Order qtty:</small> <?=$qtty?><small> => </small><? } ?>
+										<small>Unité(s) commandée(s) :</small> <?=$qtty?><? } ?> </td><td><input type="hidden" name="pkg[<?=$line['id']?>]" id="pkg-<?=$line['id']?>" value="<?=$line['packaging']?>" /><small style="color: #7e7e7e;">(soit <span id="respkg-<?=$line['id']?>"><?=$nbcolis?></span> colis)</small>
 									</td>
 
 									<? if($load > 0 && $type == 'viewreception' && (isset($line['stock']) OR (isset($line['qtty']) && $line['qtty'] > 0 ))) { 
@@ -63,12 +66,12 @@ $today = getdate();
 
 										}											
 										?>
-										<td><span class="zmdi <?=$icon?>"></span><font color="<?=$fontcolor?>"> Received qtty:</font></td>
+										<td><span class="zmdi <?=$icon?>"></span><font color="<?=$fontcolor?>"> | Unité  reçu:</font></td>
 										<td><font color="<?=$fontcolor?>"><?=$added_stock?></font></td>
 										<td><span>&nbsp;&nbsp;&nbsp;</span></td>
 										<td>
-											<small>Modify reception: </small>
-											<input type="text" style="width:120px" name="editQtty[<?=$line['id']?>]" id="editQtty-<?=$line['id']?>" class="custom" data-mini="true" data-clear-btn="true">
+											<small>Modifier reception: </small>
+											<input type="text" style="width:120px" name="editQtty[<?=$line['id']?>]" id="editQtty-<?=$line['id']?>" class="custom" data-mini="true" data-clear-btn="true"> </td><td><small>unité(s)</small>
 										</td>
 										<td><span>&nbsp;&nbsp;&nbsp;</span></td>
 										<td>
@@ -76,15 +79,15 @@ $today = getdate();
 										</td>
 										<? } ?> 
 										<? if($load > 0 && $type == 'reception') { ?>
-											<td><small>Received: </small></td>
+											<td><small>| Reçu : </small></td>
 											<td>
-												<input type="text" name="stock[<?=$line['id']?>]" id="stock-<?=$line['id']?>" class="custom" value="0" style="width:120px" data-clear-btn="true" />
+												<input type="text" name="stock[<?=$line['id']?>]" id="stock-<?=$line['id']?>" class="custom" value="0" style="width:120px" data-clear-btn="true" /> </td><td><small>unité(s)</small>
 											</td>
 											<? if($load > 0 && $qtty > 0 && $type == 'reception') { ?>
 												<td><input type="button" id="add<?=$line['id']?>" name="add[<?=$line['id']?>]" class="add" value="OK" data-mini="true" onclick="AddStock(<?=$line['id']?>);" />
 												</td>
 												<td>
-													<small>Comment product:</small>
+													<small>Commentaire produit:</small>
 													<input type="text" id="comment-<?=$line['id']?>" name="comment[<?=$line['id']?>]" class="custom" data-mini="true" data-clear-btn="true" style="width:500px"/>
 												</td>
 												<script>
@@ -107,7 +110,7 @@ $today = getdate();
 									<input type="hidden" id="price[<?=$line['id']?>]" name="price[<?=$line['id']?>]" value="<?=$line['price']?>">
 									<!-- END hidden price -->
 									<input type="hidden" name="pdt" value="<?=$line['id']?>">
-									<input type="hidden" name="pdt_name[<?=$line['id']?>]" value="<?=strtoupper($line['name'])?>">
+									<input type="hidden" name="pdt_name[<?=$line['id']?>]" id="pdt_name-<?=$line['id']?>" value="<?=strtoupper($line['name'])?>">
 								</div>
 								<? $qtty = 0; $added_stock = 0; } ?>
 							</ul>
@@ -137,18 +140,18 @@ $today = getdate();
 												<? } ?>
 										</select>
 										<li>
-											<input type="submit" name="save" value="SAVE">
+											<input type="submit" name="save" id="save" value="SAVE">
 										</li>
 									<? } ?>
 									
 									<? if(!$keylogin && $type != 'viewreception') { ?>
-										<li><input type="submit" name="save" value="SAVE"></li>
+										<li><input type="submit" name="save" id="save" value="SAVE"></li>
 									<? } else if (!$keylogin && $type == 'viewreception') { ?>
 										<input type="hidden" name="editReception" value="true">
 										<input type="hidden" name="srl_order_post" value='<?=serialize($unsrl_order)?>'>
 										<input type="hidden" name="id_order" value='<?=$load?>'>
 										<input type="hidden" name="current_url" value=<?=current_url()?>>
-										<li><input type="submit" name="save" value="SAVE"></li>
+										<li><input type="submit" name="save" id="save" value="SAVE"></li>
 									<? } ?>
 									</ul>
 
@@ -178,6 +181,7 @@ $today = getdate();
 										<input style="background-color: #e33030;" type="submit" name="save" value="CANCEL RECEPTION">
 									</form>
 								<? } ?>
+
 							</div><!-- /theme -->
 						</div><!-- /content -->
 					</div><!-- /page -->
@@ -212,6 +216,7 @@ $today = getdate();
 
 					function updateTotal() {
 						var total = 0;
+						
 						$(".order input[type='text']").each(function () {
 							if($(this).val() === '') {
 								// empty
@@ -223,7 +228,18 @@ $today = getdate();
 								var item	= elid1[0];
 								var price	= $('#price' + '-' + idpdt).val();
 								var qtty	= $('#qtty' + '-' + idpdt).val();
+								var pdtname	= $('#pdt_name' + '-' + idpdt).val();
 
+								// START PACKAGING MANAGEMENT //
+								var pkg 	= $('#pkg' + '-' + idpdt).val();
+								var respkg 	= qtty/pkg;
+								if(!Number.isInteger(respkg)) {
+									respkg = 'ERREUR';
+									alert('Colisage incorrect, entrez un multiple de ' + pkg + ' pour ' + pdtname + '.');
+								} 
+								$( '#respkg' + '-' + idpdt).text( respkg );
+								// END PACKAGING MANAGEMENT //
+								
 								if(item == 'qtty' && qtty > 0) { 						
 									//get sub total
 									if(price) var sub = qtty*price;
@@ -231,7 +247,7 @@ $today = getdate();
 								}
 							}
 							$( "#total" ).text( (Math.round(total*100)/100)/1000 );
-
+							
 						});
 					}
 

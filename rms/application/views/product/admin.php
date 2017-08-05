@@ -139,19 +139,13 @@
 										</select>
 									</div>
 								</div>
-								<div class="col-md">
+								<div class="col-md" style="background-color: #f2f2ef;">
 									<div class="box">
 										<small>Prix H.T. /unité €</small>
 										<input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
-								<div class="col-md">
-									<div class="box">
-										<small>Colisage</small>
-										<input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
-									</div>
-								</div>
-								<div class="col-md">
+								<div class="col-md" style="background-color: #f2f2ef;">
 									<div class="box">
 										<small>Unité de vente</small>
 										<select id="id_unit<?=$line['id']?>" name="id_unit"  data-mini="true" <?if ($managed_only == "on") {echo "disabled";}?>>
@@ -161,6 +155,13 @@
 										</select>
 									</div>
 								</div>
+								<div class="col-md">
+									<div class="box">
+										<small>Colisage</small>
+										<input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+									</div>
+								</div>
+
 								<div class="col-md">
 									<div class="box">
 										<small>Category</small>

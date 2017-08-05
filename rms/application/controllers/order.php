@@ -590,6 +590,10 @@ class Order extends CI_Controller {
 						}
 						if(!empty($value) AND !is_numeric($value)) exit('Qtty has to be numeric, invalid: '.$value);
 						if(!empty($value) AND is_numeric($value)) $do_something	= true;
+						if($post['pkg'][$id_pdt] <= 0) exit('Colisage incorrect, doit être supérieur à 0 pour '.$post['pdt_name'][$id_pdt].'.');
+						$packaging_check = $value/$post['pkg'][$id_pdt];
+						if(!is_int($packaging_check)) exit('Colisage incorrect, entrez un multiple de '.$post['pkg'][$id_pdt].' pour '.$post['pdt_name'][$id_pdt].'.');
+						
 						$pricetotal += $post['price'][$id_pdt]*$value;
 					}
 					$order['pricetotal'] = $pricetotal;
@@ -626,7 +630,9 @@ class Order extends CI_Controller {
 								'subtotal' => $post['price'][$id_pdt]*$value
 								);
 						}
-							$order_reception['pdt'][$id_pdt]['comment'] = $post['comment'][$id_pdt];
+						
+						if(isset($post['comment'][$id_pdt])) $order_reception['pdt'][$id_pdt]['comment'] = $post['comment'][$id_pdt];
+
 							if($post['qtty_check'][$id_pdt] != $post['stock'][$id_pdt]) {
 								$status_reception = false;
 							}
@@ -838,7 +844,7 @@ class Order extends CI_Controller {
 
 		$data = array('info' => $info, 'order' => $order);
 		$html = $this->load->view('order/bdc', $data, true);
-		//$this->load->view('order/bdc', $data); to debug uncomment this line, comment 1 line above and all the following
+		//$this->load->view('order/bdc', $data); //to debug uncomment this line, comment 1 line above and all the following
 
 		$pdf = pdf_create($html, '', false);
 		$filename = 'orders/'.$date_y.'/'.$date_m.'/'.$info['idorder'].'_'.strtoupper($info['supplier']['name']).'.pdf';
@@ -852,12 +858,11 @@ class Order extends CI_Controller {
 		$this->db->update('orders')  or die($this->mysqli->error);
 
 		write_file($filename, $pdf);
-
 		$fileencode = str_replace("/", "-", $filename);
 		$data['filename']	= urlencode($fileencode);
 		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
-		
+
 		$this->session->set_userdata('keep_filters', 'true');
 
 		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Confirm");
