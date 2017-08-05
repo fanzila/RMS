@@ -91,6 +91,9 @@ class Product {
 		}
 		if($id) $sqladd = $CI->db->where('p.deleted', 0)->where('p.id', $id);
 		$CI->db->where('s.id_bu', $id_bu);
+		$CI->db->where('s.deleted', 0);
+		$CI->db->where('s.active', 1);
+			
 		$ordersql = "p.`active` DESC";
 		if($order) $ordersql = $order; 
 
