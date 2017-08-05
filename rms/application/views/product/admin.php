@@ -114,7 +114,7 @@
 					<?
 				foreach ($products as $line) { 
 					?>
-					<li data-role="list-divider"><?=stripslashes($line['name'])?> <small>- <?=$line['id']?></small></li>
+					<li data-role="list-divider"><?=stripslashes(str_replace('"','\'',$line['name']))?> <small>- <?=$line['id']?></small></li>
 					<? 
 					$bkgcolor = '';
 					if($line['active'] == 0 ) $bkgcolor = '#e5e5e5'; 
@@ -126,7 +126,7 @@
 								<div class="col-md">
 									<div class="box">
 										Name
-										<input type="text" name="name" id="name-<?=$line['id']?>" value="<?=stripslashes($line['name'])?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+										<input type="text" name="name" id="name-<?=$line['id']?>" value="<?=stripslashes(str_replace('"','\'',$line['name']))?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 								<div class="col-md">
@@ -194,7 +194,7 @@
 								<div class="col-md">
 									<div class="box">
 										<small>Ref. supplier</small>
-										<input type="text" name="supplier_reference" value="<?=$line['supplier_reference']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+										<input type="text" name="supplier_reference" value="<?=stripslashes(str_replace('"','\'',$line['supplier_reference']))?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 							</div>
@@ -247,7 +247,7 @@
 								<div class="col-md">
 									<div class="box">
 										<small>Comment</small><br/>
-										<input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true" data-clear-btn="true" <?if ($managed_only == "on") {echo "disabled";}?>/>
+										<input type="text" name="comment" value="<?=stripslashes(str_replace('"','\'',$line['comment']))?>"  data-mini="true" data-clear-btn="true" <?if ($managed_only == "on") {echo "disabled";}?>/>
 									</div>
 								</div>
 								<div class="col-md">
