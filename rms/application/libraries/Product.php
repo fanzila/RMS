@@ -17,6 +17,8 @@ class Product {
 			$CI->db->where('p.deleted', 0)->like($array);
 		}
 		$CI->db->where('s.id_bu', $id_bu);
+		$CI->db->where('s.deleted', 0);
+		$CI->db->where('s.active', 1);
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
 
@@ -152,6 +154,9 @@ class Product {
 			$CI->db->where('p.deleted', 0)->like($array);
 		}
 		$CI->db->where('s.id_bu', $id_bu);
+		$CI->db->where('s.deleted', 0);
+		$CI->db->where('s.active', 1);
+		
 		$CI->db->where('p.manage_stock', 1);
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 

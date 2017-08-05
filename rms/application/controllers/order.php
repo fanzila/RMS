@@ -142,6 +142,8 @@ class Order extends CI_Controller {
 				->like('p.name', "$q", 'both')
 				->where('p.deleted', 0)
 				->where('p.active', 1)
+				->where('s.deleted', 0)
+				->where('s.active', 1)
 				->where('s.id_bu', $id_bu)
 				->order_by('p.name asc')->limit(100);
 			$query = $this->db->get() or die($this->mysqli->error);
@@ -179,6 +181,8 @@ class Order extends CI_Controller {
 				->like('p.name', "$q", 'both')
 				->where('p.deleted', 0)
 				->where('p.active', 1)
+				->where('s.deleted', 0)
+				->where('s.active', 1)
 				->where('s.id_bu', $id_bu)
 				->order_by('p.name asc')->limit(100);
 			$query = $this->db->get() or die($this->mysqli->error);
