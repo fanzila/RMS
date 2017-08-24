@@ -332,6 +332,7 @@ class webCashier extends CI_Controller {
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$data['username']		= $user->username;
 		$data['user_groups']	= $user_groups[0];
+		$data['all_user_groups'] = $user_groups;
 		$data['mov']			= $mov;
 		$data['archive_file'] 	= null;
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];

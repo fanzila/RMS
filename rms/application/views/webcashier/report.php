@@ -95,12 +95,12 @@
 						<? if($mov == 'close') { ?>
 							<small>Total Cashpad amount: <?=$total?>€   </small>
 							<? if ($diff != 0) { ?>
-								<p style="color: red;">Diff: <?=$diff?>€</p>
+								<p style="color: red;">Diff: <?=$diff?>€ <br /><small style="color: black;">(Cashpad cash - Espece FDC (user) + balance CB + TR  + cheque)</small></p>
 						<? 	}
 							} ?>
 
 	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']; ?> 
-		<? if($check_amount < 0 ) { ?><p style="color : red; font: bold 16px Arial, Verdana, sans-serif;">ALERT! <?=$check_amount?>€ cash missing!</p>
+		<? if($check_amount < 0 ) { ?><p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT! <?=$check_amount?>€ cash missing! </b><br /><small style="color: black;">(Différence entre fond de caisse au moment de la close (cashpad cash) et montant utilisateur entré (espece user amount))</small></p>
 		<? } } ?>
 <div style="width:70%">		
 		<h3>Movement comments</h3>
