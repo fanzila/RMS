@@ -281,6 +281,7 @@
 												<th>Theorical Stock</th>
 												<th>Actual Stock</th>
 												<th>Delta</th>
+												<th>Delete record</th>
 											</tr>
 										</thead>
 										<tbody id="tbl-body_<?=$line['id']?>">
@@ -499,6 +500,26 @@
 									<!-- Modal script -->
 											<script>
 											
+											function delete_record(id_record, id_product) {
+												if (confirm('Do you really want to delete this record ?') === true) {
+													var site_url = '<?= site_url('product_admin/deleteStockRecord/') ?>' + '/' + id_record;
+													var row = document.getElementById('row_' + id_record);
+													$.ajax({
+														url: site_url,
+														type: 'get',
+														data: null,
+														success: function(data) {
+															if (data.status == 'success') {
+																row.parentNode.removeChild(row);
+															} else {
+																alert('Unable to delete record');
+																return (false);
+															}	
+														}
+													});
+												}
+											}
+											
 											function open_modal(id_product) {
 												
 												var site_url = '<?= site_url('product_admin/tableProductHistory/') ?>' + '/' + id_product;
@@ -512,10 +533,10 @@
 												modal.style.display = "block";
 												document.body.classList.add("modal-open");
 												for (i = 0; i < inputs.length; i += 1) {
-													inputs[i].disabled = true;
+													inputs[i].hidden = true;
 												}
 												for (i = 0; i < selects.length; i += 1) {
-													selects[i].disabled = true;
+													selects[i].hidden = true;
 												}
 											}
 											
