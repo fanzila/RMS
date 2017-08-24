@@ -10,9 +10,8 @@ class Book extends CI_Controller {
 
 	public function index($login=null)
 	{
-		
-		$this->hmw->changeBu();// GENERIC changement de Bu
 		$this->hmw->keyLogin();
+		$this->hmw->changeBu();// GENERIC changement de Bu
 		
 		$id_bu =  $this->session->all_userdata()['bu_id'];
 		$bu_name	= $this->session->all_userdata()['bu_name'];

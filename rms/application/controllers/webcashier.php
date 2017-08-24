@@ -41,12 +41,56 @@ class webCashier extends CI_Controller {
 
 	public function save_report_comment()
 	{
+		$id_bu = $this->session->userdata('bu_id');
 		$reponse = 'ok';
 		$data = $this->input->post();
+
+		$this->db->select('name');
+		$this->db->where('id', $id_bu);
+		$bu_name = $this->db->get('bus')->row_array()['name'];
+		$subject = "WARNING $bu_name : New comment on report";
+		
 		$this->db->set('comment_report', $data['comment-'.$data['id']]);
 		$this->db->where('id', $data['id']);
+		
 		if(!$this->db->update('pos_movements')) {
 			$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+		}
+		
+		if (isset($data['validate-'.$data['id']])) {
+			$this->db->set('status', 'validated');
+			$this->db->where('id', $data['id']);
+			if (!$this->db->update('pos_movements')) {
+				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+			}
+			$subject .= " (Director Validated)";
+		} else {
+			if ($data['diff-'.$data['id']] != '0') {
+				$this->db->set('status', 'error');
+				$this->db->where('id', $data['id']);
+				if (!$this->db->update('pos_movements')) {
+					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+				}
+			}
+		}
+		
+		$this->db->select('movement, date');
+		$this->db->where('id', $data['id']);
+		$mov = $this->db->get('pos_movements')->row_array();
+		$this->db->select('users.username, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->join('users_groups', 'users.id = users_groups.user_id');
+		$this->db->where('users.active', 1);
+		$this->db->where_in('users_groups.group_id', array(1,4));
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$query = $this->db->get("users");
+		
+		$email['subject'] 	= $subject;
+		$email['msg'] 		= 'Comment on report for '.$bu_name.' on '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']];
+		foreach ($query->result() as $row) {
+			$email['to']	= $row->email;	
+			$this->mmail->sendEmail($email);
 		}
 		echo json_encode(['reponse' => $reponse]);
 	}
@@ -87,6 +131,62 @@ class webCashier extends CI_Controller {
 		}
 	}
 	
+	// cd /var/www/hank/rms/rms && php index.php webcashier cliAlertSafe 1
+	
+	public function cliAlertSafe($id_bu) {
+		$currentAmount = $this->cashier->calc('safe_current_cash_amount', $id_bu);
+		
+		if ($currentAmount < 1) {
+			$this->db->select('users.username, users.email, users.id');
+			$this->db->distinct('users.username');
+			$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+			$this->db->join('users_groups', 'users.id = users_groups.user_id');
+			$this->db->join('groups', 'users_groups.group_id = groups.id');
+			$this->db->where('users.active', 1);
+			$this->db->where('groups.level', 3);
+			$this->db->where('users_bus.bu_id', $id_bu);
+			$query = $this->db->get("users");
+			
+			$this->db->select('name');
+			$this->db->where('id', $id_bu);
+			$bu_name = $this->db->get('bus')->row_array()['name'];
+			
+			$email['subject'] 	= 'WARNING '.$bu_name.': Safe cash under 1 €';
+			$email['msg'] 		= 'Safe '.$bu_name.' cash amount is '.$currentAmount.' €';
+			foreach ($query->result() as $row) {
+				
+				$email['to']	= $row->email;	
+				$this->mmail->sendEmail($email);
+			}
+		} else {
+			$this->db->select('cashier_alert_amount_safe');
+			$this->db->from('bus');
+			$this->db->where('id', $id_bu);
+			$cashierAlertAmountSafe = $this->db->get()->row_array()['cashier_alert_amount_safe'];
+			
+			if ($currentAmount > $cashierAlertAmountSafe) {
+				$this->db->select('users.username, users.email, users.id');
+				$this->db->distinct('users.username');
+				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+				$this->db->join('users_groups', 'users.id = users_groups.user_id');
+				$this->db->where('users.active', 1);
+				$this->db->where_in('users_groups.group_id', array(3));
+				$this->db->where('users_bus.bu_id', $id_bu);
+				$query = $this->db->get("users");
+				
+				$this->db->select('name');
+				$this->db->where('id', $id_bu);
+				$bu_name = $this->db->get('bus')->row_array()['name'];
+				$email['subject'] 	= 'WARNING '.$bu_name.': Safe cash is above '.$cashierAlertAmountSafe.' €';
+				$email['msg'] 		= 'Safe '.$bu_name.' cash amount is '.$currentAmount;
+				foreach ($query->result() as $row) {
+					$email['to']	= $row->email;	
+					$this->mmail->sendEmail($email);
+				}
+			}
+		}
+	}
+	
 	public function safe()
 	{
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
@@ -115,9 +215,10 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
-	public function report()
+	public function report($page = 1)
 	{
-
+		
+		$this->load->library('pagination');
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 2)
 		{
@@ -126,15 +227,30 @@ class webCashier extends CI_Controller {
 		}
 
 		$data = array();
+		if ($this->input->post('type')) {	$filters['type'] = $this->input->post('type'); } else {	$filters['type'] = ""; }
+		if ($this->input->post('user')) {	$filters['user-id'] = $this->input->post('user');	}	else { $filters['user-id'] = ""; }
+		if ($this->input->post('sdate')) { $filters['sdate'] = $this->input->post('sdate'); } else { $filters['sdate'] = ""; }
+		if ($this->input->post('edate')) { $filters['edate'] = $this->input->post('edate'); } else { $filters['edate'] = ""; }
+		$data['filter'] = $filters;
 
 		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
+		
+		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+		$this->db->distinct('users.username');
+		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->where('users.active', 1);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('users.username', 'asc'); 
+		$query = $this->db->get("users");
+		$data['users'] = $query->result_array();
 
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$data['username']		= $user->username;
 		$data['user_groups']	= $user_groups[0];
+		$data['all_user_groups'] = $user_groups;
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= 'Cashier reports';
 		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount', $id_bu);
@@ -145,15 +261,31 @@ class webCashier extends CI_Controller {
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
 		$lines					= array();
 		
-		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report')
+		$config_pages['base_url'] = base_url() . 'webcashier/report/';
+		$config_pages['per_page'] = 10;
+		$config_pages['use_page_numbers'] = TRUE;
+		
+		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.status, pm.employees_sp')
 			->from('pos_movements as pm')
 			->join('users as u', 'u.id = pm.id_user', 'left')
-			->where('pm.id_bu', $id_bu)
-			->order_by('pm.id desc')
-			->limit(300);
+			->where('pm.id_bu', $id_bu);
+			if (!empty($filters['type'])) $this->db->where('pm.movement', $filters['type']);
+			if (!empty($filters['user-id'])) $this->db->where('u.id', $filters['user-id']);
+			if (!empty($filters['sdate'])) $this->db->where('pm.date >= ', $filters['sdate']);
+			if (!empty($filters['edate'])) $this->db->where('pm.date <= ', $filters['edate']);
+			$this->db->order_by('pm.id desc');
+			$this->db->limit(300);
 		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		
 		$res_pm = $r_pm->result_array();
+		$temp_sp = $res_pm;
+		foreach ($temp_sp as $key => $line) {
+			$res_pm[$key]['employees_sp'] = unserialize($line['employees_sp']);
+		}
+		$offset = $config_pages['per_page'] * ($page - 1);
+		$config_pages['total_rows'] = $r_pm->num_rows();
+		$res_pm = array_slice($res_pm, $offset, $config_pages['per_page']);
+		$this->pagination->initialize($config_pages);
 		
 		foreach ($res_pm as $key_pm => $m) {
 			$this->db->from('pos_payments as pp')
@@ -167,6 +299,7 @@ class webCashier extends CI_Controller {
 			$lines[$m['id']]['pay'] = $res_pp;
 				
 			if($m['movement'] == 'close') {
+				if (empty($m['closing_file'])) exit ("No closing file");
 				$param = array('closing_file' =>  $m['closing_file']);
 				$param['id_bu'] = $id_bu;
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
@@ -184,6 +317,7 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/report',$data);
 		$this->load->view('webcashier/jq_footer_spe');
+		$this->load->view('webcashier/jq_footer_report.php');
 		$this->load->view('jq_footer');
 	}
 
@@ -244,9 +378,10 @@ class webCashier extends CI_Controller {
 			$param_pos_info['id_bu'] = $id_bu;
 
 			if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
+				$data['closure_data'] = $d;
 				$data['archive_file'] = $d['file'];
 				$data['archive_date'] = $archive_date;
-				
+				$this->cashier->InsertTerminals($id_bu);
 				$this->cashier->posInfo('updateUsers', $param_pos_info);
 			} else {
 				$force = $this->input->get('force');
@@ -254,6 +389,7 @@ class webCashier extends CI_Controller {
 					$data['archive_date'] = $archive_date;
 					$data['force'] = 1;
 					$this->cashier->posInfo('updateUsers', $param_pos_info);
+					$this->cashier->InsertTerminals($id_bu);
 				} else {
 					header("Refresh:20");
 					echo "<h2>Impossible de trouver une cloture.<br />
@@ -274,6 +410,46 @@ class webCashier extends CI_Controller {
 		$this->load->view('webcashier/jq_footer_spe');
 		$this->load->view('jq_footer');
 	}
+	
+	private function planning() 
+	{
+	
+		$this->load->library('hmw');
+		$this->load->library('shiftplanning');
+	
+		$sp_key		= $this->hmw->getParam('sp_key'); 
+		$sp_user	= $this->hmw->getParam('sp_user');
+		$sp_pass	= $this->hmw->getParam('sp_pass');
+	
+		/* set the developer key on class initialization */
+		$shiftplanning = new shiftplanning(array('key' => $sp_key));
+
+		$session = $shiftplanning->getSession( );
+		if( !$session ) {
+			// perform a single API call to authenticate a user
+			$response = $shiftplanning->doLogin(
+			array('username' => $sp_user, 'password' => $sp_pass));
+
+				if( $response['status']['code'] == 1 )
+				{// check to make sure that login was successful
+					$session = $shiftplanning->getSession( );	// return the session data after successful login
+				} else {
+					echo " CANT GET SESSION".$response['status']['text'] . "--" . $response['status']['error'];
+				}
+		}
+
+		if( $session ) {
+			$response = $shiftplanning->setRequest(
+				array(
+					array('module' => 'dashboard.onnow', 'method' => 'GET'),
+					array('module' => 'location.locations', 'method' => 'GET')
+				)
+			);
+			//print_r($shiftplanning->getResponse(1));
+			$r = $shiftplanning->getResponse(0);
+			return $r;		
+		}
+	}
 
 	public function save()
 	{
@@ -292,7 +468,15 @@ class webCashier extends CI_Controller {
 		$id_bu			 		= $this->session->all_userdata()['bu_id'];
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
+		$planning = $this->planning();
 		
+		$employees_sp = array();
+		$buinfo = $this->hmw->getBuInfo($id_bu);
+		$bu_position_id = explode (',',$buinfo->humanity_positions);
+		foreach ($planning['data'] as $line) {
+			if (in_array ($line['schedule_id'], $bu_position_id)) 
+			array_push($employees_sp, $line['employee_name']);
+		}
 		if(empty($userpost)) { 
 			$userid = $user->id; 
 		} else {
@@ -308,7 +492,8 @@ class webCashier extends CI_Controller {
 		->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))
 		->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
 		->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))
-		->set('id_bu', $id_bu);
+		->set('id_bu', $id_bu)
+		->set('employees_sp', serialize($employees_sp));
 		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
@@ -342,9 +527,69 @@ class webCashier extends CI_Controller {
 				$rpp = $this->db->get('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}
 		}
-
+		
+		$pay_values = $pay;
+		foreach ($pay as $key => $value) {
+			$this->db->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
+			$r = $this->db->get('pos_payments_type') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$payment = $r->row_array();
+			$pay_values[$key]['name'] = $payment['name'];
+			if(!isset($value['man']) OR empty($value['man']) ) $pay_values[$key]['man'] = 0;
+			if(!isset($value['pos']) OR empty($value['pos']) ) $pay_values[$key]['pos'] = 0;
+		}
+		
 		if($this->input->post('mov') == 'close') {
-			$this->cashier->InsertTerminals($id_bu);
+			
+			$this->db->select('cashier_alert_amount_close');
+			$this->db->from('bus');
+			$this->db->where('id', $id_bu);
+			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
+			
+			$cashpad_amount = $this->cashier->posInfo('cashfloat', $param_pos_info);
+			$cash_user = $pay_values[1]['man'];
+			$cb_balance = $pay_values[2]['man'] - $pay_values[2]['pos'];
+		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];
+			$chq_balance = $pay_values[4]['man'] - $pay_values[4]['pos'];
+			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
+			if ($diff != 0) {
+				if ($diff < $alert_amount) {
+					if (!$this->input->post('blc')) {
+						$form_values = $this->input->post();
+						$this->session->set_flashdata('form_values', $form_values);
+						$this->session->set_flashdata('pay_values', $pay_values);
+						
+						$this->db->where('id', $pmid);
+						$this->db->delete('pos_movements');
+						
+						$this->db->where('id_movement', $pmid);
+						$this->db->delete('pos_payments');
+						
+						redirect('/webcashier/movement/close', 'location');
+					} else {
+						$this->db->select('users.username, users.email, users.id');
+						$this->db->distinct('users.username');
+						$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+						$this->db->join('users_groups', 'users.id = users_groups.user_id');
+						$this->db->where('users.active', 1);
+						$this->db->where_in('users_groups.group_id', array(1,4));
+						$this->db->where('users_bus.bu_id', $id_bu);
+						$query = $this->db->get("users");
+						
+						$this->db->select('name');
+						$this->db->where('id', $id_bu);
+						$bu_name = $this->db->get('bus')->row_array()['name'];
+						$email['subject'] 	= 'WARNING '.$bu_name.': Cashier close difference';
+						$email['msg'] 		= 'Cashier '.$bu_name.' : difference == ' . $diff;
+						foreach ($query->result() as $row) {
+							$email['to']	= $row->email;	
+							$this->mmail->sendEmail($email);
+						}
+					}
+				}
+				$this->db->set('status', 'error');
+				$this->db->where('id', $pmid);
+				$this->db->update('pos_movements');
+			}
 			$this->closing($this->input->post('archive'), $pmid);
 		}
 
@@ -375,10 +620,13 @@ class webCashier extends CI_Controller {
 			$this->db->update('pos_payments');
 			$af  = $this->db->affected_rows();
 
-			if(empty($af)) {
+			$this->db->select('amount_pos')->where('id_movement', $pmid)->where('amount_pos != 0');
+			$pos_payments = $this->db->get('pos_payments');
+			
+			if(empty($af) && empty($pos_payments)) {
 				$this->db->set('amount_pos', $val['SUM'])->set('id_movement', $pmid)->set('id_payment', $val['IDMETHOD']);
 				$this->db->insert('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			}	
+			}
 		}
 
 		$this->db->set('closing_file', $file)->set('closing_id', $d['seqid'])->where('id', $pmid)->where('id_bu', $id_bu);

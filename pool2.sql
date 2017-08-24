@@ -1,0 +1,1 @@
+ALTER TABLE `pos_movements` ADD `status` ENUM('ok','error','validated') NOT NULL DEFAULT 'ok' ;

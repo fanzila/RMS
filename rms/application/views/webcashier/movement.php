@@ -1,6 +1,29 @@
 	</div>
 	<div data-role="content" data-theme="a">
 		<?if($mov == 'close') { ?><small>Closing date: <?=$archive_date?></small><? } ?>
+		<?$form_values = $this->session->flashdata('form_values'); $pay_values = $this->session->flashdata('pay_values');?>
+		<?if ($pay_values) { ?>
+				<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+					<tr style="background-color: #fbf19e;">
+						<td>Payment type</td>
+						<td>User amount</td>
+						<td>Turnover by Payment type</td>
+					</tr>
+						<? foreach ($pay_values as $key => $value) { ?>
+						<tr>
+							<td><?=$value['name']?></td>
+							<? if ($value['name'] == 'Cashout' || $value['name'] == 'cashout') { ?>
+								<td> - </td>
+								<td> - </td>
+							<? } else { ?>
+							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo ""; }?></td>
+							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "0"; }?></td>
+							<? }?>
+							
+						</tr>
+					<? }?>
+				</table>
+		<? } ?> 
 		<form id="pos" name="pos" method="post" action="/webcashier/save">
 			<table border="0" cellpadding="5" width="100%">
 				<tr style="background-color: #dfdfdf;">
@@ -21,24 +44,24 @@
 							<? if($mode->id == 1) { ?>
 								<table border="0" cellpadding="2" width="100%"><tr>
 									<td>Pièces:</td>
-									<td><input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" /></td>
+									<td><input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" <?if (isset($form_values['cash2'])) echo 'value="'.$form_values['cash2'] .'"';?>/></td>
 									</tr>
 									<tr>
 										<td> </td>
 									</tr>
 									<tr>
 									<td>Billets:</td>
-									<td><small>20€</small><input maxlength="10" type="text" name="20Bill" id="basic" data-clear-btn="false" /></td>
-									<td><small>10€</small><input maxlength="10" type="text" name="10Bill" id="basic" data-clear-btn="false" /></td>
-									<td><small>5€</small><input maxlength="10" type="text" name="5Bill" id="basic" data-clear-btn="false" /></td>
+									<td><small>20€</small><input maxlength="10" type="text" name="20Bill" id="basic" data-clear-btn="false" <?if (isset($form_values['20Bill'])) { echo 'value="'.$form_values['20Bill'] .'"'; }?>/></td>
+									<td><small>10€</small><input maxlength="10" type="text" name="10Bill" id="basic" data-clear-btn="false" <?if (isset($form_values['10Bill'])) { echo 'value="'.$form_values['10Bill'] .'"'; }?>/></td>
+									<td><small>5€</small><input maxlength="10" type="text" name="5Bill" id="basic" data-clear-btn="false" <?if (isset($form_values['5Bill'])) { echo 'value="'.$form_values['5Bill'] .'"'; }?>/></td>
 								</tr></table>
 							<? } elseif($mode->id == 2) { ?>
 									<table border="0" cellpadding="2" width="100%"><tr>
-										<td>CB EMV: <input maxlength="10" type="text" name="cbemv" id="basic" data-clear-btn="true" /></td>
-										<td>CB CLESS: <input maxlength="10" type="text" name="cbcless" id="basic" data-clear-btn="true" /></td>
+										<td>CB EMV: <input maxlength="10" type="text" name="cbemv" id="basic" data-clear-btn="true" <?if (isset($form_values['cbemv'])) { echo 'value="'.$form_values['cbemv'] .'"'; }?>/></td>
+										<td>CB CLESS: <input maxlength="10" type="text" name="cbcless" id="basic" data-clear-btn="true" <?if (isset($form_values['cbcless'])) { echo 'value="'.$form_values['cbcless'] .'"'; }?>/></td>
 									</tr></table>
 							<? } else { ?>
-								<input maxlength="10" type="text" name="man_<?=$mode->id?>" id="basic" data-clear-btn="true" />
+								<input maxlength="10" type="text" name="man_<?=$mode->id?>" id="basic" data-clear-btn="true" <?if (isset($form_values['man_'.$mode->id])) { echo 'value="'.$form_values['man_'.$mode->id] .'"'; }?>/>
 							<? } ?>
 								</td>
 						<td width="40%"><?=nl2br($com)?></td>
@@ -51,14 +74,23 @@
 				<?
 			foreach ($users as $user) {
 				?>
-				<option value="<?=$user->id?>"><?=$user->first_name?> <?=$user->last_name?></option>
+				<option value="<?=$user->id?>" <?if(isset($form_values['user']) && ($form_values['user'] == $user->id)) echo "selected";?>><?=$user->first_name?> <?=$user->last_name?></option>
 				<? 
-			}
+			}	
 			?>
 		</select>
 		<input type="hidden" name="mov" value="<?=$mov?>" />
 		<input type="hidden" name="archive" value="<?=$archive_file?>" />
-		<?if(empty($force)) { ?><input type="button" name="save" onClick="validator();" value="SAVE"><? } ?>
+		<?if(empty($force)) { ?>
+			
+			<? if ($mov == 'close') { ?>
+				<label style="background-color: white;" for="blc">Ignore Error and continue closing</label>
+				<input type="checkbox" name="blc" id="blc">
+				<? foreach ($closure_data['ca'] as $pos) { ?>
+						<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
+				<? } 
+					} ?>
+			<input type="button" onClick="validator();" name="save" value="SAVE"><? } ?>
 	</form>
 </div>
 </div>
