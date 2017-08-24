@@ -444,7 +444,7 @@ class Order extends CI_Controller {
 		$query = $this->db->get("users");
 		$users = $query->result();
 		
-		if ($type != 'reception') $products = $this->sortArray($products);
+		if ($type != 'reception' && ($load == null || $load == 0)) $products = $this->sortArray($products);
 		
 		$data = array(
 			'products'			=> $products,
