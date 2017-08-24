@@ -1,1 +1,0 @@
-ALTER TABLE `bus` ADD `cashier_alert_amount_safe` INT NOT NULL ;
