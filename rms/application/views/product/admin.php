@@ -549,20 +549,20 @@
 												var selects = document.getElementsByTagName("select");
 												
 												for (i = 0; i < inputs.length; i += 1) {
-													inputs[i].disabled = false;
+													inputs[i].hidden = false;
 												}
 												for (i = 0; i < selects.length; i += 1) {
-													selects[i].disabled = false;
+													selects[i].hidden = false;
 												}
 												
 												window.onclick = function(event) {
 	    										if (event.target == modal) {
 	        									modal.style.display = "none";
 														for (i = 0; i < inputs.length; i += 1) {
-															inputs[i].disabled = false;
+															inputs[i].hidden = false;
 														}
 														for (i = 0; i < selects.length; i += 1) {
-															selects[i].disabled = false;
+															selects[i].hidden = false;
 														}
 														document.body.classList.remove("modal-open");
 													}
