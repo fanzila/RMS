@@ -96,10 +96,10 @@
 		<input type="hidden" name="archive" value="<?=$archive_file?>" />
 		<?if(empty($force)) { ?>
 			
-			<? if ($mov == 'close') { ?>
-			<!--	<label style="background-color: white;" for="blc">Ignorer les erreurs et continuer.</label>
+			<? if ($mov == 'close' && $form_values) { ?>
+				<label style="background-color: white;" for="blc">Ignorer les erreurs et continuer.</label>
 				<input type="checkbox" name="blc" id="blc">
-				-->
+				
 				<? foreach ($closure_data['ca'] as $pos) { ?>
 						<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
 				<? } 
@@ -109,7 +109,7 @@
 						 if ($user_group->level >= 3 && $mov == 'close') { ?>
 			<input type="button" onClick="validator();" name="save" value="SAVE">
 			<?  break; } } ?>
-			<!-- END --> 
+			<!-- END  -->
 			
 			<? } ?>
 	</form>

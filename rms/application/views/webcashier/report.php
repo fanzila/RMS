@@ -95,7 +95,7 @@
 						<? if($mov == 'close') { ?>
 							<small>Total Cashpad amount: <?=$total?>€   </small>
 							<? if ($diff != 0) { ?>
-								<p style="color: red;">Diff: <?=$diff?>€ <br /><small style="color: black;">(Cashpad cash - Espece FDC (user) + balance CB + TR  + cheque)</small></p>
+								<p style="color: red;">Diff: <?=$diff?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque - Cashpad Cash)</small></p>
 						<? 	}
 							} ?>
 

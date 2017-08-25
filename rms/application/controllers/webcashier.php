@@ -551,7 +551,7 @@ class webCashier extends CI_Controller {
 			$cb_balance = $pay_values[2]['man'] - $pay_values[2]['pos'];
 		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];
 			$chq_balance = $pay_values[4]['man'] - $pay_values[4]['pos'];
-			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
+			$diff = $cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount;
 			if ($diff != 0) {
 				if ($diff < $alert_amount) {
 					if (!$this->input->post('blc')) {
