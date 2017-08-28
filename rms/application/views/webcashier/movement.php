@@ -96,10 +96,11 @@
 		<input type="hidden" name="archive" value="<?=$archive_file?>" />
 		<?if(empty($force)) { ?>
 			
-			<? if ($mov == 'close' && $form_values) { ?>
-				<label style="background-color: white;" for="blc">Ignorer les erreurs et continuer.</label>
-				<input type="checkbox" name="blc" id="blc">
-				
+			<? if ($mov == 'close') { ?>
+				<? if ($form_values) { ?>
+					<label style="background-color: white;" for="blc">Ignorer les erreurs et continuer.</label>
+					<input type="checkbox" name="blc" id="blc">
+				<? } ?>
 				<? foreach ($closure_data['ca'] as $pos) { ?>
 						<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
 				<? } 

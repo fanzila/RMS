@@ -77,10 +77,10 @@
 								<?if($mov != 'safe') { ?><td>Cashpad amount</td><? } ?>
 								<?if($mov != 'safe') { ?><td>Balance</td><? } ?>
 							</tr>
-							<?php $total = 0; $diff = $m['mov']['pos_cash_amount']; foreach ($m['pay'] as $m2): ?>
+							<?php $total = 0; $diff = -$m['mov']['pos_cash_amount']; foreach ($m['pay'] as $m2): ?>
 								<? 
 								$total += $m2['amount_pos'];
-								if ($m2['id'] == 1) $diff = $diff - $m2['amount_user'];
+								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
 								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
