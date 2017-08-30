@@ -80,7 +80,7 @@
     //NEEDS AUTHENTICATION
     public function createWPAccount()
     {
-      $post = $this->input->post();
+      
       $CI = & get_instance();
       $RMS_user = $CI->ion_auth->user()->row_array();
       $appPass = "";
@@ -90,7 +90,7 @@
       $post = array(
         'username' => $RMS_user['username'],
         'email'    => $RMS_user['email'],
-        'password' => $userPass,
+        'password' => 'ilovehankrestaurant',
         'roles' => $user_role['wp_role'],
         'first_name' => $RMS_user['first_name'],
         'last_name' => $RMS_user['last_name'],
@@ -111,7 +111,17 @@
        }
        curl_close ($ch);
       $response = json_decode($result, true);
-      return ($response);
+      if (isset($response['id'])) {
+        $CI->db->where('id', $RMS_user['id']);
+        $CI->db->update('users', array('WordPress_UID' => $response['id']));
+        return (true);
+      } else {
+        error_log("Could not add WordPress User ID to RMS db User " . $RMS_user['username']);
+        if (isset($response['code']) && isset($response['message'])) {
+          error_log($response['code'] . ": " . $response['message']);
+        }
+        return (false);
+      }
     }
     
   }
