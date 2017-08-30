@@ -262,7 +262,7 @@ class webCashier extends CI_Controller {
 		$lines					= array();
 		
 		$config_pages['base_url'] = base_url() . 'webcashier/report/';
-		$config_pages['per_page'] = 10;
+		$config_pages['per_page'] = 50;
 		$config_pages['use_page_numbers'] = TRUE;
 		
 		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.status, pm.employees_sp')

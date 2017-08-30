@@ -5,8 +5,8 @@
 		<?if ($pay_values) { ?>
 			<p><b>Erreur dans le(s) montant(s) indiqué(s).</b></p>
 			<p>Consultez les erreurs dans le tableau ci-dessous et corrigé éventuellement les montants que vous avez indiqués.<br />
-			Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter sun commentaire.<br />
-			<b>Dans tous les cas, vous devez valider ce formulaire.</b></p>
+			<b>Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter sun commentaire.<br />
+			Dans tous les cas, vous devez valider ce formulaire.</b>Votre manager prendra contact avez vous ultérieurement.</p>
 				<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="100%">
 					<tr style="background-color: #c2ff91; margin-top:10px">
 						<td colspan="4">
@@ -16,7 +16,7 @@
 					<tr style="background-color: #fbf19e;">
 						<td>Type paiement</td>
 						<td>Montant utilisateur</td>
-						<td>Montant par type de paiement</td>
+						<td>Montant caisse</td>
 						<td>Différence</td>
 						
 					</tr>
@@ -28,7 +28,7 @@
 								<td> - </td>
 								<td> - </td>
 							<? } else { ?>
-							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo ""; }?></td>
+							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo "0"; }?></td>
 							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "0"; }?></td>
 							<? }?>
 							<td><?=$value['man']-$value['pos']?></td>
