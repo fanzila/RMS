@@ -5,9 +5,8 @@
 		<?if ($pay_values) { ?>
 			<p><b>Erreur dans le(s) montant(s) indiqué(s).</b></p>
 			<p>Consultez les erreurs dans le tableau ci-dessous et corrigé éventuellement les montants que vous avez indiqués.<br />
-			Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter sun commentaire.<br />
-			<b>Dans tous les cas, vous devez valider ce formulaire.</b><br />
-			Votre manager prendra contact avez vous ultérieurement.</p>
+			<b>Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter sun commentaire.<br />
+			Dans tous les cas, vous devez valider ce formulaire.</b>Votre manager prendra contact avez vous ultérieurement.</p>
 				<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="100%">
 					<tr style="background-color: #c2ff91; margin-top:10px">
 						<td colspan="4">
