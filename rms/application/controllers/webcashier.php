@@ -534,10 +534,13 @@ class webCashier extends CI_Controller {
 			$this->db->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
 			$r = $this->db->get('pos_payments_type') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$payment = $r->row_array();
+			$pay_values[$key]['id'] = $payment['id'];
 			$pay_values[$key]['name'] = $payment['name'];
 			if(!isset($value['man']) OR empty($value['man']) ) $pay_values[$key]['man'] = 0;
 			if(!isset($value['pos']) OR empty($value['pos']) ) $pay_values[$key]['pos'] = 0;
 		}
+		
+		uasort($pay_values, array("webcashier", "cmp"));
 		
 		if($this->input->post('mov') == 'close') {
 			
@@ -601,6 +604,11 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/save', $data);
 		$this->load->view('jq_footer');
+	}
+	
+	private function cmp($a, $b) {
+		 $ret = ($a['id'] > $b['id'] ? true : false);
+		 return ($ret);
 	}
 
 	private function closing($file, $pmid)
