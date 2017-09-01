@@ -5,7 +5,7 @@
 		<?if ($pay_values) { ?>
 			<p><b>Erreur dans le(s) montant(s) indiqué(s).</b></p>
 			<p>Consultez les erreurs dans le tableau ci-dessous et corrigé éventuellement les montants que vous avez indiqués.<br />
-			<b>Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter sun commentaire.<br />
+			<b>Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter un commentaire.<br />
 			Dans tous les cas, vous devez valider ce formulaire.</b>Votre manager prendra contact avez vous ultérieurement.</p>
 				<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="100%">
 					<tr style="background-color: #c2ff91; margin-top:10px">
@@ -105,13 +105,7 @@
 						<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
 				<? } 
 					} ?>
-			<!-- remove user cond after debug START -->
-						<? foreach ($all_user_groups as $user_group) {
-						 if ($user_group->level >= 3 && $mov == 'close') { ?>
-			<input type="button" onClick="validator();" name="save" value="SAVE">
-			<?  break; } } ?>
-			<!-- END  -->
-			
+			<input type="button" onClick="validator();" name="save" value="SAVE">			
 			<? } ?>
 	</form>
 </div>
