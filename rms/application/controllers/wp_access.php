@@ -8,11 +8,15 @@ Class Wp_access extends CI_Controller {
     function __construct() 
     {
       parent::__construct();
+      
+      $this->load->library('hmw');
+      $this->hmw->isLoggedIn();
+      
       $this->db = $this->load->database('default', TRUE);
       $wpdb_config['hostname'] = 'localhost';
       $wpdb_config['username'] = 'root';
       // please set your WP db password here :
-      $wpdb_config['password'] = '';
+      $wpdb_config['password'] = 'incorrect';
       $wpdb_config['database'] = 'wp';
       $wpdb_config['dbdriver'] = 'mysqli';
       $wpdb_config['pconnect'] = TRUE;
@@ -30,24 +34,25 @@ Class Wp_access extends CI_Controller {
     private function hasWpAccount($id = null) 
     {
       if (isset($id) && !empty($id)) {
-        $this->db->select('WordPress_UID');
+        $this->db->select('WordPress_UID', 'username');
         $this->db->where('id', $id);
         $query = $this->db->get('users');
-        $ret = $query->row_array();
-        $this->db->select('username');
-        $this->db->where('id', $id);
-        $username = $this->db->get('users')->row_array();
-        if (isset($ret['WordPress_UID']) && !empty($ret['WordPress_UID'])) {
-          return ($ret['WordPress_UID']);
+        $username = $query->row_array();
+        if (isset($username['WordPress_UID']) && !empty($username['WordPress_UID'])) {
+          return ($username['WordPress_UID']);
         } else {
-          $this->wpdb->where('user_login', $username['username']);
-          $this->wpdb->get('wp_users');
-          $res = $query->row_array();
-          if (isset($res['user_login'])) {
-            error_log("User " . $username['username'] . " has WP account, but UID is NULL in RMS");
-            return ($res['ID']);
+          if (isset($username['username'])) {
+            $this->wpdb->where('user_login', $username['username']);
+            $this->wpdb->get('wp_users');
+            $res = $query->row_array();
+            if (isset($res['user_login'])) {
+              error_log("User " . $username['username'] . " has WP account, but UID is NULL in RMS");
+              return ($res['ID']);  
+            } else {
+              return (false);
+            }
           } else {
-            return (false);
+            echo ('No user account corresponding');
           }
         }
       } else {
@@ -114,6 +119,7 @@ Class Wp_access extends CI_Controller {
               return (true);
             } else {
               error_log('Could not set WP password for user: ' . $user->username);
+              return (false);
             }
           } else {
             die ('Error while setting WP password, please retry creating your account, or contact an admin');
@@ -124,14 +130,28 @@ Class Wp_access extends CI_Controller {
       }
     }
     
+    public function delete($id) {
+      if ($wpUID = $this->hasWpAccount($id)) {
+        if ($this->wp_rms->deleteWPUser($wpUID, 0) === true) {
+          $WpUID = array('WordPress_UID', NULL);
+          $this->db->where('id', $id);
+          $this->db->update('WordPress_UID', $WpUID);
+        }
+      }
+    }
+    
     public function index() 
     {
-      if ($this->hasWpAccount()) {
-        echo "hasWpAccount";
+      if ($WpUID = $this->hasWpAccount()) {
+        $this->wp_rms->loginWPUser($WpUID);
       } else {
         if ($this->wp_rms->createWPAccount())
         {
-          $this->setWPPass();
+          if ($this->setWPPass())
+          {
+            $WpUID = $this->hasWpAccount();
+            $this->wp_rms->loginWPUser($WpUID);
+          }
         }
       }
     }

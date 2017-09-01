@@ -4,6 +4,9 @@
 //the Wordpress REST API.
 //Some function necessitate to install authentication plugins (Application Passwords, for example) and cannot be used as is.
 
+// define your hashed application password here
+define('APP_PASS', 'YWRtaW46YUJYZCBHanR1IFdCdFEgZGJRMiBPRVFyIG9TR2U=');
+
   class Wp_rms 
   {
     
@@ -76,15 +79,45 @@
       return ($res);
     }
     
+    
+    
+    //function to login a user in the wordpress DB
+    //NEEDS AUTHENTICATION
+    public function loginWPUser($uid)
+    {
+        
+      $CI = & get_instance();
+      $appPass = APP_PASS;
+      
+      $post = array( 'id' => $uid );
+      $post = http_build_query($post);
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $this->get('/wpRMS/v2/getlink', true));
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      $headers = array();
+      $headers[] = "Content-Type: application/x-www-form-urlencoded";
+      $headers[] = "Authorization: Basic $appPass";
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+      $result = curl_exec($ch);
+       if (curl_errno($ch)) {
+       echo 'Error:' . curl_error($ch);
+       }
+       curl_close ($ch);
+      $response = json_decode($result, true);
+      if (filter_var($response, FILTER_VALIDATE_URL)) {
+        redirect($response);
+      }
+    }
+  
     //function to create a user in the WordPress DB, using information from RMS database
     //NEEDS AUTHENTICATION
     public function createWPAccount()
     {
-      
       $CI = & get_instance();
       $RMS_user = $CI->ion_auth->user()->row_array();
-      $appPass = "";
-      $appPass = "YWRtaW46ODl5ciBYc1FHIEdMUEQgQ1RVVSBubXQ4IGlrYXc=";
+      $appPass = APP_PASS;
       $user_role = $this->userWPRole();
       
       $post = array(
@@ -124,4 +157,28 @@
       }
     }
     
+    public function deleteWPUser($uid, $reassign)
+    {
+      $CI = & get_instance();
+      $appPass = APP_PASS;
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $this->get('/wp/v2/users/'.$uid.'?force=true&reassign='.$reassign, true));
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+      $headers = array();
+      $headers[] = "Content-Type: application/x-www-form-urlencoded";
+      $headers[] = "Authorization: Basic $appPass";
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+      $result = curl_exec($ch);
+       if (curl_errno($ch)) {
+       echo 'Error:' . curl_error($ch);
+       }
+       curl_close ($ch);
+      $response = json_decode($result, true);
+      if (isset($response['deleted']) && $response['deleted'] == 1) {
+        return (true);
+      } else {
+        return (false);
+      }
+    }
   }

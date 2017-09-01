@@ -9,6 +9,7 @@ class Auth extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 		$this->load->library('hmw');
+		$this->load->library('Wp_RMS');
 
 		$this->load->database();
 
@@ -484,6 +485,15 @@ class Auth extends CI_Controller {
 				// do we have the right userlevel?
 				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
 				{
+					$user = $this->ion_auth->user($id)->row_array();
+					if (isset($user['WordPress_UID'])) {
+						$wpUID = $user['WordPRess_UID'];
+		        if ($this->wp_rms->deleteWPUser($wpUID, 0) === true) {
+		          $WpUID = array('WordPress_UID', NULL);
+		          $this->db->where('id', $id);
+		          $this->db->update('WordPress_UID', $WpUID);
+		        }
+		      }
 					$this->ion_auth->delete_user($id);
 				}
 			}
