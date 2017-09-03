@@ -561,7 +561,7 @@ class Cashier {
 			$res['la'] = $result_la ->fetchArray(SQLITE3_ASSOC);
 
 			$date = new DateTime($res['la']['la']);
-			$date->add(new DateInterval('PT1H'));
+			$date->add(new DateInterval('PT2H'));
 			$time_la = $date->format('Y-m-d H:i:s');
 			
 			$result_ct = $db->query("select count(*) AS ct FROM RECEIPT");

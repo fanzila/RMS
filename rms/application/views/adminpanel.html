@@ -88,31 +88,20 @@
 						</div>
 					<?}?>
 				</div>
+				<? /**
 				<div data-role="collapsible" data-collapsed="false" data-inset="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 					<h3>Nice to Know</h3>
-					<div>
-						<?$date = new DateTime($ca['last']);
-						$date->add(new DateInterval('PT01H'));?>
-						<?if($userlevel >= 4) { ?>
-							Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
-							<br/>
-						<? } ?>
-						CA: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€
-						<br/>
-						Last ticket: <?=$date->format('Y-m-d H:i:s')?>
-						<br/>
-						Num: <?=$ca['num']?>
-					</div>
-					<hr/>
 					<div>
 						You're log as <?=$username?>
 						<br/>
 						Your group is <?=$groupname?>
 					</div>
 				<hr/>
+
 					<ul data-role="listview" data-icon="false">
 						<li><a rel="external" data-ajax="false" href="/info"><i class="fa fa-copyright" aria-hidden="true"></i> Credits &amp; License</a></li>
-					</ul>
+					</ul>	
 				</div>
+				**/ ?>
 			</div>
 			<!-- /panel left -->
