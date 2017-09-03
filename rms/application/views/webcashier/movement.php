@@ -27,6 +27,11 @@
 							<? if ($value['id'] == 9) { ?>
 								<td><?=$value['man']?></td>
 								<td> - </td>
+								
+							<? } elseif ($value['id'] == 12) { ?>
+								<td> - </td>
+								<td><?=$value['pos']?></td>
+								
 							<? } else { ?>
 							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo "0"; }?></td>
 							
@@ -88,7 +93,8 @@
 					</tr>
 				<?php endforeach; ?>
 			</table>
-			Comments: <input type="text" name="comment" id="comment" data-clear-btn="true" />
+			<br /> 
+			Comments: <input type="text" name="comment" id="comment" data-clear-btn="true" value="<? if(isset($form_values['comment'])) echo $form_values['comment']; ?>"/>
 			<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 				<option value="0">User</option>
 				<?

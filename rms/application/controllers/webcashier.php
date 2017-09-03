@@ -583,7 +583,7 @@ class webCashier extends CI_Controller {
 						$this->db->select('name');
 						$this->db->where('id', $id_bu);
 						$bu_name = $this->db->get('bus')->row_array()['name'];
-						$email['subject'] 	= 'WARNING '.$bu_name.': Erreur de caisse';
+						$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
 						$email['msg'] 		= 'BU: '.$bu_name.' : Difference == ' . $diff;
 						foreach ($query->result() as $row) {
 							$email['to']	= $row->email;	
