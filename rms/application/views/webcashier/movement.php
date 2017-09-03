@@ -24,14 +24,21 @@
 						<? foreach ($pay_values as $key => $value) { ?>
 						<tr>
 							<td><?=$value['name']?></td>
-							<? if ($value['name'] == 'Cashout' || $value['name'] == 'cashout') { ?>
-								<td> - </td>
+							<? if ($value['id'] == 9) { ?>
+								<td><?=$value['man']?></td>
 								<td> - </td>
 							<? } else { ?>
 							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo "0"; }?></td>
+							
+							<? if ($value['id'] == 1) $value['pos'] = $form_values['cashpad_amount']; ?>
+	
 							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "0"; }?></td>
-							<? }?>
-							<td><?=$value['man']-$value['pos']?></td>
+							<? } ?>
+							<? if ($value['id'] == 9) { ?>
+								<td> - </td>
+							<? } else { ?>
+								<td><?=$value['man']-$value['pos']?></td>
+							<? } ?>
 						</tr>
 					<? }?>
 				</table>
