@@ -42,19 +42,9 @@ class Admin extends CI_Controller {
 		$user = $this->ion_auth->user()->row();
 		$user_groups = $this->ion_auth->get_users_groups()->result();
 		$bus_list = $this->hmw->getBus(null, $user->id);
-		
-		$this->db->select('val')->from('bank_balance');
-		$bal_res = $this->db->get();
-		$bal = $bal_res->row_array();
-		
-		$this->db->from('turnover')->order_by('date desc')->where('id_bu',$change_bu)->limit(1);
-	 	$bal_ca = $this->db->get();
-		$ca = $bal_ca->row_array();
 
 		$data = array(
 			'user_groups'		=> $user_groups[0],
-			'bank_balance'		=> $bal['val'],
-			'ca'				=> $ca,
 			'bus_list'			=> $bus_list,
 			'bu_name'			=> $this->session->all_userdata()['bu_name'],
 			'bu_id'				=> $this->session->all_userdata()['bu_id'],

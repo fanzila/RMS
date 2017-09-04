@@ -559,6 +559,7 @@ class webCashier extends CI_Controller {
 				if ($diff < $alert_amount) {
 					if (!$this->input->post('blc')) {
 						$form_values = $this->input->post();
+						$form_values['cashpad_amount'] = $cashpad_amount;
 						$this->session->set_flashdata('form_values', $form_values);
 						$this->session->set_flashdata('pay_values', $pay_values);
 						
@@ -582,8 +583,8 @@ class webCashier extends CI_Controller {
 						$this->db->select('name');
 						$this->db->where('id', $id_bu);
 						$bu_name = $this->db->get('bus')->row_array()['name'];
-						$email['subject'] 	= 'WARNING '.$bu_name.': Cashier close difference';
-						$email['msg'] 		= 'Cashier '.$bu_name.' : difference == ' . $diff;
+						$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
+						$email['msg'] 		= 'BU: '.$bu_name.' : Difference == ' . $diff;
 						foreach ($query->result() as $row) {
 							$email['to']	= $row->email;	
 							$this->mmail->sendEmail($email);
