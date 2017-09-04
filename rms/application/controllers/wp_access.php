@@ -13,18 +13,7 @@ Class Wp_access extends CI_Controller {
       $this->hmw->isLoggedIn();
       
       $this->db = $this->load->database('default', TRUE);
-      $wpdb_config['hostname'] = 'localhost';
-      $wpdb_config['username'] = 'root';
-      // please set your WP db password here :
-      $wpdb_config['password'] = 'incorrect';
-      $wpdb_config['database'] = 'wp';
-      $wpdb_config['dbdriver'] = 'mysqli';
-      $wpdb_config['pconnect'] = TRUE;
-      $wpdb_config['cache_on'] = FALSE;
-      $wpdb_config['cachedir'] = '';
-      $wpdb_config['charset'] = 'utf8';
-      $wpdb_config['dbcollat'] = 'utf8_general_ci';
-      $this->wpdb = $this->load->database($wpdb_config, TRUE);
+      $this->wpdb = $this->load->database('wpdb', TRUE);
       $this->load->library('ion_auth');
       $this->load->library('wp_rms');
       $this->load->helper('url');
