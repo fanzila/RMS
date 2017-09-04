@@ -11,10 +11,12 @@
     
     // $resource is a string for the routes, and should begin with a '/'
     // function inspired by blog.wixiweb.fr/wordpress-api-rest
-    // set $apiUrl with your own, you can set $ret_url to true to get the full url for your request, so you only have to set $apiUrl once
+    // set define $config['WpApiUrl'] with you own in application/config/config.php, you can set $ret_url to true to get the full url for your request, so you only have to set $apiUrl once
     
     public function get($resource = null, $ret_url = false) {
-      $apiUrl = 'http://wp.dev/wp-json';
+      
+      $CI = & get_instance();
+      $apiUrl = $CI->config->item('WpApiUrl');
       if (!$ret_url) {  
         $json = file_get_contents($apiUrl.$resource);
         $result = json_decode($json);

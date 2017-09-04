@@ -363,11 +363,23 @@ $config['proxy_ips'] = '';
 |---------------------------------------------------------------------------
 |
 | Config this variable to use with WP_RMS library
-|
+| You should put the user Application Password you created here
 |
 |
 */
 $config['app_pass'] = '';
+
+/*
+|---------------------------------------------------------------------------
+| Wordpress Api Url
+|---------------------------------------------------------------------------
+|
+| Config this variable to use with WP_RMS library
+| You should put your WP Api URL here
+|
+|
+*/
+$config['WpApiUrl'] = '';
 
 
 /* End of file config.php */
