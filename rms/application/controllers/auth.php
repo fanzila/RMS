@@ -487,11 +487,11 @@ class Auth extends CI_Controller {
 				{
 					$user = $this->ion_auth->user($id)->row_array();
 					if (isset($user['WordPress_UID'])) {
-						$wpUID = $user['WordPRess_UID'];
+						$wpUID = $user['WordPress_UID'];
 		        if ($this->wp_rms->deleteWPUser($wpUID, 0) === true) {
-		          $WpUID = array('WordPress_UID', NULL);
+		          $WpUID = array('WordPress_UID' => NULL);
 		          $this->db->where('id', $id);
-		          $this->db->update('WordPress_UID', $WpUID);
+		          $this->db->update('users', $WpUID);
 		        }
 		      }
 					$this->ion_auth->delete_user($id);
