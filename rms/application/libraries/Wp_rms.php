@@ -154,6 +154,7 @@
       } else {
         error_log("Could not add WordPress User ID to RMS db User " . $RMS_user['username']);
         if (isset($response['code']) && isset($response['message'])) {
+          echo ($response['code'] . ": " . $response['message']);
           error_log($response['code'] . ": " . $response['message']);
         }
         return (false);
