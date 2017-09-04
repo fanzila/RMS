@@ -357,6 +357,18 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
+/*
+|---------------------------------------------------------------------------
+| Application password
+|---------------------------------------------------------------------------
+|
+| Config this variable to use with WP_RMS library
+|
+|
+|
+*/
+$config['app_pass'] = '';
+
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

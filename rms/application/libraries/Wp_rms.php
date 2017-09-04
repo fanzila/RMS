@@ -4,8 +4,7 @@
 //the Wordpress REST API.
 //Some function necessitate to install authentication plugins (Application Passwords, for example) and cannot be used as is.
 
-// define your hashed application password here
-define('APP_PASS', 'YWRtaW46YUJYZCBHanR1IFdCdFEgZGJRMiBPRVFyIG9TR2U=');
+// define your hashed application password in application/config/config.php at the $config['app_pass'] index.
 
   class Wp_rms 
   {
@@ -87,7 +86,7 @@ define('APP_PASS', 'YWRtaW46YUJYZCBHanR1IFdCdFEgZGJRMiBPRVFyIG9TR2U=');
     {
         
       $CI = & get_instance();
-      $appPass = APP_PASS;
+      $appPass = $CI->config->item('app_pass');
       
       $post = array( 'id' => $uid );
       $post = http_build_query($post);
@@ -117,7 +116,7 @@ define('APP_PASS', 'YWRtaW46YUJYZCBHanR1IFdCdFEgZGJRMiBPRVFyIG9TR2U=');
     {
       $CI = & get_instance();
       $RMS_user = $CI->ion_auth->user()->row_array();
-      $appPass = APP_PASS;
+      $appPass = $CI->config->item('app_pass');
       $user_role = $this->userWPRole();
       
       $post = array(
@@ -163,7 +162,7 @@ define('APP_PASS', 'YWRtaW46YUJYZCBHanR1IFdCdFEgZGJRMiBPRVFyIG9TR2U=');
     public function deleteWPUser($uid, $reassign = 0)
     {
       $CI = & get_instance();
-      $appPass = APP_PASS;
+      $appPass = $CI->config->item('app_pass');
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $this->get('/wp/v2/users/'.$uid.'?force=true&reassign='.$reassign, true));
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -193,7 +192,7 @@ define('APP_PASS', 'YWRtaW46YUJYZCBHanR1IFdCdFEgZGJRMiBPRVFyIG9TR2U=');
         return (false);
       }
       $CI = & get_instance();
-      $appPass = APP_PASS;
+      $appPass = $CI->config->item('app_pass');
       $post = http_build_query($values);
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $this->get('/wp/v2/users/'.$uid, true));
