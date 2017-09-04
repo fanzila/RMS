@@ -157,7 +157,10 @@ define('APP_PASS', 'YWRtaW46YUJYZCBHanR1IFdCdFEgZGJRMiBPRVFyIG9TR2U=');
       }
     }
     
-    public function deleteWPUser($uid, $reassign)
+    //function to delete WP User by UID, and reassign content by passing WP UID to $reassign (default doesn't reassign content, 
+    //unless you have a user with a UID that has 0 for value)
+    //NEEDS AUTHENTICATION
+    public function deleteWPUser($uid, $reassign = 0)
     {
       $CI = & get_instance();
       $appPass = APP_PASS;
@@ -180,5 +183,38 @@ define('APP_PASS', 'YWRtaW46YUJYZCBHanR1IFdCdFEgZGJRMiBPRVFyIG9TR2U=');
       } else {
         return (false);
       }
+    }
+    
+    //function to edit user ($values is an array with account parameters to be changed, to see what can be used, refer to the WP REST API documentation)
+    //NEEDS AUTHENTICATION
+    public function editWPUser($uid, $values = null)
+    {
+      if (!isset($values) || empty($values)) {
+        return (false);
+      }
+      $CI = & get_instance();
+      $appPass = APP_PASS;
+      $post = http_build_query($values);
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $this->get('/wp/v2/users/'.$uid, true));
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      $headers = array();
+      $headers[] = "Content-Type: application/x-www-form-urlencoded";
+      $headers[] = "Authorization: Basic $appPass";
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+      $result = curl_exec($ch);
+       if (curl_errno($ch)) {
+       echo 'Error:' . curl_error($ch);
+       }
+       curl_close ($ch);
+      $response = json_decode($result, true);
+      print_r($response);
+      // if (isset($response['deleted']) && $response['deleted'] == 1) {
+      //   return (true);
+      // } else {
+      //   return (false);
+      // }
     }
   }

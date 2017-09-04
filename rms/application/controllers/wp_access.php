@@ -131,12 +131,31 @@ Class Wp_access extends CI_Controller {
     }
     
     public function delete($id) {
-      if ($wpUID = $this->hasWpAccount($id)) {
-        if ($this->wp_rms->deleteWPUser($wpUID, 0) === true) {
-          $WpUID = array('WordPress_UID', NULL);
-          $this->db->where('id', $id);
-          $this->db->update('WordPress_UID', $WpUID);
+      $user = $this->ion_auth->user()->row();
+      if ($this->ion_auth->is_admin()) {
+        if ($wpUID = $this->hasWpAccount($id)) {
+          if ($this->wp_rms->deleteWPUser($wpUID, 0) === true) {
+            $WpUID = array('WordPress_UID' => NULL);
+            $this->db->where('id', $id);
+            $this->db->update('users', $WpUID);
+            
+            if ($this->db->affected_rows() > 0) {
+        			$response_array['status'] = 'success';
+        		} else {
+        			$response_array['status'] = 'fail';
+        		}
+        		header('Content-type: application/json');
+        		echo json_encode($response_array);
+          } else {
+            $response_array['status'] = 'fail';
+        		header('Content-type: application/json');
+        		echo json_encode($response_array);
+          }
         }
+      } else {
+        $response_array['status'] = 'forbidden';
+    		header('Content-type: application/json');
+    		echo json_encode($response_array);
       }
     }
     
