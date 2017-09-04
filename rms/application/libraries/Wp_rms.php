@@ -120,7 +120,9 @@
       $RMS_user = $CI->ion_auth->user()->row_array();
       $appPass = $CI->config->item('app_pass');
       $user_role = $this->userWPRole();
-      
+      if (!isset($user_role) || empty($user_role)) {
+        die ('No WordPress user roles have been defined for your RMS user group, please contact an Admin.');
+      }
       $post = array(
         'username' => $RMS_user['username'],
         'email'    => $RMS_user['email'],
