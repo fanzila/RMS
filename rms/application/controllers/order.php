@@ -315,6 +315,20 @@ class Order extends CI_Controller {
 			$results	= $this->order_model->get_list($config["per_page"], $page, $keylogin);
 			$search		= false;
 		}
+		
+		$res2 = $results;
+		
+		foreach ($res2 as $key => $rec) {
+			if (isset($rec['data'])) {
+				$usrl = unserialize($rec['data']);
+				if (is_numeric($usrl['pricetotal'])) {
+					$results[$key]['totalht'] = ($usrl['pricetotal'] / 1000);
+				} else {
+					$results[$key]['totalht'] = 'Unable to get total for this order';
+				}
+			}
+		}
+		
 		$data = array(
 			'suppliers'	=> $this->product->getSuppliers(null, null, $id_bu),
 			'users'		=> $users,
@@ -912,7 +926,7 @@ class Order extends CI_Controller {
 	
 	private function searchOrder($data, $id_bu, $keylogin=null){
 		$ok=0;
-		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
+		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date, r.data, r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
 		$this->db->from('orders as r');
 		$this->db->join('users as u', 'r.user = u.id');
 		$this->db->join('users as ur', 'r.user_reception = ur.id', 'left');
@@ -930,7 +944,7 @@ class Order extends CI_Controller {
 		}
 		if($data['idorder']!=''){
 			$ok=1;
-			$this->db->where('r.idorder',	$data['idorder']);
+			$this->db->like('r.idorder',	$data['idorder']);
 		}
 		if($data['status']!=''){
 			$ok=1;
