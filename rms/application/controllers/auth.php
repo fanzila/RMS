@@ -9,7 +9,7 @@ class Auth extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 		$this->load->library('hmw');
-		$this->load->library('Wp_RMS');
+		$this->load->library('wp_rms');
 
 		$this->load->database();
 
