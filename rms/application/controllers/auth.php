@@ -9,6 +9,7 @@ class Auth extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 		$this->load->library('hmw');
+		$this->load->library('Wp_RMS');
 
 		$this->load->database();
 
@@ -484,6 +485,15 @@ class Auth extends CI_Controller {
 				// do we have the right userlevel?
 				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
 				{
+					$user = $this->ion_auth->user($id)->row_array();
+					if (isset($user['WordPress_UID'])) {
+						$wpUID = $user['WordPress_UID'];
+		        if ($this->wp_rms->deleteWPUser($wpUID, 0) === true) {
+		          $WpUID = array('WordPress_UID' => NULL);
+		          $this->db->where('id', $id);
+		          $this->db->update('users', $WpUID);
+		        }
+		      }
 					$this->ion_auth->delete_user($id);
 				}
 			}
@@ -688,15 +698,26 @@ class Auth extends CI_Controller {
 					'iban'      => $this->input->post('iban'),
 					'door_open'      => $this->input->post('door_open')
 					);
+					
+				$data_WP = array(
+					'first_name' => $this->input->post('first_name'),
+					'last_name'  => $this->input->post('last_name'),
+					'username'   => $this->input->post('username'),
+					'email'		 => $this->input->post('email')
+				);
 
 				//update the password if it was posted
 				if ($this->input->post('password'))
 				{
 					$data['password'] = $this->input->post('password');
+					$data_WP['password'] = $this->input->post('password');
 				}
 				
 
 				$this->ion_auth->update($user->id, $data);
+				if (!$this->wp_rms->editWPUser($user->WordPress_UID, $data_WP)) {
+					error_log("Unable to edit WP data for user " . $user->username);
+				}
 
 				// Only allow updating groups if user is admin
 				if ($this->ion_auth->is_admin())
@@ -704,7 +725,10 @@ class Auth extends CI_Controller {
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
 					$buData    = $this->input->post('bus');
-
+					$user_WP_role = $this->wp_rms->userWPRole($id);
+					if (isset($user_WP_role['wp_role'])) {
+						$WPGroupData = array('roles' => $user_WP_role);
+					}
 					if (isset($groupData) && !empty($groupData)) {
 
 						$this->ion_auth->remove_from_group('', $id);
@@ -712,7 +736,8 @@ class Auth extends CI_Controller {
 						foreach ($groupData as $grp) {
 							$this->ion_auth->add_to_group($grp, $id);
 						}
-
+						
+						$this->wp_rms->editWPUser($user->WordPress_UID, $WPGroupData);
 					}
 
 					if (isset($buData) && !empty($buData)) {
@@ -817,7 +842,9 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'type' => 'password'
 			);
-			
+			if (isset($user->WordPress_UID) && $this->ion_auth->is_admin()) {
+				$this->data['WpUID'] = $user->WordPress_UID;
+			}
 		$this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
 		
 		$data['door_device'] = null;
@@ -1007,15 +1034,25 @@ class Auth extends CI_Controller {
 				$data = array(
 					'email'		 => $this->input->post('email'),
 					'phone'      => $this->input->post('phone')
-					);
+				);
+
+				
+				$data_WP = array(
+					'email'		 => $this->input->post('email')
+				);
+				
 
 				//update the password if it was posted
 				if ($this->input->post('password'))
 				{
 					$data['password'] = $this->input->post('password');
+					$data_WP['password'] = $this->input->post('password');
 				}
 
 				$this->ion_auth->update($user->id, $data);
+				if (!$this->wp_rms->editWPUser($user->WordPress_UID, $data_WP)) {
+					error_log("Unable to edit WP data for user " . $user->username);
+				}
 
 				// Only allow updating groups if user is admin
 				if ($this->ion_auth->is_admin())
@@ -1023,7 +1060,10 @@ class Auth extends CI_Controller {
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
 					$buData    = $this->input->post('bus');
-
+					$user_WP_role = $this->wp_rms->userWPRole($id);
+					if (isset($user_WP_role['wp_role'])) {
+						$WPGroupData = array('roles' => $user_WP_role);
+					}
 					if (isset($groupData) && !empty($groupData)) {
 
 						$this->ion_auth->remove_from_group('', $id);
@@ -1031,7 +1071,7 @@ class Auth extends CI_Controller {
 						foreach ($groupData as $grp) {
 							$this->ion_auth->add_to_group($grp, $id);
 						}
-
+						$this->wp_rms->editWPUser($user->WordPress_UID, $WPGroupData);
 					}
 
 					if (isset($buData) && !empty($buData)) {
@@ -1087,7 +1127,9 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'type' => 'password'
 			);
-
+			if (isset($user->WordPress_UID) && $this->ion_auth->is_admin()) {
+				$this->data['WpUID'] = $user->WordPress_UID;
+			}
 		$headers = $this->hmw->headerVars(1, "/auth/", "My account");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
