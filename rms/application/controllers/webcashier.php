@@ -262,7 +262,7 @@ class webCashier extends CI_Controller {
 		$lines					= array();
 		
 		$config_pages['base_url'] = base_url() . 'webcashier/report/';
-		$config_pages['per_page'] = 10;
+		$config_pages['per_page'] = 50;
 		$config_pages['use_page_numbers'] = TRUE;
 		
 		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.status, pm.employees_sp')
@@ -332,6 +332,7 @@ class webCashier extends CI_Controller {
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$data['username']		= $user->username;
 		$data['user_groups']	= $user_groups[0];
+		$data['all_user_groups'] = $user_groups;
 		$data['mov']			= $mov;
 		$data['archive_file'] 	= null;
 		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
@@ -533,10 +534,13 @@ class webCashier extends CI_Controller {
 			$this->db->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
 			$r = $this->db->get('pos_payments_type') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$payment = $r->row_array();
+			$pay_values[$key]['id'] = $payment['id'];
 			$pay_values[$key]['name'] = $payment['name'];
 			if(!isset($value['man']) OR empty($value['man']) ) $pay_values[$key]['man'] = 0;
 			if(!isset($value['pos']) OR empty($value['pos']) ) $pay_values[$key]['pos'] = 0;
 		}
+		
+		uasort($pay_values, array("webcashier", "cmp"));
 		
 		if($this->input->post('mov') == 'close') {
 			
@@ -550,11 +554,12 @@ class webCashier extends CI_Controller {
 			$cb_balance = $pay_values[2]['man'] - $pay_values[2]['pos'];
 		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];
 			$chq_balance = $pay_values[4]['man'] - $pay_values[4]['pos'];
-			$diff = $cashpad_amount - $cash_user + $cb_balance + $tr_balance + $chq_balance;
+			$diff = $cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount;
 			if ($diff != 0) {
 				if ($diff < $alert_amount) {
 					if (!$this->input->post('blc')) {
 						$form_values = $this->input->post();
+						$form_values['cashpad_amount'] = $cashpad_amount;
 						$this->session->set_flashdata('form_values', $form_values);
 						$this->session->set_flashdata('pay_values', $pay_values);
 						
@@ -578,8 +583,8 @@ class webCashier extends CI_Controller {
 						$this->db->select('name');
 						$this->db->where('id', $id_bu);
 						$bu_name = $this->db->get('bus')->row_array()['name'];
-						$email['subject'] 	= 'WARNING '.$bu_name.': Cashier close difference';
-						$email['msg'] 		= 'Cashier '.$bu_name.' : difference == ' . $diff;
+						$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
+						$email['msg'] 		= 'BU: '.$bu_name.' : Difference == ' . $diff;
 						foreach ($query->result() as $row) {
 							$email['to']	= $row->email;	
 							$this->mmail->sendEmail($email);
@@ -600,6 +605,11 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/save', $data);
 		$this->load->view('jq_footer');
+	}
+	
+	private function cmp($a, $b) {
+		 $ret = ($a['id'] > $b['id'] ? true : false);
+		 return ($ret);
 	}
 
 	private function closing($file, $pmid)

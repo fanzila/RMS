@@ -60,49 +60,68 @@
 			if($m['mov']['movement'] == 'open') $mov = 'open';
 			if($m['mov']['movement'] == 'close') $mov = 'close';
 			?>
-			<div data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "rgba(255, 0, 0, 0.6)";} else if ($m['mov']['status'] == 'validated') { echo "rgba(255, 0, 0, 0.4)";}} else { echo "rgb(220, 220, 220)";}?>">
+			<div data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "#ec7470";} else if ($m['mov']['status'] == 'validated') { echo "#d5ecd2";}} else { echo "rgb(220, 220, 220)";}?>">
 				<h2>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'ymd'); echo $m['mov']['id'] ?> - <?=strtoupper($m['mov']['movement'])?></h2>
 
 				<ul data-role="listview" data-theme="d" data-divider-theme="d">
 					<li>
 						<h3>Date: <?=$m['mov']['date']?></h3>
 						<h3>User: <?=$m['mov']['username']?> </h3>
-						<p>Comments Cashpad: <?=$m['mov']['comment']?></p>
-						<p>Cashpad cash: <?=$m['mov']['pos_cash_amount']?>€ | Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_num']?></p>
+						<p>Cashpad cash (Fond De Caisse): <?=$m['mov']['pos_cash_amount']?>€ | Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_num']?></p>
 			
 						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-							<tr style="background-color: #bfbfbf;">
+							<tr style="background-color: #bfbfbf; border: 1px solid #dedcd7;">
 								<td>Payment type</td>
 								<td>User amount</td>
 								<?if($mov != 'safe') { ?><td>Cashpad amount</td><? } ?>
 								<?if($mov != 'safe') { ?><td>Balance</td><? } ?>
 							</tr>
-							<?php $total = 0; $diff = $m['mov']['pos_cash_amount']; foreach ($m['pay'] as $m2): ?>
+							<?php $total = 0; $diff = -$m['mov']['pos_cash_amount']; foreach ($m['pay'] as $m2): ?>
 								<? 
 								$total += $m2['amount_pos'];
-								if ($m2['id'] == 1) $diff = $diff - $m2['amount_user'];
+								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
 								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
 								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
-								<tr>
+								<tr style="border: 1px solid #dedcd7;">
 									<td><?=$m2['name']?></td>
 									<td><? if($m2['id'] != 12 AND $m2['id'] != 11 AND $m2['id'] != 5) { echo $m2['amount_user']. "€"; } else { echo "-"; } ?></td>
-									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 9) { echo $m2['amount_pos']."€"; } else { echo "-"; } ?></td><? } ?>
-									<?if($mov != 'safe') { ?><td><? if($m2['id'] != 1) { echo $m2['amount_user']-$m2['amount_pos']."€"; } else echo "-"; ?></td><? } ?>
+									<?if($mov != 'safe') { ?>
+										<td>
+										<? $ca_display = "-"; 
+										if($m2['id'] != 9) $ca_display = $m2['amount_pos']."€"; ?>
+										<? if($m2['id'] == 1) $ca_display = "FDC: ".$m['mov']['pos_cash_amount']."€ <br /> <small>(CA : ".$m2['amount_pos']."€)</small>"; ?>										
+										<?=$ca_display?>
+										</td>
+									<? } ?>
+									<?if($mov != 'safe') { ?>
+										<td>
+										<? 
+										if($m2['id'] == 1) $m2['amount_pos'] = $m['mov']['pos_cash_amount'];
+										$bal_display =  $m2['amount_user']-$m2['amount_pos']."€"; 
+										if($m2['id'] == 12) $bal_display = "-"; 
+										?>
+										<?=$bal_display?>
+										</td>
+									<? } ?>
 								</tr>						
 							<?php endforeach; ?>
 						</table>
 						<? if($mov == 'close') { ?>
-							<small>Total Cashpad amount: <?=$total?>€   </small>
+							<small>Total CA: <?=$total?>€</small>
 							<? if ($diff != 0) { ?>
-								<p style="color: red;">Diff: <?=$diff?>€</p>
+								<p style="color: red;">Diff: <?=$diff?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque - Cashpad Cash)</small></p>
 						<? 	}
 							} ?>
 
 	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']; ?> 
-		<? if($check_amount < 0 ) { ?><p style="color : red; font: bold 16px Arial, Verdana, sans-serif;">ALERT! <?=$check_amount?>€ cash missing!</p>
+		<? if($check_amount < 0 ) { ?><p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT! <?=$check_amount?>€ cash missing! </b><br /><small style="color: black;">(Différence entre fond de caisse au moment de la close (cashpad cash) et montant utilisateur entré (espece user amount))</small></p>
 		<? } } ?>
-<div style="width:70%">		
+		<h2>Commentaire close: <?=$m['mov']['comment']?></h2>
+<div>		
+	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+		<tr><td>
+			
 		<h3>Movement comments</h3>
 		<?
 		$id_form = "report".$m['mov']['id'];
@@ -122,6 +141,7 @@
 			<input type="hidden" name="id" value="<?=$m['mov']['id']?>">
 			<input type="hidden" name="diff-<?=$m['mov']['id']?>" id="diff-<?=$m['mov']['id']?>" value="<?=$diff?>">
 		</form>
+	</tr></td></table>
 </div>
 <? if($mov =='close') { ?>
 	<div data-role="collapsible">

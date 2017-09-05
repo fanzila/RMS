@@ -216,6 +216,8 @@ class Skills extends CI_Controller {
 			->join('users as us', 'us.id = id_sponsor', 'left')
 			->join('users as u', 'u.id = id_user', 'left')
 			->join('users_bus as ub', 'ub.user_id = u.id', 'left')
+			->where('u.active', 1)
+			->where('us.active', 1)
 			->order_by('sponsorname asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_records = $res->result();
