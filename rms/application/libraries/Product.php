@@ -58,6 +58,7 @@ class Product {
 		$CI->db->join('products AS p', 'p.id = sh.id_product');
 		$CI->db->where('sh.id_product', $pdt_id);
 		$CI->db->where('p.manage_stock', '1');
+		$CI->db->where('sh.deleted', '0');
 		$CI->db->order_by('date_inv', 'DESC');
 		$CI->db->order_by('id', 'DESC');
 		$ret = $CI->db->get()->result_array();

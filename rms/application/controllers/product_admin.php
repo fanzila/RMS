@@ -240,7 +240,7 @@ class Product_admin extends CI_Controller {
 		$hist = $this->product->getProductHistory($pdt_id);
 		foreach ($hist as $historyline) { 
 				$delta = $historyline['stock_real'] - $historyline['stock_theorical']; 
-		 echo "<tr>
+		 echo "<tr id='row_" . $historyline['id'] . "'>
 		 <td>" . $historyline['id'] . "</td>
 		 <td>" . $historyline['username'] . "</td>
 		 <td>" . $historyline['name'] . "</td>
@@ -248,8 +248,23 @@ class Product_admin extends CI_Controller {
 		 <td>" . $historyline['stock_theorical'] . "</td>
 		 <td>" . $historyline['stock_real'] . "</td>
 		 <td>" . $delta . "</td>
+		 <td><button data-mini='true' onclick='delete_record(" . $historyline['id'] . ", " . $pdt_id . ")'>DELETE</button></td>
 		 </tr>";
 		 }
+	}
+	
+	public function deleteStockRecord($id_record) {
+		$data = array('deleted' => 1);
+		$this->db->where('id', $id_record);
+		$this->db->update('stock_history', $data);
+		
+		if ($this->db->affected_rows() > 0) {
+			$response_array['status'] = 'success';
+		} else {
+			$response_array['status'] = 'fail';
+		}
+		header('Content-type: application/json');
+		echo json_encode($response_array);
 	}
 
 	public function save_mapping()

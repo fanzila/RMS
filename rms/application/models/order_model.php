@@ -11,7 +11,7 @@ class Order_model extends CI_Model {
 		
 		$bu_id =  $this->session->all_userdata()['bu_id'];
 		
-		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
+		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date, r.data, r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
 		$this->db->from('orders as r');
 		$this->db->join('users as u', 'r.user = u.id');
 		$this->db->join('users as ur', 'r.user_reception = ur.id', 'left');
