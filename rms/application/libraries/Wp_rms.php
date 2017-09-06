@@ -214,11 +214,13 @@
        }
        curl_close ($ch);
       $response = json_decode($result, true);
-      print_r($response);
-      // if (isset($response['deleted']) && $response['deleted'] == 1) {
-      //   return (true);
-      // } else {
-      //   return (false);
-      // }
+      if (isset($response['id'])) {
+        return (true);
+      } else {
+        if (isset($response['code']) && isset($response['message'])) {
+          error_log($response['code'] . ": " . $response['message']);
+          die($response['code'] . ": " . $response['message']);
+        }
+        return (false);
     }
   }
