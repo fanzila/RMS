@@ -71,7 +71,7 @@ body {
 	<td class="table_bdc" align="center"><?=$info['pdtinfo'][$key]['unit_name']?></td>
 	<?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><?=$info['pdtinfo'][$key]['price']/1000?>€</td><? } ?>
 	<td class="table_bdc" align="center"><?=$var['qtty']?> </br>
-		<small>(soit <?=$var['qtty']/$info['pdtinfo'][$key]['packaging']?> colis)</small></td>
+		<?if(!$info['supplier']['simple_order_form']) { ?><small>(soit <?=$var['qtty']/$info['pdtinfo'][$key]['packaging']?> colis)</small></td><? } ?>
 	<?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><?=($info['pdtinfo'][$key]['price']*$var['qtty'])/1000?>€</td><? } ?>
 </tr>
 <? } ?>
