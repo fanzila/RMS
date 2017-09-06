@@ -725,9 +725,13 @@ class Auth extends CI_Controller {
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
 					$buData    = $this->input->post('bus');
-					$user_WP_role = $this->wp_rms->userWPRole($id);
-					if (isset($user_WP_role['wp_role'])) {
-						$WPGroupData = array('roles' => $user_WP_role);
+					if (isset($user->WordPress_UID)) {
+						$user_WP_role = $this->wp_rms->userWPRole($id);
+						if (isset($user_WP_role['wp_role']) && !empty($user_WP_role['wp_role'])) {
+							$WPGroupData = array('roles' => $user_WP_role['wp_role']);
+						} else {
+							die ('No WordPress user level set for the highest group chosen');
+						}
 					}
 					if (isset($groupData) && !empty($groupData)) {
 
@@ -737,7 +741,9 @@ class Auth extends CI_Controller {
 							$this->ion_auth->add_to_group($grp, $id);
 						}
 						
-						$this->wp_rms->editWPUser($user->WordPress_UID, $WPGroupData);
+						if (isset($user->WordPress_UID)) {
+							$this->wp_rms->editWPUser($user->WordPress_UID, $WPGroupData);
+						}
 					}
 
 					if (isset($buData) && !empty($buData)) {
@@ -1060,9 +1066,13 @@ class Auth extends CI_Controller {
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
 					$buData    = $this->input->post('bus');
-					$user_WP_role = $this->wp_rms->userWPRole($id);
-					if (isset($user_WP_role['wp_role'])) {
-						$WPGroupData = array('roles' => $user_WP_role);
+					if (isset($user->WordPress_UID)) {
+						$user_WP_role = $this->wp_rms->userWPRole($id);
+						if (isset($user_WP_role['wp_role']) && !empty($user_WP_role['wp_role'])) {
+							$WPGroupData = array('roles' => $user_WP_role['wp_role']);
+						} else {
+							die ('No WordPress user level set for the highest group chosen');
+						}
 					}
 					if (isset($groupData) && !empty($groupData)) {
 
@@ -1071,7 +1081,9 @@ class Auth extends CI_Controller {
 						foreach ($groupData as $grp) {
 							$this->ion_auth->add_to_group($grp, $id);
 						}
-						$this->wp_rms->editWPUser($user->WordPress_UID, $WPGroupData);
+						if (isset($user->WordPress_UID)) {
+							$this->wp_rms->editWPUser($user->WordPress_UID, $WPGroupData);
+						}					
 					}
 
 					if (isset($buData) && !empty($buData)) {

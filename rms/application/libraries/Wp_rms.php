@@ -65,10 +65,10 @@
     }
     
     //function to get the corresponding WordPress Role according to the user's role in RMS, using his RMS id.
-    public function userWPRole() {
+    public function userWPRole($id = null) {
       $CI = & get_instance();
       
-      $user_groups = $CI->ion_auth->get_users_groups()->result_array();
+      $user_groups = $CI->ion_auth->get_users_groups($id)->result_array();
       $higher_level['level'] = -1;
       foreach ($user_groups as $key => $value) {
         if ($value['level'] > $higher_level['level']) {
