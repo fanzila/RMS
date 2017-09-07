@@ -321,7 +321,7 @@ class Order extends CI_Controller {
 		foreach ($res2 as $key => $rec) {
 			if (isset($rec['data'])) {
 				$usrl = unserialize($rec['data']);
-				if (is_numeric($usrl['pricetotal'])) {
+				if (isset($usrl['pricetotal']) && is_numeric($usrl['pricetotal'])) {
 					$results[$key]['totalht'] = ($usrl['pricetotal'] / 1000);
 				} else {
 					$results[$key]['totalht'] = 'Unable to get total for this order';

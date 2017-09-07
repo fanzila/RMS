@@ -56,7 +56,7 @@
 
 				<? if(!empty($results)) { ?>
 					<? foreach ($results as $rec): ?>
-						<li data-role="list-divider"><?=$rec['idorder']?> | <?=$rec['date']?> | <?=$rec['supplier_name']?> |  <?=$rec['username']?> | <?=$rec['totalht']?>€ H.T. | Status commande: <?=$rec['status']?> <?if($rec['status'] == 'sent') { ?> | Confirmation : <?=$rec['confirm']?> <? } ?>
+						<li data-role="list-divider"><?=$rec['idorder']?> | <?=$rec['date']?> | <?=$rec['supplier_name']?> |  <?=$rec['username']?> | <?=$rec['totalht']?> <?if (isset($rec['totalht']) && is_numeric($rec['totalht'])): ?>€ H.T.<?endif;?> | Status commande: <?=$rec['status']?> <?if($rec['status'] == 'sent') { ?> | Confirmation : <?=$rec['confirm']?> <? } ?>
 						<? if($rec['status'] == 'received') { ?>
 						<br />Received on <?=$rec['date_reception']?> by <?=$rec['username_reception']?> | Status reception: 
 						<? $status_reception = ($rec['status_reception']) ? 'OK' : 'NOK'; ?><?=$status_reception?>
