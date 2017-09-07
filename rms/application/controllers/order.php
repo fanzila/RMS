@@ -47,6 +47,14 @@ class Order extends CI_Controller {
 
 		$data['bu_name']  =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
+		
+		if ($this->session->userdata('filters')) {
+			$this->session->unset_userdata('filters');
+		}
+		
+		if ($this->session->userdata('keep_filters')) {
+			$this->session->unset_userdata('keep_filters');
+		}
 
 		$headers = $this->hmw->headerVars(1, "/order/", "Order");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
