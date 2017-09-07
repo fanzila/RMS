@@ -710,7 +710,9 @@ class Auth extends CI_Controller {
 				if ($this->input->post('password'))
 				{
 					$data['password'] = $this->input->post('password');
-					$data_WP['password'] = $this->input->post('password');
+					if (!empty($data['password'])) {
+						$data_WP['password'] = $this->input->post('password');
+					}
 				}
 				
 
