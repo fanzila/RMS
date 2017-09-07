@@ -134,8 +134,8 @@
 			if(!$create) { ?>
 				<div data-role="collapsible-set">
 					<? foreach ($tasks as $line) {	?>
-						<div data-role="collapsible">
-							<h2>ID: <?=$line->tid?> | <?=$line->ttask?></h2>
+						<div data-role="collapsible"<? if($line->tactive == 0) { ?> style="background-color: #bbbdbd;"<? } ?>>
+							<h2>ID: <?=$line->tid?> | <?=$line->ttask?> | <small><?=$line->ttype?></small></h2>
 							<ul data-role="listview" data-theme="d" data-divider-theme="d">
 								<li>
 									<form id="task<?=$line->tid?>" name="task<?=$line->tid?>" method="post" action="/reminder/adminSave">
