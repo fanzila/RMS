@@ -210,6 +210,11 @@ html .ui-alt-icon .ui-radio-off:after {
 .ui-alt-icon .ui-btn.ui-radio-on:after {
 	background-color: #000;
 }
+
+.inline {
+	display: inline-flex;
+}
+
 /* Loader */
 .ui-icon-loading {
 	background: url("images/ajax-loader.gif");

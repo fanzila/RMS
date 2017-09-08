@@ -954,9 +954,23 @@ class Order extends CI_Controller {
 			$ok=1;
 			$this->db->like('r.idorder',	$data['idorder']);
 		}
-		if($data['status']!=''){
+		$status = array();
+		if ($data['sent']!=''){
 			$ok=1;
-			$this->db->where('r.status',	$data['status']);
+			$status[] = 'sent';
+		}
+		if ($data['received']!=''){
+			$ok=1;
+			$status[] = 'received';
+		}
+		if ($data['draft']!=''){
+			$ok=1;
+			$status[] = 'draft';
+		}
+		if (isset($status) && !empty($status)) {
+			$this->db->where_in('r.status', $status);
+		} else {
+			$this->db->where_in('r.status', array('received', 'sent'));
 		}
 		if($data['sdate']!=''){
 			$ok=1;

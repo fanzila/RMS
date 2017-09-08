@@ -26,12 +26,19 @@
 							</select>
 						</td>
 						<td colspan="2">
-							<select id="status" name="status" data-mini="true">
-								<option value="">Select a status</option>
-								<option value="sent"<?if (isset($filters) && isset($filters['status']) && $filters['status'] == 'sent') echo 'selected';?>>Sent</option>
-								<? if(!$keylogin) { ?><option value="draft" <?if (isset($filters) && isset($filters['status']) && $filters['status'] == 'draft') echo 'selected';?>>Draft</option><? } ?>
-								<option value="received" <?if (isset($filters) && isset($filters['status']) && $filters['status'] == 'received') echo 'selected';?>>Received</option>
-							</select>
+								<small>Select a status (only sent and received if all is unchecked)</small><br/>
+								<div class="inline">
+									<input id="sentcbk" type="checkbox" name="sent"<?if (isset($filters) && isset($filters['sent'])) echo 'checked';?>>
+									<label style="background-color: white;" for="sentcbk">Sent</label>
+								</div><br/>
+								<div class="inline">
+										<? if(!$keylogin) { ?><input id="draftcbk" type="checkbox" name="draft" <?if (isset($filters) && isset($filters['draft'])) echo 'checked';?>><? } ?>
+										<label style="background-color: white;" for="draftcbk">Draft</label>
+								</div><br/>
+								<div class="inline">
+									<input id="receivedcbk" type="checkbox" name="received" <?if (isset($filters) && isset($filters['received'])) echo 'checked';?>>
+									<label style="background-color: white;" for="receivedcbk">Received</label>
+								</div>
 						</td>
 					</tr>
 					<tr>

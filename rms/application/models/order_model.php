@@ -19,7 +19,7 @@ class Order_model extends CI_Model {
 		$this->db->join('orders_confirm as c','r.idorder = c.idorder','left');
 		$this->db->where('r.id_bu', $bu_id);
 		$status = array('sent', 'received');
-		if($keylogin) $this->db->where_in('r.status', $status);
+		$this->db->where_in('r.status', $status);
 		$this->db->limit($limit, $start);
 		$this->db->order_by('r.date desc');
 		$query = $this->db->get() or die($this->mysqli->error);
