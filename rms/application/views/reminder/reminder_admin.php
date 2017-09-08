@@ -131,10 +131,14 @@
 			<? }
 			
 			
-			if(!$create) { ?>
-				<div data-role="collapsible-set">
-					<? foreach ($tasks as $line) {	?>
-						<div data-role="collapsible"<? if($line->tactive == 0) { ?> style="background-color: #bbbdbd;"<? } ?>>
+		if(!$create) { ?>
+			<div data-role="collapsible-set">
+				<? foreach ($tasks as $line) {	
+					if($line->ttype == 'service') $bgstyle=" style='background-color: #d2ffd7;';"; 
+					if($line->ttype == 'kitchen') $bgstyle=" style='background-color: #ffe8d1;';"; 
+					if($line->tactive == 0) $bgstyle=" style='background-color: #bbbdbd;';"; 
+					?>
+						<div data-role="collapsible"<?=$bgstyle?>>
 							<h2>ID: <?=$line->tid?> | <?=$line->ttask?> | <small><?=$line->ttype?></small></h2>
 							<ul data-role="listview" data-theme="d" data-divider-theme="d">
 								<li>
