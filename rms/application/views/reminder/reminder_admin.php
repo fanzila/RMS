@@ -57,17 +57,14 @@
 													<input id="nend" type="text" name="nend" value="" data-clear-btn="true" />
 												</td>
 											</tr>
-
+											
 											<tr>
 												<td>
 													<label for="ninterval" id="label">Notification interval (in seconds):</label>
 													<input id="ninterval" type="text" name="ninterval" value="" data-clear-btn="true" />
 												</td>
-												<td>
-													<label for="nlast" id="label">Last notification (datetime format YYYY-MM-DD HH:MN:SS): </label>
-													<input id="nlast" type="text" name="nlast" value="" data-clear-btn="true" />
-												</td>
 											</tr>
+										
 											<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 												<tr><td colspan="2" style="background-color: #fbf19e;">Repeating</td></tr>
 												<tr>
