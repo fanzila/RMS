@@ -134,7 +134,7 @@
 		if(!$create) { ?>
 			<div data-role="collapsible-set">
 				<? foreach ($tasks as $line) {	
-					if($line->ttype == 'service') $bgstyle=" style='background-color: #d2ffd7;';"; 
+					if($line->ttype == 'service') $bgstyle=" style='background-color: #eceeff;';"; 
 					if($line->ttype == 'kitchen') $bgstyle=" style='background-color: #ffe8d1;';"; 
 					if($line->tactive == 0) $bgstyle=" style='background-color: #bbbdbd;';"; 
 					?>
