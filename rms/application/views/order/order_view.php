@@ -26,9 +26,9 @@
 							</select>
 						</td>
 						<td colspan="2">
-								<small>Select a status (only sent and received if all is unchecked)</small><br/>
+								<small>Select a status</small><br/>
 								<div class="inline">
-									<input id="sentcbk" type="checkbox" name="sent"<?if (isset($filters) && isset($filters['sent'])) echo 'checked';?>>
+									<input id="sentcbk" type="checkbox" name="sent"<?if (!isset($filters) || (isset($filters) && isset($filters['sent']))) echo 'checked';?>>
 									<label style="background-color: white;" for="sentcbk">Sent</label>
 								</div><br/>
 								<div class="inline">
@@ -36,7 +36,7 @@
 										<label style="background-color: white;" for="draftcbk">Draft</label>
 								</div><br/>
 								<div class="inline">
-									<input id="receivedcbk" type="checkbox" name="received" <?if (isset($filters) && isset($filters['received'])) echo 'checked';?>>
+									<input id="receivedcbk" type="checkbox" name="received" <?if (!isset($filters) || (isset($filters) && isset($filters['received']))) echo 'checked';?>>
 									<label style="background-color: white;" for="receivedcbk">Received</label>
 								</div>
 						</td>

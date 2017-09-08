@@ -955,22 +955,23 @@ class Order extends CI_Controller {
 			$this->db->like('r.idorder',	$data['idorder']);
 		}
 		$status = array();
-		if ($data['sent']!=''){
+		if (isset($data['sent']) && $data['sent']!=''){
 			$ok=1;
 			$status[] = 'sent';
 		}
-		if ($data['received']!=''){
+		if (isset($data['received']) && $data['received']!=''){
 			$ok=1;
 			$status[] = 'received';
 		}
-		if ($data['draft']!=''){
+		if (isset($data['draft']) && $data['draft']!=''){
 			$ok=1;
 			$status[] = 'draft';
 		}
 		if (isset($status) && !empty($status)) {
 			$this->db->where_in('r.status', $status);
 		} else {
-			$this->db->where_in('r.status', array('received', 'sent'));
+			$status = 'undefined';
+			$this->db->where('r.status', $status);
 		}
 		if($data['sdate']!=''){
 			$ok=1;
@@ -980,10 +981,7 @@ class Order extends CI_Controller {
 			$ok=1;
 			$this->db->where('r.date <=',	$data['edate']);
 		}
-
-		$status = array('sent', 'received');
-		if($keylogin) $this->db->where_in('r.status', $status);
-
+		
 		$this->db->order_by('r.date desc')->limit(50);
 		$rec_res = $this->db->get() or die($this->mysqli->error);
 
