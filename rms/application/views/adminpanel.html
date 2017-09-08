@@ -43,7 +43,9 @@
 						<? if($userlevel >= 1){?>								
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 						<?}?>
+						<?if($userlevel >= 4){?>
 						<li><a rel="external" data-ajax="false" href="/wp_access/" onclick="window.open(this.href);return false;"><i class="fa fa-wordpress"></i> Wordpress</a></li>
+						<? } ?>
 						</ul>
 					</div>
 					<? if($userlevel >= 2){?>
@@ -72,7 +74,6 @@
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/discount/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Discounts</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliers/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers</a></li>
 								<?if($userlevel >= 4){?>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/wpRmsGroups"><i class="fa fa-hdd-o"></i> WP Roles Management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklists/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Checklists management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/products/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products</a></li>
