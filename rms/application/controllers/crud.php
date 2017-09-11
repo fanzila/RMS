@@ -330,8 +330,8 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'name', 'deleted');
-        $crud->required_fields('id', 'name');
+        $crud->columns('id', 'name', 'deleted', 'order');
+        $crud->required_fields('id', 'name', 'order');
         $crud->set_table('skills_category');
         $output = $crud->render();
  
