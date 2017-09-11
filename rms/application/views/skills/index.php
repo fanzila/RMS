@@ -11,8 +11,8 @@
 				<div class="ui-body ui-corner-all">
 					<?
 					$i=0;
-					$rouge_petard	= "#ff7777";
-					$rouge_doux		= "#ff7777";
+					$rouge_petard	= "#ffbfb5";
+					$rouge_doux		= "#ffbfb5";
 					$R_font_color	= "#ff0000";
 					$vert_pomme		= "#77ff77";
 					$vert_leger		= "#77ff77";
