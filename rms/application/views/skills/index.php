@@ -124,7 +124,7 @@
 																			break;
 																		}
 																	}?>
-																	<div data-role="collapsible" <?if($check==1){?> data-collapsed="false"<?}?>>
+																	<div data-role="collapsible" <?if($check==1){?> data-collapsed="true"<?}?>>
 																		<h4 style="background-color: <?=$color?>"><?=$valided?> <?=$sub_category->name?></h4>
 																		<ul data-role="">
 																			<?foreach($skills_items as $skills_item){?>
