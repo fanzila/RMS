@@ -40,14 +40,15 @@ $today = getdate();
 												}
 											}
 										}
-										if($type != 'reception' AND $type != 'viewreception') { ?>
-											
-										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" value="<?=$qtty?>" data-clear-btn="true" />
+										$nbcolis = 'x';
+										if($type == 'viewreception') $nbcolis = $qtty/$line['packaging'];
+										if($type != 'reception') { ?>
+										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" data-inline="true" value="<?=$qtty?>" data-clear-btn="true" <?if ($type == 'viewreception') echo 'readonly';?>/> </td><td><small>unité(s)</small>
 										<? } else { ?><input type="hidden" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" value="<?=$qtty?>" />
 										<small>Order qtty:</small> <?=$qtty?><small> => </small><? } ?>
 									</td>
 
-									<? if($load > 0 && $type == 'viewreception' && (isset($line['stock']) OR (isset($line['qtty']) && $line['qtty'] > 0 ))) { 
+									<? if($load > 0 && $type == 'viewreception') {
 										(!isset($line['stock'])) ? $line['stock']=0 : $line['stock'];
 
 										$added_stock = 0;

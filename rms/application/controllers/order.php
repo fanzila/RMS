@@ -388,10 +388,10 @@ class Order extends CI_Controller {
 					if(!isset($products[$key]['qtty']) AND $order_recev['pdt'][$key]['stock'] > 0) $products[$key]['qtty'] = 0;
 				}
 
-				//Remove product from viewreception if empty
-				if($type == 'viewreception' && (empty($products[$key]['stock']) AND empty($products[$key]['qtty']))) {
-					unset($products[$key]);
-				}
+				//Remove product from viewreception if empty (not used anymore)
+				// if($type == 'viewreception' && (empty($products[$key]['stock']) AND empty($products[$key]['qtty']))) {
+				// 	unset($products[$key]);
+				// }
 
 			}
 			uasort($products, array($this, "sortProductOrder"));
