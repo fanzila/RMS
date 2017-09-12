@@ -289,7 +289,8 @@ class Pm extends CI_Controller {
 	function send($recipients = NULL, $subject = NULL, $body = NULL)
 	{
 		$this->hmw->isLoggedIn();
-
+		
+		$current_user = $this->ion_auth->user()->row_array();
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1)
 		{
@@ -339,7 +340,17 @@ class Pm extends CI_Controller {
 			$recipients = explode(";", $this->input->post(PM_RECIPIENTS, TRUE));
 			$subject = $this->input->post(TF_PM_SUBJECT, TRUE);
 			$body = $this->input->post(TF_PM_BODY, TRUE);
-
+			
+			if (isset($current_user['username'])) {
+				$from = 'FROM : ' . $current_user['username'];
+				$to = 'TO : ';
+				foreach ($recipients as $recipient) {
+					$to .= $recipient . ', ';
+				}
+				$to = rtrim($to, ", ");
+				$body = $from . '<br>' . $to . '<br><br><hr>' . $body;
+			}
+			
 			$recipient_ids = array();
 			// Get user ids of recipients - if not found, get usernames of suggestions
 			foreach ($recipients as $recipient)
