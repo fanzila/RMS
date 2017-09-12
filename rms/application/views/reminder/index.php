@@ -38,8 +38,11 @@
 								
 								?>
 									<?if ($type == false) { ?>
-											<input type="checkbox" name="task_<?=$line->id?>" id="task-<?=$line->id?>" class="custom <?= $line->type ?>" />
-											<label class="<?= $line->type ?>" style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if ($line->interval > 0) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?></label>
+										<div class="<?= $line->type?>">
+											<label style="background-color: <?=$bkg_color?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if ($line->interval > 0) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?>
+												<input type="checkbox" name="task_<?=$line->id?>" id="task-<?=$line->id?>" />
+											</label>
+										</div>
 									<?} else {?>
 									<input type="checkbox" name="task_<?=$line->id?>" id="task-<?=$line->id?>" class="custom" />
 									<label style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if ($line->interval > 0) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?></label>
@@ -67,8 +70,8 @@
 		</div><!-- /page -->
 		<?if ($type == false) { ?>
 		<script>
-			var service = document.getElementsByClassName('service');
-			var kitchen = document.getElementsByClassName('kitchen');
+			var service = document.querySelectorAll(".service");
+			var kitchen = document.querySelectorAll(".kitchen");
 			var ul = document.getElementById('ReminderUL');
 			var h3Service = document.createElement('h3');
 			var h3Kitchen = document.createElement('h3');

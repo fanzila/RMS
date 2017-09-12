@@ -11,8 +11,8 @@
 				<div class="ui-body ui-corner-all">
 					<?
 					$i=0;
-					$rouge_petard	= "#ff7777";
-					$rouge_doux		= "#ff7777";
+					$rouge_petard	= "#ffbfb5";
+					$rouge_doux		= "#ffbfb5";
 					$R_font_color	= "#ff0000";
 					$vert_pomme		= "#77ff77";
 					$vert_leger		= "#77ff77";
@@ -124,7 +124,7 @@
 																			break;
 																		}
 																	}?>
-																	<div data-role="collapsible" <?if($check==1){?> data-collapsed="false"<?}?>>
+																	<div data-role="collapsible" <?if($check==1){?> data-collapsed="true"<?}?>>
 																		<h4 style="background-color: <?=$color?>"><?=$valided?> <?=$sub_category->name?></h4>
 																		<ul data-role="">
 																			<?foreach($skills_items as $skills_item){?>

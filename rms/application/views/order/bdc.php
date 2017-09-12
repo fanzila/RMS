@@ -59,7 +59,7 @@ body {
 <?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><font color="#7c7c7c"><b>Colisage</b></font></td> <? } ?>
 	<td class="table_bdc" align="center"><b>Unité de vente</b></td>
 <?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><b>prix unitaire H.T.</b></td><? } ?>
-	<td class="table_bdc" align="center"><b>Quantité</b></td>
+	<td class="table_bdc" align="center"><b>Quantité unitaire</b></td>
 <?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><b>Sous total H.T.</b></td><? } ?>
 
 </tr>
@@ -70,7 +70,8 @@ body {
 	<?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><font color="#7c7c7c"><?=$info['pdtinfo'][$key]['packaging']?></font></td><? } ?>
 	<td class="table_bdc" align="center"><?=$info['pdtinfo'][$key]['unit_name']?></td>
 	<?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><?=$info['pdtinfo'][$key]['price']/1000?>€</td><? } ?>
-	<td class="table_bdc" align="center"><?=$var['qtty']?></td>
+	<td class="table_bdc" align="center"><?=$var['qtty']?> </br>
+		<?if(!$info['supplier']['simple_order_form']) { ?><small>(soit <?=$var['qtty']/$info['pdtinfo'][$key]['packaging']?> colis)</small></td><? } ?>
 	<?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><?=($info['pdtinfo'][$key]['price']*$var['qtty'])/1000?>€</td><? } ?>
 </tr>
 <? } ?>

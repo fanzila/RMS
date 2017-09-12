@@ -136,7 +136,7 @@ class Reminder extends CI_Controller {
 			$sqle = "";
 		}
 		
-		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], type = '$data[type]'', id_bu = $id_bu $sqle ";
+		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], type = '".$data['type']."', id_bu = $id_bu $sqle ";
 		$this->db->trans_start();
 		if (!$this->db->query($sql_tasks)) {
 			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
@@ -147,7 +147,7 @@ class Reminder extends CI_Controller {
 			$sqln = " , id_task = $data[id]";
 		}
 		 
-		$sql_notif = "$sqlt rmd_notif SET `start` = '".$data['nstart']."', `end` = '".$data['nend']."', `interval` = '".$data['ninterval']."', `last` = '".$data['nlast']."' $sqln";
+		$sql_notif = "$sqlt rmd_notif SET `start` = '".$data['nstart']."', `end` = '".$data['nend']."', `interval` = '".$data['ninterval']."' $sqln";
 		
 		$sql_meta = "$sqlt rmd_meta SET `start` = '".$data['mstart']."', repeat_interval = '".$data['repeat_interval']."' $sqln";		
 

@@ -17,6 +17,8 @@ class Product {
 			$CI->db->where('p.deleted', 0)->like($array);
 		}
 		$CI->db->where('s.id_bu', $id_bu);
+		$CI->db->where('s.deleted', 0);
+		$CI->db->where('s.active', 1);
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
 
@@ -56,6 +58,7 @@ class Product {
 		$CI->db->join('products AS p', 'p.id = sh.id_product');
 		$CI->db->where('sh.id_product', $pdt_id);
 		$CI->db->where('p.manage_stock', '1');
+		$CI->db->where('sh.deleted', '0');
 		$CI->db->order_by('date_inv', 'DESC');
 		$CI->db->order_by('id', 'DESC');
 		$ret = $CI->db->get()->result_array();
@@ -89,6 +92,9 @@ class Product {
 		}
 		if($id) $sqladd = $CI->db->where('p.deleted', 0)->where('p.id', $id);
 		$CI->db->where('s.id_bu', $id_bu);
+		$CI->db->where('s.deleted', 0);
+		$CI->db->where('s.active', 1);
+			
 		$ordersql = "p.`active` DESC";
 		if($order) $ordersql = $order; 
 
@@ -152,6 +158,9 @@ class Product {
 			$CI->db->where('p.deleted', 0)->like($array);
 		}
 		$CI->db->where('s.id_bu', $id_bu);
+		$CI->db->where('s.deleted', 0);
+		$CI->db->where('s.active', 1);
+		
 		$CI->db->where('p.manage_stock', 1);
 		$ordersql = "p.`active` DESC"; 
 		if($order) $ordersql = $order; 
@@ -200,7 +209,7 @@ class Product {
 
 	public function getMapping($id_bu) {
 		$CI =& get_instance();
-		$CI->db->select('*')->from('products_mapping')->where('id_bu', $id_bu);
+		$CI->db->select('*')->from('products_mapping')->join('products', 'products.id = products_mapping.id_product')->where('id_bu', $id_bu)->where('products.active', 1);
 		$req = $CI->db->get() or die($this->mysqli->error);
 		$ret = array();
 		foreach ($req->result_array() as $key) {
@@ -269,6 +278,7 @@ class Product {
 	public function getProductUnit() {
 		$CI =& get_instance();
 		$CI->db->select('*')->from('products_unit');
+		$CI->db->order_by("name", "asc");
 		$req = $CI->db->get() or die($this->mysqli->error);
 		$ret = array();
 		foreach ($req->result_array() as $key) {

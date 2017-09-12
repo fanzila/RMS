@@ -21,7 +21,7 @@ class Rmd extends CI_Controller  {
 		$CI->db->join('rmd_notif as N', 'N.id_task = T.id');
 		$CI->db->join('rmd_meta as M', 'M.id_task = T.id');
 		$CI->db->where('T.id_bu', $id_bu);
-		$CI->db->order_by('T.id asc');
+		$CI->db->order_by('T.active DESC, T.type');
 		$query	= $CI->db->get();
 		return $query->result();
 	}

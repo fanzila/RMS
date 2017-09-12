@@ -245,8 +245,8 @@ $config['encryption_key'] = 'JAIMELATECHNOLOGIEAPARIS75';
 |
 */
 $config['sess_cookie_name']		= 'ci_session';
-$config['sess_expiration']		= 1500;
-$config['sess_expire_on_close']	= true;
+$config['sess_expiration']		= 0;
+$config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= TRUE;
 $config['sess_table_name']		= 'ci_sessions';
@@ -356,6 +356,30 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
+
+/*
+|---------------------------------------------------------------------------
+| Application password
+|---------------------------------------------------------------------------
+|
+| Config this variable to use with WP_RMS library
+| You should put the user Application Password you created here
+|
+|
+*/
+$config['app_pass'] = '';
+
+/*
+|---------------------------------------------------------------------------
+| Wordpress Api Url
+|---------------------------------------------------------------------------
+|
+| Config this variable to use with WP_RMS library
+| You should put your WP Api URL here
+|
+|
+*/
+$config['WpApiUrl'] = '';
 
 
 /* End of file config.php */

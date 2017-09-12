@@ -11,7 +11,7 @@
 								<div class="col-md">
 									<div class="box">
 										<?$test=0;?>
-										<select name="supplier_id"  data-mini="true" onchange="this.form.submit()">
+										<select name="supplier_id" id="filter-supID" data-mini="true" onchange="this.form.submit()">
 											<option value="">SUPPLIER</option>
 											<? foreach ($suppliers as $sup) { ?>
 												<option value="<?=$sup['id']?>" <? if($sup['id'] == $supplier_id) { echo "selected";}?> ><?=$sup['name']?></option>
@@ -22,7 +22,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="freq" data-mini="true" onchange="this.form.submit()">
+										<select name="freq" id="filter-freq" data-mini="true" onchange="this.form.submit()">
 											<option value="">FREQUENCY</option>
 											<option value="high" <? if(isset($freq) && $freq == 'high') { echo "selected";}?> >high</option>
 											<option value="medium" <? if(isset($freq) && $freq == 'medium') { echo "selected";}?> >medium</option>
@@ -33,7 +33,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="pdt_cat_id" data-mini="true" onchange="this.form.submit()">
+										<select name="pdt_cat_id" id="filter-pdt-cat" data-mini="true" onchange="this.form.submit()">
 											<option value="">CATEGORY</option>
 											<? foreach ($products_category as $cat) { ?>
 											<option value="<?=$cat['id']?>" <? if($cat['id'] === $cat_id) { echo "selected";}?> ><?=$cat['name']?></option>	
@@ -43,7 +43,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="pdt_active" data-mini="true" onchange="this.form.submit()">
+										<select name="pdt_active" id="filter-pdt-active" data-mini="true" onchange="this.form.submit()">
 											<option value="">ACTIVE</option>
 											<option value="1" <? if (isset($pdt_active) && $pdt_active === "1") {echo "selected" ;}?>>Yes</option>
 											<option value="0" <? if (isset($pdt_active) && $pdt_active === "0") {echo "selected" ;}?>>No</option>
@@ -52,7 +52,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="stock_manage" data-mini="true" onchange="this.form.submit()">
+										<select name="stock_manage" id="filter-stock-manage" data-mini="true" onchange="this.form.submit()">
 											<option value="">MANAGE STOCK</option>
 											<option value="1" <? if (isset($stock_manage) && $stock_manage === "1") {echo "selected" ;}?>>Yes</option>
 											<option value="0" <? if (isset($stock_manage) && $stock_manage === "0") {echo "selected" ;}?>>No</option>
@@ -61,7 +61,7 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
-										<select name="pdt_unit" data-mini="true" onchange="this.form.submit()">
+										<select name="pdt_unit" id="filter-pdt-unit" data-mini="true" onchange="this.form.submit()">
 											<option value="">PRODUCT UNIT</option>
 											<? foreach ($products_unit as $unit) { ?>
 												<option value="<?=$unit['id']?>" <? if($unit['id'] === $pdt_unit) { echo "selected";}?> ><?=$unit['name']?></option>	
@@ -74,19 +74,19 @@
 								<div class="col-md">
 									<div class="box">
 										<small>Supplier Ref</small>
-										<input type="text" name="supplier_reference" value="<?=$input_ref?>" data-mini="true" data-clear-btn="true" />
+										<input type="text" name="supplier_reference" id="filter-supRef" value="<?=$input_ref?>" data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 								<div class="col-md">
 									<div class="box">
 										<small>Name</small>
-										<input type="text" name="pdt_name" value="<?=$pdt_name?>" data-mini="true" data-clear-btn="true" />
+										<input type="text" name="pdt_name" id="filter-supName" value="<?=$pdt_name?>" data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 								<div class="col-md">
 									<div class="box">
 										<small>Manage Stock Only</small>
-										<input type="checkbox" name="managed_only" <?if ($managed_only == "on") {echo "checked ";}?> data-mini="true" onchange="this.form.submit()" />
+										<input type="checkbox" name="managed_only" id="manage-only" <?if ($managed_only == "on") {echo "checked ";}?> data-mini="true" onchange="this.form.submit()" />
 									</div>
 								</div>
 							</div>
@@ -114,7 +114,7 @@
 					<?
 				foreach ($products as $line) { 
 					?>
-					<li data-role="list-divider"><?=stripslashes($line['name'])?> <small>- <?=$line['id']?></small></li>
+					<li data-role="list-divider"><?=stripslashes(str_replace('"','\'',$line['name']))?> <small>- <?=$line['id']?></small></li>
 					<? 
 					$bkgcolor = '';
 					if($line['active'] == 0 ) $bkgcolor = '#e5e5e5'; 
@@ -126,7 +126,7 @@
 								<div class="col-md">
 									<div class="box">
 										Name
-										<input type="text" name="name" id="name-<?=$line['id']?>" value="<?=stripslashes($line['name'])?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+										<input type="text" name="name" id="name-<?=$line['id']?>" value="<?=stripslashes(str_replace('"','\'',$line['name']))?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 								<div class="col-md">
@@ -139,19 +139,13 @@
 										</select>
 									</div>
 								</div>
-								<div class="col-md">
+								<div class="col-md" style="background-color: #f2f2ef;">
 									<div class="box">
 										<small>Prix H.T. /unité €</small>
 										<input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
-								<div class="col-md">
-									<div class="box">
-										<small>Colisage</small>
-										<input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
-									</div>
-								</div>
-								<div class="col-md">
+								<div class="col-md" style="background-color: #f2f2ef;">
 									<div class="box">
 										<small>Unité de vente</small>
 										<select id="id_unit<?=$line['id']?>" name="id_unit"  data-mini="true" <?if ($managed_only == "on") {echo "disabled";}?>>
@@ -161,6 +155,13 @@
 										</select>
 									</div>
 								</div>
+								<div class="col-md">
+									<div class="box">
+										<small>Colisage</small>
+										<input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+									</div>
+								</div>
+
 								<div class="col-md">
 									<div class="box">
 										<small>Category</small>
@@ -193,14 +194,14 @@
 								<div class="col-md">
 									<div class="box">
 										<small>Ref. supplier</small>
-										<input type="text" name="supplier_reference" value="<?=$line['supplier_reference']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+										<input type="text" name="supplier_reference" value="<?=stripslashes(str_replace('"','\'',$line['supplier_reference']))?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md">
 									<div class="box">
-										<small>Stock qtty</small><br/>
+										<small>Stock qtty /pièce</small><br/>
 										<input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=round($line['stock_qtty'],2)?>"  data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
@@ -246,7 +247,7 @@
 								<div class="col-md">
 									<div class="box">
 										<small>Comment</small><br/>
-										<input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true" data-clear-btn="true" <?if ($managed_only == "on") {echo "disabled";}?>/>
+										<input type="text" name="comment" value="<?=stripslashes(str_replace('"','\'',$line['comment']))?>"  data-mini="true" data-clear-btn="true" <?if ($managed_only == "on") {echo "disabled";}?>/>
 									</div>
 								</div>
 								<div class="col-md">
@@ -280,6 +281,7 @@
 												<th>Theorical Stock</th>
 												<th>Actual Stock</th>
 												<th>Delta</th>
+												<th>Delete record</th>
 											</tr>
 										</thead>
 										<tbody id="tbl-body_<?=$line['id']?>">
@@ -294,19 +296,29 @@
 				</ul>
 				<?
 				if (isset($total_pages)) { ?>
-					<span>Pages : </span>
+					<div style="margin-top: 50px;">
+					<span style="margin: 5px; margin-right: 30px;">Pages : </span>
 				<?	$i = 1;
+					if ($current_page > 1) { ?>
+						<a style="margin-right: 30px; cursor: pointer;" onclick="resendFilters(<?=($current_page - 1)?>)">&larr; Previous</a>
+					<?
+					}
 					while ($i <= $total_pages) { 
 						if ($i == $current_page) { ?>
-								<span><?=$i?></span>
+						<span style="margin: 5px;"><?=$i?></span>
 					<? 	} else {?>
-							<a href="/product_admin/index/filter/<?=$i?>"><?=$i?></a>
+							<a onclick="resendFilters(<?=$i?>)" style="cursor: pointer; margin: 5px;"><?=$i?></a>
 				<?
 					}
 					$i += 1;	
 					}
+					if ($current_page < $total_pages) { ?>
+						<a style="margin-left: 30px; cursor: pointer;" onclick="resendFilters(<?=($current_page + 1)?>)">Next &rarr;</a>
+					<?
 					}
-				} 
+				} ?>
+			</div>
+			<?	} 
 				?>
 				
 							<? if($command == 'create') { ?>
@@ -488,6 +500,26 @@
 									<!-- Modal script -->
 											<script>
 											
+											function delete_record(id_record, id_product) {
+												if (confirm('Do you really want to delete this record ?') === true) {
+													var site_url = '<?= site_url('product_admin/deleteStockRecord/') ?>' + '/' + id_record;
+													var row = document.getElementById('row_' + id_record);
+													$.ajax({
+														url: site_url,
+														type: 'get',
+														data: null,
+														success: function(data) {
+															if (data.status == 'success') {
+																row.parentNode.removeChild(row);
+															} else {
+																alert('Unable to delete record');
+																return (false);
+															}	
+														}
+													});
+												}
+											}
+											
 											function open_modal(id_product) {
 												
 												var site_url = '<?= site_url('product_admin/tableProductHistory/') ?>' + '/' + id_product;
@@ -501,10 +533,10 @@
 												modal.style.display = "block";
 												document.body.classList.add("modal-open");
 												for (i = 0; i < inputs.length; i += 1) {
-													inputs[i].disabled = true;
+													inputs[i].hidden = true;
 												}
 												for (i = 0; i < selects.length; i += 1) {
-													selects[i].disabled = true;
+													selects[i].hidden = true;
 												}
 											}
 											
@@ -517,26 +549,32 @@
 												var selects = document.getElementsByTagName("select");
 												
 												for (i = 0; i < inputs.length; i += 1) {
-													inputs[i].disabled = false;
+													inputs[i].hidden = false;
 												}
 												for (i = 0; i < selects.length; i += 1) {
-													selects[i].disabled = false;
+													selects[i].hidden = false;
 												}
 												
 												window.onclick = function(event) {
 	    										if (event.target == modal) {
 	        									modal.style.display = "none";
 														for (i = 0; i < inputs.length; i += 1) {
-															inputs[i].disabled = false;
+															inputs[i].hidden = false;
 														}
 														for (i = 0; i < selects.length; i += 1) {
-															selects[i].disabled = false;
+															selects[i].hidden = false;
 														}
 														document.body.classList.remove("modal-open");
 													}
 												}
 												modal.style.display = "none";
 												document.body.classList.remove("modal-open");
+											}
+											
+											function resendFilters(page) {
+												var form = document.getElementById("filter");
+												form.action = "/product_admin/index/filter/" + page;
+												form.submit();
 											}
 																						
 											</script>

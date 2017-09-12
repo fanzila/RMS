@@ -123,7 +123,9 @@ class Pm_user_model extends CI_Model {
 		$this->db->where('users.id', $id);
 		$query = $this->db->get("users");
 		$user = $query->result();
-		return $user[0]->username;
+		if (isset($user) && !empty($user)) {
+			return $user[0]->username;
+		}
 	}
 
 	/**

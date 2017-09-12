@@ -330,8 +330,8 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'name', 'deleted');
-        $crud->required_fields('id', 'name');
+        $crud->columns('id', 'name', 'deleted', 'order');
+        $crud->required_fields('id', 'name', 'order');
         $crud->set_table('skills_category');
         $output = $crud->render();
  
@@ -343,7 +343,7 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'name', 'deleted');
+        $crud->columns('id', 'name', 'order', 'deleted');
         $crud->required_fields('id', 'name');
         $crud->set_table('skills_sub_category');
         $output = $crud->render();
@@ -365,6 +365,20 @@ class Crud extends CI_Controller {
  
         $this->_example_output($output); 
     }
+		
+		public function wpRmsGroups()
+		{
+			$crud = new grocery_CRUD();
+			$crud->set_theme('bootstrap');
+			
+				$crud->columns('wp_role', 'id_group_rms');
+				$crud->required_fields('wp_role', 'id_group_rms');
+				$crud->set_relation('id_group_rms', 'groups', 'name');
+				$crud->display_as('id_group_rms', 'RMS Group');
+				$crud->set_table('wp_roles');
+				$output = $crud->render();
+				$this->_example_output($output);
+		}
 
 	public function _example_output($output = null)
 	{
