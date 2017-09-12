@@ -44,13 +44,8 @@ $today = getdate();
 										}
 										$nbcolis = 'x';
 										if($type == 'viewreception') $nbcolis = $qtty/$line['packaging'];
-<<<<<<< HEAD
-										if($type != 'reception') { ?>
-										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" data-inline="true" value="<?=$qtty?>" data-clear-btn="true" <?if ($type == 'viewreception') echo 'readonly';?>/> </td><td><small>unité(s)</small>
-=======
 										if($type != 'reception' AND $type != 'viewreception') { ?>
 										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" data-inline="true" value="<?=$qtty?>" data-clear-btn="true" /> </td><td><small>unité(s)</small>
->>>>>>> master
 										<? } else { ?><input type="hidden" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" value="<?=$qtty?>" />
 										<small>Unité(s) commandée(s) :</small> <?=$qtty?><? } ?> </td><td><input type="hidden" name="pkg[<?=$line['id']?>]" id="pkg-<?=$line['id']?>" value="<?=$line['packaging']?>" /><small style="color: #7e7e7e;">(soit <span id="respkg-<?=$line['id']?>"><?=$nbcolis?></span> colis)</small>
 									</td>
