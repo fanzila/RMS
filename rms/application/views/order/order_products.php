@@ -50,7 +50,7 @@ $today = getdate();
 										<small>Unité(s) commandée(s) :</small> <?=$qtty?><? } ?> </td><td><input type="hidden" name="pkg[<?=$line['id']?>]" id="pkg-<?=$line['id']?>" value="<?=$line['packaging']?>" /><small style="color: #7e7e7e;">(soit <span id="respkg-<?=$line['id']?>"><?=$nbcolis?></span> colis)</small>
 									</td>
 
-									<? if($load > 0 && $type == 'viewreception' && (isset($line['stock']) OR (isset($line['qtty']) && $line['qtty'] > 0 ))) { 
+									<? if($load > 0 && $type == 'viewreception') {
 										(!isset($line['stock'])) ? $line['stock']=0 : $line['stock'];
 
 										$added_stock = 0;
