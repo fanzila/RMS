@@ -26,16 +26,21 @@
 							</select>
 						</td>
 						<td colspan="2">
+							<select name="status_reception" id="status_reception" data-mini="true">
+								<option value="">Select a status for reception</option>
+								<option value="NOK" <?if (isset($filters) && isset($filters['status_reception']) && $filters['status_reception'] == "NOK") echo 'selected';?>>NOK</option>
+								<option value="OK" <?if (isset($filters) && isset($filters['status_reception']) && $filters['status_reception'] == "OK") echo 'selected';?>>OK</option>
+							</select>
+						</td>
+						</tr>
+						<tr>
+						<td colspan="2">
 								<small>Select a status</small><br/>
 								<div class="inline">
 									<input id="sentcbk" type="checkbox" name="sent"<?if (!isset($filters) || (isset($filters) && isset($filters['sent']))) echo 'checked';?>>
 									<label style="background-color: white;" for="sentcbk">Sent</label>
-								</div><br/>
-								<div class="inline">
 										<? if(!$keylogin) { ?><input id="draftcbk" type="checkbox" name="draft" <?if (isset($filters) && isset($filters['draft'])) echo 'checked';?>><? } ?>
 										<label style="background-color: white;" for="draftcbk">Draft</label>
-								</div><br/>
-								<div class="inline">
 									<input id="receivedcbk" type="checkbox" name="received" <?if (!isset($filters) || (isset($filters) && isset($filters['received']))) echo 'checked';?>>
 									<label style="background-color: white;" for="receivedcbk">Received</label>
 								</div>

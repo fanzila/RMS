@@ -981,7 +981,17 @@ class Order extends CI_Controller {
 			$ok=1;
 			$this->db->where('r.date <=',	$data['edate']);
 		}
-		
+		if($data['status_reception']!='') {
+			$ok=1;
+			if ($data['status_reception'] == 'NOK') {
+				$status_r = 0;
+			} else if ($data['status_reception'] == 'OK') {
+				$status_r = 1;
+			} else {
+				$status_r = '';
+			}
+			$this->db->where('r.status_reception', $status_r);
+		}
 		$this->db->order_by('r.date desc')->limit(50);
 		$rec_res = $this->db->get() or die($this->mysqli->error);
 
