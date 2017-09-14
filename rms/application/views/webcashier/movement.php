@@ -7,6 +7,8 @@
 			<p>Consultez les erreurs dans le tableau ci-dessous et corrigé éventuellement les montants que vous avez indiqués.<br />
 			<b>Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter un commentaire.<br />
 			Dans tous les cas, vous devez valider ce formulaire.</b>Votre manager prendra contact avez vous ultérieurement.</p>
+			<?if($form_values['cashpad_amount'] > 300) { ?><h3 style="color: red;">Tabarnak! Le montant du fond de caisse semble élevé (<?=$form_values['cashpad_amount']?>€)?! T'as tu bien réalisé le prélèvement dans la caisse ?</h3><? } ?>
+				
 				<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="100%">
 					<tr style="background-color: #c2ff91; margin-top:10px">
 						<td colspan="4">
