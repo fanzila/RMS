@@ -1,0 +1,15 @@
+#cgu {
+}
+
+#login-btn {
+  width: 100%;
+}
+
+@media (max-width: 760px) {
+  #cgu {
+    font-size: 82%;
+  }
+  #contactlbl {
+    font-size: 82%;
+  }
+}
