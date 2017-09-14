@@ -4,7 +4,7 @@
 			echo form_open("order/viewOrders", $attributes);?>
 				<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 					<tr>
-						<td colspan="6" style="background-color: #e9e9e9;">Search by <font size="2">(all optionnal but fill at least one)</font> :
+						<td colspan="10" style="background-color: #e9e9e9;">Search by <font size="2">(all optionnal but fill at least one)</font> :
 						</td>
 					</tr>
 					<tr>
@@ -32,10 +32,8 @@
 								<option value="OK" <?if (isset($filters) && isset($filters['status_reception']) && $filters['status_reception'] == "OK") echo 'selected';?>>OK</option>
 							</select>
 						</td>
-						</tr>
-						<tr>
 						<td colspan="2">
-								<small>Select a status</small><br/>
+								<small>Select a status : </small><br/>
 								<div class="inline">
 									<input id="sentcbk" type="checkbox" name="sent"<?if (!isset($filters) || (isset($filters) && isset($filters['sent']))) echo 'checked';?>>
 									<label style="background-color: white;" for="sentcbk">Sent</label>
@@ -55,7 +53,7 @@
 						<td><input type="text" data-role="date" id="edate" name="edate" value="<?if (isset($filters) && isset($filters['edate'])) echo $filters['edate'];?>" data-clear-btn="true" /></td>
 					</tr>
 					<tr>
-						<td colspan="6">
+						<td colspan="10">
 							<input type="hidden" id="filters" name="keep_filters" value="true">
 							<?$attributes = array('id' => "sub", 'name' => "submit");
 							echo form_submit($attributes, 'Search');?>
