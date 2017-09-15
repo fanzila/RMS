@@ -69,19 +69,7 @@
 						<td width="10%"><b><?=$mode->name?></b></td>
 						<td width="40%">
 							<? if($mode->id == 1) { ?>
-								<table border="0" cellpadding="2" width="100%"><tr>
-									<td>Pièces:</td>
-									<td><input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" <?if (isset($form_values['cash2'])) echo 'value="'.$form_values['cash2'] .'"';?>/></td>
-									</tr>
-									<tr>
-										<td> </td>
-									</tr>
-									<tr>
-									<td>Billets:</td>
-									<td><small>20€</small><input maxlength="10" type="text" name="20Bill" id="basic" data-clear-btn="false" <?if (isset($form_values['20Bill'])) { echo 'value="'.$form_values['20Bill'] .'"'; }?>/></td>
-									<td><small>10€</small><input maxlength="10" type="text" name="10Bill" id="basic" data-clear-btn="false" <?if (isset($form_values['10Bill'])) { echo 'value="'.$form_values['10Bill'] .'"'; }?>/></td>
-									<td><small>5€</small><input maxlength="10" type="text" name="5Bill" id="basic" data-clear-btn="false" <?if (isset($form_values['5Bill'])) { echo 'value="'.$form_values['5Bill'] .'"'; }?>/></td>
-								</tr></table>
+								<input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" <?if (isset($form_values['cash2'])) echo 'value="'.$form_values['cash2'] .'"';?>/>
 							<? } elseif($mode->id == 2) { ?>
 									<table border="0" cellpadding="2" width="100%"><tr>
 										<td>CB EMV: <input maxlength="10" type="text" name="cbemv" id="basic" data-clear-btn="true" <?if (isset($form_values['cbemv'])) { echo 'value="'.$form_values['cbemv'] .'"'; }?>/></td>
