@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Crud extends CI_Controller {
-
+	
 	public function __construct()
 	{
 		parent::__construct();
@@ -21,6 +21,9 @@ class Crud extends CI_Controller {
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
 			redirect('/news/');
 		}
+		
+		$id_bu = $this->session->all_userdata()['bu_id'];		
+	
 	}
 
     public function cklChecklistTasks()
@@ -260,11 +263,15 @@ class Crud extends CI_Controller {
 
     public function skills()
     {
+		$id_bu = $this->session->all_userdata()['bu_id'];
+		
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'name', 'order', 'deleted');
-        $crud->required_fields('id', 'name');
+        $crud->columns('id', 'name', 'order', 'deleted', 'id_bu');
+        $crud->set_relation('id_bu', 'bus', 'name');
+        $crud->required_fields('id', 'name', 'id_bu');
+		$crud->where('id_bu',$id_bu);
         $crud->set_table('skills');
         $output = $crud->render();
  
@@ -273,34 +280,43 @@ class Crud extends CI_Controller {
 
     public function skills_item()
     {
+		$id_bu = $this->session->all_userdata()['bu_id'];
+	
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
         $crud->columns('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat', 'order', 'deleted');
         $crud->required_fields('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat');
-    		$crud->set_relation('id_skills', 'skills', 'name');
-		    $crud->set_relation('id_cat', 'skills_category', 'name');
-        $crud->set_relation('id_sub_cat', 'skills_sub_category', 'name');
-				$crud->display_as('id_skills', 'Skills');
-				$crud->display_as('id_cat', 'Category');
-				$crud->display_as('id_sub_cat', 'Sub-category');
-				$crud->set_table('skills_item');
+
+    	$crud->set_relation('id_skills', 'skills', 'name',array('id_bu' => $id_bu));
+	    $crud->set_relation('id_cat', 'skills_category', 'name',array('id_bu' => $id_bu));
+        $crud->set_relation('id_sub_cat', 'skills_sub_category', 'name',array('id_bu' => $id_bu));
+
+		$crud->display_as('id_skills', 'Skills');
+		$crud->display_as('id_cat', 'Category');
+		$crud->display_as('id_sub_cat', 'Sub-category');
+		$crud->where('jb56cddaf.id_bu',$id_bu);
+		$crud->set_table('skills_item');
         $output = $crud->render();
- 
+
         $this->_example_output($output); 
     }
 
     public function skills_record()
     {
+		$id_bu = $this->session->all_userdata()['bu_id'];
+		
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'id_sponsor', 'id_user');
+        $crud->columns('id', 'id_sponsor', 'id_user', 'id_bu');
         $crud->set_relation('id_sponsor', 'users', 'username');
-				$crud->set_relation('id_user', 'users', 'username');
-				$crud->display_as('id_sponsor', 'Sponsor');
-				$crud->display_as('id_user', 'Users');
-				$crud->required_fields('id', 'sponsor', 'id_user');
+        $crud->set_relation('id_bu', 'bus', 'name');
+		$crud->set_relation('id_user', 'users', 'username');
+		$crud->display_as('id_sponsor', 'Sponsor');
+		$crud->display_as('id_user', 'Users');
+		$crud->required_fields('id', 'sponsor', 'id_user');
+		$crud->where('id_bu',$id_bu);
         $crud->set_table('skills_record');
         $output = $crud->render();
  
@@ -315,11 +331,12 @@ class Crud extends CI_Controller {
         //$crud->columns('id', 'id_skills_record', 'date');
         $crud->required_fields('id', 'id_skills_record', 'date');
         $crud->set_table('skills_log');
-				$crud->set_relation('id_user', 'users', 'username');
-				$crud->display_as('id_user', 'username');
-				$crud->unset_add();
-    		$crud->unset_edit();
-    		$crud->unset_delete();
+		$crud->set_relation('id_user', 'users', 'username');
+		$crud->set_relation('bu_id', 'bus', 'name');
+		$crud->display_as('id_user', 'username');
+		$crud->unset_add();
+  		$crud->unset_edit();
+  		$crud->unset_delete();
         $output = $crud->render();
  
         $this->_example_output($output); 
@@ -327,11 +344,15 @@ class Crud extends CI_Controller {
 
     public function skills_category()
     {
+		$id_bu = $this->session->all_userdata()['bu_id'];
+	
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-        $crud->columns('id', 'name', 'deleted', 'order');
-        $crud->required_fields('id', 'name', 'order');
+        $crud->columns('id', 'name', 'deleted', 'order', 'id_bu');
+        $crud->required_fields('id', 'name', 'order', 'id_bu');
+		$crud->set_relation('id_bu', 'bus', 'name',array('id' => $id_bu));
+		$crud->where('id_bu',$id_bu);
         $crud->set_table('skills_category');
         $output = $crud->render();
  
@@ -340,11 +361,14 @@ class Crud extends CI_Controller {
 
     public function skills_sub_category()
     {
+		$id_bu = $this->session->all_userdata()['bu_id'];
+		
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
-        $crud->columns('id', 'name', 'order', 'deleted');
-        $crud->required_fields('id', 'name');
+        $crud->columns('id', 'name', 'order', 'deleted', 'id_bu');
+        $crud->required_fields('id', 'name', 'id_bu');
+		$crud->set_relation('id_bu', 'bus', 'name',array('id' => $id_bu));
+		$crud->where('id_bu',$id_bu);
         $crud->set_table('skills_sub_category');
         $output = $crud->render();
  
@@ -358,8 +382,8 @@ class Crud extends CI_Controller {
 		
         $crud->columns('id', 'id_skills_record', 'id_skills_item', 'checked', 'comment');
         $crud->required_fields('id', 'id_skills_record', 'id_skills_item', 'checked');
-				$crud->set_relation('id_skills_item', 'skills_item', 'name');
-				$crud->display_as('id_skills_item', 'Skills item');
+		$crud->set_relation('id_skills_item', 'skills_item', 'name');
+		$crud->display_as('id_skills_item', 'Skills item');
         $crud->set_table('skills_record_item');
         $output = $crud->render();
  

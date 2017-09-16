@@ -32,6 +32,7 @@ class Skills extends CI_Controller {
 	public function index($id = null, $back=null)
 	{
 		$this->hmw->isLoggedIn();
+		$id_bu = $this->session->all_userdata()['bu_id'];
 
 		//TODO change somewhere here for disabling disabled users in sponsor
 		$current_user = $this->ion_auth->get_user_id();
@@ -40,7 +41,8 @@ class Skills extends CI_Controller {
 				->from('skills_record as sr')
 				->join('users as us', 'us.id = id_sponsor', 'left')
 				->join('users as u', 'u.id = id_user', 'left')
-				->where('id_user', $id);
+				->where('id_user', $id)
+				->where('id_bu', $id_bu);
 				
 			$res 	= $this->db->get() or die($this->mysqli->error);
 			$skills_records = $res->result();
@@ -80,12 +82,14 @@ class Skills extends CI_Controller {
 			->join('skills_category as cat', 'I.id_cat = cat.id')
 			->join('skills_sub_category as subcat', 'I.id_sub_cat = subcat.id')
 			->where('R.id_user', $id)
+			->where('R.id_bu', $id_bu)
 			->order_by('skills.order asc, cat.order asc, subcat.order asc, I.order asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_items = $res->result();
 
 		$this->db->select('id, name')
 			->from('skills')
+			->where('id_bu', $id_bu)
 			->order_by('order asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills = $res->result();
@@ -176,6 +180,7 @@ class Skills extends CI_Controller {
 			->join('skills', 'skills.id = I.id_skills')
 			->join('skills_category as cat', 'I.id_cat = cat.id')
 			->join('skills_sub_category as subcat', 'I.id_sub_cat = subcat.id')
+			->where('R.id_bu', $id_bu)
 			->order_by('I.name desc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_staff = $res->result();
@@ -189,12 +194,14 @@ class Skills extends CI_Controller {
 			->join('skills', 'skills.id = I.id_skills')
 			->join('skills_category as cat', 'I.id_cat = cat.id')
 			->join('skills_sub_category as subcat', 'I.id_sub_cat = subcat.id')
+			->where('R.id_bu', $id_bu)
 			->order_by('I.name desc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_items = $res->result();
 
 		$this->db->select('id, name')
 			->from('skills')
+			->where('id_bu', $id_bu)
 			->order_by('name desc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills = $res->result();
@@ -218,6 +225,7 @@ class Skills extends CI_Controller {
 			->join('users_bus as ub', 'ub.user_id = u.id', 'left')
 			->where('u.active', 1)
 			->where('us.active', 1)
+			->where('id_bu', $id_bu)
 			->order_by('sponsorname asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_records = $res->result();
@@ -231,7 +239,7 @@ class Skills extends CI_Controller {
 			->join('users as u', 'u.id = id_user', 'left')
 			->join('skills_record as sr', 'sr.id = sl.id_skills_record')
 			->join('users as uv', 'uv.id = sr.id_user', 'left')
-			->where('sl.bu_id', $id_bu)
+			->where('sl.id_bu', $id_bu)
 			->order_by('date desc')
 			->limit(100);
 		$res 	= $this->db->get() or die($this->mysqli->error);
@@ -385,9 +393,12 @@ class Skills extends CI_Controller {
 	public function save()//here we create a sponsoring link
 	{		
 		$data = $this->input->post();
+		$id_bu 		= $this->session->all_userdata()['bu_id'];
+		
 		$this->db->select('sr.id_user, us.username as sponsor_name')
 			->from('skills_record as sr')
-			->join('users as us', 'us.id = id_sponsor', 'left');
+			->join('users as us', 'us.id = id_sponsor', 'left')
+			->where('id_bu', $id_bu);
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$users = $res->result();
 
@@ -406,7 +417,8 @@ class Skills extends CI_Controller {
 				->from('skills_item as I')
 				->join('skills', 'skills.id = I.id_skills')
 				->join('skills_category as cat', 'I.id_cat = cat.id')
-				->join('skills_sub_category as subcat', 'I.id_sub_cat = subcat.id', 'left')//
+				->join('skills_sub_category as subcat', 'I.id_sub_cat = subcat.id', 'left')
+				->where('skills.id_bu', $id_bu)
 				->where('skills.deleted', 0)
 				->where('I.deleted', 0)
 				->where('cat.deleted', 0)
@@ -417,6 +429,7 @@ class Skills extends CI_Controller {
 
 			$this->db->set('id_sponsor', $data['sponsor']);
 			$this->db->set('id_user', $data['user']);
+			$this->db->set('id_bu', $id_bu);
 			$date = date('Y-m-d H:i:s');
 			$this->db->set('date', $date);
 
@@ -429,7 +442,7 @@ class Skills extends CI_Controller {
 				$this->db->set('id_user', $current_user);
 				$this->db->set('date', $date);
 				$this->db->set('id_skills_record', $data['id']);
-				$this->db->set('bu_id', $this->session->all_userdata()['bu_id']);
+				$this->db->set('id_bu', $this->session->all_userdata()['bu_id']);
 				if(!$this->db->insert('skills_log')) {
 					$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
 				}
@@ -509,7 +522,7 @@ class Skills extends CI_Controller {
 							$this->db->set('date', $date);
 							$this->db->set('type', 'edit');
 							$this->db->set('id_skills_record', $data['id_record']);
-							$this->db->set('bu_id', $this->session->all_userdata()['bu_id']);
+							$this->db->set('id_bu', $this->session->all_userdata()['bu_id']);
 							if(!$this->db->insert('skills_log')) {
 								$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
 							}
