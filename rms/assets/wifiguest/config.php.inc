@@ -5,21 +5,30 @@ ini_set('display_errors', '1');
 require_once ('params.php');
 
 //Establish connection the MySQL server using credentials as above.  If connection cannot be made, the process will fail and produce a troubleshooting error
-$mysql = mysql_connect($mysql_host,$mysql_user,$mysql_pass);
-	if(!$mysql) {
-		die("Database connection failed: " . mysql_error());
-	}
+try {
+    $mysql = new PDO('mysql:host=' . $mysql_host . ';dbname=' . $mysql_db, $mysql_user, $mysql_pass);
+} catch (PDOException $e) {
+    print "Erreur !: " . $e->getMessage() . "<br/>";
+    die();
+}
+
+//$mysql = mysql_connect($mysql_host,$mysql_user,$mysql_pass);
+	// if(!$mysql) {
+	// 	die("Database connection failed: " . mysql_error());
+	// }
 
 //Select the appropriate database for credential storage
-$db_select = mysql_select_db($mysql_db,$mysql);
-	if(!$db_select) {
-		die("Database selection failed: " . mysql_error());
-	}
+// $db_select = mysql_select_db($mysql_db,$mysql);
+// 	if(!$db_select) {
+// 		die("Database selection failed: " . mysql_error());
+// 	}
 
 //The function to authenticate a user using Username, Password, and Email as authentication paramaters then return a true boolena to the auth.php page
 function auth_user($username,$password,$email,$table) {
 	$query = "SELECT * FROM `$table` WHERE `username` = \"$username\"";
-	$execute = mysql_query($query);
+	$q = $mysql->prepare($query);
+	$mysql->execute($q);
+	
 	while($row = mysql_fetch_assoc($execute)) {
 		if(($row['password'] == $password) && ($row['email'] == $email)) {
 			echo "true";

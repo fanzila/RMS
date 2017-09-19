@@ -28,9 +28,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `creds` (
   `id` int(6) NOT NULL AUTO_INCREMENT,
-  `username` varchar(15) NOT NULL,
-  `password` int(16) NOT NULL,
   `email` varchar(30) NOT NULL,
+  `clientIP` varchar(50) NOT NULL,
+  `clientUserAgent` TEXT NOT NULL,
+  `clientMac` varchar(50) NOT NULL,
+  `optout` BOOLEAN NOT NULL DEFAULT TRUE,
+  `date` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
@@ -39,8 +42,17 @@ CREATE TABLE IF NOT EXISTS `creds` (
 -- Dumping data for table `creds`
 --
 
-INSERT INTO `creds` (`id`, `username`, `password`, `email`) VALUES
-(1, 'test', 123456, 'somefake@address.com');
+INSERT INTO `creds` (`id`, `email`, `optout`) VALUES
+(1, 'somefake@address.com', 'true');
+
+--
+-- Table structure for table `params`
+--
+
+CREATE TABLE IF NOT EXISTS `params` (
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `wifi_pass` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

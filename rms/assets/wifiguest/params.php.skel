@@ -10,4 +10,7 @@
   //It's important to note that if this server is offsite, you need to have port 8443 forwarded through to it
   $unifiUser = ""; //Change to your UniFi Username
   $unifiPass = ""; //Change to your UniFi Password
+  $unifiControllerVersion = ""; 
+  $unifiSite = "";
+  $duration = 120; //Defines how long a guest stays connected to the wifi, in minutes;
 ?>

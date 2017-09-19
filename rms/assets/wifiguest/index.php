@@ -28,8 +28,8 @@ $url = 'http://www.ubnt.com';
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 	<!-- Bootstrap -->
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/wifiguest.css" rel="stylesheet">
+	<link href="/assets/wifiguest/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+	<link href="/assets/wifiguest/css/wifiguest.css" type="text/css" rel="stylesheet">
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -44,47 +44,46 @@ $url = 'http://www.ubnt.com';
 	<div class="container">
 		<br />
 		<div class="jumbotron">
-				<img src="logo.png" class="logo">
+				<img src="/assets/wifiguest/logo.png" class="logo">
 			<br /><br />
+			<? if (isset($_GET['pass_error'])) :?>
+				<p style="color: red;"> Field "password" is incorrect, please retry. </p>
+			<?endif;?>
 			<form action="auth.php" method="POST">
 				<div class="form-group">
 					<label for="InputEmail1">Adresse Email / Email Address</label>
-					<input type="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp" placeholder="Insérer email / Enter email" required>
+					<input type="email" class="form-control" id="InputEmail1" name="InputEmail1" aria-describedby="emailHelp" placeholder="Insérer email / Enter email" required>
 					<small id="emailHelp" class="form-text text-muted">Article R.10-13 du CPCE, Décret de 24 mars 2006.</small><br />
 					<small id="emailHelp" class="form-text text-muted">Nous ne partagerons jamais votre adresse email. /</small>
 					<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
 				</div>
 				<div class="form-group">
-					<input id="InputOptOut" aria-describedby="InputOptOut" type="checkbox" aria-label="..."> 
+					<input id="InputOptOut" name="InputOptOut" aria-describedby="InputOptOut" type="checkbox" aria-label="..."> 
 					<label id="contactlbl" for="InputOptOut">Je ne veux pas être contacté par Hank / I do not want to be contacted by Hank</label>
 				</div>
 				<div class="form-group">
 					<label for="InputPass">Mot de Passe / Password</label>
-					<input type="text" class="form-control" id="InputPass" aria-describedby="passHelp" placeholder="Enter Password" required>
+					<input type="password" class="form-control" id="InputPass" name="InputPass" aria-describedby="passHelp" placeholder="Enter Password" required>
 					<small id="passHelp" class="form-text text-muted">Le mot de passe est écrit sur votre ticket de caisse / The password is written on your recipt</small>
 				</div>				
 				<div class="row">
 			    <div class="col-lg-10">
 						<div class="form-group">
-							<input id="InputCond" aria-describedby="InputCond" type="checkbox" aria-label="..."> 
-							<label id="cgu" for="InputCond">J'accepte les <a href="wificgu.html">Conditions Générales d'utilisation</a> / I agree with the <a href="wificgu.html">Terms Of Use</a></label>
+							<input id="InputCond" name="InputCond" aria-describedby="InputCond" type="checkbox" aria-label="..." required> 
+							<label id="cgu" for="InputCond">J'accepte les <a href="/assets/wifiguest/wificgu.html">Conditions Générales d'utilisation</a> / I agree with the <a href="wificgu.html">Terms Of Use</a></label>
 					  </div> 
 					</div> 
 			  </div> 
 			
-				<button id="login-btn" type="submit" class="btn btn-lg btn-success">Log In</button>
+				<button id="login-btn" name="submitLogIn" type="submit" class="btn btn-lg btn-success">Log In</button>
 			</form>
 
 		</div>
-		<div class="alert alert-success" role="alert">
-			<strong>Well done!</strong> You successfully read this important alert message.
-		</div>
-
 	</div>
 
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="js/bootstrap.min.js"></script>
+	<script src="/assets/wifiguest/js/bootstrap.min.js"></script>
 </body>
 </html>
