@@ -1,6 +1,8 @@
 	</div>
-	<div data-role="content" data-theme="a">
-		<?if($mov == 'close') { ?><small>Closing date: <?=$archive_date?></small><? } ?>
+	<?$bgColor = ($mov == 'open' ? '#B8FF9F' : '#FFFF99');?>
+	<div style="background-color: <?=$bgColor?>;" data-role="content" data-theme="a">
+		<?if($mov == 'close') { ?><h2>CLOSE</h2><small>Closing date: <?=$archive_date?></small><? } ?>
+		<?if($mov == 'open') { ?><h2>OPEN</h2><? } ?>
 		<?$form_values = $this->session->flashdata('form_values'); $pay_values = $this->session->flashdata('pay_values');?>
 		<?if ($pay_values) { ?>
 			<p><b>Erreur dans le(s) montant(s) indiqué(s).</b></p>
