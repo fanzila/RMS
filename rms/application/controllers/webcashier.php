@@ -254,7 +254,7 @@ class webCashier extends CI_Controller {
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= 'Cashier reports';
 		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount', $id_bu);
-		$data['safe_tr'] 		= $this->cashier->calc('safe_current_tr_num', $id_bu);
+		$data['safe_tr'] 		= $this->cashier->calc('safe_current_tr_amount', $id_bu);
 		$data['monthly_to']		= $this->cashier->calc('current_monthly_turnover', $id_bu);
 		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat', $param_pos_info);		
 		$data['live_movements'] = $this->cashier->posInfo('getLiveMovements', $param_pos_info);
@@ -265,7 +265,7 @@ class webCashier extends CI_Controller {
 		$config_pages['per_page'] = 50;
 		$config_pages['use_page_numbers'] = TRUE;
 		
-		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_num, pm.closing_file, pm.comment_report, pm.status, pm.employees_sp')
+		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.prelevement_amount, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_amount, pm.closing_file, pm.comment_report, pm.status, pm.employees_sp')
 			->from('pos_movements as pm')
 			->join('users as u', 'u.id = pm.id_user', 'left')
 			->where('pm.id_bu', $id_bu);
@@ -490,15 +490,17 @@ class webCashier extends CI_Controller {
 		$this->db->set('movement', $postmov)
 		->set('id_user', $userid)
 		->set('comment', addslashes($this->input->post('comment')))
+		->set('prelevement_amount', $this->input->post('prelevement'))
 		->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))
 		->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
-		->set('safe_tr_num', $this->cashier->calc('safe_current_tr_num', $id_bu))
+		->set('safe_tr_amount', $this->cashier->calc('safe_current_tr_num', $id_bu))
 		->set('id_bu', $id_bu)
 		->set('employees_sp', serialize($employees_sp));
 		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
-		$payid = date('y-m-d/').$pmid;
+		//$payid = date('y-m-d/').$pmid;
+		$payid = $pmid;
 		$pay = array();
 
 		if($this->input->post('mov')) { 

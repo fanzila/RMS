@@ -1,8 +1,8 @@
 	</div>
-	<?$bgColor = ($mov == 'open' ? '#B8FF9F' : '#FFFF99');?>
+	<?$bgColor = ($mov == 'open' ? '#e2fceb' : '#fffde8');?>
 	<div style="background-color: <?=$bgColor?>;" data-role="content" data-theme="a">
 		<?if($mov == 'close') { ?><h2>CLOSE</h2><small>Closing date: <?=$archive_date?></small><? } ?>
-		<?if($mov == 'open') { ?><h2>OPEN</h2><? } ?>
+		<?if($mov == 'open') { ?><h3>OPEN</h3><? } ?>
 		<?$form_values = $this->session->flashdata('form_values'); $pay_values = $this->session->flashdata('pay_values');?>
 		<?if ($pay_values) { ?>
 			<p><b>Erreur dans le(s) montant(s) indiqué(s).</b></p>
@@ -84,6 +84,13 @@
 						<td width="40%"><?=nl2br($com)?></td>
 					</tr>
 				<?php endforeach; ?>
+				<tr style="background-color: #fdfff9;">
+					<td><b>Prélèvement billets</b></td>
+					<td>
+<input type="text" name="prelevement" id="prelevement" data-clear-btn="true" value="<? if(isset($form_values['prelevement'])) echo $form_values['prelevement']; ?>"/>
+					</td>
+					<td>Indiquer le montant total des billets prélevés du fond de caisse.</td>
+				</tr>
 			</table>
 			<br /> 
 			Comments: <input type="text" name="comment" id="comment" data-clear-btn="true" value="<? if(isset($form_values['comment'])) echo $form_values['comment']; ?>"/>
