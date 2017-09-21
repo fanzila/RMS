@@ -469,14 +469,17 @@ class webCashier extends CI_Controller {
 		$id_bu			 		= $this->session->all_userdata()['bu_id'];
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
+		$param_pos_info['archive'] = $this->input->post('archive');
 		$planning = $this->planning();
 		
 		$employees_sp = array();
 		$buinfo = $this->hmw->getBuInfo($id_bu);
 		$bu_position_id = explode (',',$buinfo->humanity_positions);
-		foreach ($planning['data'] as $line) {
-			if (in_array ($line['schedule_id'], $bu_position_id)) 
-			array_push($employees_sp, $line['employee_name']);
+		if (isset($planning['data'])) {
+			foreach ($planning['data'] as $line) {
+				if (in_array ($line['schedule_id'], $bu_position_id)) 
+				array_push($employees_sp, $line['employee_name']);
+			}
 		}
 		if(empty($userpost)) { 
 			$userid = $user->id; 
@@ -491,7 +494,7 @@ class webCashier extends CI_Controller {
 		->set('id_user', $userid)
 		->set('comment', addslashes($this->input->post('comment')))
 		->set('prelevement_amount', $this->input->post('prelevement'))
-		->set('pos_cash_amount', $this->cashier->posInfo('cashfloat', $param_pos_info))
+		->set('pos_cash_amount', $this->cashier->posInfo('cashfloatArchive', $param_pos_info))
 		->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
 		->set('safe_tr_amount', $this->cashier->calc('safe_current_tr_num', $id_bu))
 		->set('id_bu', $id_bu)
@@ -548,7 +551,7 @@ class webCashier extends CI_Controller {
 			$this->db->where('id', $id_bu);
 			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
 			
-			$cashpad_amount = $this->cashier->posInfo('cashfloat', $param_pos_info);
+			$cashpad_amount = $this->cashier->posInfo('cashfloatArchive', $param_pos_info);
 			$cash_user = $pay_values[1]['man'];
 			$cb_balance = $pay_values[2]['man'] - $pay_values[2]['pos'];
 		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];

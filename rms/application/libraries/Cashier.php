@@ -500,9 +500,16 @@ class Cashier {
 		$CI = & get_instance(); 
 		$CI->load->database();
 		$CI->load->library("hmw");
-		$file	= $this->getPosDbDir($param['id_bu']);
-		if(!file_exists($file)) exit('No POS db found for BU ID '.$param['id_bu'].' in '.$file);
-		$db	= new SQLite3($file);
+		if (isset($param['archive']) && !empty($param['archive'])) {
+			$dir	= $this->getPosArchivesDir($param['id_bu']);
+			$path = $dir . "/" . $param['archive'];
+			$db	= new SQLite3($path);
+		} else {
+			$file	= $this->getPosDbDir($param['id_bu']);
+			if(!file_exists($file)) exit('No POS db found for BU ID '.$param['id_bu'].' in '.$file);
+			$db	= new SQLite3($file);
+		}
+		
 		
 		$getBuInfo = $CI->hmw->getBuInfo($param['id_bu']);
 		$id_pos_cash_method = $getBuInfo->id_pos_cash_method;
@@ -513,6 +520,7 @@ class Cashier {
 			$this->syncSalesDb($param['id_bu']);
 			$this->syncArchivesDb($param['id_bu']);
 			break;
+			
 			case 'cashfloat':
 			$sql1 	= "SELECT SUM(AMOUNT) AS FLOAT1 FROM CASHMOVEMENT WHERE METHOD='".$id_pos_cash_method."'";
 			$result1 = $db->query($sql1);
@@ -521,6 +529,21 @@ class Cashier {
 			$result2 = $db->query($sql2);
 			$res2	= $result2->fetchArray(SQLITE3_ASSOC);
 			$sql3 	= "SELECT SUM(CASH_FLOAT_IN) AS FLOAT3 FROM CASHFLOAT";
+			$result3 = $db->query($sql3);
+			$res3	= $result3->fetchArray(SQLITE3_ASSOC);
+			$ret 	= ($res1['FLOAT1']+$res2['FLOAT2']+$res3['FLOAT3'])/1000;
+			return $ret;
+			break;
+			
+			case 'cashfloatArchive':
+			
+			$sql1 	= "SELECT SUM(AMOUNT) AS FLOAT1 FROM ARCHIVEDCASHMOVEMENT WHERE METHOD='".$id_pos_cash_method."'";
+			$result1 = $db->query($sql1);
+			$res1	= $result1->fetchArray(SQLITE3_ASSOC);
+			$sql2 	= "SELECT SUM(AMOUNT) AS FLOAT2 FROM ARCHIVEDRECEIPTPAYMENT WHERE METHOD='".$id_pos_cash_method."'";
+			$result2 = $db->query($sql2);
+			$res2	= $result2->fetchArray(SQLITE3_ASSOC);
+			$sql3 	= "SELECT SUM(CASH_FLOAT_IN) AS FLOAT3 FROM ARCHIVEDCASHFLOAT";
 			$result3 = $db->query($sql3);
 			$res3	= $result3->fetchArray(SQLITE3_ASSOC);
 			$ret 	= ($res1['FLOAT1']+$res2['FLOAT2']+$res3['FLOAT3'])/1000;
