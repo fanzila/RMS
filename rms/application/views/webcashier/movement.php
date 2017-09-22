@@ -22,7 +22,12 @@
 						<td>Différence</td>
 						
 					</tr>
-
+					<tr>
+						<td>Prélèvement billets</td>
+						<td><?=$form_values['prelevement']?></td>
+						<td> - </td>
+						<td> - </td>
+					</tr>
 						<? foreach ($pay_values as $key => $value) { ?>
 						<tr>
 							<td><?=$value['name']?></td>
@@ -48,12 +53,6 @@
 							<? } ?>
 						</tr>
 					<? }?>
-						<tr>
-							<td>Prélèvement billets</td>
-							<td><?=$form_values['prelevement']?></td>
-							<td> - </td>
-							<td> - </td>
-						</tr>
 				</table>
 				FDC Utilisateur + Prélèvement - FDC Cashpad = <?=number_format(($form_values['prelevement'] - $form_values['cashpad_amount'] + $pay_values[1]['man']), 2);?>
 		<? } ?> 
@@ -64,6 +63,13 @@
 					<td>Payment type</td>
 					<td>Amount</td>
 					<td>Info</td>
+				</tr>
+				<tr style="background-color: #fdfff9;">
+					<td><b>Prélèvement billets</b></td>
+					<td>
+				<input type="text" name="prelevement" id="prelevement" data-clear-btn="true" value="<? if(isset($form_values['prelevement'])) echo $form_values['prelevement']; ?>"/>
+					</td>
+					<td>Indiquer le montant total des billets prélevés du fond de caisse.</td>
 				</tr>
 				<?php foreach ($payment as $mode): ?>
 					<?php 
@@ -88,13 +94,6 @@
 						<td width="40%"><?=nl2br($com)?></td>
 					</tr>
 				<?php endforeach; ?>
-				<tr style="background-color: #fdfff9;">
-					<td><b>Prélèvement billets</b></td>
-					<td>
-<input type="text" name="prelevement" id="prelevement" data-clear-btn="true" value="<? if(isset($form_values['prelevement'])) echo $form_values['prelevement']; ?>"/>
-					</td>
-					<td>Indiquer le montant total des billets prélevés du fond de caisse.</td>
-				</tr>
 			</table>
 			<br /> 
 			Comments: <input type="text" name="comment" id="comment" data-clear-btn="true" value="<? if(isset($form_values['comment'])) echo $form_values['comment']; ?>"/>
