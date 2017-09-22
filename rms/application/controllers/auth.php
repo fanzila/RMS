@@ -1014,6 +1014,31 @@ class Auth extends CI_Controller {
 		$this->_render_page('auth/edit_group', $this->data);
 		$this->load->view('jq_footer');
 	}
+	
+	
+	// cd /var/www/hank/rms/rms && index.php auth cliRmdShift
+	public function cliRmdShift() {
+		
+		if($this->input->is_cli_request()) {
+			$this->db->select('id, first_shift, last_shift_rmd');
+			$res = $this->db->get('users')->result();
+			$current_date = date('Y-m-d');
+			foreach ($res as $key => $val) {
+				$user_groups = $this->ion_auth->get_users_groups($val->id)->result_array();
+	      $higher_level['level'] = -1;
+	      foreach ($user_groups as $key => $value) {
+	        if ($value['level'] > $higher_level['level']) {
+	          $higher_level = $value;
+	        }
+	      }
+				if (isset($higher_level['level']) && $higher_level['level'] == 0) {
+					if (isset($val->))
+				}
+			}
+		} else {
+			return (false);
+		}
+	}
 
 	public function edit_oneself($id=null)
 	{
