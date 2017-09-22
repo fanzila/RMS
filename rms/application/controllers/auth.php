@@ -542,7 +542,8 @@ class Auth extends CI_Controller {
 				'phone'      => trim($this->input->post('phone'))
 				);
 		}
-		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $this->input->post('groups'), $this->input->post('bus')))
+		$first_shift = $this->input->post('sdate');
+		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $this->input->post('groups'), $this->input->post('bus'), $first_shift))
 		{
 			$welcome_email = $this->input->post('welcome_email');
 
@@ -634,6 +635,7 @@ class Auth extends CI_Controller {
 
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('auth/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/create_user', $this->data);
 			$this->load->view('jq_footer');
@@ -729,6 +731,7 @@ class Auth extends CI_Controller {
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
 					$buData    = $this->input->post('bus');
+					$first_shift = $this->input->post('sdate');
 					if (isset($user->WordPress_UID)) {
 						$user_WP_role = $this->wp_rms->userWPRole($id);
 						if (isset($user_WP_role['wp_role']) && !empty($user_WP_role['wp_role'])) {
@@ -758,6 +761,13 @@ class Auth extends CI_Controller {
 							$this->ion_auth->add_to_bu($bu, $id);
 						}
 
+					}
+					if (isset($first_shift) && !empty($first_shift)) {
+						$this->db->where('id', $id);
+						$this->db->update('users', array('first_shift' => $first_shift));
+					} else {
+						$this->db->where('id', $id);
+						$this->db->update('users', array('first_shift' => NULL));
 					}
 				}
 
@@ -855,6 +865,9 @@ class Auth extends CI_Controller {
 			if (isset($user->WordPress_UID) && $this->ion_auth->is_admin()) {
 				$this->data['WpUID'] = $user->WordPress_UID;
 			}
+			if (isset($user->first_shift) && $this->ion_auth->is_admin()) {
+				$this->data['first_shift'] = $user->first_shift;
+			}
 		$this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
 		
 		$data['door_device'] = null;
@@ -863,6 +876,7 @@ class Auth extends CI_Controller {
 
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('auth/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->_render_page('auth/edit_user', $this->data);
 		$this->load->view('jq_footer');
