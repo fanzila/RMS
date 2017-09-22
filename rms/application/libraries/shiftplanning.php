@@ -382,7 +382,7 @@ class shiftplanning
 				$message = 'Could not find the requested error message.';
 				break;
 		}
-		return $message; exit;
+		return $message;
 	}
 
 	private function api( )
