@@ -1,8 +1,6 @@
 	</div>
-	<?$bgColor = ($mov == 'open' ? '#e2fceb' : '#fffde8');?>
-	<div style="background-color: <?=$bgColor?>;" data-role="content" data-theme="a">
+	<div style="background-color: #fffde8;" data-role="content" data-theme="a">
 		<?if($mov == 'close') { ?><h2>CLOSE</h2><small>Closing date: <?=$archive_date?></small><? } ?>
-		<?if($mov == 'open') { ?><h3>OPEN</h3><? } ?>
 		<?$form_values = $this->session->flashdata('form_values'); $pay_values = $this->session->flashdata('pay_values');?>
 		<?if ($pay_values) { ?>
 			<p><b>Erreur dans le(s) montant(s) indiqué(s).</b></p>
@@ -50,7 +48,14 @@
 							<? } ?>
 						</tr>
 					<? }?>
+						<tr>
+							<td>Prélèvement billets</td>
+							<td><?=$form_values['prelevement']?></td>
+							<td> - </td>
+							<td> - </td>
+						</tr>
 				</table>
+				FDC Utilisateur + Prélèvement - FDC Cashpad = <?=number_format(($form_values['prelevement'] - $form_values['cashpad_amount'] + $pay_values[1]['man']), 2);?>
 		<? } ?> 
 		<br />
 		<form id="pos" name="pos" method="post" action="/webcashier/save">
@@ -63,7 +68,6 @@
 				<?php foreach ($payment as $mode): ?>
 					<?php 
 					$amount_user	= '0.00';
-					if($mov == 'open')  $com = $mode->comment_open;
 					if($mov == 'close') $com = $mode->comment_close;
 					if($mode->report == 'no') continue;
 					?>
