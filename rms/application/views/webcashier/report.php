@@ -76,7 +76,7 @@
 								<?if($mov != 'safe') { ?><td>Cashpad amount</td><? } ?>
 								<?if($mov != 'safe') { ?><td>Balance</td><? } ?>
 							</tr>
-							<?php $total = 0; $diff = -$m['mov']['pos_cash_amount']; foreach ($m['pay'] as $m2): ?>
+							<?php $total = 0; $diff = (-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']); foreach ($m['pay'] as $m2): ?>
 								<? 
 								$total += $m2['amount_pos'];
 								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
@@ -115,8 +115,8 @@
 						</table>
 						<? if($mov == 'close') { ?>
 							<small>Total CA: <?=$total?>€</small>
-							<? if ($diff != 0) { ?>
-								<p style="color: red;">Diff: <?=$diff?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque - Cashpad Cash)</small></p>
+							<? if (number_format($diff, 3) != 0) { ?>
+								<p style="color: red;">Diff: <?=number_format($diff, 3)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - Cashpad Cash)</small></p>
 						<? 	}
 							?>
 

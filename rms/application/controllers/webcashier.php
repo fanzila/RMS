@@ -324,7 +324,7 @@ class webCashier extends CI_Controller {
 	public function movement($mov)
 	{
 
-		//'middle','open','close','safe_in','safe_out','pos_in','pos_out'
+		//'middle','close','safe_in','safe_out','pos_in','pos_out'
 		$data = array();
 		$this->hmw->keyLogin();
 
@@ -552,11 +552,12 @@ class webCashier extends CI_Controller {
 			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
 			
 			$cashpad_amount = $this->cashier->posInfo('cashfloatArchive', $param_pos_info);
-			$cash_user = $pay_values[1]['man'];
+			$cash_user = floatval($pay_values[1]['man']);
 			$cb_balance = $pay_values[2]['man'] - $pay_values[2]['pos'];
 		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];
 			$chq_balance = $pay_values[4]['man'] - $pay_values[4]['pos'];
-			$diff = $cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount;
+			$prelevement = floatval($this->input->post('prelevement'));
+			$diff = number_format(($cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount + $prelevement),3);
 			if ($diff != 0) {
 				if ($diff < $alert_amount) {
 					if (!$this->input->post('blc')) {
@@ -586,7 +587,7 @@ class webCashier extends CI_Controller {
 						$this->db->where('id', $id_bu);
 						$bu_name = $this->db->get('bus')->row_array()['name'];
 						$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
-						$email['msg'] 		= 'BU: '.$bu_name.' : Difference == ' . $diff;
+						$email['msg'] 		= 'BU: '.$bu_name.' : Difference == ' . number_format($diff, 3);
 						foreach ($query->result() as $row) {
 							$email['to']	= $row->email;	
 							$this->mmail->sendEmail($email);
