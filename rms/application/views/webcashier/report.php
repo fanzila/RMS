@@ -103,7 +103,7 @@
 									<?if($mov != 'safe') { ?>
 										<td>
 										<? 
-										if($m2['id'] == 1) $m2['amount_pos'] = $m['mov']['pos_cash_amount'];
+										if($m2['id'] == 1) $m2['amount_pos'] = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount'];
 										$bal_display =  $m2['amount_user']-$m2['amount_pos']."€"; 
 										if($m2['id'] == 12) $bal_display = "-"; 
 										?>
