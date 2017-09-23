@@ -67,7 +67,7 @@
 					<li>
 						<h3>Date: <?=$m['mov']['date']?></h3>
 						<h3>User: <?=$m['mov']['username']?> </h3>
-						<p>Cashpad cash (Fond De Caisse): <?=$m['mov']['pos_cash_amount']?>€ | Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_amount']?></p>
+						<p>Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_amount']?></p>
 			
 						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 							<tr style="background-color: #bfbfbf; border: 1px solid #dedcd7;">
@@ -96,7 +96,7 @@
 										<td>
 										<? $ca_display = "-"; 
 										if($m2['id'] != 9) $ca_display = $m2['amount_pos']."€"; ?>
-										<? if($m2['id'] == 1) $ca_display = "FDC: ".$m['mov']['pos_cash_amount']."€ <br /> <small>(CA : ".$m2['amount_pos']."€)</small>"; ?>										
+										<? if($m2['id'] == 1) { $fdc = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount']; $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".$m2['amount_pos']."€)</small>"; } ?>										
 										<?=$ca_display?>
 										</td>
 									<? } ?>
@@ -120,7 +120,7 @@
 						<? 	}
 							?>
 
-	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']; ?> 
+	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']+$m['mov']['prelevement_amount']; ?> 
 		<? if($check_amount < 0 ) { ?><p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT! <?=$check_amount?>€ cash missing! </b><br /><small style="color: black;">(Différence entre fond de caisse au moment de la close (cashpad cash) et montant utilisateur entré (espece user amount))</small></p>
 		<? } } } ?>
 		<? if($mov == 'close') { ?><h2>Commentaire close: <?=stripslashes($m['mov']['comment'])?></h2><? } ?>

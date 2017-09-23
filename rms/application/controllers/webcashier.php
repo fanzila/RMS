@@ -494,11 +494,13 @@ class webCashier extends CI_Controller {
 		->set('id_user', $userid)
 		->set('comment', addslashes($this->input->post('comment')))
 		->set('prelevement_amount', $this->input->post('prelevement'))
-		->set('pos_cash_amount', $this->cashier->posInfo('cashfloatArchive', $param_pos_info))
 		->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
 		->set('safe_tr_amount', $this->cashier->calc('safe_current_tr_num', $id_bu))
 		->set('id_bu', $id_bu)
 		->set('employees_sp', serialize($employees_sp));
+		
+		if($this->input->post('mov') == 'close') $this->db->set('pos_cash_amount', $this->cashier->posInfo('cashfloatArchive', $param_pos_info));
+		
 		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
