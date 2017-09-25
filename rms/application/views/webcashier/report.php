@@ -1,6 +1,5 @@
 	<link rel="stylesheet" href="/public/receiptContent.css" />
 	</div>
-
 	<div data-role="content" data-theme="a">
 		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=number_format($safe_cash,  2, '.', ' ')?>€ |  Safe TR num: <?=$safe_tr?> | Monthly TO: <?=number_format($monthly_to,  2, '.', ' ')?>€</h4>
 		<p>Daily Cashpad cash movements</p>
@@ -10,7 +9,6 @@
 		<?php endforeach; ?>
 		<? if(empty($live_movements)) { ?>No movement<? } ?>
 		</ul>
-		<br>
 		<br>
 		<form id="filter" name="filter" method="post" data-ajax="false" action="/webcashier/report/">
 			<div class="row">
@@ -50,7 +48,6 @@
 			<input type="submit" name="sub" value="FILTER" />
 		</form>
 		<br>
-		<br>
 		<h2>Movements</h2>
 		
 		<?php foreach ($lines as $m): ?>
@@ -61,8 +58,7 @@
 			if($m['mov']['movement'] == 'close') $mov = 'close';
 			?>
 			<div data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "#ec7470";} else if ($m['mov']['status'] == 'validated') { echo "#d5ecd2";}} else { echo "rgb(220, 220, 220)";}?>">
-				<h2>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'ymd'); echo $m['mov']['id'] ?> - <?=strtoupper($m['mov']['movement'])?></h2>
-
+				<h2>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'Y-m-d'); echo " [".$m['mov']['id']."]";    ?> - <?=strtoupper($m['mov']['movement'])?></h2>
 				<ul data-role="listview" data-theme="d" data-divider-theme="d">
 					<li>
 						<h3>Date: <?=$m['mov']['date']?></h3>
@@ -116,13 +112,11 @@
 						<? if($mov == 'close') { ?>
 							<small>Total CA: <?=$total?>€</small>
 							<? if (number_format($diff, 3) != 0) { ?>
-								<p style="color: red;">Diff: <?=number_format($diff, 3)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - Cashpad Cash)</small></p>
-						<? 	}
-							?>
-
-	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']+$m['mov']['prelevement_amount']; ?> 
-		<? if($check_amount < 0 ) { ?><p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT! <?=$check_amount?>€ cash missing! </b><br /><small style="color: black;">(Différence entre fond de caisse au moment de la close (cashpad cash) et montant utilisateur entré (espece user amount))</small></p>
-		<? } } } ?>
+								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=number_format($diff, 3)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - Cashpad Cash)</small></p>
+						<? 	
+						}
+					} 
+					?>
 		<? if($mov == 'close') { ?><h2>Commentaire close: <?=stripslashes($m['mov']['comment'])?></h2><? } ?>
 <div>		
 	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
@@ -136,10 +130,12 @@
 			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" value="<?=$m['mov']['comment_report']?>" />
 			<? foreach ($all_user_groups as $user_group) {
 			 if ($user_group->level >= 3 && $mov == 'close') { ?>
-			 <div class="box">
+			 <? if (number_format($diff, 3) != 0) { ?>
+				<div class="box">
 					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?> />
 					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance Directeur</label>
 			 </div>
+			<? } ?>
 			 <? break;
 		 			}
 		 		} ?>
