@@ -152,6 +152,7 @@
 <? if($mov =='close') { ?>
 	<div data-role="collapsible">
 		<h3>POS Movements</h3>
+		<?if(!empty($m['cashmovements'])) { ?>
 		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 			<tr style="background-color: #bfbfbf;">
 				<td>Date</td>
@@ -172,28 +173,22 @@
 			</tr>
 		<?php endforeach; ?>
 		</table>
+		<? } ?>
 	</div>
 	<div data-role="collapsible">
-		<h3>User Actions</h3>
-	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-		<tr>
-			<td colspan="6">Total : <?=$m['total_actions']?></td>
-		</tr>
-		<tr style="background-color: #bfbfbf;">
-			<td>Receipt Closure Date</td>
-			<td>User</td>
-			<td>Nb</td>
-			<td>Percent</td>
-		</tr>
-	<?php foreach ($m['userActionStats'] as $mov): ?> 
-		<tr>
-			<td><?=$mov['date_closed']?></td>
-			<td><?= $mov['owner']?></td>
-			<td><?=$mov['count']?></td>
-			<td><?=$mov['percent']?></td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
+		<h3>FDC Movements</h3>
+		<?if(!empty($m['cashFdcMovements'])) { ?>
+		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+			<tr style="background-color: #bfbfbf;">
+				<td>Amount</td>
+			</tr>
+		<?php foreach ($m['cashFdcMovements'] as $mov): ?> 
+			<tr>
+				<td><?=$mov['amount']/1000?></td>
+			</tr>
+		<?php endforeach; ?>
+		</table>
+		<? } ?>
 	</div>
 	<div data-role="collapsible">
 		<h3>Cash Drawer Opened</h3>
@@ -262,6 +257,28 @@
 <span>Note : <? if (isset($mov['NOTE'])) echo $mov['NOTE']; else echo "<strong>NO NOTE FOR THIS RECEIPT</strong>";?></span>
 </div>
 <?php endforeach;?>
+</div>
+<div data-role="collapsible">
+	<h3>User Actions</h3>
+<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
+	<tr>
+		<td colspan="6">Total : <?=$m['total_actions']?></td>
+	</tr>
+	<tr style="background-color: #bfbfbf;">
+		<td>Receipt Closure Date</td>
+		<td>User</td>
+		<td>Nb</td>
+		<td>Percent</td>
+	</tr>
+<?php foreach ($m['userActionStats'] as $mov): ?> 
+	<tr>
+		<td><?=$mov['date_closed']?></td>
+		<td><?= $mov['owner']?></td>
+		<td><?=$mov['count']?></td>
+		<td><?=$mov['percent']?></td>
+	</tr>
+<?php endforeach; ?>
+</table>
 </div>
 <? if (isset($m['mov']['employees_sp']) && !empty($m['mov']['employees_sp'])) { ?>
 <div data-role="collapsible">

@@ -302,8 +302,14 @@ class webCashier extends CI_Controller {
 				if (empty($m['closing_file'])) exit ("No closing file");
 				$param = array('closing_file' =>  $m['closing_file']);
 				$param['id_bu'] = $id_bu;
+				
+				//get cashFdcMovements to user archive
+				$paramFdc = $param;
+				$paramFdc['archive'] = $m['closing_file'];
+				
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
 				$lines[$m['id']]['cashmovements'] 	= $this->cashier->posInfo('getMovements', $param);
+				$lines[$m['id']]['cashFdcMovements'] = $this->cashier->posInfo('getFdcMovements', $paramFdc);
 				$lines[$m['id']]['cashDrawerOpened'] = $this->cashier->getArchivedDrawerOpenedEvents($id_bu, $m['closing_file']);
 				$lines[$m['id']]['cancelledReceipts'] = $this->cashier->getArchivedCancelledReceipts($id_bu, $m['closing_file']);
 				$lines[$m['id']]['userActionStats'] = $this->cashier->userActionStats($id_bu, $m['closing_file']);
