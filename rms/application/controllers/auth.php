@@ -1020,9 +1020,9 @@ class Auth extends CI_Controller {
 	public function cliRmdShift() {
 		
 		if($this->input->is_cli_request()) {
-			$this->db->select('id, first_shift, last_shift_rmd');
+			$this->db->select('id, username, first_shift, last_shift_rmd');
 			$res = $this->db->get('users')->result();
-			$current_date = date('Y-m-d');
+			$current_date = new DateTime("now");
 			foreach ($res as $key => $val) {
 				$user_groups = $this->ion_auth->get_users_groups($val->id)->result_array();
 	      $higher_level['level'] = -1;
@@ -1032,7 +1032,17 @@ class Auth extends CI_Controller {
 	        }
 	      }
 				if (isset($higher_level['level']) && $higher_level['level'] == 0) {
-					if (isset($val->))
+					if (isset($val->last_shift_rmd)) {
+						$last_rmd = new DateTime($val->last_shift_rmd);
+						var_dump($last_rmd);
+						die();
+					} else {
+							if (isset($val->first_shift)) {
+								$inter_first_curr = $current_date->diff($first)
+							} else {
+								echo "User :" . $username // finir message;
+							}
+					}
 				}
 			}
 		} else {
