@@ -28,8 +28,8 @@ $url = 'http://www.ubnt.com';
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 	<!-- Bootstrap -->
-	<link href="/assets/wifiguest/guest/s/default/css/bootstrap.min.css" type="text/css" rel="stylesheet">
-	<link href="/assets/wifiguest/guest/s/default/css/wifiguest.css" type="text/css" rel="stylesheet">
+	<link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+	<link href="css/wifiguest.css" type="text/css" rel="stylesheet">
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -44,7 +44,7 @@ $url = 'http://www.ubnt.com';
 	<div class="container">
 		<br />
 		<div class="jumbotron">
-				<img src="/assets/wifiguest/guest/s/default/logo.png" class="logo">
+				<img src="logo.png" class="logo">
 			<br /><br />
 			<? if (isset($_GET['pass_error'])) :?>
 				<p style="color: red;"> Field "password" is incorrect, please retry. </p>
@@ -70,7 +70,7 @@ $url = 'http://www.ubnt.com';
 			    <div class="col-lg-10">
 						<div class="form-group">
 							<input id="InputCond" name="InputCond" aria-describedby="InputCond" type="checkbox" aria-label="..." required> 
-							<label id="cgu" for="InputCond">J'accepte les <a href="/assets/wifiguest/wificgu.html">Conditions Générales d'utilisation</a> / I agree with the <a href="wificgu.html">Terms Of Use</a></label>
+							<label id="cgu" for="InputCond">J'accepte les <a href="wificgu.html">Conditions Générales d'utilisation</a> / I agree with the <a href="wificgu.html">Terms Of Use</a></label>
 					  </div> 
 					</div> 
 			  </div> 
@@ -84,6 +84,6 @@ $url = 'http://www.ubnt.com';
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="/assets/wifiguest/guest/s/default/js/bootstrap.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 </body>
 </html>
