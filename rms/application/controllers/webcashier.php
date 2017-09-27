@@ -510,7 +510,6 @@ class webCashier extends CI_Controller {
 		$this->db->insert('pos_movements');
 		$pmid = $this->db->insert_id();
 
-		//$payid = date('y-m-d/').$pmid;
 		$payid = $pmid;
 		$pay = array();
 
@@ -554,10 +553,10 @@ class webCashier extends CI_Controller {
 		
 		if($this->input->post('mov') == 'close') {
 			
-			$this->db->select('cashier_alert_amount_close');
+			$this->db->select('cashier_alert_amount_close_min,cashier_alert_amount_close_max');
 			$this->db->from('bus');
 			$this->db->where('id', $id_bu);
-			$alert_amount = $this->db->get()->row_array()['cashier_alert_amount_close'] or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
+			$alert_amount = $this->db->get()->row_array() or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
 			
 			$cashpad_amount = $this->cashier->posInfo('cashfloatArchive', $param_pos_info);
 			$cash_user = floatval($pay_values[1]['man']);
@@ -565,41 +564,44 @@ class webCashier extends CI_Controller {
 		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];
 			$chq_balance = $pay_values[4]['man'] - $pay_values[4]['pos'];
 			$prelevement = floatval($this->input->post('prelevement'));
-			$diff = number_format(($cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount + $prelevement),3);
-			if ($diff != 0) {
-				if ($diff < $alert_amount) {
-					if (!$this->input->post('blc')) {
-						$form_values = $this->input->post();
-						$form_values['cashpad_amount'] = $cashpad_amount;
-						$this->session->set_flashdata('form_values', $form_values);
-						$this->session->set_flashdata('pay_values', $pay_values);
+            
+			$diff = $cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount + $prelevement;
+			$test_diff = false;
+            if($diff <= $alert_amount['cashier_alert_amount_close_min']) $test_diff = true;
+            if($diff >= $alert_amount['cashier_alert_amount_close_max']) $test_diff = true;
+
+            if (($test_diff)) {
+				if (!$this->input->post('blc')) {
+					$form_values = $this->input->post();
+					$form_values['cashpad_amount'] = $cashpad_amount;
+					$this->session->set_flashdata('form_values', $form_values);
+					$this->session->set_flashdata('pay_values', $pay_values);
 						
-						$this->db->where('id', $pmid);
-						$this->db->delete('pos_movements');
+					$this->db->where('id', $pmid);
+					$this->db->delete('pos_movements');
 						
-						$this->db->where('id_movement', $pmid);
-						$this->db->delete('pos_payments');
+					$this->db->where('id_movement', $pmid);
+					$this->db->delete('pos_payments');
 						
-						redirect('/webcashier/movement/close', 'location');
-					} else {
-						$this->db->select('users.username, users.email, users.id');
-						$this->db->distinct('users.username');
-						$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-						$this->db->join('users_groups', 'users.id = users_groups.user_id');
-						$this->db->where('users.active', 1);
-						$this->db->where_in('users_groups.group_id', array(1,4));
-						$this->db->where('users_bus.bu_id', $id_bu);
-						$query = $this->db->get("users");
+					redirect('/webcashier/movement/close', 'location');
+				} else {
+					$this->db->select('users.username, users.email, users.id');
+					$this->db->distinct('users.username');
+					$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+					$this->db->join('users_groups', 'users.id = users_groups.user_id');
+					$this->db->where('users.active', 1);
+					$this->db->where_in('users_groups.group_id', array(1,4));
+					$this->db->where('users_bus.bu_id', $id_bu);
+					$query = $this->db->get("users");
 						
-						$this->db->select('name');
-						$this->db->where('id', $id_bu);
-						$bu_name = $this->db->get('bus')->row_array()['name'];
-						$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
-						$email['msg'] 		= 'BU: '.$bu_name.' : Difference == ' . number_format($diff, 3);
-						foreach ($query->result() as $row) {
-							$email['to']	= $row->email;	
-							$this->mmail->sendEmail($email);
-						}
+					$this->db->select('name');
+					$this->db->where('id', $id_bu);
+					$bu_name = $this->db->get('bus')->row_array()['name'];
+					$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
+					$email['msg'] 		= 'BU: '.$bu_name.' : Difference == ' . number_format($diff, 3);
+					foreach ($query->result() as $row) {
+						$email['to']	= $row->email;	
+						$this->mmail->sendEmail($email);
 					}
 				}
 				$this->db->set('status', 'error');
