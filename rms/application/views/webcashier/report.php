@@ -78,9 +78,9 @@
 								<td>-</td>
 								<td>-</td>
 							</tr>
-							<?php $total = 0; $diff = number_format((-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']),3); foreach ($m['pay'] as $m2): ?>
+							<?php $total = 0; $diff = (-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']); foreach ($m['pay'] as $m2): ?>
 								<? 
-								$total += number_format($m2['amount_pos'],3);
+								$total += $m2['amount_pos'];
 								if ($m2['id'] == 1) $diff = $diff + number_format($m2['amount_user'],3);
 								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
@@ -99,8 +99,8 @@
 									<?if($mov != 'safe') { ?>
 										<td>
 										<? 
-										if($m2['id'] == 1) $m2['amount_pos'] = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount'];
-										$bal_display =  $m2['amount_user']-$m2['amount_pos']."€"; 
+										if($m2['id'] == 1) $m2['amount_pos'] = number_format($m['mov']['pos_cash_amount'],3)-number_format($m['mov']['prelevement_amount'],3);
+										$bal_display =  number_format($m2['amount_user']-$m2['amount_pos'],3)."€"; 
 										if($m2['id'] == 12) $bal_display = "-"; 
 										?>
 										<?=$bal_display?>
