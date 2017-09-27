@@ -17,16 +17,16 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `hotspot`
+-- Database: `rms`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `creds`
+-- Table structure for table `customers`
 --
 
-CREATE TABLE IF NOT EXISTS `creds` (
+CREATE TABLE IF NOT EXISTS `customers` (
   `id` int(6) NOT NULL AUTO_INCREMENT,
   `email` varchar(30) NOT NULL,
   `clientIP` varchar(50) NOT NULL,
@@ -42,20 +42,5 @@ CREATE TABLE IF NOT EXISTS `creds` (
 -- Dumping data for table `creds`
 --
 
-INSERT INTO `creds` (`id`, `email`, `clientIP`, `clientUserAgent`, `clientMac`, `optout`, `date`) VALUES
-(1, 'somefake@address.com', '0.0.0.0', 'none', 'none', true, '0000-00-00 00:00:00');
---
--- Table structure for table `params`
---
-
-CREATE TABLE IF NOT EXISTS `params` (
-  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `name` VARCHAR(255) NOT NULL,
-  `value` varchar(255) NOT NULL
-) ENGINE=InnoDB ;
-
-ALTER TABLE `params` ADD UNIQUE(`name`);
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+INSERT INTO `customers` (`id`, `email`, `clientIP`, `clientUserAgent`, `clientMac`, `optout`, `date`) VALUES
+(1, 'somefake@address.com', '0.0.0.0', 'none', 'none', 'true', '0000-00-00 00:00:00');
