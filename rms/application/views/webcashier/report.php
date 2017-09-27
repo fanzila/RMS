@@ -91,8 +91,8 @@
 									<?if($mov != 'safe') { ?>
 										<td>
 										<? $ca_display = "-"; 
-										if($m2['id'] != 9) $ca_display = number_format($m2['amount_pos'],3)."€"; ?>
-										<? if($m2['id'] == 1) { $fdc = number_format($m['mov']['pos_cash_amount'],3)-number_format($m['mov']['prelevement_amount'],2); $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".number_format($m2['amount_pos'],3)."€)</small>"; } ?>										
+										if($m2['id'] != 9) $ca_display = number_format($m2['amount_pos'],2)."€"; ?>
+										<? if($m2['id'] == 1) { $fdc = number_format($m['mov']['pos_cash_amount'],2)-number_format($m['mov']['prelevement_amount'],2); $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".number_format($m2['amount_pos'],2)."€)</small>"; } ?>										
 										<?=$ca_display?>
 										</td>
 									<? } ?>
