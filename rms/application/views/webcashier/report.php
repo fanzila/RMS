@@ -78,21 +78,21 @@
 								<td>-</td>
 								<td>-</td>
 							</tr>
-							<?php $total = 0; $diff = (-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']); foreach ($m['pay'] as $m2): ?>
+							<?php $total = 0; $diff = number_format((-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']),3); foreach ($m['pay'] as $m2): ?>
 								<? 
-								$total += $m2['amount_pos'];
-								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
+								$total += number_format($m2['amount_pos'],3);
+								if ($m2['id'] == 1) $diff = $diff + number_format($m2['amount_user'],3);
 								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
-								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
+								<? if($m2['id'] == 1) $cash_amount = number_format($m2['amount_user'],3); ?>
 								<tr style="border: 1px solid #dedcd7;">
 									<td><?=$m2['name']?></td>
 									<td><? if($m2['id'] != 12 AND $m2['id'] != 11 AND $m2['id'] != 5) { echo $m2['amount_user']. "€"; } else { echo "-"; } ?></td>
 									<?if($mov != 'safe') { ?>
 										<td>
 										<? $ca_display = "-"; 
-										if($m2['id'] != 9) $ca_display = $m2['amount_pos']."€"; ?>
-										<? if($m2['id'] == 1) { $fdc = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount']; $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".$m2['amount_pos']."€)</small>"; } ?>										
+										if($m2['id'] != 9) $ca_display = number_format($m2['amount_pos'],3)."€"; ?>
+										<? if($m2['id'] == 1) { $fdc = number_format($m['mov']['pos_cash_amount'],3)-number_format($m['mov']['prelevement_amount'],3); $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".number_format($m2['amount_pos'],3)."€)</small>"; } ?>										
 										<?=$ca_display?>
 										</td>
 									<? } ?>
