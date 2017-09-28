@@ -45,17 +45,38 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $server_output = curl_exec($ch);
 $ret = json_decode($server_output, true);
 curl_close($ch);
-if (isset($ret['lastID']) && is_numeric($ret['lastID'])) {
-  $lastID = $ret['lastID'];
-} else {
-  $sql = "SELECT MAX(id) FROM CREDS";
-  $query = $dbh->prepare($sql);
-  $query->execute();
-  $res = $query->fetch(PDO::FETCH_ASSOC);
-  if (isset($res['id'])) {
-    $lastID = $res['id'];
+if (isset($ret['lastID'])) {
+   if (is_numeric($ret['lastID'])) {
+    $lastID = $ret['lastID'];
   } else {
-    $lastID = 0;
+    $sql = "SELECT MAX(id) FROM CREDS";
+    $query = $dbh->prepare($sql);
+    $query->execute();
+    $res = $query->fetch(PDO::FETCH_ASSOC);
+    if (isset($res['id'])) {
+      $lastID = $res['id'];
+    } else {
+      die ("error check lastID in table params");
+    }
+  }
+} else {
+  curl_setopt($ch, CURLOPT_URL, "http://rms.hankrestaurant.com/customers/getLastId/true");
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+  #curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+  #curl_setopt($ch, CURLOPT_PORT,  443);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  curl_close($ch);
+  if (isnumeric($response)) {
+    $lastID = $response;
+  } else {
+    echo "ERROR: RMS Server response: ";
+    var_dump($server_output);
+    echo "RMS last id : ";
+    var_dump($response);
+    die();
   }
 }
 $sql = "SELECT value FROM params WHERE name = 'RMS_last_id' LIMIT 1";

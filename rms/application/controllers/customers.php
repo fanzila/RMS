@@ -32,10 +32,13 @@ class customers extends CI_Controller {
     echo ($ret);
   }
   
-  private function getLastId() {
+  public function getLastId($output = false) {
     $this->db->select_max('id');
     $res = $this->db->get('customers')->row_array();
     $lastID = (isset($res['id']) ? $res['id'] : 0);
+    if ($output == true) {
+      echo $lastID;
+    }
     return ($lastID);
   }
   
