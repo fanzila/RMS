@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <?php
-/**
 if(!isset($_GET['id'])) exit("Not allowed");
 //Start session to grab MAC Address and have it available throughout the auth process
 session_start();
@@ -17,8 +16,6 @@ $url = $_GET['url'];
 //If original URL not specified, default to ubnt.com
 $url = 'http://www.ubnt.com';
 }
-
-**/
 ?>
 <html>
 <head>
