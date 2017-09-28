@@ -1,6 +1,6 @@
 <?php 
 
-require_once('guests/s/default/params.php');
+require_once('guest/s/default/params.php');
 
 try {
   $dbh = new PDO('mysql:dbname=hotspot;host=localhost', $mysql_user, $mysql_pass);
@@ -9,7 +9,7 @@ try {
   die();
 }
 
-$sql = "SELECT value FROM params WHERE name = 'RMSlastID' LIMIT 1";
+$sql = "SELECT value FROM params WHERE name = 'RMS_last_id' LIMIT 1";
 $query = $dbh->prepare($sql);
 $query->execute();
 $res = $query->fetch(PDO::FETCH_ASSOC);
@@ -43,7 +43,31 @@ curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $server_output = curl_exec($ch);
-var_dump($server_output);
+$ret = json_decode($server_output, true);
 curl_close($ch);
+if (isset($ret['lastID']) && is_numeric($ret['lastID'])) {
+  $lastID = $ret['lastID'];
+} else {
+  $sql = "SELECT MAX(id) FROM CREDS";
+  $query = $dbh->prepare($sql);
+  $query->execute();
+  $res = $query->fetch(PDO::FETCH_ASSOC);
+  if (isset($res['id'])) {
+    $lastID = $res['id'];
+  } else {
+    $lastID = 0;
+  }
+}
+$sql = "SELECT value FROM params WHERE name = 'RMS_last_id' LIMIT 1";
+$query->dbh->prepare($sql);
+$query->execute();
+$res = $query->fetch(PDO::FETCH_ASSOC);
+if (isset($res['value'])) {
+  $sql = "UPDATE params SET value = $lastID WHERE name = 'RMS_last_id'";
+} else {
+  $sql = "INSERT INTO params VALUES (NULL, 'RMS_last_id', $lastID)";
+}
+$query->dbh->prepare($sql);
+$query->execute();
 
 ?>

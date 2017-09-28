@@ -20,47 +20,22 @@ class customers extends CI_Controller {
     if(!isset($_POST['data'])) exit('No POST data provided');
     if(empty($_POST['data'])) exit('No data provided in POST');
     
-    $data = json_decode($_POST['data']);
+    $data = json_decode($_POST['data'], true);
     foreach ($data as $key => $val) {
-      $ex 	= explode("|",$val);
-      $id = $ex[0];
-      $email = $ex[1];
-      $clientIP = $ex[2];
-      $clientUserAgent = $ex[3];
-      $clientMac = $ex[4];
-      $optout = $ex[5];
-      $date = $ex[6];
-      
-      $req = array (
-        'id' => $id,
-        'email' => $email,
-        'clientIP' => $clientIP,
-        'clientUserAgent' => $clientUserAgent,
-        'clientMac' => $clientMac,
-        'optout' => $optout,
-        'date' => $date
-        );
-
-      if (!$this->db->insert('customers', $req)) {
+      if (!$this->db->insert('customers', $val)) {
         error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
-        exit();
+        return ($val['id']);
       }
     }
     $lastID = $this->getLastId($data);
-    return ($lastID);
+    $ret = json_encode(array('lastID' => $lastID));
+    echo ($ret);
   }
   
-  private function getLastId($res) {
-    $lastID = 1;
-    foreach ($res as $key => $value) {
-      if (isset($value['id'])) {
-        if ($value['id'] > $lastID) {
-          $lastID = $value['id'];
-        }  
-      } else {
-        return (false);
-      }
-    }
+  private function getLastId() {
+    $this->db->select_max('id');
+    $res = $this->db->get('customers')->row_array();
+    $lastID = (isset($res['id']) ? $res['id'] : 0);
     return ($lastID);
   }
   

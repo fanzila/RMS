@@ -39,12 +39,6 @@ CREATE TABLE IF NOT EXISTS `creds` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 ;
 
 --
--- Dumping data for table `creds`
---
-
-INSERT INTO `creds` (`id`, `email`, `clientIP`, `clientUserAgent`, `clientMac`, `optout`, `date`) VALUES
-(1, 'somefake@address.com', '0.0.0.0', 'none', 'none', true, '0000-00-00 00:00:00');
---
 -- Table structure for table `params`
 --
 
