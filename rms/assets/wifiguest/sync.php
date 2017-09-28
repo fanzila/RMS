@@ -1,5 +1,4 @@
 <?php 
-
 require_once('guest/s/default/params.php');
 
 try {
@@ -15,7 +14,7 @@ $query->execute();
 $res = $query->fetch(PDO::FETCH_ASSOC);
 
 if (isset($res['value'])) {
-  $currLastID = $rev['value'];
+  $currLastID = $res['value'];
   $sql = "SELECT * FROM creds WHERE id > " . $currLastID;
   $query = $dbh->prepare($sql);
   $query->execute();
@@ -26,11 +25,12 @@ if (isset($res['value'])) {
   $query->execute();
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
 }
-$jdata = array();
 if (isset($res) && !empty($res)) {
   $jdata = json_encode($res);
+} else {
+  die ("No data to send\n");
 }
-
+  
 $ch = curl_init();
 
 curl_setopt($ch, CURLOPT_URL, "http://rms.hankrestaurant.com/customers/record");
@@ -59,7 +59,7 @@ if (isset($ret['lastID']) && is_numeric($ret['lastID'])) {
   }
 }
 $sql = "SELECT value FROM params WHERE name = 'RMS_last_id' LIMIT 1";
-$query->dbh->prepare($sql);
+$query = $dbh->prepare($sql);
 $query->execute();
 $res = $query->fetch(PDO::FETCH_ASSOC);
 if (isset($res['value'])) {
@@ -67,7 +67,7 @@ if (isset($res['value'])) {
 } else {
   $sql = "INSERT INTO params VALUES (NULL, 'RMS_last_id', $lastID)";
 }
-$query->dbh->prepare($sql);
+$query = $dbh->prepare($sql);
 $query->execute();
 
 ?>
