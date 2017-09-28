@@ -23,7 +23,7 @@ try {
 
 if (isset($post['submitLogIn'])) {
   if (isset($post['InputCond'])) {
-    if (isset($post['InputEmail1'])) {
+    if (isset($post['InputEmail1']) && filter_var($post['InputEmail1'], FILTER_VALIDATE_EMAIL)) {
       $userEmail = trim($post['InputEmail1']);
       if (isset($post['InputOptOut'])) {
         $sql = "INSERT INTO " . $table . " VALUES (NULL, '" . $userEmail . "', '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SERVER['HTTP_USER_AGENT'] . "', '" . $clientMac . "', true, '" . $date . "')";
