@@ -44,16 +44,24 @@ class customers extends CI_Controller {
       if (!$this->db->insert('customers', $req)) {
         error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
         exit();
-      } else {
-        $this->db->select_max('id');
-        $res = $this->db->get('customers')->row();
-        if (isset($id)) {
-          $lastID = $res->id;
-          return ($lastID);
-        } else {
-          return (false);
-        }
       }
     }
+    $lastID = $this->getLastId($data);
+    return ($lastID);
   }
+  
+  private function getLastId($res) {
+    $lastID = 1;
+    foreach ($res as $key => $value) {
+      if (isset($value['id'])) {
+        if ($value['id'] > $lastID) {
+          $lastID = $value['id'];
+        }  
+      } else {
+        return (false);
+      }
+    }
+    return ($lastID);
+  }
+  
 }
