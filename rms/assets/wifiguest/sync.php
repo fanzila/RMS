@@ -60,6 +60,7 @@ if (isset($ret['lastID'])) {
     }
   }
 } else {
+  $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, "$RMSUrl/customers/getLastId/true");
   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
   #curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);

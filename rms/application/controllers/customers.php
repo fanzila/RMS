@@ -27,7 +27,7 @@ class customers extends CI_Controller {
         return ($val['id']);
       }
     }
-    $lastID = $this->getLastId($data);
+    $lastID = $this->getLastId();
     $ret = json_encode(array('lastID' => $lastID));
     echo ($ret);
   }
