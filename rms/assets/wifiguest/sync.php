@@ -69,7 +69,7 @@ if (isset($ret['lastID'])) {
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   $response = curl_exec($ch);
   curl_close($ch);
-  if (isnumeric($response)) {
+  if (is_numeric($response)) {
     $lastID = $response;
   } else {
     echo "ERROR: RMS Server response: ";
