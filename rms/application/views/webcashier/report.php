@@ -81,7 +81,7 @@
 							<?php $total = 0; $diff = (-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']); foreach ($m['pay'] as $m2): ?>
 								<? 
 								$total += $m2['amount_pos'];
-								if ($m2['id'] == 1) $diff = $diff + number_format($m2['amount_user'],2);
+								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
 								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
 								<? if($m2['id'] == 1) $cash_amount = number_format($m2['amount_user'],2); ?>
@@ -92,15 +92,15 @@
 										<td>
 										<? $ca_display = "-"; 
 										if($m2['id'] != 9) $ca_display = number_format($m2['amount_pos'],2)."€"; ?>
-										<? if($m2['id'] == 1) { $fdc = number_format($m['mov']['pos_cash_amount'],2)-number_format($m['mov']['prelevement_amount'],2); $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".number_format($m2['amount_pos'],2)."€)</small>"; } ?>										
+										<? if($m2['id'] == 1) { $fdc = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount']; $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".number_format($m2['amount_pos'],2)."€)</small>"; } ?>										
 										<?=$ca_display?>
 										</td>
 									<? } ?>
 									<?if($mov != 'safe') { ?>
 										<td>
 										<? 
-										if($m2['id'] == 1) $m2['amount_pos'] = number_format($m['mov']['pos_cash_amount'],2)-number_format($m['mov']['prelevement_amount'],2);
-										$bal_display =  number_format($m2['amount_user']-$m2['amount_pos'],2)."€"; 
+										if($m2['id'] == 1) $m2['amount_pos'] = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount'];
+										$bal_display =  $m2['amount_user']-$m2['amount_pos']."€"; 
 										if($m2['id'] == 12) $bal_display = "-"; 
 										?>
 										<?=$bal_display?>
@@ -112,7 +112,7 @@
 						<? if($mov == 'close') { ?>
 							<small>Total CA: <?=$total?>€</small>
 							<? if (number_format($diff, 3) != 0) { ?>
-								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=number_format($diff, 3)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - Cashpad Cash)</small></p>
+								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - Cashpad Cash (=FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€)</small></p>
 						<? 	
 						}
 					} 
