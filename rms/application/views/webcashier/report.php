@@ -57,8 +57,8 @@
 			if($m['mov']['movement'] == 'open') $mov = 'open';
 			if($m['mov']['movement'] == 'close') $mov = 'close';
 			?>
-			<div data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "#ec7470";} else if ($m['mov']['status'] == 'validated') { echo "#d5ecd2";}} else { echo "rgb(220, 220, 220)";}?>">
-				<h2>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'Y-m-d'); echo " [".$m['mov']['id']."]";    ?> - <?=strtoupper($m['mov']['movement'])?></h2>
+			<div id="<?=$m['mov']['id']?>" data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "#ec7470";} else if ($m['mov']['status'] == 'validated') { echo "#d5ecd2";}} else { echo "rgb(220, 220, 220)";}?>">
+				<h2><a id="<?=$m['mov']['id']?>"></a>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'Y-m-d'); echo " [".$m['mov']['id']."]";    ?> - <?=strtoupper($m['mov']['movement'])?></h2>
 				<ul data-role="listview" data-theme="d" data-divider-theme="d">
 					<li>
 						<h3>Date: <?=$m['mov']['date']?></h3>
