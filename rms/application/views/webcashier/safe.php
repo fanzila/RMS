@@ -24,7 +24,7 @@
 				</tr>
 			</table>
 			
-			Comments: <input type="text" name="comment" id="comment" data-clear-btn="true" />
+			Comments: <input type="text" name="comment_report" id="comment_report" data-clear-btn="true" />
 		<input maxlength="20" type="hidden" name="action" value="safe" data-clear-btn="true" />
 		<input type="button" name="save" onClick="validator();" value="SAVE">
 	</form>

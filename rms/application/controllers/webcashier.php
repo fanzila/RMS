@@ -85,9 +85,12 @@ class webCashier extends CI_Controller {
 		$this->db->where_in('users_groups.group_id', array(1,4));
 		$this->db->where('users_bus.bu_id', $id_bu);
 		$query = $this->db->get("users");
-		
+
+		$server_name = $this->hmw->getParam('server_name');
+							
 		$email['subject'] 	= $subject;
-		$email['msg'] 		= 'Comment on report for '.$bu_name.' on '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']];
+		$email['msg'] 		= 'Comment on report for '.$bu_name.' on ID: '.$data['id'].' | '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']]."<br /><a href='http://".$server_name."/webcashier/report/#".$data['id']."'>http://".$server_name."/webcashier/report/#".$data['id']."</a>";
+		
 		foreach ($query->result() as $row) {
 			$email['to']	= $row->email;	
 			$this->mmail->sendEmail($email);
@@ -476,7 +479,7 @@ class webCashier extends CI_Controller {
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
 		$param_pos_info['archive'] = $this->input->post('archive');
-		$planning = $this->planning();
+		if($this->input->post('mov') == 'close') $planning = $this->planning();
 		
 		$employees_sp = array();
 		$buinfo = $this->hmw->getBuInfo($id_bu);
@@ -504,6 +507,9 @@ class webCashier extends CI_Controller {
 		->set('safe_tr_amount', $this->cashier->calc('safe_current_tr_num', $id_bu))
 		->set('id_bu', $id_bu)
 		->set('employees_sp', serialize($employees_sp));
+
+		$comment_report = $this->input->post('comment_report');
+		if(isset($comment_report)) $this->db->set('comment_report', addslashes($this->input->post('comment_report')));
 		
 		if($this->input->post('mov') == 'close') $this->db->set('pos_cash_amount', $this->cashier->posInfo('cashfloatArchive', $param_pos_info));
 		
@@ -594,11 +600,12 @@ class webCashier extends CI_Controller {
 					$this->db->where('users_bus.bu_id', $id_bu);
 					$query = $this->db->get("users");
 						
+					$server_name = $this->hmw->getParam('server_name');
 					$this->db->select('name');
 					$this->db->where('id', $id_bu);
 					$bu_name = $this->db->get('bus')->row_array()['name'];
 					$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
-					$email['msg'] 		= 'BU: '.$bu_name.' : Difference == ' . number_format($diff, 3);
+					$email['msg'] 		= "BU: ".$bu_name." | ID: ".$pmid."<br />Difference de " . number_format($diff, 2) ."€ <br /><a href='http://".$server_name."/webcashier/report/#".$pmid."'>http://".$server_name."/webcashier/report/#".$pmid."</a>";
 					foreach ($query->result() as $row) {
 						$email['to']	= $row->email;	
 						$this->mmail->sendEmail($email);

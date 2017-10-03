@@ -44,7 +44,8 @@ if (isset($post['submitLogIn'])) {
         }
       }
       if (isset($post['InputPass'])) {
-        $userPass = trim($post['InputPass']);
+        $to_strip = array(' ', '-', '_', "\t", "\n");
+        $userPass = strtolower(str_replace($to_strip, '', $post['InputPass']));
         $sql = "SELECT value FROM params WHERE name = 'wifi_pass' LIMIT 1";
         $query = $dbh->prepare($sql);
         $query->execute();
