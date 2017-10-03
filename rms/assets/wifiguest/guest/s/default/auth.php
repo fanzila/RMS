@@ -44,12 +44,13 @@ if (isset($post['submitLogIn'])) {
         }
       }
       if (isset($post['InputPass'])) {
-        $userPass = trim($post['InputPass']);
-        $sql = "SELECT wifi_pass FROM params LIMIT 1";
+        $to_strip = array(' ', '-', '_', "\t", "\n");
+        $userPass = strtolower(str_replace($to_strip, '', $post['InputPass']));
+        $sql = "SELECT value FROM params WHERE name = 'wifi_pass' LIMIT 1";
         $query = $dbh->prepare($sql);
         $query->execute();
         $result = $query->fetch(PDO::FETCH_ASSOC);
-        $wifi_pass = $result['wifi_pass'];
+        $wifi_pass = $result['value'];
         if (password_verify($userPass, $wifi_pass) === true) {
           $unifi_connection = new UniFi_API\Client($unifiUser, $unifiPass, $unifiServer, $unifiSite, $unifiControllerVersion);
           $set_debug_mode   = $unifi_connection->set_debug($debug);
