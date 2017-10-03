@@ -1023,6 +1023,7 @@ class Auth extends CI_Controller {
 			$this->db->select('users.id, users.username, users.first_shift, users.last_shift_rmd, bus.name');
 			$this->db->join('users_bus', 'users.id = users_bus.user_id');
 			$this->db->join('bus', 'users_bus.bu_id = bus.id');
+			$this->db->where('users.active', 1);
 			$res = $this->db->get('users')->result();
 			$current_date = new DateTime("now");
 			$employees_first_rmd = array();
@@ -1070,7 +1071,16 @@ class Auth extends CI_Controller {
 					}
 				}
 			}
-			
+			$this->db->select('users.email');
+			$this->db->join('users_groups', 'users.id = users_groups.user_id');
+			$this->db->where_in('users_groups.group_id', array(3,4));
+			$this->db->where('users.active', 1);
+			$managers = $this->db->get('users')->result_array();
+			$managers_email = array();
+			foreach ($managers as $manager) {
+				$managers_email[] = $manager['email'];
+			}
+			var_dump($managers_email);
 		} else {
 			return (false);
 		}
