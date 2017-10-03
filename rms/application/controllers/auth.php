@@ -1020,11 +1020,17 @@ class Auth extends CI_Controller {
 	public function cliRmdShift() {
 		
 		if($this->input->is_cli_request()) {
-			$this->db->select('id, username, first_shift, last_shift_rmd');
+			$this->db->select('users.id, users.username, users.first_shift, users.last_shift_rmd, bus.name');
+			$this->db->join('users_bus', 'users.id = users_bus.user_id');
+			$this->db->join('bus', 'users_bus.bu_id = bus.id');
 			$res = $this->db->get('users')->result();
 			$current_date = new DateTime("now");
+			$employees_first_rmd = array();
+			$employees_second_rmd = array();
+			$employees_rmd = array();
 			foreach ($res as $key => $val) {
 				$user_groups = $this->ion_auth->get_users_groups($val->id)->result_array();
+				$username = $val->username;
 	      $higher_level['level'] = -1;
 	      foreach ($user_groups as $key => $value) {
 	        if ($value['level'] > $higher_level['level']) {
@@ -1034,17 +1040,37 @@ class Auth extends CI_Controller {
 				if (isset($higher_level['level']) && $higher_level['level'] == 0) {
 					if (isset($val->last_shift_rmd)) {
 						$last_rmd = new DateTime($val->last_shift_rmd);
-						var_dump($last_rmd);
-						die();
+						if (isset($val->first_shift)) {
+							$first_shift = new DateTime($val->first_shift);
+							$inter_first_last = $last_rmd->diff($first_shift);
+							$sum = (($inter_first_last->format('%y') * 365) + ($inter_first_last->format('%m') * 30) + $inter_first_last->format('%d'));
+							if ($sum == 42) {
+								$employees_second_rmd[] = $username;
+							} else {
+								$inter_last_curr = $current_date->diff($last_rmd);
+								$sum = (($inter_last_curr->format('%y') * 365) + ($inter_last_curr->format('%m') * 30) + $inter_last_curr->format('%d'));
+								if ($sum >= 90) {
+									$employees_rmd[] = $username;
+								}
+							}
+						} else {
+							echo "User: " . $username . " has no first shift\n";
+						}
 					} else {
 							if (isset($val->first_shift)) {
-								$inter_first_curr = $current_date->diff($first)
+								$first_shift = new DateTime($val->first_shift);
+								$inter_first_curr = $current_date->diff($first_shift);
+								$sum = (($inter_first_curr->format('%m') * 30) + $inter_first_curr->format('%d'));
+								if ($sum >= 21) {
+									$employees_first_rmd[] = $username;
+								}
 							} else {
-								echo "User :" . $username // finir message;
+								echo "User: " . $username . " has no first shift\n";
 							}
 					}
 				}
 			}
+			
 		} else {
 			return (false);
 		}
