@@ -33,7 +33,7 @@ class Rmd extends CI_Controller  {
 		
 		date_default_timezone_set('Europe/Paris');
 		
-		$type = $this->session->userdata('type');
+		$type = $CI->session->userdata('type');
 		$now = strtotime("+0 day");
 		$year = date("Y", $now);
 		$month = date("m", $now);
