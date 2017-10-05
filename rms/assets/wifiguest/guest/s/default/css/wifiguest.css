@@ -48,5 +48,8 @@ h4, h5 {
   #contactlbl {
     font-size: 82%;
   }
+  .back-btn a {
+    font-size: 15pt;
+  }
 }
 
