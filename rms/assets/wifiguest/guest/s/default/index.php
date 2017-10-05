@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <?php
+require_once('params.php');
 if(!isset($_GET['id'])) exit("Not allowed");
-//Start session to grab MAC Address and have it available throughout the auth process
-session_start();
 //Get MAC Address and assign it to _SESSION variable to be available throughout the auth process
 if($_GET['id']) {
 $id = $_GET['id'];
@@ -14,7 +13,7 @@ if ($_GET['url']) {
 $url = $_GET['url'];
 } else {
 //If original URL not specified, default to ubnt.com
-$url = 'http://www.ubnt.com';
+$url = $param_url;
 }
 ?>
 <html>
@@ -67,7 +66,7 @@ $url = 'http://www.ubnt.com';
 			    <div class="col-lg-10">
 						<div class="form-group">
 							<input id="InputCond" name="InputCond" aria-describedby="InputCond" type="checkbox" aria-label="..." required> 
-							<label id="cgu" for="InputCond">J'accepte les <a href="/guest/s/default/wificgu.html">Conditions Générales d'utilisation</a> / I agree with the <a href="/guest/s/default/wificgu.html">Terms Of Use</a></label>
+							<label id="cgu" for="InputCond">J'accepte les <a href="/guest/s/default/wificgu.php?id=<?=$id?>&url=<?=$url?>">Conditions Générales d'utilisation</a> / I agree with the <a href="/guest/s/default/wificgu.php?id=<?=$id?>&url=<?=$url?>">Terms Of Use</a></label>
 					  </div> 
 					</div> 
 			  </div> 

@@ -1,3 +1,39 @@
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.cgu-content {
+  font-size: 11pt;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  margin : 30px;
+}
+
+.back-btn {
+  align-self: center;
+  width: 75%;
+  height: 50px;
+  margin-bottom: 25px;
+  margin-top: 5px;
+}
+
+.back-btn a {
+  width: 100%;
+  height: 100%;
+  font-size: 20pt;
+  text-transform: uppercase;
+}
+
+.back-btn-bottom {
+  margin-bottom: 5px;
+  margin-top: 25px;
+}
+
+h4, h5 {
+  text-align: center;
+}
+
 #cgu {
 }
 
@@ -13,3 +49,4 @@
     font-size: 82%;
   }
 }
+
