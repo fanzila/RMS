@@ -6,9 +6,7 @@
 			<p><b>Erreur dans le(s) montant(s) indiqué(s).</b></p>
 			<p>Consultez les erreurs dans le tableau ci-dessous et corrigé éventuellement les montants que vous avez indiqués.<br />
 			<b>Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter un commentaire.<br />
-			Dans tous les cas, vous devez valider ce formulaire.</b>Votre manager prendra contact avez vous ultérieurement.</p>
-			<?if($form_values['cashpad_amount'] > 300) { ?><h3 style="color: red;">Tabarnak! Le montant du fond de caisse semble élevé (<?=$form_values['cashpad_amount']?>€)?! T'as tu bien réalisé le prélèvement dans la caisse ?</h3><? } ?>
-				
+			Dans tous les cas, vous devez valider ce formulaire.</b>Votre manager prendra contact avez vous ultérieurement.</p>				
 				<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="100%">
 					<tr style="background-color: #c2ff91; margin-top:10px">
 						<td colspan="4">
@@ -22,22 +20,27 @@
 						<td>Différence</td>
 						
 					</tr>
-
-						<? foreach ($pay_values as $key => $value) { ?>
+					<tr>
+						<td>Prélèvement billets</td>
+						<td><?=$form_values['prelevement']?></td>
+						<td> - </td>
+						<td> - </td>
+					</tr>
+						<? foreach ($pay_values as $key => $value) { 
+							if ($value['id'] == 1) $value['pos'] = $form_values['cashpad_amount']-$form_values['prelevement']; 
+							?>
 						<tr>
 							<td><?=$value['name']?></td>
 							<? if ($value['id'] == 9) { ?>
 								<td><?=$value['man']?></td>
 								<td> - </td>
 								
-							<? } elseif ($value['id'] == 12) { ?>
+							<? } elseif ($value['id'] == 12 OR $value['id'] == 11) { ?>
 								<td> - </td>
 								<td><?=$value['pos']?></td>
 								
 							<? } else { ?>
 							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo "0"; }?></td>
-							
-							<? if ($value['id'] == 1) $value['pos'] = $form_values['cashpad_amount']; ?>
 	
 							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "0"; }?></td>
 							<? } ?>
@@ -48,14 +51,7 @@
 							<? } ?>
 						</tr>
 					<? }?>
-						<tr>
-							<td>Prélèvement billets</td>
-							<td><?=$form_values['prelevement']?></td>
-							<td> - </td>
-							<td> - </td>
-						</tr>
 				</table>
-				FDC Utilisateur + Prélèvement - FDC Cashpad = <?=number_format(($form_values['prelevement'] - $form_values['cashpad_amount'] + $pay_values[1]['man']), 2);?>
 		<? } ?> 
 		<br />
 		<form id="pos" name="pos" method="post" action="/webcashier/save">
@@ -64,6 +60,13 @@
 					<td>Payment type</td>
 					<td>Amount</td>
 					<td>Info</td>
+				</tr>
+				<tr style="background-color: #fdfff9;">
+					<td><b>Prélèvement billets</b></td>
+					<td>
+				<input type="text" name="prelevement" id="prelevement" data-clear-btn="true" value="<? if(isset($form_values['prelevement'])) echo $form_values['prelevement']; ?>"/>
+					</td>
+					<td>Indiquer le montant total des billets prélevés du fond de caisse.</td>
 				</tr>
 				<?php foreach ($payment as $mode): ?>
 					<?php 
@@ -88,13 +91,6 @@
 						<td width="40%"><?=nl2br($com)?></td>
 					</tr>
 				<?php endforeach; ?>
-				<tr style="background-color: #fdfff9;">
-					<td><b>Prélèvement billets</b></td>
-					<td>
-<input type="text" name="prelevement" id="prelevement" data-clear-btn="true" value="<? if(isset($form_values['prelevement'])) echo $form_values['prelevement']; ?>"/>
-					</td>
-					<td>Indiquer le montant total des billets prélevés du fond de caisse.</td>
-				</tr>
 			</table>
 			<br /> 
 			Comments: <input type="text" name="comment" id="comment" data-clear-btn="true" value="<? if(isset($form_values['comment'])) echo $form_values['comment']; ?>"/>

@@ -36,14 +36,7 @@ CREATE TABLE IF NOT EXISTS `creds` (
   `date` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `creds`
---
-
-INSERT INTO `creds` (`id`, `email`, `optout`) VALUES
-(1, 'somefake@address.com', 'true');
+) ENGINE=InnoDB AUTO_INCREMENT=2 ;
 
 --
 -- Table structure for table `params`
@@ -51,8 +44,11 @@ INSERT INTO `creds` (`id`, `email`, `optout`) VALUES
 
 CREATE TABLE IF NOT EXISTS `params` (
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `wifi_pass` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `name` VARCHAR(255) NOT NULL,
+  `value` varchar(255) NOT NULL
+) ENGINE=InnoDB ;
+
+ALTER TABLE `params` ADD UNIQUE(`name`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -1,6 +1,5 @@
 	<link rel="stylesheet" href="/public/receiptContent.css" />
 	</div>
-
 	<div data-role="content" data-theme="a">
 		<h4>Current Cashpad cash: <?=$pos_cash?>€ | Safe cash: <?=number_format($safe_cash,  2, '.', ' ')?>€ |  Safe TR num: <?=$safe_tr?> | Monthly TO: <?=number_format($monthly_to,  2, '.', ' ')?>€</h4>
 		<p>Daily Cashpad cash movements</p>
@@ -10,7 +9,6 @@
 		<?php endforeach; ?>
 		<? if(empty($live_movements)) { ?>No movement<? } ?>
 		</ul>
-		<br>
 		<br>
 		<form id="filter" name="filter" method="post" data-ajax="false" action="/webcashier/report/">
 			<div class="row">
@@ -50,7 +48,6 @@
 			<input type="submit" name="sub" value="FILTER" />
 		</form>
 		<br>
-		<br>
 		<h2>Movements</h2>
 		
 		<?php foreach ($lines as $m): ?>
@@ -60,14 +57,13 @@
 			if($m['mov']['movement'] == 'open') $mov = 'open';
 			if($m['mov']['movement'] == 'close') $mov = 'close';
 			?>
-			<div data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "#ec7470";} else if ($m['mov']['status'] == 'validated') { echo "#d5ecd2";}} else { echo "rgb(220, 220, 220)";}?>">
-				<h2>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'ymd'); echo $m['mov']['id'] ?> - <?=strtoupper($m['mov']['movement'])?></h2>
-
+			<div id="<?=$m['mov']['id']?>" data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> <?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "#ec7470";} else if ($m['mov']['status'] == 'validated') { echo "#d5ecd2";}} else { echo "rgb(220, 220, 220)";}?>">
+				<h2><a id="<?=$m['mov']['id']?>"></a>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'Y-m-d'); echo " [".$m['mov']['id']."]";    ?> - <?=strtoupper($m['mov']['movement'])?></h2>
 				<ul data-role="listview" data-theme="d" data-divider-theme="d">
 					<li>
 						<h3>Date: <?=$m['mov']['date']?></h3>
 						<h3>User: <?=$m['mov']['username']?> </h3>
-						<p>Cashpad cash (Fond De Caisse): <?=$m['mov']['pos_cash_amount']?>€ | Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_amount']?></p>
+						<p>Safe cash: <?=number_format($m['mov']['safe_cash_amount'],  2, '.', ' ')?>€ | Safe TR num: <?=$m['mov']['safe_tr_amount']?></p>
 			
 						<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 							<tr style="background-color: #bfbfbf; border: 1px solid #dedcd7;">
@@ -76,28 +72,34 @@
 								<?if($mov != 'safe') { ?><td>Cashpad amount</td><? } ?>
 								<?if($mov != 'safe') { ?><td>Balance</td><? } ?>
 							</tr>
+								<tr style="border: 1px solid #dedcd7;">
+								<td>Prélèvement billets</td>
+								<td><?=$m['mov']['prelevement_amount']?>€</td>
+								<td>-</td>
+								<td>-</td>
+							</tr>
 							<?php $total = 0; $diff = (-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']); foreach ($m['pay'] as $m2): ?>
 								<? 
 								$total += $m2['amount_pos'];
 								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
 								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
-								<? if($m2['id'] == 1) $cash_amount = $m2['amount_user']; ?>
+								<? if($m2['id'] == 1) $cash_amount = number_format($m2['amount_user'],2); ?>
 								<tr style="border: 1px solid #dedcd7;">
 									<td><?=$m2['name']?></td>
 									<td><? if($m2['id'] != 12 AND $m2['id'] != 11 AND $m2['id'] != 5) { echo $m2['amount_user']. "€"; } else { echo "-"; } ?></td>
 									<?if($mov != 'safe') { ?>
 										<td>
 										<? $ca_display = "-"; 
-										if($m2['id'] != 9) $ca_display = $m2['amount_pos']."€"; ?>
-										<? if($m2['id'] == 1) $ca_display = "FDC: ".$m['mov']['pos_cash_amount']."€ <br /> <small>(CA : ".$m2['amount_pos']."€)</small>"; ?>										
+										if($m2['id'] != 9) $ca_display = number_format($m2['amount_pos'],2)."€"; ?>
+										<? if($m2['id'] == 1) { $fdc = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount']; $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".number_format($m2['amount_pos'],2)."€)</small>"; } ?>										
 										<?=$ca_display?>
 										</td>
 									<? } ?>
 									<?if($mov != 'safe') { ?>
 										<td>
 										<? 
-										if($m2['id'] == 1) $m2['amount_pos'] = $m['mov']['pos_cash_amount'];
+										if($m2['id'] == 1) $m2['amount_pos'] = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount'];
 										$bal_display =  $m2['amount_user']-$m2['amount_pos']."€"; 
 										if($m2['id'] == 12) $bal_display = "-"; 
 										?>
@@ -106,23 +108,15 @@
 									<? } ?>
 								</tr>						
 							<?php endforeach; ?>
-							<tr style="border: 1px solid #dedcd7;">
-							<td>Prélèvement billets</td>
-							<td><?=$m['mov']['prelevement_amount']?>€</td>
-							<td>-</td>
-							<td>-</td>
-						</tr>
 						</table>
 						<? if($mov == 'close') { ?>
 							<small>Total CA: <?=$total?>€</small>
 							<? if (number_format($diff, 3) != 0) { ?>
-								<p style="color: red;">Diff: <?=number_format($diff, 3)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - Cashpad Cash)</small></p>
-						<? 	}
-							?>
-
-	<? if($mov != 'safe') { $check_amount = $cash_amount-$m['mov']['pos_cash_amount']; ?> 
-		<? if($check_amount < 0 ) { ?><p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT! <?=$check_amount?>€ cash missing! </b><br /><small style="color: black;">(Différence entre fond de caisse au moment de la close (cashpad cash) et montant utilisateur entré (espece user amount))</small></p>
-		<? } } } ?>
+								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - Cashpad Cash (=FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€)</small></p>
+						<? 	
+						}
+					} 
+					?>
 		<? if($mov == 'close') { ?><h2>Commentaire close: <?=stripslashes($m['mov']['comment'])?></h2><? } ?>
 <div>		
 	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
@@ -136,10 +130,12 @@
 			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" value="<?=$m['mov']['comment_report']?>" />
 			<? foreach ($all_user_groups as $user_group) {
 			 if ($user_group->level >= 3 && $mov == 'close') { ?>
-			 <div class="box">
+			 <? if (number_format($diff, 3) != 0) { ?>
+				<div class="box">
 					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?> />
 					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance Directeur</label>
 			 </div>
+			<? } ?>
 			 <? break;
 		 			}
 		 		} ?>
@@ -152,6 +148,7 @@
 <? if($mov =='close') { ?>
 	<div data-role="collapsible">
 		<h3>POS Movements</h3>
+		<?if(!empty($m['cashmovements'])) { ?>
 		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 			<tr style="background-color: #bfbfbf;">
 				<td>Date</td>
@@ -172,14 +169,22 @@
 			</tr>
 		<?php endforeach; ?>
 		</table>
+		<? } ?>
 	</div>
 	<div data-role="collapsible">
-		<h3>Users</h3>
+		<h3>FDC Movements</h3>
+		<?if(!empty($m['cashFdcMovements'])) { ?>
 		<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
-		<?php foreach ($m['close_users'] as $cusers): ?> 
-			<tr><td><?=$cusers?></td></tr>
-			<?php endforeach; ?>
+			<tr style="background-color: #bfbfbf;">
+				<td>Amount</td>
+			</tr>
+		<?php foreach ($m['cashFdcMovements'] as $mov): ?> 
+			<tr>
+				<td><?=$mov['amount']/1000?></td>
+			</tr>
+		<?php endforeach; ?>
 		</table>
+		<? } ?>
 	</div>
 	<div data-role="collapsible">
 		<h3>Cash Drawer Opened</h3>

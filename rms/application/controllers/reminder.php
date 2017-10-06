@@ -76,6 +76,22 @@ class Reminder extends CI_Controller {
 		$users = $query->result();
 
 		$rmd = $this->rmd->getTasks($task_id, $view, $id_bu);
+		
+		if ($this->session->userdata('type') == false) {
+			$rmdraw = $rmd;
+			$rmd = array('service' => array(), 'kitchen' => array());
+			foreach ($rmdraw as $key => $val) {
+				if (isset($val->type)) {
+					if ($val->type == 'service') {
+						$rmd['service'][$key] = $val;
+					} else if ($val->type == 'kitchen') {
+						$rmd['kitchen'][$key] = $val;
+					}
+				}
+			}
+			if (empty($rmd['service']) && empty($rmd['kitchen'])) $rmd = array();
+		}
+		
 		$data = array(
 			'tasks'		=> $rmd,
 			'users'		=> $users,

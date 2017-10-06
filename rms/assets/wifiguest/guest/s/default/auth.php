@@ -7,10 +7,11 @@ require_once('params.php');
 
 $post = $_POST;
 $date = date('Y-m-d H:i:s');
+$debug = false;
 $clientMac = '';
 
-if (isset($_GET['id'])) {
-  $clientMac = trim($_GET['id']);
+if (isset($_POST['id'])) {
+  $clientMac = trim($_POST['id']);
 }
 
 try {
@@ -43,17 +44,19 @@ if (isset($post['submitLogIn'])) {
         }
       }
       if (isset($post['InputPass'])) {
-        $userPass = trim($post['InputPass']);
-        $sql = "SELECT wifi_pass FROM params LIMIT 1";
+        $to_strip = array(' ', '-', '_', "\t", "\n");
+        $userPass = strtolower(str_replace($to_strip, '', $post['InputPass']));
+        $sql = "SELECT value FROM params WHERE name = 'wifi_pass' LIMIT 1";
         $query = $dbh->prepare($sql);
         $query->execute();
         $result = $query->fetch(PDO::FETCH_ASSOC);
-        $wifi_pass = $result['wifi_pass'];
+        $wifi_pass = $result['value'];
         if (password_verify($userPass, $wifi_pass) === true) {
           $unifi_connection = new UniFi_API\Client($unifiUser, $unifiPass, $unifiServer, $unifiSite, $unifiControllerVersion);
+          $set_debug_mode   = $unifi_connection->set_debug($debug);
           $login = $unifi_connection->login();
           $auth_result = $unifi_connection->authorize_guest($clientMac, $duration);
-          echo json_encode($auth_result, JSON_PRETTY_PRINT);
+          header('Location: ' . $param_url);
         } else {
           header('Location: index.php/?pass_error=true');
         }
@@ -69,8 +72,4 @@ if (isset($post['submitLogIn'])) {
 } else {
   die("Forbidden");
 }
-
-$unifi_connection = new UniFi_API\Client($unifiUser, $unifiPass, $unifiServer, $unifiSite, $unifiControllerVersion);
-$login = $unifi_connection->login();
-$results = $unifi_connection->list_alarms();
 ?>

@@ -549,7 +549,18 @@ class Cashier {
 			$ret 	= ($res1['FLOAT1']+$res2['FLOAT2']+$res3['FLOAT3'])/1000;
 			return $ret;
 			break;
+
+			case 'getFdcMovements':
 			
+			$sql 	= "SELECT CASH_FLOAT_IN AS amount FROM ARCHIVEDCASHFLOAT WHERE CASH_FLOAT_IN > 0";
+			$result = $db->query($sql);
+			$lines = array();
+			while($row=$result->fetchArray(SQLITE3_ASSOC)){
+				$lines[] = $row;
+			}
+			return $lines;
+			break;
+						
 			case 'getLiveMovements':
 			$sql 	= "SELECT cm.DATE, u.NAME AS USERNAME, c.LASTNAME AS CLASTNAME, c.FIRSTNAME AS CFIRSTNAME,  cm.AMOUNT, pm.NAME AS PAYMENTNAME, cm.DESCRIPTION, cm.CUSTOMER  FROM CASHMOVEMENT AS cm 
 				LEFT JOIN USER AS u ON cm.USER = u.ID
