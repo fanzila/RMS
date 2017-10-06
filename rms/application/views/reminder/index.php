@@ -18,54 +18,56 @@
 									<?
 							}
 							$type = $this->session->userdata('type');
-							if ($type == false) { ?>
+							if ($type == false) {
+								if (!empty($tasks)) { ?>
 								<h3>Service Remiders</h3>
 								<div id="service-div">
-							<?	foreach ($tasks['service'] as $line) {
-									$bkg_color	= '';
-									$font_color = ''; 
-									if($line->priority == 3) $bkg_color = "#ffcabf";
-									if($line->priority == 2) $bkg_color = "#ffdfa6";
-									if($line->priority == 1) $bkg_color = "#e0e0e0";
+							<? foreach ($tasks['service'] as $line) {
+										$bkg_color	= '';
+										$font_color = ''; 
+										if($line->priority == 3) $bkg_color = "#ffcabf";
+										if($line->priority == 2) $bkg_color = "#ffdfa6";
+										if($line->priority == 1) $bkg_color = "#e0e0e0";
 
-									$overdue = null;
-									if($line->overdue > 0) {
-										$overdue = "overdue: $line->overdue day(s)";
-										$font_color = "#ff5b50";
-									}
-									
-									if($line->overdue < 0) {
-										$overdue = "due in: ".abs($line->overdue)." day(s)";
-										$font_color = "#4a7b50";
-									}
-									?>
-										<input type="checkbox" name="task_<?=$line->id?>" id="task-<?=$line->id?>" class="custom" />
-										<label style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if ($line->interval > 0) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?></label>
-								<? } ?>
-								</div>
-								<h3>Kitchen Reminders</h3>
-								<div id="kitchen-div">
-									<?	foreach ($tasks['kitchen'] as $line) {
-											$bkg_color	= '';
-											$font_color = ''; 
-											if($line->priority == 3) $bkg_color = "#ffcabf";
-											if($line->priority == 2) $bkg_color = "#ffdfa6";
-											if($line->priority == 1) $bkg_color = "#e0e0e0";
+										$overdue = null;
+										if($line->overdue > 0) {
+											$overdue = "overdue: $line->overdue day(s)";
+											$font_color = "#ff5b50";
+										}
+										
+										if($line->overdue < 0) {
+											$overdue = "due in: ".abs($line->overdue)." day(s)";
+											$font_color = "#4a7b50";
+										}
+										?>
+											<input type="checkbox" name="task_<?=$line->id?>" id="task-<?=$line->id?>" class="custom" />
+											<label style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if ($line->interval > 0) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?></label>
+									<? } ?>
+									</div>
+									<h3>Kitchen Reminders</h3>
+									<div id="kitchen-div">
+										<?	foreach ($tasks['kitchen'] as $line) {
+												$bkg_color	= '';
+												$font_color = ''; 
+												if($line->priority == 3) $bkg_color = "#ffcabf";
+												if($line->priority == 2) $bkg_color = "#ffdfa6";
+												if($line->priority == 1) $bkg_color = "#e0e0e0";
 
-											$overdue = null;
-											if($line->overdue > 0) {
-												$overdue = "overdue: $line->overdue day(s)";
-												$font_color = "#ff5b50";
-											}
-											
-											if($line->overdue < 0) {
-												$overdue = "due in: ".abs($line->overdue)." day(s)";
-												$font_color = "#4a7b50";
-											}
-											?>
-												<input type="checkbox" name="task_<?=$line->id?>" id="task-<?=$line->id?>" class="custom" />
-												<label style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if ($line->interval > 0) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?></label>
-										<? } ?>
+												$overdue = null;
+												if($line->overdue > 0) {
+													$overdue = "overdue: $line->overdue day(s)";
+													$font_color = "#ff5b50";
+												}
+												
+												if($line->overdue < 0) {
+													$overdue = "due in: ".abs($line->overdue)." day(s)";
+													$font_color = "#4a7b50";
+												}
+												?>
+													<input type="checkbox" name="task_<?=$line->id?>" id="task-<?=$line->id?>" class="custom" />
+													<label style="background-color: <?=$bkg_color?>" for="task-<?=$line->id?>" id="label-<?=$line->id?>"> <?=$line->task?>  &nbsp;&nbsp;&nbsp;&nbsp;<font size="2" color="<?=$font_color?>"><i><?=$overdue?></i></font><? if(!empty($line->comment)) { echo "<font style='font-size:smaller'><i><br />".nl2br($line->comment)."</i></font>"; } ?> <?if ($line->interval > 0) { ?><font style='font-size:smaller'>| every <?=$line->interval/3600/24?> day(s)</font><? } ?></label>
+											<? } 
+										}?>
 								</div>
 							<? } else {
 								foreach ($tasks as $line) {

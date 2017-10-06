@@ -3,10 +3,14 @@
 	<div data-role="content" data-theme="a">
 		<script>
 		function validateForm() {
-			var x = document.forms["news"]["title"].value;
-			if (x == null || x == "") {
+			var title = document.forms["news"]["title"].value;
+			var content = document.forms["news"]["text"].value;
+			if (title == null || title == "") {
 				alert("Title must be filled out");
 				return false;
+			}
+			if (content == null || content == "") {
+				alert("Text field must be filled out");
 			}
 		}
 		</script>
@@ -22,7 +26,7 @@
 		<input data-theme="a" class="input" data-form="ui-body-a" type="text" id="title" name="title" data-clear-btn="true" /><br />
 
 		<label for="text">Text</label>
-		<textarea id="text" name="text"></textarea><br />
+		<textarea id="text" name="text" required></textarea><br />
 
 		<label for="title">Picture (not needed) (Size max : 2 Mo)</label>
 		<input type="file" name="userfile" size="20" data-clear-btn="true" /><br/>

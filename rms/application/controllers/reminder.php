@@ -79,14 +79,17 @@ class Reminder extends CI_Controller {
 		
 		if ($this->session->userdata('type') == false) {
 			$rmdraw = $rmd;
-			$rmd = array('service' => null, 'kitchen' => null);
+			$rmd = array('service' => array(), 'kitchen' => array());
 			foreach ($rmdraw as $key => $val) {
-				if ($val->type == 'service') {
-					$rmd['service'][$key] = $val;
-				} else if ($val->type == 'kitchen') {
-					$rmd['kitchen'][$key] = $val;
+				if (isset($val->type)) {
+					if ($val->type == 'service') {
+						$rmd['service'][$key] = $val;
+					} else if ($val->type == 'kitchen') {
+						$rmd['kitchen'][$key] = $val;
+					}
 				}
 			}
+			if (empty($rmd['service']) && empty($rmd['kitchen'])) $rmd = array();
 		}
 		
 		$data = array(

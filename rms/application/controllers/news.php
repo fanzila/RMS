@@ -105,6 +105,10 @@ class News extends CI_Controller {
 			$this->load->view('news/create', $error);
 			$this->load->view('jq_footer');
 		}else{
+			$text = $this->input->post('text');
+			if (!isset($text) || empty($text)) {
+				redirect('/news/create');
+			}
 			$config['upload_path'] = './public/pictures';
 			$config['allowed_types'] = 'gif|jpg|png';
 			$config['max_size']	= '2000';
