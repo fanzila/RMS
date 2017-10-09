@@ -10,6 +10,7 @@ class Auth extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->library('hmw');
 		$this->load->library('wp_rms');
+		$this->load->library('mmail');
 
 		$this->load->database();
 
@@ -1016,16 +1017,21 @@ class Auth extends CI_Controller {
 	}
 	
 	
-	// cd /var/www/hank/rms/rms && index.php auth cliRmdShift
-	public function cliRmdShift() {
+	// cd /var/www/hank/rms/rms && index.php auth cliRmdShift [id_bu]
+	public function cliRmdShift($id_bu = null) {
 		
 		if($this->input->is_cli_request()) {
+			if ($id_bu == null) {
+				die('pass a bu id in parameters');
+			}
+			$bu_info = $this->hmw->getBuInfo($id_bu);
 			$this->db->select('users.id, users.username, users.first_shift, users.last_shift_rmd, bus.name');
 			$this->db->join('users_bus', 'users.id = users_bus.user_id');
 			$this->db->join('bus', 'users_bus.bu_id = bus.id');
 			$this->db->where('users.active', 1);
 			$res = $this->db->get('users')->result();
 			$current_date = new DateTime("now");
+			$current_date_string = $current_date->format('Y-m-d');
 			$employees_first_rmd = array();
 			$employees_second_rmd = array();
 			$employees_rmd = array();
@@ -1071,16 +1077,45 @@ class Auth extends CI_Controller {
 					}
 				}
 			}
+			if (empty($employees_rmd) && empty($employees_first_rmd) && empty($employees_second_rmd)) {
+				// echo "No user need skills validation\n"; 						//uncomment to debug
+				return (false);
+			}
 			$this->db->select('users.email');
 			$this->db->join('users_groups', 'users.id = users_groups.user_id');
+			$this->db->join('users_bus', 'users.id = users_bus.user_id');
 			$this->db->where_in('users_groups.group_id', array(3,4));
 			$this->db->where('users.active', 1);
+			$this->db->where('users_bus.bu_id', $id_bu);
 			$managers = $this->db->get('users')->result_array();
 			$managers_email = array();
 			foreach ($managers as $manager) {
 				$managers_email[] = $manager['email'];
 			}
-			var_dump($managers_email);
+			if (empty($managers_email)) {
+				die ('Could not find any manager for this bu');
+			}
+			$email['to'] = $managers_email;
+			$email['subject'] = '[' . $bu_info->name . '] Users that need skills reporting !';
+			$email['mailtype'] = 'html';
+			$msg = 'Hello Managers, here are the users that need skill review as of now :<br /> First Report : <br />';
+			foreach($employees_first_rmd as $employee) {
+				$msg .= $employee . '<br />';
+			}
+			$msg .= '<hr><br />Second Report : <br />';
+			foreach($employees_second_rmd as $employee) {
+				$msg .= $employee . '<br />';
+			}
+			$msg .= '<hr><br />Quarterly Report : <br />';
+			foreach($employees_rmd as $employee) {
+				$msg .= $employee . '<br />';
+			}
+			$msg .= 'Please make a report for each one of them. Thank you !';
+			$email['msg'] = $msg;
+			$this->mmail->sendEmail($email);
+			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
+			$this->db->where_in('username', $employees_to_update);
+			$this->db->update('users', array('last_shift_rmd' => $current_date_string));
 		} else {
 			return (false);
 		}
