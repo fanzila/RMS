@@ -161,11 +161,14 @@ class Skills extends CI_Controller {
 		}
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$users_group_id = array(1,2,3,4,6);
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+		$this->db->join('users_groups', 'users.id = users_groups.user_id', 'left');
 		$this->db->where('users.active', 1);
+		$this->db->where_in('users_groups.group_id', $users_group_id);
 		$this->db->where('users_bus.bu_id', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");

@@ -56,7 +56,7 @@ if (isset($post['submitLogIn'])) {
           $set_debug_mode   = $unifi_connection->set_debug($debug);
           $login = $unifi_connection->login();
           $auth_result = $unifi_connection->authorize_guest($clientMac, $duration);
-          header('Location: ' . $post['url']);
+          header('Location: ' . $param_url);
         } else {
           header('Location: index.php/?pass_error=true');
         }

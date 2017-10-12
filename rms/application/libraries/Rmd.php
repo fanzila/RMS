@@ -33,7 +33,7 @@ class Rmd extends CI_Controller  {
 		
 		date_default_timezone_set('Europe/Paris');
 		
-		$type = $this->session->userdata('type');
+		$type = $CI->session->userdata('type');
 		$now = strtotime("+0 day");
 		$year = date("Y", $now);
 		$month = date("m", $now);
@@ -45,7 +45,6 @@ class Rmd extends CI_Controller  {
 
 		$CI->db->select('T.task as task, T.comment as comment, T.id as id, M.start as start, T.priority as priority, T.type as type, M.repeat_interval as `interval`, ROUND((UNIX_TIMESTAMP() - (UNIX_TIMESTAMP(start)+repeat_interval))/86400) as overdue')->from('rmd_tasks as T')->join('rmd_meta as M','M.id_task = T.id','right')->where('T.active', 1)->where('T.id_bu', $id_bu);
 		if($view != 'all') $CI->db->where_not_in('T.id', "(SELECT id_task FROM rmd_log as L WHERE DATE(L.`date`), DATE(NOW()))->group_by('L.id_task'))");
-		if($task_id > 0) $CI->db->where('id_task', $task_id);
 		
 		if($view != 'all') $CI->db->where("( DATE_ADD(TIMESTAMP(M.`start`), INTERVAL M.`repeat_interval` SECOND) <= TIMESTAMP('$nowtime') )");
 		if ($type != false) $CI->db->where('T.type', $type);
