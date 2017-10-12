@@ -1,5 +1,7 @@
 <?php
   $RMSUrl = ""; //Put your RMS installation url here if you're going to use sync
+  $appName = ""; // The AppName you set on RMS.
+  $apiKey = ""; // The API Key you generated on RMS with the above appName.
   $mysql_db = "";
   $mysql_host = ""; //If the MySQL server is running on the same server as the web auth page
   $mysql_user = ""; //Change to the appropriate user that has access to DB/table

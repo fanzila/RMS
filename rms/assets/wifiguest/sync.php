@@ -36,6 +36,7 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, "$RMSUrl/customers/record");
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, array('data' => $jdata));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('custApiKey: ' . $apiKey, 'appName: ' . $appName));
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 #curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 #curl_setopt($ch, CURLOPT_PORT,  443);
@@ -63,6 +64,7 @@ if (isset($ret['lastID'])) {
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, "$RMSUrl/customers/getLastId/true");
   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array('custApiKey: ' . $apiKey, 'appName: ' . $appName));
   #curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
   #curl_setopt($ch, CURLOPT_PORT,  443);
   curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);

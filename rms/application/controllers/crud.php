@@ -404,6 +404,19 @@ class Crud extends CI_Controller {
 				$this->_example_output($output);
 		}
 
+		public function customers_api_keys()
+		{
+			$crud = new grocery_CRUD();
+			$crud->set_theme('bootstrap');
+			
+				$crud->columns('id', 'app_name', 'key');
+				$crud->required_fields('app_name', 'key');
+				$crud->display_as('app_name', 'Application Name');
+				$crud->set_table('customers_api_keys');
+				$output = $crud->render();
+				$this->_example_output($output);
+		}
+
 	public function _example_output($output = null)
 	{
 		$this->load->view('crud.php',$output);
