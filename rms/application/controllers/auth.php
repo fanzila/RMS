@@ -10,6 +10,7 @@ class Auth extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->library('hmw');
 		$this->load->library('wp_rms');
+		$this->load->library('mmail');
 
 		$this->load->database();
 
@@ -542,7 +543,8 @@ class Auth extends CI_Controller {
 				'phone'      => trim($this->input->post('phone'))
 				);
 		}
-		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $this->input->post('groups'), $this->input->post('bus')))
+		$first_shift = $this->input->post('sdate');
+		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $this->input->post('groups'), $this->input->post('bus'), $first_shift))
 		{
 			$welcome_email = $this->input->post('welcome_email');
 
@@ -634,6 +636,7 @@ class Auth extends CI_Controller {
 
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('auth/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/create_user', $this->data);
 			$this->load->view('jq_footer');
@@ -729,6 +732,7 @@ class Auth extends CI_Controller {
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
 					$buData    = $this->input->post('bus');
+					$first_shift = $this->input->post('sdate');
 					if (isset($user->WordPress_UID)) {
 						$user_WP_role = $this->wp_rms->userWPRole($id);
 						if (isset($user_WP_role['wp_role']) && !empty($user_WP_role['wp_role'])) {
@@ -758,6 +762,13 @@ class Auth extends CI_Controller {
 							$this->ion_auth->add_to_bu($bu, $id);
 						}
 
+					}
+					if (isset($first_shift) && !empty($first_shift)) {
+						$this->db->where('id', $id);
+						$this->db->update('users', array('first_shift' => $first_shift));
+					} else {
+						$this->db->where('id', $id);
+						$this->db->update('users', array('first_shift' => NULL));
 					}
 				}
 
@@ -855,6 +866,9 @@ class Auth extends CI_Controller {
 			if (isset($user->WordPress_UID) && $this->ion_auth->is_admin()) {
 				$this->data['WpUID'] = $user->WordPress_UID;
 			}
+			if (isset($user->first_shift) && $this->ion_auth->is_admin()) {
+				$this->data['first_shift'] = $user->first_shift;
+			}
 		$this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
 		
 		$data['door_device'] = null;
@@ -863,6 +877,7 @@ class Auth extends CI_Controller {
 
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('auth/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->_render_page('auth/edit_user', $this->data);
 		$this->load->view('jq_footer');
@@ -999,6 +1014,107 @@ class Auth extends CI_Controller {
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->_render_page('auth/edit_group', $this->data);
 		$this->load->view('jq_footer');
+	}
+	
+	
+	// cd /var/www/hank/rms/rms && php index.php auth cliRmdShift [id_bu]
+	public function cliRmdShift($id_bu = null) {
+		
+		if($this->input->is_cli_request()) {
+			if ($id_bu == null) {
+				die('pass a bu id in parameters');
+			}
+			$bu_info = $this->hmw->getBuInfo($id_bu);
+			$this->db->select('users.id, users.username, users.first_shift, users.last_shift_rmd, bus.name');
+			$this->db->join('users_bus', 'users.id = users_bus.user_id');
+			$this->db->join('bus', 'users_bus.bu_id = bus.id');
+			$this->db->where('users.active', 1);
+			$this->db->where('bus.id', $id_bu);
+			$res = $this->db->get('users')->result();
+			$current_date = new DateTime("now");
+			$current_date_string = $current_date->format('Y-m-d');
+			$employees_first_rmd = array();
+			$employees_second_rmd = array();
+			$employees_rmd = array();
+			foreach ($res as $key => $val) {
+				$user_groups = $this->ion_auth->get_users_groups($val->id)->result_array();
+				$username = $val->username;
+	      $higher_level['level'] = -1;
+	      foreach ($user_groups as $key => $value) {
+	        if ($value['level'] > $higher_level['level']) {
+	          $higher_level = $value;
+	        }
+	      }
+				if (isset($higher_level['level']) && $higher_level['level'] == 0) {
+					if (isset($val->last_shift_rmd)) {
+						$last_rmd = new DateTime($val->last_shift_rmd);
+						if (isset($val->first_shift)) {
+							$inter_last_curr = $current_date->diff($last_rmd);
+							$sum = (($inter_last_curr->format('%y') * 365) + ($inter_last_curr->format('%m') * 30) + $inter_last_curr->format('%d'));
+							if ($sum == 21) {
+								$employees_second_rmd[] = $username;
+							} else if ($sum >= 90) {
+									$employees_rmd[] = $username;
+							}
+						} else {
+							echo "User: " . $username . " has no first shift\n";
+						}
+					} else {
+							if (isset($val->first_shift)) {
+								$first_shift = new DateTime($val->first_shift);
+								$inter_first_curr = $current_date->diff($first_shift);
+								$sum = (($inter_first_curr->format('%m') * 30) + $inter_first_curr->format('%d'));
+								if ($sum >= 21) {
+									$employees_first_rmd[] = $username;
+								}
+							} else {
+								echo "User: " . $username . " has no first shift\n";
+							}
+					}
+				}
+			}
+			if (empty($employees_rmd) && empty($employees_first_rmd) && empty($employees_second_rmd)) {
+				// echo "No user need skills validation\n"; 						//uncomment to debug
+				return (false);
+			}
+			$this->db->select('users.email');
+			$this->db->join('users_groups', 'users.id = users_groups.user_id');
+			$this->db->join('users_bus', 'users.id = users_bus.user_id');
+			$this->db->where_in('users_groups.group_id', array(3,4));
+			$this->db->where('users.active', 1);
+			$this->db->where('users_bus.bu_id', $id_bu);
+			$managers = $this->db->get('users')->result_array();
+			$managers_email = array();
+			foreach ($managers as $manager) {
+				$managers_email[] = $manager['email'];
+			}
+			if (empty($managers_email)) {
+				die ('Could not find any manager for this bu');
+			}
+			$email['to'] = $managers_email;
+			$email['subject'] = '[' . $bu_info->name . '] Users that need skills reporting !';
+			$email['mailtype'] = 'html';
+			$msg = '<p>Hello Managers, here are the users that need skill review as of now :</p><p>* First Report : <br />';
+			foreach($employees_first_rmd as $employee) {
+				$msg .= '- '.$employee . '<br />';
+			}
+			$msg .= '</p><hr><p>* Second Report : <br />';
+			foreach($employees_second_rmd as $employee) {
+				$msg .= '- '.$employee . '<br />';
+			}
+			$msg .= '</p><hr><p>* Quarterly Report : <br />';
+			foreach($employees_rmd as $employee) {
+				$msg .= '- '.$employee . '<br />';
+			}
+			$msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
+			$email['msg'] = $msg;
+			$this->mmail->sendEmail($email);
+			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
+			$this->db->where_in('username', $employees_to_update);
+			$this->db->update('users', array('last_shift_rmd' => $current_date_string));
+		} else {
+			return (false);
+		}
 	}
 
 	public function edit_oneself($id=null)

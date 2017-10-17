@@ -46,6 +46,8 @@ echo form_open("auth/create_user", $attributes);
             <?php echo form_input($password_confirm);?>
       </p>
 	**/ ?>
+	<td><label for="sdate" id="label">First Shift Date :</label></td>
+	<td><input type="text" data-role="date" id="sdate" name="sdate" data-clear-btn="true" /></td>
     </div>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-7">
@@ -98,3 +100,8 @@ echo form_open("auth/create_user", $attributes);
 	<br /><br />
 	<div id="view"></div>
 </div><!-- /page -->
+<script>
+	$(document).ready(function() {
+	$("#sdate").datepicker({ dateFormat: 'yy-mm-dd' });
+	});
+</script>
