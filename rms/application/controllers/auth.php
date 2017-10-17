@@ -1017,7 +1017,7 @@ class Auth extends CI_Controller {
 	}
 	
 	
-	// cd /var/www/hank/rms/rms && index.php auth cliRmdShift [id_bu]
+	// cd /var/www/hank/rms/rms && php index.php auth cliRmdShift [id_bu]
 	public function cliRmdShift($id_bu = null) {
 		
 		if($this->input->is_cli_request()) {
@@ -1029,6 +1029,7 @@ class Auth extends CI_Controller {
 			$this->db->join('users_bus', 'users.id = users_bus.user_id');
 			$this->db->join('bus', 'users_bus.bu_id = bus.id');
 			$this->db->where('users.active', 1);
+			$this->db->where('bus.id', $id_bu);
 			$res = $this->db->get('users')->result();
 			$current_date = new DateTime("now");
 			$current_date_string = $current_date->format('Y-m-d');
@@ -1051,7 +1052,7 @@ class Auth extends CI_Controller {
 							$first_shift = new DateTime($val->first_shift);
 							$inter_first_last = $last_rmd->diff($first_shift);
 							$sum = (($inter_first_last->format('%y') * 365) + ($inter_first_last->format('%m') * 30) + $inter_first_last->format('%d'));
-							if ($sum == 42) {
+							if ($sum == 21) {
 								$employees_second_rmd[] = $username;
 							} else {
 								$inter_last_curr = $current_date->diff($last_rmd);
@@ -1098,19 +1099,19 @@ class Auth extends CI_Controller {
 			$email['to'] = $managers_email;
 			$email['subject'] = '[' . $bu_info->name . '] Users that need skills reporting !';
 			$email['mailtype'] = 'html';
-			$msg = 'Hello Managers, here are the users that need skill review as of now :<br /> First Report : <br />';
+			$msg = '<p>Hello Managers, here are the users that need skill review as of now :</p><p>* First Report : <br />';
 			foreach($employees_first_rmd as $employee) {
-				$msg .= $employee . '<br />';
+				$msg .= '- '.$employee . '<br />';
 			}
-			$msg .= '<hr><br />Second Report : <br />';
+			$msg .= '</p><hr><p>* Second Report : <br />';
 			foreach($employees_second_rmd as $employee) {
-				$msg .= $employee . '<br />';
+				$msg .= '- '.$employee . '<br />';
 			}
-			$msg .= '<hr><br />Quarterly Report : <br />';
+			$msg .= '</p><hr><p>* Quarterly Report : <br />';
 			foreach($employees_rmd as $employee) {
-				$msg .= $employee . '<br />';
+				$msg .= '- '.$employee . '<br />';
 			}
-			$msg .= 'Please make a report for each one of them. Thank you !';
+			$msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
 			$email['msg'] = $msg;
 			$this->mmail->sendEmail($email);
 			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
