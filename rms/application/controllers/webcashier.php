@@ -444,7 +444,7 @@ class webCashier extends CI_Controller {
 				{// check to make sure that login was successful
 					$session = $shiftplanning->getSession( );	// return the session data after successful login
 				} else {
-					echo " CANT GET SESSION".$response['status']['text'] . "--" . $response['status']['error'];
+					error_log(" CANT GET SESSION".$response['status']['text'] . "--" . $response['status']['error']);
 				}
 		}
 
