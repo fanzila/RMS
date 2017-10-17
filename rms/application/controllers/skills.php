@@ -280,7 +280,9 @@ class Skills extends CI_Controller {
 		$this->db->select('sr.id, us.id as id_sponsor, u.first_name, u.last_name, u.id as id_user')
 			->from('skills_record as sr')
 			->join('users as us', 'us.id = id_sponsor', 'left')
-			->join('users as u', 'u.id = id_user', 'left');
+			->join('users as u', 'u.id = id_user', 'left')
+			->where('id_bu', $id_bu);
+			
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_records = $res->result();
 
