@@ -1049,17 +1049,12 @@ class Auth extends CI_Controller {
 					if (isset($val->last_shift_rmd)) {
 						$last_rmd = new DateTime($val->last_shift_rmd);
 						if (isset($val->first_shift)) {
-							$first_shift = new DateTime($val->first_shift);
-							$inter_first_last = $last_rmd->diff($first_shift);
-							$sum = (($inter_first_last->format('%y') * 365) + ($inter_first_last->format('%m') * 30) + $inter_first_last->format('%d'));
+							$inter_last_curr = $current_date->diff($last_rmd);
+							$sum = (($inter_last_curr->format('%y') * 365) + ($inter_last_curr->format('%m') * 30) + $inter_last_curr->format('%d'));
 							if ($sum == 21) {
 								$employees_second_rmd[] = $username;
-							} else {
-								$inter_last_curr = $current_date->diff($last_rmd);
-								$sum = (($inter_last_curr->format('%y') * 365) + ($inter_last_curr->format('%m') * 30) + $inter_last_curr->format('%d'));
-								if ($sum >= 90) {
+							} else if ($sum >= 90) {
 									$employees_rmd[] = $username;
-								}
 							}
 						} else {
 							echo "User: " . $username . " has no first shift\n";
