@@ -112,13 +112,27 @@ class customers extends CI_Controller {
   {
     if(!isset($_POST['data'])) exit('No POST data provided');
     if(empty($_POST['data'])) exit('No data provided in POST');
-    
-    $data = json_decode($_POST['data'], true);
-    foreach ($data as $key => $val) {
-      if (!$this->db->insert('customers', $val)) {
-        error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
-        return ($val['id']);
+    if (isset($_SERVER['HTTP_CUSTAPIKEY']) && isset($_SERVER['HTTP_APPNAME'])) {
+      $apiKey = $_SERVER['HTTP_CUSTAPIKEY'];
+      $appName = $_SERVER['HTTP_APPNAME'];
+      if ($this->customers_lib->checkApiKey($appName, $apiKey)) {
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $key => $val) {
+          if (!$this->db->insert('customers', $val)) {
+            error_log("Can't place the insert sql request, error message: ".$this->db->_error_message());
+            $ret = json_encode(array('lastID' => $data[$prev_key]['id']));
+            echo ($ret);
+            die('Transfer interrupted at id : ' . $val['id']);
+          }
+          $prev_key = $key;
+        }
+      } else {
+        $ret = json_encode(array('apiError' => 'FORBIDDEN: Wrong API key'));
+        echo $ret;
       }
+    } else {
+      $ret = json_encode(array('apiError' => 'FORBIDDEN: No API key received'));
+      echo ($ret);
     }
     $lastID = $this->getLastId();
     $ret = json_encode(array('lastID' => $lastID));
@@ -131,9 +145,10 @@ class customers extends CI_Controller {
     $res = $this->db->get('customers')->row_array();
     $lastID = (isset($res['id']) ? $res['id'] : 0);
     if ($output == true) {
-      if (isset($_SERVER['custApiKey']) {
-        $apiKey = $_SERVER['custApiKey'];
-        if ($this->customers_lib->checkApiKey($apiKey)) {
+      if (isset($_SERVER['HTTP_CUSTAPIKEY']) && isset($_SERVER['HTTP_APPNAME'])) {
+        $apiKey = $_SERVER['HTTP_CUSTAPIKEY'];
+        $appName = $_SERVER['HTTP_APPNAME'];
+        if ($this->customers_lib->checkApiKey($appName, $apiKey)) {
           echo $lastID;
         } else {
           $ret = json_encode(array('apiError' => 'FORBIDDEN: Wrong API key'));
