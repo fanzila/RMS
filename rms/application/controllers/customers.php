@@ -8,7 +8,7 @@ class customers extends CI_Controller {
     $this->load->library('hmw');
     $this->load->library('mmail');
     $this->load->library('customers_lib');
-    $this->load->library('useragentparser');
+    $this->load->library('UserAgentParser');
     $this->load->helper('form');
     $this->load->database();
   }
