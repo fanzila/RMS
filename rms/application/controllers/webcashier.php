@@ -444,7 +444,7 @@ class webCashier extends CI_Controller {
 				{// check to make sure that login was successful
 					$session = $shiftplanning->getSession( );	// return the session data after successful login
 				} else {
-					echo " CANT GET SESSION".$response['status']['text'] . "--" . $response['status']['error'];
+					error_log(" CANT GET SESSION".$response['status']['text'] . "--" . $response['status']['error']);
 				}
 		}
 
@@ -499,21 +499,37 @@ class webCashier extends CI_Controller {
 		$postmov = $this->input->post('mov');
 		if(empty($postmov)) exit('Error, empty movement, please try again.');
 		
-		$this->db->set('movement', $postmov)
-		->set('id_user', $userid)
-		->set('comment', addslashes($this->input->post('comment')))
-		->set('prelevement_amount', $this->input->post('prelevement'))
-		->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
-		->set('safe_tr_amount', $this->cashier->calc('safe_current_tr_num', $id_bu))
-		->set('id_bu', $id_bu)
-		->set('employees_sp', serialize($employees_sp));
+		$this->db->trans_begin();
+		$keys = "(movement, id_user, comment, prelevement_amount, safe_cash_amount, safe_tr_amount, id_bu, employees_sp";
+		
+		
+		$values = "('" . $postmov . "', " . $userid . ", '" . addslashes($this->input->post('comment')) . "', '" . $this->input->post('prelevement') . "', '" 
+							. $this->cashier->calc('safe_current_cash_amount', $id_bu) . "', '" . $this->cashier->calc('safe_current_tr_num', $id_bu) . "', '"
+							. $id_bu . "', '" . serialize($employees_sp) . "'"; 
+		
+		// $this->db->query('movement', $postmov)
+		// ->set('id_user', $userid)
+		// ->set('comment', addslashes($this->input->post('comment')))
+		// ->set('prelevement_amount', $this->input->post('prelevement'))
+		// ->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
+		// ->set('safe_tr_amount', $this->cashier->calc('safe_current_tr_num', $id_bu))
+		// ->set('id_bu', $id_bu)
+		// ->set('employees_sp', serialize($employees_sp));
 
 		$comment_report = $this->input->post('comment_report');
-		if(isset($comment_report)) $this->db->set('comment_report', addslashes($this->input->post('comment_report')));
+		if(isset($comment_report)){
+			$keys .= ", comment_report";
+			$values	.= ", '" . addslashes($this->input->post('comment_report')) . "'";
+		} 
 		
-		if($this->input->post('mov') == 'close') $this->db->set('pos_cash_amount', $this->cashier->posInfo('cashfloatArchive', $param_pos_info));
-		
-		$this->db->insert('pos_movements');
+		if($this->input->post('mov') == 'close') {
+			$keys .= ", pos_cash_amount";
+			$values .= ", '" . $this->cashier->posInfo('cashfloatArchive', $param_pos_info) . "'";
+		}
+		$keys .= ")";
+		$values .= ")";
+		$queryStringPm = "INSERT INTO `pos_movements` " . $keys . "VALUES" . $values . ";";
+		$this->db->query($queryStringPm);
 		$pmid = $this->db->insert_id();
 
 		$payid = $pmid;
@@ -538,9 +554,11 @@ class webCashier extends CI_Controller {
 				if(!isset($val2['pos']) OR empty($val2['pos']) ) $val2['pos'] = 0;
 				$val2man = $this->cashier->clean_number($val2['man']);
 				if($this->input->post('mov') == 'safe_out') $val2man = -1 * abs($val2man);
-				$this->db->set('id_payment', $idp)->set('id_movement', $pmid)->set('amount_pos', $this->cashier->clean_number($val2['pos']))->set('amount_user', $val2man);
-				$this->db->insert('pos_payments');
-				$rpp = $this->db->get('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				$queryStringPp = "INSERT INTO `pos_payments` (id_payment, id_movement, amount_pos, amount_user) VALUES ('" . $idp . "', '" . $pmid . "', '" . $this->cashier->clean_number($val2['pos']) . "', '" . $val2man . "');";  
+				$this->db->query($queryStringPp);
+				// $this->db->set('id_payment', $idp)->set('id_movement', $pmid)->set('amount_pos', $this->cashier->clean_number($val2['pos']))->set('amount_user', $val2man);
+				// $this->db->insert('pos_payments');
+				// $rpp = $this->db->get('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}
 		}
 		
@@ -578,17 +596,12 @@ class webCashier extends CI_Controller {
 
             if (($test_diff)) {
 				if (!$this->input->post('blc')) {
+					$this->db->trans_rollback();
 					$form_values = $this->input->post();
 					$form_values['cashpad_amount'] = $cashpad_amount;
 					$this->session->set_flashdata('form_values', $form_values);
 					$this->session->set_flashdata('pay_values', $pay_values);
-						
-					$this->db->where('id', $pmid);
-					$this->db->delete('pos_movements');
-						
-					$this->db->where('id_movement', $pmid);
-					$this->db->delete('pos_payments');
-						
+					
 					redirect('/webcashier/movement/close', 'location');
 				} else {
 					$this->db->select('users.username, users.email, users.id');
@@ -611,11 +624,16 @@ class webCashier extends CI_Controller {
 						$this->mmail->sendEmail($email);
 					}
 				}
+				$this->db->trans_commit();
 				$this->db->set('status', 'error');
 				$this->db->where('id', $pmid);
 				$this->db->update('pos_movements');
+			} else {
+				$this->db->trans_commit();
 			}
 			$this->closing($this->input->post('archive'), $pmid);
+		} else {
+			$this->db->trans_commit();
 		}
 
 		$data['idtrans'] = $payid;

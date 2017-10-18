@@ -58,6 +58,10 @@ echo form_open(uri_string(), $attributes);
             IBAN
             <?php echo form_input($iban);?>
       </p>
+			<?if ($this->ion_auth->is_admin()):?>
+				<td><label for="sdate" id="label">First Shift Date :</label></td>
+				<td><input type="text" data-role="date" id="sdate" name="sdate" value="<?if (isset($first_shift)) echo $first_shift;?>" data-clear-btn="true" /></td>
+			<?endif;?>
     </div>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-7">
@@ -168,3 +172,8 @@ echo form_open(uri_string(), $attributes);
 	<br /><br />
 	<div id="view"></div>
 </div><!-- /page -->
+<script>
+	$(document).ready(function() {
+	$("#sdate").datepicker({ dateFormat: 'yy-mm-dd' });
+	});
+</script>

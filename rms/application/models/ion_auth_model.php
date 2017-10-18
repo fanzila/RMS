@@ -861,7 +861,7 @@ class Ion_auth_model extends CI_Model
 	 * @return bool
 	 * @author Mathew
 	 **/
-	public function register($username, $password, $email, $additional_data = array(), $groups = array(), $bus = array())
+	public function register($username, $password, $email, $additional_data = array(), $groups = array(), $bus = array(), $first_shift = NULL)
 	{
 		$this->trigger_events('pre_register');
 
@@ -926,6 +926,12 @@ class Ion_auth_model extends CI_Model
 		    'created_on' => time(),
 		    'active'     => ($manual_activation === false ? 1 : 0)
 		);
+		
+		if (isset($first_shift) && !empty($first_shift)) {
+			$data['first_shift'] = $first_shift;
+		} else {
+			$data['first_shift'] = NULL;
+		}
 
 		if ($this->store_salt)
 		{
