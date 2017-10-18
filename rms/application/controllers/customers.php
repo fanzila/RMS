@@ -87,7 +87,7 @@ class customers extends CI_Controller {
     $headers = $this->hmw->headerVars(0, "/customers/api/", "Create API Key");
     $this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-    $this->load->view('customers/createApikey', $data);
+    $this->load->view('customers/createApiKey', $data);
 		$this->load->view('jq_footer');
   }
   
