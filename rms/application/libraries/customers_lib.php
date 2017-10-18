@@ -28,8 +28,8 @@ Class Customers_lib {
     $CI->db->select('api_key')->where('name', $buName);
     $query = $CI->db->get('bus');
     $res = $query->row_array();
-    if (isset($res['key'])) {
-      $pass_verify = password_verify($apiKey, $res['key']);
+    if (isset($res['api_key'])) {
+      $pass_verify = password_verify($apiKey, $res['api_key']);
       if ($pass_verify === true) {
         return (true);
       } else {
