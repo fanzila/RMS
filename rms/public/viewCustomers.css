@@ -9,3 +9,7 @@ table {
 .customer-list {
   overflow: scroll;
 }
+
+#optout-types button {
+  display: inline-flex;
+}

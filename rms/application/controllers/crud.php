@@ -404,15 +404,21 @@ class Crud extends CI_Controller {
 				$this->_example_output($output);
 		}
 
-		public function customers_api_keys()
+		public function customers_api_keys($id_bu)
 		{
 			$crud = new grocery_CRUD();
 			$crud->set_theme('bootstrap');
 			
-				$crud->columns('id', 'app_name', 'key');
-				$crud->required_fields('app_name', 'key');
-				$crud->display_as('app_name', 'Application Name');
-				$crud->set_table('customers_api_keys');
+				$crud->columns('id', 'name', 'api_key');
+				if (!empty($id_bu)) $crud->where('id', $id_bu);
+				$crud->edit_fields('api_key');
+				$crud->display_as('name', 'BU Name');
+				$crud->display_as('api_key', 'API Key');
+				$crud->add_action('Delete Key', '', '/customers/deleteApiKey');
+				$crud->unset_delete();
+				$crud->unset_add();
+				$crud->unset_read();
+				$crud->set_table('bus');
 				$output = $crud->render();
 				$this->_example_output($output);
 		}

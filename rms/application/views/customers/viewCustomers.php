@@ -32,6 +32,32 @@
   </div>
   <div data-role="collapsible">
     <h3>Stats</h3>
+    <div id="optout-stat">
+      <canvas id="optout-canvas" width="400" height="400"></canvas>
+    </div>
   </div>
 </div>
 </div> <!-- page -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.js"></script> 
+<script type="text/javascript">
+  var ctx = $('#optout-canvas');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ["Opted Out ?"],
+      datasets: [{
+        label: 'Opted Out',
+        data: [<?=$countOptOut?>],
+        backgroundColor: "red"
+      }, {
+        label: 'Opted In',
+        data: [<?=$countOptIn?>],
+        backgroundColor: "green"
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true
+    }
+  });
+</script>

@@ -34,11 +34,14 @@ class customers extends CI_Controller {
     $this->hmw->changeBu();
     
     $data = array();
-    $keys = $this->customers_lib->getApiKeys();
+    $id_bu = $this->session->userdata('bu_id');
+    $keys = $this->customers_lib->getApiKeys($id_bu);
     
-    if (isset($keys) && !empty($keys)) {
+    if (!empty($keys)) {
       $data['keys'] = $keys;
     }
+    
+    $data['id_bu'] = $id_bu;
     
     $headers = $this->hmw->headerVars(0, "/customers/", "API");
     $this->load->view('jq_header_pre', $headers['header_pre']);
@@ -53,33 +56,54 @@ class customers extends CI_Controller {
     $this->hmw->changeBu();
     
     $post = $this->input->post();
-    if (empty($post)) {
-      $error = "No data sent, please retry.";
-    } else {
-      $appName = $this->security->xss_clean($post['app_name']);
-      if (!ctype_alnum($appName)) {
-      $error = "Use only alphanumeric characters for Application Name";
+    $id_bu = $this->session->userdata('bu_id');
+    $buName = $this->hmw->getBuInfo($id_bu)->name;
+    
+    if (isset($id_bu)) {
+      if (empty($post)) {
+        $error = "No data sent, please retry.";
       } else {
         $cstrong = true;
         $apiKey = bin2hex(openssl_random_pseudo_bytes(16, $cstrong));
         $hashedKey = password_hash($apiKey, PASSWORD_DEFAULT);
-        if (!$this->customers_lib->addApiKey($appName, $hashedKey)) {
-          $error = "Couldn't insert your api key in the database";
+        if (!$this->customers_lib->addApiKey($id_bu, $hashedKey)) {
+          $error = "Could not insert your api key in the database";
+          $apiKey = null;
         }
-      }
+      }  
+    } else {
+      $error = "Could not recognize current BU.";
     }
+    
     if (isset($apiKey)) {
-      $data['appName'] = $appName;
+      $data['buName'] = $buName;
       $data['apiKey'] = $apiKey;
     }
+    
     if (isset($error)) {
       $data['error'] = $error;
     }
+    
     $headers = $this->hmw->headerVars(0, "/customers/api/", "Create API Key");
     $this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
     $this->load->view('customers/createApikey', $data);
 		$this->load->view('jq_footer');
+  }
+  
+  public function deleteApiKey($id) 
+  {
+    $this->hmw->isLoggedIn();
+    $this->hmw->changeBu();
+    
+    $id_bu = $this->session->userdata('bu_id');
+    
+    if (!empty($id)) {
+      $delete = $this->customers_lib->removeApiKey($id);
+      redirect('/crud/customers_api_keys/' . $id_bu);
+      } else {
+      die('You must provide the bu ID to remove key from when calling this function.');
+    }
   }
   
   public function viewCustomers() 
@@ -97,6 +121,8 @@ class customers extends CI_Controller {
           $customers[$key]['clientUserAgent'] = $readableUserAgent;
         }
       }
+      $data['countOptOut'] = $this->customers_lib->countOptOut();
+      $data['countOptIn'] = $this->customers_lib->countOptIn();
       $data['customers'] = $customers;
     }
     
