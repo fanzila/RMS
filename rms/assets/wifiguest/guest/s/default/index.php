@@ -59,7 +59,7 @@ $url = $param_url;
 				</div>
 				<div class="form-group">
 					<label for="InputPass">Mot de Passe / Password</label>
-					<input type="password" class="form-control" id="InputPass" name="InputPass" aria-describedby="passHelp" placeholder="Enter Password" required>
+					<input type="text" class="form-control" id="InputPass" name="InputPass" aria-describedby="passHelp" placeholder="Enter Password" required>
 					<small id="passHelp" class="form-text text-muted">Le mot de passe est écrit sur votre ticket de caisse / The password is written on your recipt</small>
 				</div>				
 				<div class="row">

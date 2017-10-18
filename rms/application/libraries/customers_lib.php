@@ -88,6 +88,7 @@ Class Customers_lib {
     $CI->db->distinct();
     $CI->db->select('email');
     $CI->db->where('optout', 1);
+    $CI->db->order_by('id', 'desc');
     $query = $CI->db->get('customers');
     $res = $query->num_rows();
     return ($res);
@@ -100,6 +101,7 @@ Class Customers_lib {
     $CI->db->distinct();
     $CI->db->select('email');
     $CI->db->where('optout', 0);
+    $CI->db->order_by('id', 'desc');
     $query = $CI->db->get('customers');
     $res = $query->num_rows();
     return ($res);
