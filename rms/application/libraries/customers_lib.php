@@ -73,6 +73,8 @@ Class Customers_lib {
     
     $CI->load->database();
     
+    $CI->db->order_by('id', 'desc');
+    $CI->db->limit('200');
     $query = $CI->db->get('customers');
     $ret = $query->result_array();
     
