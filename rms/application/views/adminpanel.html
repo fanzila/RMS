@@ -46,6 +46,9 @@
 						<?if($userlevel >= 4){?>
 						<li><a rel="external" data-ajax="false" href="/wp_access/" onclick="window.open(this.href);return false;"><i class="fa fa-wordpress"></i> Wordpress</a></li>
 						<? } ?>
+						<?if($userlevel >= 4){?>
+						<li><a rel="external" data-ajax="false" href="/customers/" onclick="window.open(this.href);return false;"><i class="fa fa-user"></i> Customers</a></li>
+						<? } ?>
 						</ul>
 					</div>
 					<? if($userlevel >= 2){?>
