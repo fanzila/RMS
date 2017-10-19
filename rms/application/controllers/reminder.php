@@ -146,6 +146,12 @@ class Reminder extends CI_Controller {
 		$sqln = " WHERE id_task = $data[id]";
 		$reponse = 'ok';
 		
+		
+		if ($data['id'] == 'create') {
+			if (empty($data['mstart']) || $data['mstart'] == '0000-00-00 00:00:00') {
+				$data['mstart'] = date('Y-m-d H:i:s');
+			}
+		}
 						
 		if($data['id'] == 'create') {
 			$sqlt = "INSERT INTO ";
