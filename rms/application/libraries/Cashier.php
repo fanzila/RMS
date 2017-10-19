@@ -161,6 +161,15 @@ class Cashier {
 			}
 			array_push($result_array, $row_array);
 		}
+		$temp = $result_array;
+		foreach ($temp as $key => $val) {
+			$GMT = new DateTimeZone('GMT');
+			$locale = date_default_timezone_get();
+			$localtz = new DateTimeZone($locale);
+			$dt = DateTime::createFromFormat('Y-m-d H:i:s', $val['DATE_CLOSED'], $GMT);
+			$dt->setTimezone($localtz);
+			$result_array[$key]['DATE_CLOSED'] = $dt->format('Y-m-d H:i:s');
+		}
 		return ($result_array);
 	}
 	
@@ -200,6 +209,15 @@ class Cashier {
 				$row_array['TERMINAL'] = $o['0']['name'];
 			}
 			array_push($result_array, $row_array);
+		}
+		$temp = $result_array;
+		foreach ($temp as $key => $val) {
+			$GMT = new DateTimeZone('GMT');
+			$locale = date_default_timezone_get();
+			$localtz = new DateTimeZone($locale);
+			$dt = DateTime::createFromFormat('Y-m-d H:i:s', $val['DATE'], $GMT);
+			$dt->setTimezone($localtz);
+			$result_array[$key]['DATE'] = $dt->format('Y-m-d H:i:s');
 		}
 		return ($result_array);
 	}
@@ -248,6 +266,15 @@ class Cashier {
 				}
 			}
 			array_push($result_array, $row_array);
+		}
+		$temp = $result_array;
+		foreach ($temp as $key => $val) {
+			$GMT = new DateTimeZone('GMT');
+			$locale = date_default_timezone_get();
+			$localtz = new DateTimeZone($locale);
+			$dt = DateTime::createFromFormat('Y-m-d H:i:s', $val['date_closed'], $GMT);
+			$dt->setTimezone($localtz);
+			$result_array[$key]['date_closed'] = $dt->format('Y-m-d H:i:s');
 		}
 		$total_actions = $this->countAllArchivedReceipts($id_bu, $file);
 		$stats = array();
@@ -593,10 +620,13 @@ class Cashier {
 			
 			$result_la = $db->query("select DATE_CREATED as la FROM RECEIPT ORDER BY DATE_CREATED DESC LIMIT 1");
 			$res['la'] = $result_la ->fetchArray(SQLITE3_ASSOC);
-
-			$date = new DateTime($res['la']['la']);
-			$date->add(new DateInterval('PT2H'));
-			$time_la = $date->format('Y-m-d H:i:s');
+			$GMT = new DateTimeZone('GMT');
+			$locale = date_default_timezone_get();
+			$localtz = new DateTimeZone($locale);
+			$dt = DateTime::createFromFormat('Y-m-d H:i:s', $res['la']['la'], $GMT);
+			$dt->setTimezone($localtz);
+			$time_la = $dt->format('Y-m-d H:i:s');
+			
 			
 			$result_ct = $db->query("select count(*) AS ct FROM RECEIPT");
 			$res['ct'] = $result_ct ->fetchArray(SQLITE3_ASSOC);
