@@ -127,7 +127,7 @@
 		$id_form = "report".$m['mov']['id'];
 		$attributes = array('id' => $id_form, 'name' => $id_form);
 		echo form_open("webcashier/save_report_comment", $attributes);?>
-			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" value="<?=$m['mov']['comment_report']?>" />
+			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" />
 			<? foreach ($all_user_groups as $user_group) {
 			 if ($user_group->level >= 3 && $mov == 'close') { ?>
 			 <? if (number_format($diff, 3) != 0) { ?>
@@ -143,7 +143,15 @@
 			<input type="hidden" name="id" value="<?=$m['mov']['id']?>">
 			<input type="hidden" name="diff-<?=$m['mov']['id']?>" id="diff-<?=$m['mov']['id']?>" value="<?=$diff?>">
 		</form>
-	</tr></td></table>
+	</tr></td>
+	<? foreach ($m['comments'] as $comment) { ?>
+			<tr>
+				<td>
+					<b><?=$comment['username']?></b> | <b><?=$comment['date']?></b> : <b><?=$comment['content']?></b>
+				</td>
+			</tr>
+	<? } ?>
+	</table>
 </div>
 <? if($mov =='close') { ?>
 	<div data-role="collapsible">

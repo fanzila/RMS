@@ -42,6 +42,8 @@ class webCashier extends CI_Controller {
 	public function save_report_comment()
 	{
 		$id_bu = $this->session->userdata('bu_id');
+		$user = $this->session->userdata('username');
+		$curr_date = date('Y-m-d H:i:s');
 		$reponse = 'ok';
 		$data = $this->input->post();
 
@@ -50,10 +52,14 @@ class webCashier extends CI_Controller {
 		$bu_name = $this->db->get('bus')->row_array()['name'];
 		$subject = "WARNING $bu_name : New comment on report";
 		
-		$this->db->set('comment_report', $data['comment-'.$data['id']]);
-		$this->db->where('id', $data['id']);
+		$comment_data = array(
+			'content' => $data['comment-'.$data['id']],
+			'date' => $curr_date,
+			'username' => $user,
+			'mov_id' => $data['id']
+		);
 		
-		if(!$this->db->update('pos_movements')) {
+		if(!$this->db->insert('pos_comment_report', $comment_data)) {
 			$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 		}
 		
@@ -309,6 +315,14 @@ class webCashier extends CI_Controller {
 				//get cashFdcMovements to user archive
 				$paramFdc = $param;
 				$paramFdc['archive'] = $m['closing_file'];
+				
+				//get comments for movement
+				$this->db->from('pos_comment_report');
+				$this->db->where('mov_id', $m['id']);
+				$this->db->limit(50);
+				$this->db->order_by('id', 'desc');
+				$comments_mov = $this->db->get()->result_array();
+				$lines[$m['id']]['comments'] = $comments_mov;
 				
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
 				$lines[$m['id']]['cashmovements'] 	= $this->cashier->posInfo('getMovements', $param);
