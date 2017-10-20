@@ -587,9 +587,10 @@ class webCashier extends CI_Controller {
 			$cb_balance = $pay_values[2]['man'] - $pay_values[2]['pos'];
 		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];
 			$chq_balance = $pay_values[4]['man'] - $pay_values[4]['pos'];
+			$cc_balance = $pay_values[11]['man'] - $pay_values[11]['pos'];
 			$prelevement = floatval($this->input->post('prelevement'));
             
-			$diff = $cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount + $prelevement;
+			$diff = $cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount + $prelevement + $cc_balance;
 			$test_diff = false;
             if($diff <= $alert_amount['cashier_alert_amount_close_min']) $test_diff = true;
             if($diff >= $alert_amount['cashier_alert_amount_close_max']) $test_diff = true;

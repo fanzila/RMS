@@ -82,7 +82,7 @@
 								<? 
 								$total += $m2['amount_pos'];
 								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
-								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
+								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4 OR $m2['id'] == 11) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
 								<? if($m2['id'] == 1) $cash_amount = number_format($m2['amount_user'],2); ?>
 								<tr style="border: 1px solid #dedcd7;">
@@ -112,7 +112,7 @@
 						<? if($mov == 'close') { ?>
 							<small>Total CA: <?=$total?>€</small>
 							<? if (number_format($diff, 3) != 0) { ?>
-								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - Cashpad Cash (=FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€)</small></p>
+								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - (FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€) - balance compte client</small></p>
 						<? 	
 						}
 					} 

@@ -35,7 +35,7 @@
 								<td><?=$value['man']?></td>
 								<td> - </td>
 								
-							<? } elseif ($value['id'] == 12 OR $value['id'] == 11) { ?>
+							<? } elseif ($value['id'] == 12) { ?>
 								<td> - </td>
 								<td><?=$value['pos']?></td>
 								
