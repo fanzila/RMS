@@ -75,8 +75,8 @@
 								<tr style="border: 1px solid #dedcd7;">
 								<td>Prélèvement billets</td>
 								<td><?=$m['mov']['prelevement_amount']?>€</td>
-								<td>-</td>
-								<td>-</td>
+								<?if($mov != 'safe') { ?> <td>-</td> <? } ?>
+								<?if($mov != 'safe') { ?> <td>-</td> <? } ?>
 							</tr>
 							<?php $total = 0; $diff = (-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']); foreach ($m['pay'] as $m2): ?>
 								<? 
