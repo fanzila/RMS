@@ -117,8 +117,36 @@
 						<input type="hidden" name="<?='pos_'.$pos['IDMETHOD']?>" id="<?='pos_'.$pos['IDMETHOD']?>" value="<?=$pos['SUM']?>">
 				<? } 
 					} ?>
-			<input type="button" onClick="validator();" name="save" value="SAVE">			
+			<input type="button" onClick="validateBoth();" name="save" value="SAVE">			
 			<? } ?>
 	</form>
 </div>
 </div>
+<script>
+function validateError() {
+	var comment = document.forms["pos"]["comment"].value;
+	var blc = document.forms["pos"]["blc"];
+	if (typeof(blc) != 'undefined') {
+		if (blc.checked === true) {
+			if (comment == null || comment == "") {
+				alert('Commentaire obligatoire en cas d\'erreur');
+				return (false);
+			} else {
+				return (true);
+			}
+		} else {
+			return (true);
+		}
+	} else {
+		return (true);
+	}
+}
+
+function validateBoth() {
+	if (validateError() == true) {
+		validator();
+	} else {
+		return (false);
+	}
+}
+</script>
