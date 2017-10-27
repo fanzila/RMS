@@ -1,5 +1,5 @@
 	</div>
-	<div data-role="content" data-theme="a">
+	<div data-role="content">
 
 			<script>
 			function validateForm() {
@@ -22,7 +22,15 @@
 			<? } ?>
 			Message:
 			<textarea id="msg" name="msg"></textarea><br />
-
+				<label for="type">TYPE</label>
+				<label class="checkbox">
+				<input data-inline="true" type="checkbox" name="service" id="service" checked style="background-color: #ffffff">
+				Service
+				</label>
+				<label class="checkbox">
+					<input data-inline="true" type="checkbox" name="kitchen" id="kitchen" style="background-color: #ffffff">
+					Kitchen
+				</label>
 			<input data-ajax="false"  data-theme="a" type="submit" onclick="return validateForm()" name="submit" value="Send" />
 
 		</form>

@@ -18,7 +18,12 @@ class Posmessage extends CI_Controller {
 		{
 			$this->load->library('mmail');
 			$data['msgsent'] = $this->input->post('msg');
-			$this->hmw->sendNotif($this->input->post('msg'), $id_bu);	
+			if ($this->input->post('service')) {
+				$this->hmw->sendNotif($this->input->post('msg'), $id_bu);
+			}
+			if ($this->input->post('kitchen')) {
+				$this->hmw->sendNotif($this->input->post('msg'), $id_bu, 'kitchen');
+			}
 		}
 		
 		$this->load->helper('form');
