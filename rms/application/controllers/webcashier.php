@@ -316,14 +316,6 @@ class webCashier extends CI_Controller {
 				$paramFdc = $param;
 				$paramFdc['archive'] = $m['closing_file'];
 				
-				//get comments for movement
-				$this->db->from('pos_comment_report');
-				$this->db->where('mov_id', $m['id']);
-				$this->db->limit(50);
-				$this->db->order_by('id', 'desc');
-				$comments_mov = $this->db->get()->result_array();
-				$lines[$m['id']]['comments'] = $comments_mov;
-				
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
 				$lines[$m['id']]['cashmovements'] 	= $this->cashier->posInfo('getMovements', $param);
 				$lines[$m['id']]['cashFdcMovements'] = $this->cashier->posInfo('getFdcMovements', $paramFdc);
@@ -332,6 +324,14 @@ class webCashier extends CI_Controller {
 				$lines[$m['id']]['userActionStats'] = $this->cashier->userActionStats($id_bu, $m['closing_file']);
 				$lines[$m['id']]['total_actions'] = $this->cashier->countAllArchivedReceipts($id_bu, $m['closing_file']);
 			}
+			
+			//get comments for movement
+			$this->db->from('pos_comment_report');
+			$this->db->where('mov_id', $m['id']);
+			$this->db->limit(50);
+			$this->db->order_by('id', 'desc');
+			$comments_mov = $this->db->get()->result_array();
+			$lines[$m['id']]['comments'] = $comments_mov;
 		}
 
 		$data['lines'] = $lines;
