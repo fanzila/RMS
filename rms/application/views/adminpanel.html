@@ -30,8 +30,8 @@
 							<li><a rel="external" data-ajax="false" href="/door/"><i class="zmdi zmdi-lock zmd-fw"></i>Door</a></li>
 						<? } **/ ?>
 						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
-						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
-						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
+						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
+						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
 						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="<? if($keylogin) { ?>/order/viewOrders/<? } else { ?>/order/<? } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
 						<? if($keylogin || $userlevel >= 1) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>
 						<li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li>
@@ -43,6 +43,9 @@
 						<? if($userlevel >= 1){?>								
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 						<?}?>
+						<?if($userlevel >= 4){?>
+						<li><a rel="external" data-ajax="false" href="/wp_access/" onclick="window.open(this.href);return false;"><i class="fa fa-wordpress"></i> Wordpress</a></li>
+						<? } ?>
 						</ul>
 					</div>
 					<? if($userlevel >= 2){?>
@@ -53,6 +56,7 @@
 								<li><a rel="external" data-ajax="false" href="http://redmine.hankrestaurant.com/" onclick="window.open(this.href);return false;"><i class="fa fa-trello"></i> Redmine</a></li>
 								<li><a rel="external" data-ajax="false" href="http://mail.hankrestaurant.com" onclick="window.open(this.href);return false;"><i class="fa fa-envelope"></i> Email Hank</a></li>
 								<li><a rel="external" data-ajax="false" href="http://dropbox.com/home" onclick="window.open(this.href);return false;"><i class="fa fa-dropbox"></i> Dropbox</a></li>
+
 								<?if($userlevel >= 2){?>
 									<li><a rel="external" data-ajax="false" href="https://hank.recruiterbox.com/app/#candidates/overview" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-open-in-new zmd-fw"></i>Recruiter Box (RB)</a></li>
 									<li><a rel="external" data-ajax="false" href="https://www.cashpad.net" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-money zmd-fw"></i>Reporting Cashpad</a></li>
@@ -83,36 +87,27 @@
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensorsAlarm/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors alarm management</a></li>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
+								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/wpRmsGroups/"><i class="fa fa-hdd-o" aria-hidden="true"></i> WP Roles Management</a></li>								
+								<li><a rel="external" data-ajax="false" href="/customers/" onclick="window.open(this.href);return false;"><i class="fa fa-user" aria-hidden="true"></i> Customers</a></li>
 								<?}?>
 							</ul>
 						</div>
 					<?}?>
 				</div>
+				<? /**
 				<div data-role="collapsible" data-collapsed="false" data-inset="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 					<h3>Nice to Know</h3>
-					<div>
-						<?$date = new DateTime($ca['last']);
-						$date->add(new DateInterval('PT01H'));?>
-						<?if($userlevel >= 4) { ?>
-							Bank balance: <?=number_format($bank_balance, 2, ',', ' ');?>€
-							<br/>
-						<? } ?>
-						CA: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€
-						<br/>
-						Last ticket: <?=$date->format('Y-m-d H:i:s')?>
-						<br/>
-						Num: <?=$ca['num']?>
-					</div>
-					<hr/>
 					<div>
 						You're log as <?=$username?>
 						<br/>
 						Your group is <?=$groupname?>
 					</div>
 				<hr/>
+
 					<ul data-role="listview" data-icon="false">
 						<li><a rel="external" data-ajax="false" href="/info"><i class="fa fa-copyright" aria-hidden="true"></i> Credits &amp; License</a></li>
-					</ul>
+					</ul>	
 				</div>
+				**/ ?>
 			</div>
 			<!-- /panel left -->

@@ -1,0 +1,63 @@
+.wpa-box{
+	padding: 6px 9px;
+	margin: 0 auto 25px;
+	display: block;
+	width: 100%;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.wpa-error{
+	background: #ffebe8;
+	border: 1px solid #C00;
+}
+.wpa-success{
+	background: #e7f7d3;
+	border: 1px solid #6c3;
+}
+.wpa-alert{
+	background: #fffbbc;
+	border: 1px solid #E6DB55;
+}
+/* Last paragraph, no bottom margin */
+.wpa-box p:last-child {
+	margin-bottom: 0 !important;
+}
+
+/* We need all these styles to counteract various theme dependent styles that can mess with the alignment, colors, etc. */
+#user_email_username{
+	box-sizing: border-box;
+	height: 32px;
+
+	width: 60%;
+	margin-bottom: 10px;
+	vertical-align: top;
+	font-size: 14px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 2px;
+	color: #2b2b2b;
+	padding: 9px 10px 8px;
+	line-height: 0.9em;
+	display: inline-block;
+}
+#wpa-submit{
+	box-sizing: border-box;
+	height: 32px;
+
+	width:25%;
+	max-width: 100px;
+	font-size: 14px;
+	background-color: #333;
+	background-image: none;
+	border: 0 none;
+	border-radius: 2px !important;
+	color: #fff !important;
+	font-weight: normal;
+	padding: 9px 2px 9px 2px;
+	text-transform: uppercase;
+	vertical-align: top;
+	box-shadow: none;
+	text-shadow: none;
+	line-height: 1em;
+	display: inline-block;
+}

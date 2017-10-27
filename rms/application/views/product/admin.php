@@ -114,7 +114,7 @@
 					<?
 				foreach ($products as $line) { 
 					?>
-					<li data-role="list-divider"><?=stripslashes($line['name'])?> <small>- <?=$line['id']?></small></li>
+					<li data-role="list-divider"><?=stripslashes(str_replace('"','\'',$line['name']))?> <small>- <?=$line['id']?></small></li>
 					<? 
 					$bkgcolor = '';
 					if($line['active'] == 0 ) $bkgcolor = '#e5e5e5'; 
@@ -126,7 +126,7 @@
 								<div class="col-md">
 									<div class="box">
 										Name
-										<input type="text" name="name" id="name-<?=$line['id']?>" value="<?=stripslashes($line['name'])?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+										<input type="text" name="name" id="name-<?=$line['id']?>" value="<?=stripslashes(str_replace('"','\'',$line['name']))?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 								<div class="col-md">
@@ -139,19 +139,13 @@
 										</select>
 									</div>
 								</div>
-								<div class="col-md">
+								<div class="col-md" style="background-color: #f2f2ef;">
 									<div class="box">
 										<small>Prix H.T. /unité €</small>
 										<input type="text" name="price" id="price-<?=$line['id']?>" value="<?=$line['price']/1000?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
-								<div class="col-md">
-									<div class="box">
-										<small>Colisage</small>
-										<input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
-									</div>
-								</div>
-								<div class="col-md">
+								<div class="col-md" style="background-color: #f2f2ef;">
 									<div class="box">
 										<small>Unité de vente</small>
 										<select id="id_unit<?=$line['id']?>" name="id_unit"  data-mini="true" <?if ($managed_only == "on") {echo "disabled";}?>>
@@ -161,6 +155,13 @@
 										</select>
 									</div>
 								</div>
+								<div class="col-md">
+									<div class="box">
+										<small>Colisage</small>
+										<input type="text" name="packaging" value="<?=$line['packaging']?>"  id="packaging-<?=$line['id']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+									</div>
+								</div>
+
 								<div class="col-md">
 									<div class="box">
 										<small>Category</small>
@@ -193,14 +194,14 @@
 								<div class="col-md">
 									<div class="box">
 										<small>Ref. supplier</small>
-										<input type="text" name="supplier_reference" value="<?=$line['supplier_reference']?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
+										<input type="text" name="supplier_reference" value="<?=stripslashes(str_replace('"','\'',$line['supplier_reference']))?>" <?if ($managed_only == "on") {echo "disabled";}?> data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md">
 									<div class="box">
-										<small>Stock qtty</small><br/>
+										<small>Stock qtty /pièce</small><br/>
 										<input type="text" id="stock_qtty-<?=$line['id']?>" name="stock_qtty" value="<?=round($line['stock_qtty'],2)?>"  data-mini="true" data-clear-btn="true" />
 									</div>
 								</div>
@@ -246,7 +247,7 @@
 								<div class="col-md">
 									<div class="box">
 										<small>Comment</small><br/>
-										<input type="text" name="comment" value="<?=$line['comment']?>"  data-mini="true" data-clear-btn="true" <?if ($managed_only == "on") {echo "disabled";}?>/>
+										<input type="text" name="comment" value="<?=stripslashes(str_replace('"','\'',$line['comment']))?>"  data-mini="true" data-clear-btn="true" <?if ($managed_only == "on") {echo "disabled";}?>/>
 									</div>
 								</div>
 								<div class="col-md">
@@ -280,6 +281,7 @@
 												<th>Theorical Stock</th>
 												<th>Actual Stock</th>
 												<th>Delta</th>
+												<th>Delete record</th>
 											</tr>
 										</thead>
 										<tbody id="tbl-body_<?=$line['id']?>">
@@ -498,6 +500,26 @@
 									<!-- Modal script -->
 											<script>
 											
+											function delete_record(id_record, id_product) {
+												if (confirm('Do you really want to delete this record ?') === true) {
+													var site_url = '<?= site_url('product_admin/deleteStockRecord/') ?>' + '/' + id_record;
+													var row = document.getElementById('row_' + id_record);
+													$.ajax({
+														url: site_url,
+														type: 'get',
+														data: null,
+														success: function(data) {
+															if (data.status == 'success') {
+																row.parentNode.removeChild(row);
+															} else {
+																alert('Unable to delete record');
+																return (false);
+															}	
+														}
+													});
+												}
+											}
+											
 											function open_modal(id_product) {
 												
 												var site_url = '<?= site_url('product_admin/tableProductHistory/') ?>' + '/' + id_product;
@@ -511,10 +533,10 @@
 												modal.style.display = "block";
 												document.body.classList.add("modal-open");
 												for (i = 0; i < inputs.length; i += 1) {
-													inputs[i].disabled = true;
+													inputs[i].hidden = true;
 												}
 												for (i = 0; i < selects.length; i += 1) {
-													selects[i].disabled = true;
+													selects[i].hidden = true;
 												}
 											}
 											
@@ -527,20 +549,20 @@
 												var selects = document.getElementsByTagName("select");
 												
 												for (i = 0; i < inputs.length; i += 1) {
-													inputs[i].disabled = false;
+													inputs[i].hidden = false;
 												}
 												for (i = 0; i < selects.length; i += 1) {
-													selects[i].disabled = false;
+													selects[i].hidden = false;
 												}
 												
 												window.onclick = function(event) {
 	    										if (event.target == modal) {
 	        									modal.style.display = "none";
 														for (i = 0; i < inputs.length; i += 1) {
-															inputs[i].disabled = false;
+															inputs[i].hidden = false;
 														}
 														for (i = 0; i < selects.length; i += 1) {
-															selects[i].disabled = false;
+															selects[i].hidden = false;
 														}
 														document.body.classList.remove("modal-open");
 													}
@@ -552,7 +574,6 @@
 											function resendFilters(page) {
 												var form = document.getElementById("filter");
 												form.action = "/product_admin/index/filter/" + page;
-												console.log(form.action);
 												form.submit();
 											}
 																						

@@ -57,17 +57,14 @@
 													<input id="nend" type="text" name="nend" value="" data-clear-btn="true" />
 												</td>
 											</tr>
-
+											
 											<tr>
 												<td>
 													<label for="ninterval" id="label">Notification interval (in seconds):</label>
 													<input id="ninterval" type="text" name="ninterval" value="" data-clear-btn="true" />
 												</td>
-												<td>
-													<label for="nlast" id="label">Last notification (datetime format YYYY-MM-DD HH:MN:SS): </label>
-													<input id="nlast" type="text" name="nlast" value="" data-clear-btn="true" />
-												</td>
 											</tr>
+										
 											<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 												<tr><td colspan="2" style="background-color: #fbf19e;">Repeating</td></tr>
 												<tr>
@@ -131,11 +128,15 @@
 			<? }
 			
 			
-			if(!$create) { ?>
-				<div data-role="collapsible-set">
-					<? foreach ($tasks as $line) {	?>
-						<div data-role="collapsible">
-							<h2>ID: <?=$line->tid?> | <?=$line->ttask?></h2>
+		if(!$create) { ?>
+			<div data-role="collapsible-set">
+				<? foreach ($tasks as $line) {	
+					if($line->ttype == 'service') $bgstyle=" style='background-color: #eceeff;';"; 
+					if($line->ttype == 'kitchen') $bgstyle=" style='background-color: #ffe8d1;';"; 
+					if($line->tactive == 0) $bgstyle=" style='background-color: #bbbdbd;';"; 
+					?>
+						<div data-role="collapsible"<?=$bgstyle?>>
+							<h2>ID: <?=$line->tid?> | <?=$line->ttask?> | <small><?=$line->ttype?></small></h2>
 							<ul data-role="listview" data-theme="d" data-divider-theme="d">
 								<li>
 									<form id="task<?=$line->tid?>" name="task<?=$line->tid?>" method="post" action="/reminder/adminSave">

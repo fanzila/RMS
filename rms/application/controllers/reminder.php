@@ -76,6 +76,22 @@ class Reminder extends CI_Controller {
 		$users = $query->result();
 
 		$rmd = $this->rmd->getTasks($task_id, $view, $id_bu);
+		
+		if ($this->session->userdata('type') == false) {
+			$rmdraw = $rmd;
+			$rmd = array('service' => array(), 'kitchen' => array());
+			foreach ($rmdraw as $key => $val) {
+				if (isset($val->type)) {
+					if ($val->type == 'service') {
+						$rmd['service'][$key] = $val;
+					} else if ($val->type == 'kitchen') {
+						$rmd['kitchen'][$key] = $val;
+					}
+				}
+			}
+			if (empty($rmd['service']) && empty($rmd['kitchen'])) $rmd = array();
+		}
+		
 		$data = array(
 			'tasks'		=> $rmd,
 			'users'		=> $users,
@@ -130,6 +146,12 @@ class Reminder extends CI_Controller {
 		$sqln = " WHERE id_task = $data[id]";
 		$reponse = 'ok';
 		
+		
+		if ($data['id'] == 'create') {
+			if (empty($data['mstart']) || $data['mstart'] == '0000-00-00 00:00:00') {
+				$data['mstart'] = date('Y-m-d H:i:s');
+			}
+		}
 						
 		if($data['id'] == 'create') {
 			$sqlt = "INSERT INTO ";
@@ -147,7 +169,7 @@ class Reminder extends CI_Controller {
 			$sqln = " , id_task = $data[id]";
 		}
 		 
-		$sql_notif = "$sqlt rmd_notif SET `start` = '".$data['nstart']."', `end` = '".$data['nend']."', `interval` = '".$data['ninterval']."', `last` = '".$data['nlast']."' $sqln";
+		$sql_notif = "$sqlt rmd_notif SET `start` = '".$data['nstart']."', `end` = '".$data['nend']."', `interval` = '".$data['ninterval']."' $sqln";
 		
 		$sql_meta = "$sqlt rmd_meta SET `start` = '".$data['mstart']."', repeat_interval = '".$data['repeat_interval']."' $sqln";		
 

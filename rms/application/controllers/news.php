@@ -99,12 +99,18 @@ class News extends CI_Controller {
 		$error = array('error' => "");
 		if (!$this->input->post('title'))
 		{
+			$data['user'] = $user->username;
+			$data['error'] = $error['error'];
 			$this->load->view('jq_header_pre', $headers['header_post']);
 			$this->load->view('news/jq_header_spe');
 			$this->load->view('jq_header_post', $headers['header_post']);
-			$this->load->view('news/create', $error);
+			$this->load->view('news/create', $data);
 			$this->load->view('jq_footer');
 		}else{
+			$text = $this->input->post('text');
+			if (!isset($text) || empty($text)) {
+				redirect('/news/create');
+			}
 			$config['upload_path'] = './public/pictures';
 			$config['allowed_types'] = 'gif|jpg|png';
 			$config['max_size']	= '2000';

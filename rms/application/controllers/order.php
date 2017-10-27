@@ -47,6 +47,14 @@ class Order extends CI_Controller {
 
 		$data['bu_name']  =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
+		
+		if ($this->session->userdata('filters')) {
+			$this->session->unset_userdata('filters');
+		}
+		
+		if ($this->session->userdata('keep_filters')) {
+			$this->session->unset_userdata('keep_filters');
+		}
 
 		$headers = $this->hmw->headerVars(1, "/order/", "Order");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -142,6 +150,8 @@ class Order extends CI_Controller {
 				->like('p.name', "$q", 'both')
 				->where('p.deleted', 0)
 				->where('p.active', 1)
+				->where('s.deleted', 0)
+				->where('s.active', 1)
 				->where('s.id_bu', $id_bu)
 				->order_by('p.name asc')->limit(100);
 			$query = $this->db->get() or die($this->mysqli->error);
@@ -179,6 +189,8 @@ class Order extends CI_Controller {
 				->like('p.name', "$q", 'both')
 				->where('p.deleted', 0)
 				->where('p.active', 1)
+				->where('s.deleted', 0)
+				->where('s.active', 1)
 				->where('s.id_bu', $id_bu)
 				->order_by('p.name asc')->limit(100);
 			$query = $this->db->get() or die($this->mysqli->error);
@@ -270,6 +282,9 @@ class Order extends CI_Controller {
 	public function viewOrders()
 	{
 		$this->hmw->keyLogin();
+		$this->load->library('session');
+		$this->load->library('user_agent');
+		
 		$id_bu 		= $this->session->all_userdata()['bu_id'];
 		$keylogin 	= $this->session->all_userdata()['keylogin'];
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -295,16 +310,33 @@ class Order extends CI_Controller {
 		$this->pagination->initialize($config);
 
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-		$post  = $this->input->post();
+		$post  = $this->input->get();
 
 		if(isset($post['search'])) {
+			foreach ($post as $key => $val) {
+				$filters[$key] = $val;
+			}
+			$this->session->set_userdata('filters', $filters);
 			$results	= $this->searchOrder($post, $id_bu, $keylogin);
 			$search		= true;
 		} else {
 			$results	= $this->order_model->get_list($config["per_page"], $page, $keylogin);
 			$search		= false;
 		}
-
+		
+		$res2 = $results;
+		
+		foreach ($res2 as $key => $rec) {
+			if (isset($rec['data'])) {
+				$usrl = unserialize($rec['data']);
+				if (isset($usrl['pricetotal']) && is_numeric($usrl['pricetotal'])) {
+					$results[$key]['totalht'] = ($usrl['pricetotal'] / 1000);
+				} else {
+					$results[$key]['totalht'] = 'Unable to get total for this order';
+				}
+			}
+		}
+		
 		$data = array(
 			'suppliers'	=> $this->product->getSuppliers(null, null, $id_bu),
 			'users'		=> $users,
@@ -313,15 +345,40 @@ class Order extends CI_Controller {
 			'search'	=> $search,
 			'links'		=> $this->pagination->create_links()
 			);
+		if (($this->session->userdata('keep_filters') === 'true') || $post['keep_filters'] == 'true')
+		{
+			if ($this->session->userdata('filters') !== null) {
+				$data['filters'] = $this->session->userdata('filters');
+			}
+			//$this->session->unset_userdata('keep_filters');
+		} else {
+			//$this->session->unset_userdata('filters');
+		}
+
+		$referrer	= $this->agent->referrer();
+		$ref_ex 	= explode('/', $referrer);
+		if(!isset($ref_ex['4'])) $ref_ex['4'] = 'NONE';
+		
+		if($this->session->userdata('keep_filters') == 'true' && ($ref_ex['4'] != 'viewOrders' OR $ref_ex == 'NONE') && $this->session->userdata('reset_filters') != true) {
+			$location = '/order/viewOrders?'.http_build_query($data['filters']);	
+			$this->session->unset_userdata('filters');
+			$this->session->unset_userdata('keep_filters');
+			$this->session->set_userdata('reset_filters', true);
+			header('Location: '.$location);
+			exit();
+		}
+	
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
-
+				
 		$headers = $this->hmw->headerVars(0, "/order/", "Orders");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('order/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_view',$data);
 		$this->load->view('jq_footer');
+		
+		$this->session->unset_userdata('reset_filters');		
 	}
 	
 	private function sortArray($array) {
@@ -339,9 +396,6 @@ class Order extends CI_Controller {
 				array_push($low, $value);
 			}
 		}
-		uasort($high, array($this, "sortProductOrder"));
-		uasort($medium, array($this, "sortProductOrder"));
-		uasort($low, array($this, "sortProductOrder"));
 		$productsFinal = array_merge($high, $medium, $low);
 		return ($productsFinal);
 	}
@@ -391,14 +445,13 @@ class Order extends CI_Controller {
 					if(!isset($products[$key]['qtty']) AND $order_recev['pdt'][$key]['stock'] > 0) $products[$key]['qtty'] = 0;
 				}
 
-				//Remove product from viewreception if empty
-				if($type == 'viewreception' && (empty($products[$key]['stock']) AND empty($products[$key]['qtty']))) {
-					unset($products[$key]);
-				}
+				//Remove product from viewreception if empty (not used anymore)
+				// if($type == 'viewreception' && (empty($products[$key]['stock']) AND empty($products[$key]['qtty']))) {
+				// 	unset($products[$key]);
+				// }
 
 			}
-			$products = $this->sortArray($products);
-			//uasort($products, array($this, "sortProductOrder"));
+			uasort($products, array($this, "sortProductOrder"));
 			//print_r($products);
 		}
 
@@ -412,7 +465,9 @@ class Order extends CI_Controller {
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
-
+		
+		if ($type != 'reception' && ($load == null || $load == 0)) $products = $this->sortArray($products);
+		
 		$data = array(
 			'products'			=> $products,
 			'stock'				=> $stock,
@@ -422,20 +477,74 @@ class Order extends CI_Controller {
 			'users'				=> $users,
 			'supinfo'			=> $supinfo[$supplier_id],
 			'load' 				=> $load,
-			'type'				=> $type
+			'type'				=> $type,
 			);
-
+		
+		if (isset($order_recev)) $data['unsrl_order'] = $order_recev;
 		$title 				= "Order ".$supinfo[$supplier_id]['name'];
 		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
 		$data['keylogin']	= $this->session->userdata('keylogin');
-
+		if ($type == 'reception' || $type == 'order' || $type == 'viewreception') {
+		$headers = $this->hmw->headerVars(0, "/order/viewOrders/", $title);
+		$this->session->set_userdata('keep_filters', 'true');
+	} else {
 		$headers = $this->hmw->headerVars(0, "/order/", $title);
+	}
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_products',$data);
 		$this->load->view('jq_footer');
 
+	}
+	
+	public function cancelReception() {
+		
+		$post = $this->input->post();
+		if (isset($post['srl_order_post'])) {
+			$unsrl_order = unserialize($post['srl_order_post']);
+			foreach ($unsrl_order['pdt'] as $key => $val) {
+				if (isset($val['stock'])) {
+					$received = $val['stock'];
+					$this->db->select('qtty');
+					$this->db->where('id_product', $key);
+					$current_stock = $this->db->get('products_stock')->row_array();
+					$new_stock = $current_stock;
+					$new_stock['qtty'] = $current_stock['qtty'] - $received;
+					$this->db->where('id_product', $key);
+					$this->db->update('products_stock', $new_stock);
+				}
+			}
+		}
+		$array_cancel = array('data_reception' => null, 'status' => 'sent');
+		$this->db->where('idorder', $post['id_order']);
+		$this->db->update('orders', $array_cancel);
+		redirect('order/viewOrders', 'refresh');
+		die();
+	}
+	
+	public function editReception($post) {
+		
+		$unsrl_order = unserialize($post['srl_order_post']);
+		$editQtty = $post['editQtty'];
+		foreach ($editQtty as $key => $val) {
+			if (!empty($val)) {
+				$diff = $unsrl_order['pdt'][$key]['stock'] - $val;
+				$this->db->select('qtty');
+				$this->db->where('id_product', $key);
+				$current_stock = $this->db->get('products_stock')->row_array();
+				$new_stock = $current_stock;
+				$new_stock['qtty'] = $current_stock['qtty'] - $diff;
+				$this->db->where('id_product', $key);
+				$this->db->update('products_stock', $new_stock);
+				$unsrl_order['pdt'][$key]['stock'] = $val;
+			}
+		}
+		$srl = serialize($unsrl_order);
+		$array_order = array('data_reception' => $srl);
+		$this->db->where('idorder', $post['id_order']);
+		$this->db->update('orders', $array_order);
+		redirect($post['current_url'], 'refresh');
 	}
 
 	public function detailOrder() {
@@ -449,6 +558,11 @@ class Order extends CI_Controller {
 		$do_something	= false;
 
 		if(empty($post)) exit('Nothing to process, go back');
+		
+		if (isset($post['editReception']) && $post['editReception'] == true) {
+			$this->editReception($post);
+			return;
+		}
 		foreach ($post as $key => $var) {
 
 			//update stock
@@ -502,6 +616,10 @@ class Order extends CI_Controller {
 						}
 						if(!empty($value) AND !is_numeric($value)) exit('Qtty has to be numeric, invalid: '.$value);
 						if(!empty($value) AND is_numeric($value)) $do_something	= true;
+						if($post['pkg'][$id_pdt] <= 0) exit('Colisage incorrect, doit être supérieur à 0 pour '.$post['pdt_name'][$id_pdt].'.');
+						$packaging_check = $value/$post['pkg'][$id_pdt];
+						if(!is_int($packaging_check)) exit('Colisage incorrect, entrez un multiple de '.$post['pkg'][$id_pdt].' pour '.$post['pdt_name'][$id_pdt].'.');
+						
 						$pricetotal += $post['price'][$id_pdt]*$value;
 					}
 					$order['pricetotal'] = $pricetotal;
@@ -538,6 +656,8 @@ class Order extends CI_Controller {
 								'subtotal' => $post['price'][$id_pdt]*$value
 								);
 						}
+						
+						if(isset($post['comment'][$id_pdt])) $order_reception['pdt'][$id_pdt]['comment'] = $post['comment'][$id_pdt];
 
 							if($post['qtty_check'][$id_pdt] != $post['stock'][$id_pdt]) {
 								$status_reception = false;
@@ -572,13 +692,15 @@ class Order extends CI_Controller {
 			'pdtinfo'		=> $pdtinfo,
 			'type'			=> $post['type'],
 			'update_stock' 	=> $update_stock);
+			
+		$this->session->set_userdata('keep_filters', 'true');
 
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
 		if(!$do_something) exit('Empty form, go back');
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Detail");
+		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Detail");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_detail',$data);
@@ -699,7 +821,9 @@ class Order extends CI_Controller {
 		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
 		$data['username'] = $this->session->all_userdata()['identity'];
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Sent");
+		$this->session->set_userdata('keep_filters', 'true');
+
+		$headers = $this->hmw->headerVars(0, "/order/ViewOrders", "Order Sent");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_send', $data);
@@ -746,7 +870,7 @@ class Order extends CI_Controller {
 
 		$data = array('info' => $info, 'order' => $order);
 		$html = $this->load->view('order/bdc', $data, true);
-		//$this->load->view('order/bdc', $data); to debug uncomment this line, comment 1 line above and all the following
+		//$this->load->view('order/bdc', $data); //to debug uncomment this line, comment 1 line above and all the following
 
 		$pdf = pdf_create($html, '', false);
 		$filename = 'orders/'.$date_y.'/'.$date_m.'/'.$info['idorder'].'_'.strtoupper($info['supplier']['name']).'.pdf';
@@ -760,13 +884,14 @@ class Order extends CI_Controller {
 		$this->db->update('orders')  or die($this->mysqli->error);
 
 		write_file($filename, $pdf);
-
 		$fileencode = str_replace("/", "-", $filename);
 		$data['filename']	= urlencode($fileencode);
 		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
 		$data['username']	= $this->session->all_userdata()['identity'];
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Order Confirm");
+		$this->session->set_userdata('keep_filters', 'true');
+
+		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Confirm");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_confirm', $data);
@@ -809,7 +934,7 @@ class Order extends CI_Controller {
 	
 	private function searchOrder($data, $id_bu, $keylogin=null){
 		$ok=0;
-		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date,  r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
+		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date, r.data, r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
 		$this->db->from('orders as r');
 		$this->db->join('users as u', 'r.user = u.id');
 		$this->db->join('users as ur', 'r.user_reception = ur.id', 'left');
@@ -827,11 +952,26 @@ class Order extends CI_Controller {
 		}
 		if($data['idorder']!=''){
 			$ok=1;
-			$this->db->where('r.idorder',	$data['idorder']);
+			$this->db->like('r.idorder',	$data['idorder']);
 		}
-		if($data['status']!=''){
+		$status = array();
+		if (isset($data['sent']) && $data['sent']!=''){
 			$ok=1;
-			$this->db->where('r.status',	$data['status']);
+			$status[] = 'sent';
+		}
+		if (isset($data['received']) && $data['received']!=''){
+			$ok=1;
+			$status[] = 'received';
+		}
+		if (isset($data['draft']) && $data['draft']!=''){
+			$ok=1;
+			$status[] = 'draft';
+		}
+		if (isset($status) && !empty($status)) {
+			$this->db->where_in('r.status', $status);
+		} else {
+			$status = 'undefined';
+			$this->db->where('r.status', $status);
 		}
 		if($data['sdate']!=''){
 			$ok=1;
@@ -841,10 +981,17 @@ class Order extends CI_Controller {
 			$ok=1;
 			$this->db->where('r.date <=',	$data['edate']);
 		}
-
-		$status = array('sent', 'received');
-		if($keylogin) $this->db->where_in('r.status', $status);
-
+		if($data['status_reception']!='') {
+			$ok=1;
+			if ($data['status_reception'] == 'NOK') {
+				$status_r = 0;
+			} else if ($data['status_reception'] == 'OK') {
+				$status_r = 1;
+			} else {
+				$status_r = '';
+			}
+			$this->db->where('r.status_reception', $status_r);
+		}
 		$this->db->order_by('r.date desc')->limit(50);
 		$rec_res = $this->db->get() or die($this->mysqli->error);
 

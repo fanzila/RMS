@@ -273,7 +273,7 @@ class Sensors extends CI_Controller {
 				$rs = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 				$is = $rs->result();
-
+				
 				if(!empty($is)) {
 
 					$temp		= $is[0]->temp; // + $correction;
@@ -282,11 +282,15 @@ class Sensors extends CI_Controller {
 					// "AND $temp != 85" is a cludge for wrong data collecting by 1-wire which report sometimes, for unknown reason, 85 instead of minus something...
 					if(($temp >= $max OR $temp <= $min) AND ($temp != 85 AND $temp > -100 AND $temp < 100) AND ($this->checkForOngoingDelay($s_id) == false)) {
 						$buinfo = $this->hmw->getBuInfo($id_bu);
+						
 						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."° at ".$is[0]->date."\n
-							The temperature should be max: ".$max."° and min: ".$min."°";
-						echo "notif sent";
+The temperature should be max: ".$max."° and min: ".$min."°";
 
-						$this->hmw->sendNotif($msg, $id_bu);
+						$msg_notif = "Problème de température pour : '".$is[0]->name."'\n
+Température = ".$temp."°\n 
+==> VOUS DEVEZ AGIR <==";
+							
+						$this->hmw->sendNotif($msg_notif, $id_bu);
 
 						//get checklist BU, then manager2 + admin email of this BU
 						$this->db->select('users.username, users.email, users.id');

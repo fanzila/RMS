@@ -58,8 +58,6 @@ class Cameras extends CI_Controller {
 		$buname 		= array();
 		$buinfo1 		= $this->hmw->getBuInfo(1);
 		$buinfo2 		= $this->hmw->getBuInfo(2);
-
-		
 		
 		$this->db->from('turnover')->order_by('date desc')->where('id_bu',1)->limit(1);
 	 	$bal_ca = $this->db->get();

@@ -58,6 +58,10 @@ echo form_open(uri_string(), $attributes);
             IBAN
             <?php echo form_input($iban);?>
       </p>
+			<?if ($this->ion_auth->is_admin()):?>
+				<td><label for="sdate" id="label">First Shift Date :</label></td>
+				<td><input type="text" data-role="date" id="sdate" name="sdate" value="<?if (isset($first_shift)) echo $first_shift;?>" data-clear-btn="true" /></td>
+			<?endif;?>
     </div>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-7">
@@ -138,7 +142,38 @@ echo form_open(uri_string(), $attributes);
   </div>
 </div>
 <?php echo form_close();?>
+<?if (isset($WpUID)):?>
+	<div class="col-xs-12 col-sm-12 col-md-12">
+			<button href="#" onclick="wpDeleteAccount(<?=$user->id?>); return false;">Delete WP Account</button>
+		</div>
+<script>
+	function wpDeleteAccount(id) {
+		if (confirm('Do you really want to delete your WordPress account ?') === true) {
+			var site_url = '<?= site_url('wp_access/delete/') ?>' + '/' + id;
+			$.ajax({
+				url: site_url,
+				type: 'get',
+				data: null,
+				success: function(data) {
+					if (data.status == 'success') {
+						alert('WordPress Account successfully deleted');
+						location.reload();
+					} else {
+						alert('Unable to delete WP account');
+						return (false);
+					}
+				}
+			});
+		}
+	}
+</script>
+<?endif;?>
 	</div><!-- /content -->
 	<br /><br />
 	<div id="view"></div>
 </div><!-- /page -->
+<script>
+	$(document).ready(function() {
+	$("#sdate").datepicker({ dateFormat: 'yy-mm-dd' });
+	});
+</script>

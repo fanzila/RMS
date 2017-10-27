@@ -210,7 +210,7 @@ class Checklist extends CI_Controller {
 
 			$line = explode('-', $key);
 
-			if($line[0] == 'comment' AND !empty($var)) {
+			if($line[0] == 'comment' AND !empty(trim($var))) {
 
 				$this->db->select('name')->from('checklist_tasks')->where('id', $line[1]);
 				$checklist_task_res = $this->db->get() or die($this->mysqli->error);
