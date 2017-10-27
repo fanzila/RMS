@@ -297,7 +297,7 @@ class Pm extends CI_Controller {
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
 			redirect('/pm/');
 		}
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');

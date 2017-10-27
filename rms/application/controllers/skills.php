@@ -32,7 +32,7 @@ class Skills extends CI_Controller {
 	public function index($id = null, $back=null)
 	{
 		$this->hmw->isLoggedIn();
-		$id_bu = $this->session->all_userdata()['bu_id'];
+		$id_bu = $this->session->userdata('bu_id');
 
 		//TODO change somewhere here for disabling disabled users in sponsor
 		$current_user = $this->ion_auth->get_user_id();
@@ -70,7 +70,7 @@ class Skills extends CI_Controller {
 		}else{
 			$id = $current_user;
 		}
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
@@ -112,8 +112,8 @@ class Skills extends CI_Controller {
 			'skills_sub_categories'	=> $skills_sub_categories,
 			'skills_items'	=> $skills_items
 			);
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 		
 		if($id != $current_user){
 			$data['userlevel'] = 1;
@@ -144,7 +144,7 @@ class Skills extends CI_Controller {
 			redirect('skills', 'refresh');
 		}
 		$this->hmw->changeBu();
-		$id_bu = $this->session->all_userdata()['bu_id'];
+		$id_bu = $this->session->userdata('bu_id');
 		
 		$headers = $this->hmw->headerVars(1, "/skills/general", "Manage Skills");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -160,7 +160,7 @@ class Skills extends CI_Controller {
 			redirect('skills', 'refresh');
 		}
 		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$users_group_id = array(1,2,3,4,6);
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -274,8 +274,8 @@ class Skills extends CI_Controller {
 	{
 		$this->hmw->isLoggedIn();
 		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->all_userdata()['bu_id'];
-		$bu_name	= $this->session->all_userdata()['bu_name'];
+		$id_bu =  $this->session->userdata('bu_id');
+		$bu_name	= $this->session->userdata('bu_name');
 
 		$this->db->select('sr.id, us.id as id_sponsor, u.first_name, u.last_name, u.id as id_user')
 			->from('skills_record as sr')
@@ -398,7 +398,7 @@ class Skills extends CI_Controller {
 	public function save()//here we create a sponsoring link
 	{		
 		$data = $this->input->post();
-		$id_bu 		= $this->session->all_userdata()['bu_id'];
+		$id_bu 		= $this->session->userdata('bu_id');
 		
 		$this->db->select('sr.id_user, us.username as sponsor_name')
 			->from('skills_record as sr')
@@ -447,7 +447,7 @@ class Skills extends CI_Controller {
 				$this->db->set('id_user', $current_user);
 				$this->db->set('date', $date);
 				$this->db->set('id_skills_record', $data['id']);
-				$this->db->set('id_bu', $this->session->all_userdata()['bu_id']);
+				$this->db->set('id_bu', $this->session->userdata('bu_id'));
 				if(!$this->db->insert('skills_log')) {
 					$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
 				}
@@ -527,7 +527,7 @@ class Skills extends CI_Controller {
 							$this->db->set('date', $date);
 							$this->db->set('type', 'edit');
 							$this->db->set('id_skills_record', $data['id_record']);
-							$this->db->set('id_bu', $this->session->all_userdata()['bu_id']);
+							$this->db->set('id_bu', $this->session->userdata('bu_id'));
 							if(!$this->db->insert('skills_log')) {
 								$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
 							}

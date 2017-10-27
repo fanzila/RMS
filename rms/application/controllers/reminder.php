@@ -36,7 +36,7 @@ class Reminder extends CI_Controller {
 		$this->hmw->keyLogin();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$this->load->library('rmd');
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 
 		$msg = null;
 		$form = $this->input->post();
@@ -100,8 +100,8 @@ class Reminder extends CI_Controller {
 			'view'		=> $view
 			);
 
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 		
 		$headers = $this->hmw->headerVars(1, "/reminder/", "Reminder");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -115,7 +115,7 @@ class Reminder extends CI_Controller {
 	{
 		$this->hmw->keyLogin();
 		
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		
 		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` WHERE t.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
 		
@@ -125,8 +125,8 @@ class Reminder extends CI_Controller {
 			'tasks'		=> $tasks
 			);
 			
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 		
 		$headers = $this->hmw->headerVars(0, "/reminder/", "Reminder Log");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -138,7 +138,7 @@ class Reminder extends CI_Controller {
 
 	public function adminSave()
 	{		
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		
 		$data = $this->input->post();
 		$sqlt = "UPDATE ";
@@ -189,7 +189,7 @@ class Reminder extends CI_Controller {
 	{		
 		$this->hmw->keyLogin();
 		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$this->load->library('rmd');
 
 		$rmd = $this->rmd->getAllTasks($id_bu);
@@ -198,8 +198,8 @@ class Reminder extends CI_Controller {
 			'tasks'		=> $rmd
 			);
 		
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 		
 		if(!$create){
 			$headers = $this->hmw->headerVars(1, "/reminder/admin", "Reminder admin");
@@ -217,7 +217,7 @@ class Reminder extends CI_Controller {
 	public function cliNotify($id_bu)
 	{
 		$this->load->library('rmd');
-		if($this->input->is_cli_request()) {
+		if($this->input->is_cli()) {
 
 			$tasks = $this->rmd->getTasks(null, null, $id_bu);
 			foreach ($tasks as $row) {

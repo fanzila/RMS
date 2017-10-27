@@ -30,7 +30,7 @@ class Sensors extends CI_Controller {
 			}
 		}
 
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$query = "SELECT `s`.`id` as sid, stid, idsensor, `date`, stsub.temp, s.name, s.correction, sa.lastalarm, MAX(sap.date_fin) as date_fin\n"
     . "FROM (SELECT `st`.`id` as stid, `st`.`id_sensor` as idsensor, `st`.date as date, `st`.`temp`\n"
     . " FROM `sensors_temp` as `st`\n"
@@ -47,8 +47,8 @@ class Sensors extends CI_Controller {
 		$r = $this->db->query($query) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$info = $r->result_array();
 
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 
 		$data['current'] 	= $info;
 		foreach ($data['current'] as $key => &$val) {
@@ -183,7 +183,7 @@ class Sensors extends CI_Controller {
 	public function cliCheckLast($id_bu)
 	{
 
-		if($this->input->is_cli_request()) {
+		if($this->input->is_cli()) {
 			$this->db->from('sensors_temp as st')
 				->join('sensors as s', 's.id = st.id_sensor')
 				->where('s.id_bu', $id_bu);
@@ -245,7 +245,7 @@ class Sensors extends CI_Controller {
 	//cd /var/www/hank/rms/assets/1wire.sh #every 5 mn
 	public function cliCheck($id_bu)
 	{
-		if($this->input->is_cli_request()) {
+		if($this->input->is_cli()) {
 			$this->db->from('sensors_alarm as sa')
 				->join('sensors as s', 's.id = sa.id_sensor')
 				->where('s.id_bu', $id_bu);

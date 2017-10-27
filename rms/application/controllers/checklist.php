@@ -33,7 +33,7 @@ class Checklist extends CI_Controller {
 		$this->hmw->changeBu();// GENERIC changement de Bu
 
 		$this->hmw->keyLogin();
-		$id_bu = $this->session->all_userdata()['bu_id'];
+		$id_bu = $this->session->userdata('bu_id');
 		$type = $this->session->userdata('type');
 		
 		$msg = null;
@@ -58,8 +58,8 @@ class Checklist extends CI_Controller {
 			'keylogin'		=> $this->session->userdata('keylogin'),	
 			'checklists'	=> $checklists);
 
-		$data['bu_name'] 	=  $this->session->all_userdata()['bu_name'];
-		$data['username'] 	= $this->session->all_userdata()['identity'];
+		$data['bu_name'] 	=  $this->session->userdata('bu_name');
+		$data['username'] 	= $this->session->userdata('identity');
 		$data['type'] 		= $type;
 		$headers 			= $this->hmw->headerVars(1, "/checklist/", "Checklist");
 		
@@ -75,7 +75,7 @@ class Checklist extends CI_Controller {
 	{		
 
 		$this->hmw->keyLogin();
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		
 		if (isset($type)) {
 			$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users as u', 'r.user = u.id')->where(array('c.id_bu' => $id_bu, 'c.type' => $type))->order_by('r.date desc')->limit(50);
@@ -89,8 +89,8 @@ class Checklist extends CI_Controller {
 			'checklists_rec'	=> $checklist_rec,
 			);
 
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 
 		$headers = $this->hmw->headerVars(0, "/checklist/", "Checklist View Record");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -106,7 +106,7 @@ class Checklist extends CI_Controller {
 		$this->hmw->keyLogin();
 		$form = null;
 		$checklist_rec_id = null;
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$type = $this->session->userdata('type');
 
 		if($load > 0) {
@@ -151,8 +151,8 @@ class Checklist extends CI_Controller {
 			'users'					=> $users
 			);
 
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 
 		$headers = $this->hmw->headerVars(0, "/checklist/", "Checklist Record");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -167,12 +167,12 @@ class Checklist extends CI_Controller {
 		$srl = serialize($this->input->post());
 		$checklist_rec_id = $this->input->post('checklist_rec_id');
 		$checklist_name = $this->input->post('checklist_name');
-		$bu_name =  $this->session->all_userdata()['bu_name'];
+		$bu_name =  $this->session->userdata('bu_name');
 		
 		$date = date('Y-m-d H:i:s'); 
 		
 		//get checklist BU, then manager2 + admin email of this BU
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$this->db->select('users.username, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
@@ -242,7 +242,7 @@ class Checklist extends CI_Controller {
 	public function clicCheck($id, $id_bu)
 	{
 
-		if($this->input->is_cli_request()) {
+		if($this->input->is_cli()) {
 
 			$this->db->select('checklists.name AS cname, bus.name AS bname');
 			$this->db->join('bus', 'checklists.id_bu = bus.id', 'left');

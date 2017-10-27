@@ -32,7 +32,7 @@ class Product_admin extends CI_Controller {
 
 	public function index($command = null, $page = 1)
 	{		
-		$id_bu	=  $this->session->all_userdata()['bu_id'];
+		$id_bu	=  $this->session->userdata('bu_id');
 		$this->load->library('product');
 		$product_id = null;
 		$msg = null;
@@ -100,8 +100,8 @@ class Product_admin extends CI_Controller {
 			'current_page' => $page,
 			'total_products' => $total_products
 			);
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 
 		if($command!='create'){
 			$headers = $this->hmw->headerVars(0, "/order/", "Product Admin");
@@ -122,7 +122,7 @@ class Product_admin extends CI_Controller {
 	public function save()
 	{
 		$this->load->library('product');
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$reponse = 'ok';
 		$data = $this->input->post();
 		if(empty($data['id'])) exit();
@@ -273,7 +273,7 @@ class Product_admin extends CI_Controller {
 		$post 			= $this->input->post();
 		$tab 			= array();
 		$reponse 		= 'ok';
-		$id_bu			=  $this->session->all_userdata()['bu_id'];
+		$id_bu			=  $this->session->userdata('bu_id');
 
 		foreach ($post as $key => $var) {
 			$ex 		= explode('_',$key);
@@ -305,7 +305,7 @@ class Product_admin extends CI_Controller {
 	public function mapping()
 	{		
 		$this->load->library('product');
-		$id_bu			=  $this->session->all_userdata()['bu_id'];
+		$id_bu			=  $this->session->userdata('bu_id');
 		$products_pos	= $this->product->getPosProducts($id_bu);
 		$products 		= $this->product->getManagedProducts(null, null, 'p.name', null, $id_bu, 1);
 		$mapping		= $this->product->getMapping($id_bu);
@@ -314,8 +314,8 @@ class Product_admin extends CI_Controller {
 			'products'			=> $products,
 			'mapping'			=> $mapping
 			);
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 
 		$headers = $this->hmw->headerVars(0, "/order/", "Product Mapping");
 		$this->load->view('jq_header_pre', $headers['header_pre']);

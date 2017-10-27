@@ -64,7 +64,7 @@
 								<th>Trainee</th>
 							</tr>
 						</thead>
-						<?$id_bu =  $this->session->all_userdata()['bu_id'];?>
+						<?$id_bu =  $this->session->userdata('bu_id');?>
 						<tbody>
 							<?foreach ($skills_records as $skills_record) {
 									if($skills_record->bu_id == $id_bu){?>

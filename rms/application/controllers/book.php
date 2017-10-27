@@ -13,8 +13,8 @@ class Book extends CI_Controller {
 		$this->hmw->keyLogin();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		
-		$id_bu =  $this->session->all_userdata()['bu_id'];
-		$bu_name	= $this->session->all_userdata()['bu_name'];
+		$id_bu =  $this->session->userdata('bu_id');
+		$bu_name	= $this->session->userdata('bu_name');
 				
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
@@ -31,7 +31,7 @@ class Book extends CI_Controller {
 			'keylogin'	=> $this->session->userdata('keylogin'),
 			'bu_infos'		=> $bu_infos[0]->bu_info,
 			'bu_link'		=> $bu_infos[0]->training_link,
-			'bu_name'	=> $this->session->all_userdata()['bu_name']
+			'bu_name'	=> $this->session->userdata('bu_name')
 			);
 
 		$headers = $this->hmw->headerVars(1, "/news/index/", "Play Book");

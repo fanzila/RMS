@@ -37,9 +37,9 @@ class News extends CI_Controller {
 
 		$this->hmw->keyLogin();
 		
-		$bu_test = $this->session->all_userdata()['bu_name'];
+		$bu_test = $this->session->userdata('bu_name');
 		$this->hmw->changeBu();// GENERIC changement de Bu
-		if($bu_test != $this->session->all_userdata()['bu_name'] && $login!='welcome'){
+		if($bu_test != $this->session->userdata('bu_name') && $login!='welcome'){
 			redirect('news');
 		}
 		
@@ -67,7 +67,7 @@ class News extends CI_Controller {
 			'results'	=> $this->news_model->get_list($config["per_page"], $page),
 			'links'		=> $this->pagination->create_links(),
 			'login'		=> $login,
-			'bu_name'	=> $this->session->all_userdata()['bu_name']
+			'bu_name'	=> $this->session->userdata('bu_name')
 			);
 
 		$headers = $this->hmw->headerVars(1, "/news/index/", "News");

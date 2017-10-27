@@ -19,7 +19,7 @@ class webCashier extends CI_Controller {
 		$data = array();
 
 		$this->hmw->keyLogin();
-		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
+		$id_bu			 		=  $this->session->userdata('bu_id');
 
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
@@ -29,7 +29,7 @@ class webCashier extends CI_Controller {
 		$data['title'] 			= 'Cashier';
 		$data['safe_cash'] 		= $this->cashier->calc('safe_current_cash_amount', $id_bu);
 		
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
 
 		$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -212,7 +212,7 @@ class webCashier extends CI_Controller {
 		$data['username']		= $user->username;
 
 		$data["keylogin"] = $this->session->userdata('keylogin');
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
 
 		$data['title']  	= 'Safe';
 
@@ -242,7 +242,7 @@ class webCashier extends CI_Controller {
 		if ($this->input->post('edate')) { $filters['edate'] = $this->input->post('edate'); } else { $filters['edate'] = ""; }
 		$data['filter'] = $filters;
 
-		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
+		$id_bu			 		=  $this->session->userdata('bu_id');
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
 		
@@ -267,7 +267,7 @@ class webCashier extends CI_Controller {
 		$data['monthly_to']		= $this->cashier->calc('current_monthly_turnover', $id_bu);
 		$data['pos_cash'] 		= $this->cashier->posInfo('cashfloat', $param_pos_info);		
 		$data['live_movements'] = $this->cashier->posInfo('getLiveMovements', $param_pos_info);
-		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
+		$data['bu_name'] 		=  $this->session->userdata('bu_name');
 		$lines					= array();
 		
 		$config_pages['base_url'] = base_url() . 'webcashier/report/';
@@ -358,10 +358,10 @@ class webCashier extends CI_Controller {
 		$data['all_user_groups'] = $user_groups;
 		$data['mov']			= $mov;
 		$data['archive_file'] 	= null;
-		$data['bu_name'] 		=  $this->session->all_userdata()['bu_name'];
+		$data['bu_name'] 		=  $this->session->userdata('bu_name');
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= "Cashier - ".strtoupper($mov);
-		$id_bu			 		=  $this->session->all_userdata()['bu_id'];
+		$id_bu			 		=  $this->session->userdata('bu_id');
 		$param_pos_info 		= array();
 
 		$this->db->select('*')->from('pos_payments_type')->where('active',1)->where('id_bu', $id_bu);
@@ -486,10 +486,10 @@ class webCashier extends CI_Controller {
 		$data['user_groups']	= $user_groups[0];
 		$data["keylogin"]		= $this->session->userdata('keylogin');
 		$data['title']			= 'Cashier';
-		$data['bu_name'] 		= $this->session->all_userdata()['bu_name'];
+		$data['bu_name'] 		= $this->session->userdata('bu_name');
 		$data['mov']			= $this->input->post('mov');
 		$userpost 				= $this->input->post('user');
-		$id_bu			 		= $this->session->all_userdata()['bu_id'];
+		$id_bu			 		= $this->session->userdata('bu_id');
 		$param_pos_info 		= array();
 		$param_pos_info['id_bu'] = $id_bu;
 		$param_pos_info['archive'] = $this->input->post('archive');
@@ -667,7 +667,7 @@ class webCashier extends CI_Controller {
 
 	private function closing($file, $pmid)
 	{
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		
 		if(empty($file)) exit('Error: empty archive file');
 		if(empty($pmid)) exit('Error: empty movement id');

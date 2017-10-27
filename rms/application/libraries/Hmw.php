@@ -6,8 +6,8 @@ class Hmw {
 		
 		$CI = & get_instance();
 		
-		if(!isset($id_bu)) $id_bu = $CI->session->all_userdata()['bu_id'];
-		if(isset($CI->session->all_userdata()['keylogin'])) $keylogin = $CI->session->all_userdata()['keylogin'];
+		if(!isset($id_bu)) $id_bu = $CI->session->userdata('bu_id');
+		if(isset($CI->session->userdata('keylogin'])) $keylogin = $CI->session->all_userdata()['keylogin');
 		
 		$user		= $CI->ion_auth->user()->row();
 		
@@ -240,8 +240,8 @@ class Hmw {
 			
 		}
 		
-		$data['bu_name'] =  $CI->session->all_userdata()['bu_name'];
-		$data['username'] = $CI->session->all_userdata()['identity'];
+		$data['bu_name'] =  $CI->session->userdata('bu_name');
+		$data['username'] = $CI->session->userdata('identity');
 		if(empty($data['username'])) {
 						$email['subject'] 	= "RMS SESSION ERROR";
 						$email['msg'] 		= 'RMS SESSION ERROR';
@@ -257,7 +257,7 @@ class Hmw {
 		if(!empty($change_bu)) {
 			$bu_info = $CI->hmw->getBus($change_bu);
 			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
-			$CI->hmw->updateUserBu($change_bu, $CI->session->all_userdata()['user_id']); 
+			$CI->hmw->updateUserBu($change_bu, $CI->session->userdata('user_id')); 
 			$CI->session->set_userdata($session_data);
 		}
 	}
@@ -270,10 +270,10 @@ class Hmw {
 			$bus_list		= $CI->hmw->getBus(null, $user->id);
 			$user_groups	= $CI->ion_auth->get_users_groups()->result();
 
-			$bu_id			= $CI->session->all_userdata()['bu_id'];
-			$keylogin 		= $CI->session->all_userdata()['keylogin'];
-			$bu_name		= $CI->session->all_userdata()['bu_name'];
-			$username		= $CI->session->all_userdata()['identity'];
+			$bu_id			= $CI->session->userdata('bu_id');
+			$keylogin 		= $CI->session->userdata('keylogin');
+			$bu_name		= $CI->session->userdata('bu_name');
+			$username		= $CI->session->userdata('identity');
 
 			$buinfo 		= $CI->hmw->getBuInfo($bu_id);
 	

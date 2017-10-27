@@ -11,7 +11,7 @@ class Posmessage extends CI_Controller {
 	public function index()
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$data = array();
 		
 		if ($this->input->post('msg'))
@@ -28,8 +28,8 @@ class Posmessage extends CI_Controller {
 		
 		$this->load->helper('form');
 		
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 		
 		
 	 	$headers = $this->hmw->headerVars(1, "/posmessage/", "Message caisse");
