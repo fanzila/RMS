@@ -188,7 +188,7 @@
 			</tr>
 		<?php foreach ($m['cashFdcMovements'] as $mov): ?> 
 			<tr>
-				<td><?=$mov['amount']/1000?></td>
+				<td><?=$mov['NAME']?>: <?=$mov['AMOUNT']/1000?></td>
 			</tr>
 		<?php endforeach; ?>
 		</table>

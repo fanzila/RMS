@@ -318,7 +318,11 @@ class webCashier extends CI_Controller {
 				
 				$lines[$m['id']]['close_users'] 	= $this->cashier->posInfo('getUsers', $param);
 				$lines[$m['id']]['cashmovements'] 	= $this->cashier->posInfo('getMovements', $param);
-				$lines[$m['id']]['cashFdcMovements'] = $this->cashier->posInfo('getFdcMovements', $paramFdc);
+
+				$archivedCashfloat = $this->cashier->posInfo('getFdcMovements', $paramFdc);
+				$param['archivedCashfloat'] = $archivedCashfloat;
+				$lines[$m['id']]['cashFdcMovements'] = $this->cashier->posInfo('getCashContainerName', $param);
+								
 				$lines[$m['id']]['cashDrawerOpened'] = $this->cashier->getArchivedDrawerOpenedEvents($id_bu, $m['closing_file']);
 				$lines[$m['id']]['cancelledReceipts'] = $this->cashier->getArchivedCancelledReceipts($id_bu, $m['closing_file']);
 				$lines[$m['id']]['userActionStats'] = $this->cashier->userActionStats($id_bu, $m['closing_file']);
