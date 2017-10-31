@@ -599,7 +599,7 @@ class Cashier {
 				if(isset($res1['BASE'])) {
 					$where =  "BASE ='".$res1['BASE']."'";
 				} else { 
-					$where =  "CASHCONTAINER ='".$res1['CASHCONTAINER']."'";
+					$where =  "CASHCONTAINER ='".$var['CASHCONTAINER']."'";
 				}
 				$sql2 = $sql2.$where; 
 				$result2 = $db->query($sql2);
