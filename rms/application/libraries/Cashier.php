@@ -579,7 +579,7 @@ class Cashier {
 
 			case 'getFdcMovements':
 			
-			$sql 	= "SELECT CASH_FLOAT_IN AS amount FROM ARCHIVEDCASHFLOAT WHERE CASH_FLOAT_IN > 0";
+			$sql 	= "SELECT CASH_FLOAT_IN AS amount, CASHCONTAINER FROM ARCHIVEDCASHFLOAT WHERE CASH_FLOAT_IN > 0";
 			$result = $db->query($sql);
 			$lines = array();
 			while($row=$result->fetchArray(SQLITE3_ASSOC)){
@@ -587,7 +587,30 @@ class Cashier {
 			}
 			return $lines;
 			break;
-						
+
+			case 'getCashContainerName':
+			$lines = array();
+			foreach ($param['archivedCashfloat'] as $var) {
+				$sql1 	= "SELECT BASE FROM CASHCONTAINER WHERE DELETED = 0 AND BASE != 0 AND ID='".$var['CASHCONTAINER']."'";
+				$result1 = $db->query($sql1);
+				$res1	= $result1->fetchArray(SQLITE3_ASSOC);
+								
+				$sql2 	= "SELECT NAME FROM TERMINAL WHERE DELETED = 0 AND "; 
+				if(isset($res1['BASE'])) {
+					$where =  "BASE ='".$res1['BASE']."'";
+				} else { 
+					$where =  "CASHCONTAINER ='".$var['CASHCONTAINER']."'";
+				}
+				$sql2 = $sql2.$where; 
+				$result2 = $db->query($sql2);
+				$res2	= $result2->fetchArray(SQLITE3_ASSOC);
+				
+				$lines[$var['CASHCONTAINER']]['NAME'] = $res2['NAME'];
+				$lines[$var['CASHCONTAINER']]['AMOUNT'] = $var['amount'];
+			}
+			return $lines;
+			break;
+									
 			case 'getLiveMovements':
 			$sql 	= "SELECT cm.DATE, u.NAME AS USERNAME, c.LASTNAME AS CLASTNAME, c.FIRSTNAME AS CFIRSTNAME,  cm.AMOUNT, pm.NAME AS PAYMENTNAME, cm.DESCRIPTION, cm.CUSTOMER  FROM CASHMOVEMENT AS cm 
 				LEFT JOIN USER AS u ON cm.USER = u.ID
