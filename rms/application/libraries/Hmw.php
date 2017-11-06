@@ -7,7 +7,7 @@ class Hmw {
 		$CI = & get_instance();
 		
 		if(!isset($id_bu)) $id_bu = $CI->session->userdata('bu_id');
-		if(isset($CI->session->userdata('keylogin'])) $keylogin = $CI->session->all_userdata()['keylogin');
+		if($CI->session->userdata('keylogin') != NULL) $keylogin = $CI->session->userdata('keylogin');
 		
 		$user		= $CI->ion_auth->user()->row();
 		

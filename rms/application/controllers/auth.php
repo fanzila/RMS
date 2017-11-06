@@ -34,7 +34,7 @@ class Auth extends CI_Controller {
 			$this->data['message']  = '';
 			$sento = '';
 
-			if($txtmessage) {
+			if(!empty($txtmessage)) {
 				foreach ($this->input->post() as $key => $var) {
 					$line = explode('-', $key);
 					if($line[0] == 'sms') {
