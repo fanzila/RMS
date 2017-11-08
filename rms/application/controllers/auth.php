@@ -1020,7 +1020,7 @@ class Auth extends CI_Controller {
 	// cd /var/www/hank/rms/rms && php index.php auth cliRmdShift [id_bu]
 	public function cliRmdShift($id_bu = null) {
 		
-		if($this->input->is_cli()) {
+		if(is_cli()) {
 			if ($id_bu == null) {
 				die('pass a bu id in parameters');
 			}
@@ -1109,6 +1109,7 @@ class Auth extends CI_Controller {
 			$msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
 			$email['msg'] = $msg;
 			$this->mmail->sendEmail($email);
+			var_dump($email);
 			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
 			$this->db->where_in('username', $employees_to_update);
 			$this->db->update('users', array('last_shift_rmd' => $current_date_string));

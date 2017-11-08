@@ -242,7 +242,7 @@ class Checklist extends CI_Controller {
 	public function clicCheck($id, $id_bu)
 	{
 
-		if($this->input->is_cli()) {
+		if(is_cli()) {
 
 			$this->db->select('checklists.name AS cname, bus.name AS bname');
 			$this->db->join('bus', 'checklists.id_bu = bus.id', 'left');
@@ -277,7 +277,7 @@ class Checklist extends CI_Controller {
 				$email['msg'] 		= $msg;
 
 				foreach ($query->result() as $row) {
-					$email['to']	= $row->email;	
+					$email['to']	= $row->email;
 					$this->mmail->sendEmail($email);
 				}
 				$this->hmw->sendNotif($msg, $id_bu);

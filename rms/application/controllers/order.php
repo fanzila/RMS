@@ -208,10 +208,10 @@ class Order extends CI_Controller {
 
 		if(empty($id_bu)) exit('empty BU ID');
 
-		if($this->input->is_cli()) {
+		if(is_cli()) {
 			$param = array();
 			$param['id_bu'] = $id_bu;
-			if($this->input->is_cli()) {
+			if(is_cli()) {
 				$this->load->library("cashier");
 				$this->cashier->posInfo('updateTurnover', $param);
 				$this->cashier->posInfo('salesUpdate', $param);
@@ -226,11 +226,11 @@ class Order extends CI_Controller {
 	//cd /var/www/hank/rms/rms && php index.php order cliCheckPosClosing 1
 	public function cliCheckPosClosing($id_bu) {
 
-		if($this->input->is_cli()) {
+		if(is_cli()) {
 
 			$param = array();
 			$param['id_bu'] = $id_bu;
-			if($this->input->is_cli()) {
+			if(is_cli()) {
 				$this->load->library("cashier");
 
 				$today_day = @date('d');
@@ -312,7 +312,7 @@ class Order extends CI_Controller {
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
 		$post  = $this->input->get();
 
-		if(isset($post['search'])) {
+		if(!empty($post) && isset($post['search'])) {
 			foreach ($post as $key => $val) {
 				$filters[$key] = $val;
 			}
@@ -1002,7 +1002,7 @@ class Order extends CI_Controller {
 	{
 		$this->load->library('mmail');
 
-		if($this->input->is_cli()) {
+		if(is_cli()) {
 
 			$date_current	= new DateTime();
 			$current_weekday = $date_current->format('D');

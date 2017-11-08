@@ -183,7 +183,7 @@ class Sensors extends CI_Controller {
 	public function cliCheckLast($id_bu)
 	{
 
-		if($this->input->is_cli()) {
+		if(is_cli()) {
 			$this->db->from('sensors_temp as st')
 				->join('sensors as s', 's.id = st.id_sensor')
 				->where('s.id_bu', $id_bu);
@@ -245,7 +245,7 @@ class Sensors extends CI_Controller {
 	//cd /var/www/hank/rms/assets/1wire.sh #every 5 mn
 	public function cliCheck($id_bu)
 	{
-		if($this->input->is_cli()) {
+		if(is_cli()) {
 			$this->db->from('sensors_alarm as sa')
 				->join('sensors as s', 's.id = sa.id_sensor')
 				->where('s.id_bu', $id_bu);

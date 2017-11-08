@@ -217,7 +217,7 @@ class Reminder extends CI_Controller {
 	public function cliNotify($id_bu)
 	{
 		$this->load->library('rmd');
-		if($this->input->is_cli()) {
+		if(is_cli()) {
 
 			$tasks = $this->rmd->getTasks(null, null, $id_bu);
 			foreach ($tasks as $row) {
