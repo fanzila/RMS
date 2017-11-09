@@ -535,7 +535,7 @@ class webCashier extends CI_Controller {
 		// ->set('employees_sp', serialize($employees_sp));
 
 		$comment_report = $this->input->post('comment_report');
-		if(isset($comment_report)){
+		if(!empty($comment_report)){
 			$keys .= ", comment_report";
 			$values	.= ", '" . addslashes($this->input->post('comment_report')) . "'";
 		} 
