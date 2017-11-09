@@ -23,10 +23,11 @@ class Reminder extends CI_Controller {
 
 		parent::__construct();
 
-		$this->load->library('email');
 		$this->load->database();
+		$this->load->library('email');
 		$this->load->library('ion_auth');
 		$this->load->library('hmw');
+		
 		
 	}
 
@@ -191,6 +192,7 @@ class Reminder extends CI_Controller {
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$id_bu =  $this->session->userdata('bu_id');
 		$this->load->library('rmd');
+		$this->load->library('ion_auth');
 
 		$rmd = $this->rmd->getAllTasks($id_bu);
 		$data = array(

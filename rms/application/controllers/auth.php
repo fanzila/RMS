@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Auth extends CI_Controller {
 
@@ -1109,7 +1109,6 @@ class Auth extends CI_Controller {
 			$msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
 			$email['msg'] = $msg;
 			$this->mmail->sendEmail($email);
-			var_dump($email);
 			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
 			$this->db->where_in('username', $employees_to_update);
 			$this->db->update('users', array('last_shift_rmd' => $current_date_string));

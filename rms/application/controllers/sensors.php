@@ -15,8 +15,8 @@ class Sensors extends CI_Controller {
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$this->hmw->keyLogin();
 		
-		if ($this->input->post('submit_pause') !== false AND $this->input->post('delayVal') !== false
-				AND $this->input->post('s_id') !== false) {
+		if ($this->input->post('submit_pause') !== NULL AND $this->input->post('delayVal') !== NULL
+				AND $this->input->post('s_id') !== NULL) {
 			$delay = $this->input->post('delayVal');
 			$s_id = $this->input->post('s_id');
 			$delayStatus = $this->setDelay($s_id, $delay);

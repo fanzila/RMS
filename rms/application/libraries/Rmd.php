@@ -1,10 +1,9 @@
 <?php
 
-class Rmd extends CI_Controller  {
+class Rmd  {
 
 	public function __construct()
 	{
-		parent::__construct();
 		$CI =& get_instance();
 		$CI->load->database();
 		$CI->load->library('ion_auth');
