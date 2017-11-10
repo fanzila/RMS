@@ -6,6 +6,7 @@ class Auth extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('ion_auth');
+		$this->load->helper('security');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 		$this->load->library('hmw');
@@ -1108,6 +1109,7 @@ class Auth extends CI_Controller {
 			}
 			$msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
 			$email['msg'] = $msg;
+
 			$this->mmail->sendEmail($email);
 			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
 			$this->db->where_in('username', $employees_to_update);

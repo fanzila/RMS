@@ -345,7 +345,7 @@ class Order extends CI_Controller {
 			'search'	=> $search,
 			'links'		=> $this->pagination->create_links()
 			);
-		if (($this->session->userdata('keep_filters') === 'true') || $post['keep_filters'] == 'true')
+		if (($this->session->userdata('keep_filters') === 'true') || (!empty($post['keep_filters']) && $post['keep_filters'] == 'true'))
 		{
 			if ($this->session->userdata('filters') !== null) {
 				$data['filters'] = $this->session->userdata('filters');

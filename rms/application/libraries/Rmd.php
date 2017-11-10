@@ -1,6 +1,6 @@
 <?php
 
-class Rmd  {
+class Rmd {
 
 	public function __construct()
 	{

@@ -118,6 +118,7 @@
 					} 
 					?>
 		<? if($mov == 'close') { ?><h2>Commentaire close: <?=stripslashes($m['mov']['comment'])?></h2><? } ?>
+		<? if ($mov == 'safe') { ?><h2>Commentaire : <?=stripslashes($m['mov']['comment_report'])?></h2><? } ?>
 <div>		
 	<table style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="5" width="70%">
 		<tr><td>
