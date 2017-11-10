@@ -425,7 +425,11 @@
 											function validate(idl) {
 												var $form = $('#pdt' + idl);
 												var done = 0;
-												$form.on('submit', function() {
+												$form.on('submit', function(e) {
+													
+													$(':disabled').each(function(e) {
+	        									$(this).removeAttr('disabled');
+	    										});
 																										
 													var name = $('#name-' + idl).val();
 													var price = $('#price-' + idl).val();
