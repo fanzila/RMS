@@ -230,7 +230,7 @@ class Sensors extends CI_Controller {
 						$email['to']	= $row->email;
 						$this->mmail->sendEmail($email);
 					}
-					$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+					//$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				}
 			}
 			return;
