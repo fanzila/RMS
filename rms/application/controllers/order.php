@@ -360,7 +360,11 @@ class Order extends CI_Controller {
 		if(!isset($ref_ex['4'])) $ref_ex['4'] = 'NONE';
 		
 		if($this->session->userdata('keep_filters') == 'true' && ($ref_ex['4'] != 'viewOrders' OR $ref_ex == 'NONE') && $this->session->userdata('reset_filters') != true) {
-			$location = '/order/viewOrders?'.http_build_query($data['filters']);	
+			if ($data['filters'] !== NULL) {
+				$location = '/order/viewOrders?'.http_build_query($data['filters']);
+			} else {
+				$location = '/order/viewOrders';
+			}
 			$this->session->unset_userdata('filters');
 			$this->session->unset_userdata('keep_filters');
 			$this->session->set_userdata('reset_filters', true);
