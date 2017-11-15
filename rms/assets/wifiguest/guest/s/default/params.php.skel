@@ -1,12 +1,12 @@
 <?php
-  $RMSUrl = ""; //Put your RMS installation url here if you're going to use sync
-  $appName = ""; // The AppName you set on RMS.
-  $apiKey = ""; // The API Key you generated on RMS with the above appName.
-  $mysql_db = "";
-  $mysql_host = ""; //If the MySQL server is running on the same server as the web auth page
-  $mysql_user = ""; //Change to the appropriate user that has access to DB/table
-  $mysql_pass = ""; //Change to the appropriate password for the user above
-  $table = "";  //Change to the appropriate table name
+  $RMSUrl = "https://rms.hankrestaurant.com/"; //Put your RMS installation url here if you're going to use sync
+  $appName = "FR75ARCH"; // The AppName you set on RMS.
+  $apiKey = "xxxxxxxxxxxxxxxxxxxx"; // The API Key you generated on RMS with the above appName.
+  $mysql_db = "hotspot";
+  $mysql_host = "localhost"; //If the MySQL server is running on the same server as the web auth page
+  $mysql_user = "hotspot"; //Change to the appropriate user that has access to DB/table
+  $mysql_pass = "xxxxx"; //Change to the appropriate password for the user above
+  $table = "creds";  //Change to the appropriate table name
 
   //UniFi server credentials
   $unifiServer = ""; //Change to the IP/FQDN of your UniFi Server
