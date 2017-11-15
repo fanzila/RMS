@@ -16,5 +16,5 @@
   $unifiControllerVersion = ""; 
   $unifiSite = "";
   $duration = 120; //Defines how long a guest stays connected to the wifi, in minutes;
-  $param_url = ""; //Defines where should we redirect user after connection;
+  $param_url = "/guest/s/default/iframe-hank.html"; //Defines where should we redirect user after connection;
 ?>
