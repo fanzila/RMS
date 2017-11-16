@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Auth extends CI_Controller {
 
@@ -6,6 +6,7 @@ class Auth extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('ion_auth');
+		$this->load->helper('security');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 		$this->load->library('hmw');
@@ -34,7 +35,7 @@ class Auth extends CI_Controller {
 			$this->data['message']  = '';
 			$sento = '';
 
-			if($txtmessage) {
+			if(!empty($txtmessage)) {
 				foreach ($this->input->post() as $key => $var) {
 					$line = explode('-', $key);
 					if($line[0] == 'sms') {
@@ -62,8 +63,8 @@ class Auth extends CI_Controller {
 				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
 
-			$this->data['username'] = $this->session->all_userdata()['identity'];
-			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['username'] = $this->session->userdata('identity');
+			$this->data['bu_name'] =  $this->session->userdata('bu_name');
 
 			$this->data['current_user'] = $this->ion_auth->user()->row();
 
@@ -95,8 +96,8 @@ class Auth extends CI_Controller {
 				$this->data['users'][$k]->bus 		= $this->ion_auth->get_users_bus($user->id)->result();
 			}
 
-			$this->data['username']		= $this->session->all_userdata()['identity'];
-			$this->data['bu_name']		= $this->session->all_userdata()['bu_name'];
+			$this->data['username']		= $this->session->userdata('identity');
+			$this->data['bu_name']		= $this->session->userdata('bu_name');
 			$this->data['current_user'] = $this->ion_auth->user()->row();
 			$this->data['user_groups']	= $user_groups[0];
 
@@ -225,8 +226,8 @@ class Auth extends CI_Controller {
 				'value' => $user->id,
 				);
 
-			$this->data['username'] = $this->session->all_userdata()['identity'];
-			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['username'] = $this->session->userdata('identity');
+			$this->data['bu_name'] =  $this->session->userdata('bu_name');
 			//render
 			$this->_render_page('auth/change_password', $this->data);
 		}
@@ -415,8 +416,8 @@ class Auth extends CI_Controller {
 			$this->data['csrf'] = $this->_get_csrf_nonce();
 			$this->data['user'] = $this->ion_auth->user($id)->row();
 
-			$this->data['username'] = $this->session->all_userdata()['identity'];
-			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['username'] = $this->session->userdata('identity');
+			$this->data['bu_name'] =  $this->session->userdata('bu_name');
 
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -463,8 +464,8 @@ class Auth extends CI_Controller {
 			$this->data['csrf'] = $this->_get_csrf_nonce();
 			$this->data['user'] = $this->ion_auth->user($id)->row();
 
-			$this->data['username'] = $this->session->all_userdata()['identity'];
-			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['username'] = $this->session->userdata('identity');
+			$this->data['bu_name'] =  $this->session->userdata('bu_name');
 
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -627,12 +628,12 @@ class Auth extends CI_Controller {
 			$this->data['current_user'] = $userinfo;
 			$this->data['groupinfo'] = $groupinfo;
 
-			$id_bu =  $this->session->all_userdata()['bu_id'];
+			$id_bu =  $this->session->userdata('bu_id');
 			$buinfo = $this->hmw->getBuInfo($id_bu);
 			$this->data['welcome_email'] = $buinfo->welcome_email;
 
-			$this->data['username'] = $this->session->all_userdata()['identity'];
-			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['username'] = $this->session->userdata('identity');
+			$this->data['bu_name'] =  $this->session->userdata('bu_name');
 
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -648,7 +649,7 @@ class Auth extends CI_Controller {
 	{
 		$this->data['title'] = "Edit User";
 		$this->load->library('hmw');
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		
 		$this->hmw->isLoggedIn();
 		
@@ -799,8 +800,8 @@ class Auth extends CI_Controller {
 		$this->data['currentGroups'] = $currentGroups;
 		$this->data['currentBus'] = $currentBus;
 
-		$this->data['username2'] = $this->session->all_userdata()['identity'];
-		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$this->data['username2'] = $this->session->userdata('identity');
+		$this->data['bu_name'] =  $this->session->userdata('bu_name');
 
 		$this->data['first_name'] = array(
 			'name'  => 'first_name',
@@ -931,8 +932,8 @@ class Auth extends CI_Controller {
 				'value' => $this->form_validation->set_value('description')
 				);
 
-			$this->data['username'] = $this->session->all_userdata()['identity'];
-			$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+			$this->data['username'] = $this->session->userdata('identity');
+			$this->data['bu_name'] =  $this->session->userdata('bu_name');
 
 			$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -1006,8 +1007,8 @@ class Auth extends CI_Controller {
 			'value' => $this->form_validation->set_value('group_description', $group->description),
 			);
 
-		$this->data['username'] = $this->session->all_userdata()['identity'];
-		$this->data['bu_name'] =  $this->session->all_userdata()['bu_name'];
+		$this->data['username'] = $this->session->userdata('identity');
+		$this->data['bu_name'] =  $this->session->userdata('bu_name');
 
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -1020,7 +1021,7 @@ class Auth extends CI_Controller {
 	// cd /var/www/hank/rms/rms && php index.php auth cliRmdShift [id_bu]
 	public function cliRmdShift($id_bu = null) {
 		
-		if($this->input->is_cli_request()) {
+		if(is_cli()) {
 			if ($id_bu == null) {
 				die('pass a bu id in parameters');
 			}
@@ -1108,6 +1109,7 @@ class Auth extends CI_Controller {
 			}
 			$msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
 			$email['msg'] = $msg;
+
 			$this->mmail->sendEmail($email);
 			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
 			$this->db->where_in('username', $employees_to_update);

@@ -27,7 +27,7 @@ class News_model extends CI_Model {
 	public function get_list($limit, $start)
 	{
 		
-		$bu_id =  $this->session->all_userdata()['bu_id'];
+		$bu_id =  $this->session->userdata('bu_id');
 		
 		$this->db->select('news.id as news_id, users.username, news.title, news.slug, news.text, news.picture, news.date, news.id_user, bus.name, bus.id');
 		$this->db->where('news_bus.id_bu', $bu_id);
@@ -49,7 +49,7 @@ class News_model extends CI_Model {
 	}
 
 	public function record_count() {
-		$bu_id =  $this->session->all_userdata()['bu_id'];
+		$bu_id =  $this->session->userdata('bu_id');
 		$query = $this->db->where('id_bu', $bu_id)->get('news_bus');
 		return $query->num_rows();
 
@@ -60,7 +60,7 @@ class News_model extends CI_Model {
 	{
 		$this->load->helper('url');
 
-		$slug = url_title($this->input->post('title'), 'dash', TRUE);
+		$slug = url_title($this->input->post('title'), '-', TRUE);
 
 		$data = array(
 			'title' => $this->input->post('title'),

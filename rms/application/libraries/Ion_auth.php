@@ -401,7 +401,7 @@ class Ion_auth
 			return (FALSE);
 		}
 		$identity = $this->config->item('identity', 'ion_auth');
-                $this->session->unset_userdata( array($identity => '', 'id' => '', 'user_id' => '') );
+                $this->session->unset_userdata( array($identity, 'id', 'user_id') );
 
 		//delete the remember me cookies if they exist
 		if (get_cookie($this->config->item('identity_cookie_name', 'ion_auth')))

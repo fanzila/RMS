@@ -36,7 +36,7 @@ class Discount extends CI_Controller {
 		$this->hmw->changeBu();// GENERIC changement de Bu
 
 		$this->hmw->keyLogin();
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 
 		/* SPECIFIC Creation d'un message si fonction create utilisee */
 		$msg = null;
@@ -72,8 +72,8 @@ class Discount extends CI_Controller {
 			'users'		=> $users,
 			'msg'		=> $msg
 			);
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 
 		$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -85,7 +85,7 @@ class Discount extends CI_Controller {
 	public function log()
 	{
 		$this->hmw->keyLogin();
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$this->db->select('l.date, l.client, l.reason, l.nature, u.username, l.id_discount, l.event_type, l.used')
 			->from('discount_log as l')
 			->join('users as u', 'u.id = l.id_user')
@@ -96,8 +96,8 @@ class Discount extends CI_Controller {
 		$discounts 	= $res->result();
 		$data = array(
 			'discounts'	=> $discounts,
-			'bu_name' 	=> $this->session->all_userdata()['bu_name'],
-			'username' 	=> $this->session->all_userdata()['identity']
+			'bu_name' 	=> $this->session->userdata('bu_name'),
+			'username' 	=> $this->session->userdata('identity')
 			);
 
 		
@@ -110,7 +110,7 @@ class Discount extends CI_Controller {
 
 	public function save()
 	{
-		$id_bu			= $this->session->all_userdata()['bu_id'];		
+		$id_bu			= $this->session->userdata('bu_id');		
 		$data 			= $this->input->post();
 		$user_groups 	= $this->ion_auth->get_users_groups()->result();
 		$userlevel 		= $user_groups[0]->level;
@@ -167,7 +167,7 @@ class Discount extends CI_Controller {
 	
 	public function creation($create = null)
 	{		
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
@@ -192,8 +192,8 @@ class Discount extends CI_Controller {
 			'discount'	=> $discount
 			);
 		
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 		
 		$headers = $this->hmw->headerVars(0, "/discount/", "Discount create");
 		$this->load->view('jq_header_pre', $headers['header_pre']);

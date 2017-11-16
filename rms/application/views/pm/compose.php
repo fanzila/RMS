@@ -44,7 +44,7 @@
 									<option value="<?=$managers?>">All managers of <?=$bu_name?></option>
 								<?}?>
 								<?foreach ($users as $user) {
-									if($user->username != $this->session->all_userdata()['identity']){?>
+									if($user->username != $this->session->userdata('identity')){?>
 										<option id="<?=$user->id?>" value="<?=$user->username?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?>
 										</option>
 									<?}

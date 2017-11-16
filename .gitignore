@@ -18,3 +18,7 @@ rms/assets/wifiguest/params.php
 rms/assets/wifiguest/guest/s/default/params.php
 
 rms/application/config/config.php
+
+rms/application/sessions/*
+
+rms/public/pictures/*

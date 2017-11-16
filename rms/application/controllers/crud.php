@@ -22,7 +22,7 @@ class Crud extends CI_Controller {
 			redirect('/news/');
 		}
 		
-		$id_bu = $this->session->all_userdata()['bu_id'];		
+		$id_bu = $this->session->userdata('bu_id');		
 	
 	}
 
@@ -263,7 +263,7 @@ class Crud extends CI_Controller {
 
     public function skills()
     {
-		$id_bu = $this->session->all_userdata()['bu_id'];
+		$id_bu = $this->session->userdata('bu_id');
 		
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
@@ -280,7 +280,7 @@ class Crud extends CI_Controller {
 
     public function skills_item()
     {
-		$id_bu = $this->session->all_userdata()['bu_id'];
+		$id_bu = $this->session->userdata('bu_id');
 	
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
@@ -304,7 +304,7 @@ class Crud extends CI_Controller {
 
     public function skills_record()
     {
-		$id_bu = $this->session->all_userdata()['bu_id'];
+		$id_bu = $this->session->userdata('bu_id');
 		
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
@@ -344,7 +344,7 @@ class Crud extends CI_Controller {
 
     public function skills_category()
     {
-		$id_bu = $this->session->all_userdata()['bu_id'];
+		$id_bu = $this->session->userdata('bu_id');
 	
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
@@ -361,7 +361,7 @@ class Crud extends CI_Controller {
 
     public function skills_sub_category()
     {
-		$id_bu = $this->session->all_userdata()['bu_id'];
+		$id_bu = $this->session->userdata('bu_id');
 		
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');

@@ -82,7 +82,7 @@ class Cameras extends CI_Controller {
 		$buname[1] 				= $buinfo1->name;
 		$buname[2]				= $buinfo2->name;
 		
-		$info_current_bu 		= $this->hmw->getBuInfo($this->session->all_userdata()['bu_id']);
+		$info_current_bu 		= $this->hmw->getBuInfo($this->session->userdata('bu_id'));
 		$planning 				= $this->planning();
 		$data['bu_postion_id'] 	= $bu_postion_id;
 		$data['info_bu'] 		= $info_current_bu;
@@ -151,7 +151,7 @@ class Cameras extends CI_Controller {
 		{
 			exit;
 		}
-		$data['cams'] = $this->session->all_userdata()['cam'];
+		$data['cams'] = $this->session->userdata('cam');
 		$data['num']  = $num;
 		$this->load->view('camera/frame', $data);
 	}

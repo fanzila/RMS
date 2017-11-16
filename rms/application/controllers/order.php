@@ -36,7 +36,7 @@ class Order extends CI_Controller {
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$this->hmw->keyLogin();
-		$id_bu			=  $this->session->all_userdata()['bu_id'];
+		$id_bu			=  $this->session->userdata('bu_id');
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 		$suppliers 		= $this->product->getSuppliers(true, null, $id_bu);
 
@@ -45,8 +45,8 @@ class Order extends CI_Controller {
 			'user_groups'	=> $user_groups[0],
 			'suppliers'    	=> $suppliers);
 
-		$data['bu_name']  =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name']  =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 		
 		if ($this->session->userdata('filters')) {
 			$this->session->unset_userdata('filters');
@@ -68,7 +68,7 @@ class Order extends CI_Controller {
 		$this->hmw->keyLogin();
 		$user = $this->ion_auth->user()->row();
 
-		$id_bu					= $this->session->all_userdata()['bu_id'];
+		$id_bu					= $this->session->userdata('bu_id');
 		$post					= $this->input->post();
 
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -81,9 +81,9 @@ class Order extends CI_Controller {
 		$users = $query->result();
 
 		$data = array();
-		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
-		$data['username']	= $this->session->all_userdata()['identity'];
-		$data['keylogin']	= $this->session->all_userdata()['keylogin'];
+		$data['bu_name']	= $this->session->userdata('bu_name');
+		$data['username']	= $this->session->userdata('identity');
+		$data['keylogin']	= $this->session->userdata('keylogin');
 		$data['users']		= $users;
 
 		$headers = $this->hmw->headerVars(0, "/order/", "Loss");
@@ -95,7 +95,7 @@ class Order extends CI_Controller {
 
 	public function saveLoss()
 	{
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 		$reponse = 'ok';
 		$data = $this->input->post();
 		$user = $this->ion_auth->user()->row();
@@ -137,7 +137,7 @@ class Order extends CI_Controller {
 
 	public function autoCompLoss(){
 
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 
 		if (isset($_GET['q'])){
 			$q = strtolower($_GET['q']);
@@ -176,7 +176,7 @@ class Order extends CI_Controller {
 
 	public function autoCompProducts(){
 
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 
 		if (isset($_GET['q'])){
 			$q = strtolower($_GET['q']);
@@ -208,10 +208,10 @@ class Order extends CI_Controller {
 
 		if(empty($id_bu)) exit('empty BU ID');
 
-		if($this->input->is_cli_request()) {
+		if(is_cli()) {
 			$param = array();
 			$param['id_bu'] = $id_bu;
-			if($this->input->is_cli_request()) {
+			if(is_cli()) {
 				$this->load->library("cashier");
 				$this->cashier->posInfo('updateTurnover', $param);
 				$this->cashier->posInfo('salesUpdate', $param);
@@ -226,11 +226,11 @@ class Order extends CI_Controller {
 	//cd /var/www/hank/rms/rms && php index.php order cliCheckPosClosing 1
 	public function cliCheckPosClosing($id_bu) {
 
-		if($this->input->is_cli_request()) {
+		if(is_cli()) {
 
 			$param = array();
 			$param['id_bu'] = $id_bu;
-			if($this->input->is_cli_request()) {
+			if(is_cli()) {
 				$this->load->library("cashier");
 
 				$today_day = @date('d');
@@ -285,8 +285,8 @@ class Order extends CI_Controller {
 		$this->load->library('session');
 		$this->load->library('user_agent');
 		
-		$id_bu 		= $this->session->all_userdata()['bu_id'];
-		$keylogin 	= $this->session->all_userdata()['keylogin'];
+		$id_bu 		= $this->session->userdata('bu_id');
+		$keylogin 	= $this->session->userdata('keylogin');
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
@@ -312,7 +312,7 @@ class Order extends CI_Controller {
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
 		$post  = $this->input->get();
 
-		if(isset($post['search'])) {
+		if(!empty($post) && isset($post['search'])) {
 			foreach ($post as $key => $val) {
 				$filters[$key] = $val;
 			}
@@ -345,7 +345,7 @@ class Order extends CI_Controller {
 			'search'	=> $search,
 			'links'		=> $this->pagination->create_links()
 			);
-		if (($this->session->userdata('keep_filters') === 'true') || $post['keep_filters'] == 'true')
+		if (($this->session->userdata('keep_filters') === 'true') || (!empty($post['keep_filters']) && $post['keep_filters'] == 'true'))
 		{
 			if ($this->session->userdata('filters') !== null) {
 				$data['filters'] = $this->session->userdata('filters');
@@ -360,7 +360,11 @@ class Order extends CI_Controller {
 		if(!isset($ref_ex['4'])) $ref_ex['4'] = 'NONE';
 		
 		if($this->session->userdata('keep_filters') == 'true' && ($ref_ex['4'] != 'viewOrders' OR $ref_ex == 'NONE') && $this->session->userdata('reset_filters') != true) {
-			$location = '/order/viewOrders?'.http_build_query($data['filters']);	
+			if (!empty($data['filters'])) {
+				$location = '/order/viewOrders?'.http_build_query($data['filters']);
+			} else {
+				$location = '/order/viewOrders';
+			}
 			$this->session->unset_userdata('filters');
 			$this->session->unset_userdata('keep_filters');
 			$this->session->set_userdata('reset_filters', true);
@@ -368,8 +372,8 @@ class Order extends CI_Controller {
 			exit();
 		}
 	
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 				
 		$headers = $this->hmw->headerVars(0, "/order/", "Orders");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -411,7 +415,7 @@ class Order extends CI_Controller {
 	{
 
 		$this->hmw->keyLogin();
-		$id_bu =  $this->session->all_userdata()['bu_id'];
+		$id_bu =  $this->session->userdata('bu_id');
 
 		$order_prev		= null;
 		$supinfo		= null;
@@ -482,8 +486,8 @@ class Order extends CI_Controller {
 		
 		if (isset($order_recev)) $data['unsrl_order'] = $order_recev;
 		$title 				= "Order ".$supinfo[$supplier_id]['name'];
-		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
-		$data['username']	= $this->session->all_userdata()['identity'];
+		$data['bu_name']	= $this->session->userdata('bu_name');
+		$data['username']	= $this->session->userdata('identity');
 		$data['keylogin']	= $this->session->userdata('keylogin');
 		if ($type == 'reception' || $type == 'order' || $type == 'viewreception') {
 		$headers = $this->hmw->headerVars(0, "/order/viewOrders/", $title);
@@ -553,7 +557,7 @@ class Order extends CI_Controller {
 		$user			= $this->ion_auth->user()->row();
 		$stock_update	= false;
 		$post			= $this->input->post();
-		$id_bu 			= $this->session->all_userdata()['bu_id'];
+		$id_bu 			= $this->session->userdata('bu_id');
 		$update_stock	= array();
 		$do_something	= false;
 
@@ -695,8 +699,8 @@ class Order extends CI_Controller {
 			
 		$this->session->set_userdata('keep_filters', 'true');
 
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 
 		if(!$do_something) exit('Empty form, go back');
 
@@ -767,7 +771,7 @@ class Order extends CI_Controller {
 		$this->load->library('mmail');
 		$this->load->helper('file');
 
-		$id_bu 			= $this->session->all_userdata()['bu_id'];
+		$id_bu 			= $this->session->userdata('bu_id');
 		$user 			= $this->ion_auth->user()->row();
 		$post			= $this->input->post();
 
@@ -818,8 +822,8 @@ class Order extends CI_Controller {
 		}
 
 		$data = array('name' => $supinfo['name']);
-		$data['bu_name'] =  $this->session->all_userdata()['bu_name'];
-		$data['username'] = $this->session->all_userdata()['identity'];
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+		$data['username'] = $this->session->userdata('identity');
 
 		$this->session->set_userdata('keep_filters', 'true');
 
@@ -836,7 +840,7 @@ class Order extends CI_Controller {
 		$this->hmw->keyLogin();
 		$user = $this->ion_auth->user()->row();
 		$this->load->helper(array('dompdf', 'file'));
-		$id_bu					= $this->session->all_userdata()['bu_id'];
+		$id_bu					= $this->session->userdata('bu_id');
 		$post					= $this->input->post();
 		$order					= $this->getOrderData($post['idorder'], $id_bu);
 		$getSupInfo				= $this->product->getSuppliers(null, $post['supplier'], $id_bu);
@@ -886,8 +890,8 @@ class Order extends CI_Controller {
 		write_file($filename, $pdf);
 		$fileencode = str_replace("/", "-", $filename);
 		$data['filename']	= urlencode($fileencode);
-		$data['bu_name']	= $this->session->all_userdata()['bu_name'];
-		$data['username']	= $this->session->all_userdata()['identity'];
+		$data['bu_name']	= $this->session->userdata('bu_name');
+		$data['username']	= $this->session->userdata('identity');
 
 		$this->session->set_userdata('keep_filters', 'true');
 
@@ -1002,7 +1006,7 @@ class Order extends CI_Controller {
 	{
 		$this->load->library('mmail');
 
-		if($this->input->is_cli_request()) {
+		if(is_cli()) {
 
 			$date_current	= new DateTime();
 			$current_weekday = $date_current->format('D');

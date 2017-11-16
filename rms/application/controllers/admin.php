@@ -36,7 +36,7 @@ class Admin extends CI_Controller {
 		if(!empty($change_bu)) { 
 			$bu_info = $this->hmw->getBus($change_bu);
 			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
-			$this->hmw->updateUserBu($change_bu, $this->session->all_userdata()['user_id']); 
+			$this->hmw->updateUserBu($change_bu, $this->session->userdata('user_id')); 
 			$this->session->set_userdata($session_data); 
 		}
 		$user = $this->ion_auth->user()->row();
@@ -46,8 +46,8 @@ class Admin extends CI_Controller {
 		$data = array(
 			'user_groups'		=> $user_groups[0],
 			'bus_list'			=> $bus_list,
-			'bu_name'			=> $this->session->all_userdata()['bu_name'],
-			'bu_id'				=> $this->session->all_userdata()['bu_id'],
+			'bu_name'			=> $this->session->userdata('bu_name'),
+			'bu_id'				=> $this->session->userdata('bu_id'),
 			'ticket'			=> '',
 			'last_ticket'		=> '',
 			'username'			=> $user->username
