@@ -68,11 +68,12 @@ Class Customers_lib {
     }
   }
   
-  public function getCustomers() {
+  public function getCustomers($id_bu = NULL) {
     $CI = & get_instance();
     
     $CI->load->database();
-    
+    if (!empty($id_bu))
+      $CI->db->where('id_bu', $id_bu);
     $CI->db->order_by('id', 'desc');
     $CI->db->limit('200');
     $query = $CI->db->get('customers');

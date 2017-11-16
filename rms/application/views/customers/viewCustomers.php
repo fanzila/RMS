@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="/public/viewCustomers.css">
 </div>
 <div data-role="content" data-theme="a">
+  <? if (!empty($all)) { ?>
+    <a onClick="javascript:location.href='/customers/viewCustomers/'"data-role="button">VIEW BU ONLY</a>
+  <? } else { ?>
+    <a onClick="javascript:location.href='/customers/viewCustomers/all'" data-role="button">VIEW ALL LAST RECORDS</a>
+  <? } ?>
   <div class="customer-list" data-role="collapsible">
     <h3>Customers List</h3>
     <?if (isset($customers) && !empty($customers)) : ?>
@@ -13,6 +18,7 @@
         <th>Client Mac</th>
         <th>Opt Out</th>
         <th>Date</th>
+        <th>Bu</th>
       </tr>
       <?foreach ($customers as $customer) : ?>
         <tr>
@@ -23,6 +29,8 @@
           <td><?=$customer['clientMac']?></td>
           <td><?=$customer['optout']?></td>
           <td><?=$customer['date']?></td>
+          <?$buDisplay = (!empty($customer['buName'])) ? $customer['buName'] : $customer['id_bu']; ?>
+          <td><?=$buDisplay?></td>
         </tr>
       <?endforeach;?>
     </table>

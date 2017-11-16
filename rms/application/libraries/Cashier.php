@@ -646,11 +646,14 @@ class Cashier {
 			$GMT = new DateTimeZone('GMT');
 			$locale = date_default_timezone_get();
 			$localtz = new DateTimeZone($locale);
-			$dt = DateTime::createFromFormat('Y-m-d H:i:s', $res['la']['la'], $GMT);
-			$dt->setTimezone($localtz);
-			$time_la = $dt->format('Y-m-d H:i:s');
-			
-			
+			if (!empty($res) && !empty($res['la']))
+			{
+				$dt = DateTime::createFromFormat('Y-m-d H:i:s', $res['la']['la'], $GMT);
+				$dt->setTimezone($localtz);
+				$time_la = $dt->format('Y-m-d H:i:s');
+			} else {
+				$time_la = NULL;
+			}
 			$result_ct = $db->query("select count(*) AS ct FROM RECEIPT");
 			$res['ct'] = $result_ct ->fetchArray(SQLITE3_ASSOC);
 			
