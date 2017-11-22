@@ -8,7 +8,14 @@
 
   class Wp_rms 
   {
+    public $db;
+    public $wpdb;
     
+    function __construct() {
+      $CI = & get_instance();
+      $this->db = $CI->load->database('default', TRUE);
+      $this->wpdb = $CI->load->database('wpdb', TRUE);  
+    }
     // $resource is a string for the routes, and should begin with a '/'
     // function inspired by blog.wixiweb.fr/wordpress-api-rest
     // set define $config['WpApiUrl'] with you own in application/config/config.php, you can set $ret_url to true to get the full url for your request, so you only have to set $apiUrl once
@@ -64,6 +71,63 @@
       return ($user);
     }
     
+    // If id is not passed in parameters, the function will check for a wordpress account in the current user data
+    public function hasWpAccount($id = null) 
+    {
+      $CI = & get_instance();
+      if (isset($id) && !empty($id)) {
+        $this->db->select('WordPress_UID');
+        $this->db->select('username');
+        $this->db->where('id', $id);
+        $query = $this->db->get('users');
+        $username = $query->row_array();
+        if (isset($username['WordPress_UID']) && !empty($username['WordPress_UID'])) {
+          return ($username['WordPress_UID']);
+        } else {
+          if (isset($username['username'])) {
+            $this->wpdb->where('user_login', $username['username']);
+            $query = $this->wpdb->get('wp_users');
+            $res = $query->row_array();
+            if (isset($res['user_login'])) {
+              $this->db->where('id', $id);
+              $this->db->set('WordPress_UID', $res['ID']);
+              $this->db->update('users');
+              error_log("User " . $username['username'] . " has WP account, but UID is NULL in RMS, updating to ID : " . $res['ID']);
+              return ($res['ID']);
+            } else {
+              return (false);
+            }
+            die();
+          } else {
+            echo ('No user account corresponding');
+          }
+        }
+      } else {
+        $user = $CI->ion_auth->user()->row();
+        $this->db->select('WordPress_UID');
+        $this->db->where('id', $user->id);
+        $query = $this->db->get('users');
+        $ret = $query->row_array();
+        $username = $user->username;
+        if (isset($ret['WordPress_UID']) && !empty($ret['WordPress_UID'])) {
+          return ($ret['WordPress_UID']);
+        } else {
+          $this->wpdb->where('user_login', $username);
+          $res = $this->wpdb->get('wp_users')->row_array();
+          if (isset($res['user_login'])) {
+            $this->db->where('id', $user->id);
+            $this->db->set('WordPress_UID', $res['ID']);
+            $this->db->update('users');
+            error_log("User " . $username . " has WP account, but UID is NULL in RMS, updating to ID : " . $res['ID']);
+            return ($res['ID']);
+          } else {
+            return (false);
+          }
+        }
+      }
+    }
+    
+    
     //function to get the corresponding WordPress Role according to the user's role in RMS, using his RMS id.
     public function userWPRole($id = null) {
       $CI = & get_instance();
@@ -75,8 +139,8 @@
           $higher_level = $value;
         }
       }
-      $CI->db->where('id_group_rms', $higher_level['id']);
-      $res = $CI->db->get('wp_roles')->row_array();
+      $this->db->where('id_group_rms', $higher_level['id']);
+      $res = $this->db->get('wp_roles')->row_array();
       return ($res);
     }
     
@@ -148,8 +212,8 @@
        curl_close ($ch);
       $response = json_decode($result, true);
       if (isset($response['id'])) {
-        $CI->db->where('id', $RMS_user['id']);
-        $CI->db->update('users', array('WordPress_UID' => $response['id']));
+        $this->db->where('id', $RMS_user['id']);
+        $this->db->update('users', array('WordPress_UID' => $response['id']));
         return (true);
       } else {
         error_log("Could not add WordPress User ID to RMS db User " . $RMS_user['username']);

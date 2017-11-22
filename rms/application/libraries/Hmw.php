@@ -269,7 +269,14 @@ class Hmw {
 			$user			= $CI->ion_auth->user()->row();
 			$bus_list		= $CI->hmw->getBus(null, $user->id);
 			$user_groups	= $CI->ion_auth->get_users_groups()->result();
-
+			
+			$higher_level = new stdClass();
+			$higher_level->level = -1;
+      foreach ($user_groups as $key => $value) {
+        if ($value->level > $higher_level->level) {
+          $higher_level = $value;
+        }
+      }
 			$bu_id			= $CI->session->userdata('bu_id');
 			$keylogin 		= $CI->session->userdata('keylogin');
 			$bu_name		= $CI->session->userdata('bu_name');
@@ -303,8 +310,8 @@ class Hmw {
 					'keylogin'		=> $keylogin,
 					'indexlocation'	=> $indexlocation,
 					'title'			=> $title,
-					'groupname' 	=> $user_groups[0]->name,
-					'userlevel' 	=> $user_groups[0]->level,
+					'groupname' 	=> $higher_level->name,
+					'userlevel' 	=> $higher_level->level,
 					'username'		=> $username,
 					'user_id'		=> $user->id,
 					'door_device'	=> $door_device,
