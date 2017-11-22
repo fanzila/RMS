@@ -87,6 +87,7 @@
           if (isset($username['username'])) {
             $this->wpdb->where('user_login', $username['username']);
             $query = $this->wpdb->get('wp_users');
+            $res = $query->row_array();
             if (isset($res['user_login'])) {
               $this->db->where('id', $id);
               $this->db->set('WordPress_UID', $res['ID']);

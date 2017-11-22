@@ -1178,8 +1178,8 @@ class Auth extends CI_Controller {
 				}
 
 				$this->ion_auth->update($user->id, $data);
-				if ($this->wp_rms->hasWpAccount($user->id)) {
-					if (!$this->wp_rms->editWPUser($user->WordPress_UID, $data_WP)) {
+				if ($wpid = $this->wp_rms->hasWpAccount($user->id)) {
+					if (!$this->wp_rms->editWPUser($wpid, $data_WP)) {
 						error_log("Unable to edit WP data for user " . $user->username);
 					}
 				}
@@ -1205,9 +1205,9 @@ class Auth extends CI_Controller {
 						foreach ($groupData as $grp) {
 							$this->ion_auth->add_to_group($grp, $id);
 						}
-						if (isset($user->WordPress_UID)) {
+						if ($this->wp_rms->hasWpAccount($user->id)) {
 							$this->wp_rms->editWPUser($user->WordPress_UID, $WPGroupData);
-						}					
+						}
 					}
 
 					if (isset($buData) && !empty($buData)) {
