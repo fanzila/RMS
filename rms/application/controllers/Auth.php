@@ -1178,8 +1178,10 @@ class Auth extends CI_Controller {
 				}
 
 				$this->ion_auth->update($user->id, $data);
-				if (!$this->wp_rms->editWPUser($user->WordPress_UID, $data_WP)) {
-					error_log("Unable to edit WP data for user " . $user->username);
+				if ($this->wp_rms->hasWpAccount($user->id)) {
+					if (!$this->wp_rms->editWPUser($user->WordPress_UID, $data_WP)) {
+						error_log("Unable to edit WP data for user " . $user->username);
+					}
 				}
 
 				// Only allow updating groups if user is admin
