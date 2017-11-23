@@ -764,6 +764,87 @@ class Order extends CI_Controller {
 
 		$this->load->view('order/confirm',$data);
 	}
+	
+	public function cancelOrder($load = null, $supplier_id = null, $confirm = false)
+	{
+		$this->load->library('mmail');
+		$this->hmw->isLoggedIn();
+		if ($confirm == true) {
+			if (empty($load) || empty($supplier_id))
+				die("Cannot cancel order: Missing parameters");
+			
+			$id_bu = $this->session->userdata('bu_id');
+			$user  = $this->ion_auth->user()->row();
+			$this->db->where('idorder', $load);
+			$this->db->where('supplier_id', $supplier_id);
+			$query = $this->db->get('orders');
+			$order = $query->row_array();
+			$order_email 	= $this->hmw->getEmail('order', $id_bu);
+			
+			$this->db->where('id', $supplier_id);
+			$query = $this->db->get('suppliers');
+			$supplier = $query->row_array();
+			$supplier_email = $supplier['contact_order_email'];
+			
+			if (empty($order))
+				die("Cannot cancel order: Cannot find order in database");
+			if (empty($supplier_email))
+				die("Cannot cancel order: Cannot find supplier email");
+			
+				if(!empty($supplier_email)) {
+					$cc = $order_email;
+					if(!empty($order['ccemail'])) $cc .= ','.$order->ccemail;
+				}
+			$email['from'] = $order_email;
+			$email['from_name'] = 'HANK';
+			$email['to'] = $supplier_email;
+			$email['cc'] = $cc;
+			$email['subject'] = 'Annulation Commande ' . $load;
+			$email['attach'] = $order['file'];
+			$email['replyto'] = $order_email;
+			$email['msg'] = "Bonjour ".$supplier['name']."!\n\nNous souhaitons annuler la commande en PJ.\n\n";
+			$email['msg'] .= "\n\nHave A Nice Karma,\n-- \nHANK - ".$user->username."\nEmail : $order_email \nTel : $user->phone";
+			$this->mmail->sendEmail($email);
+			$this->db->set('status', 'canceled');
+			$this->db->where('idorder', $load);
+			$this->db->update('orders');
+			
+			$this->session->set_userdata('keep_filters', 'true');
+			
+			redirect('/order/viewOrders/', 'auto');
+		} else {
+			if (empty($load) || empty($supplier_id))
+				die("Cannot cancel order: Missing parameters");
+			
+			$this->db->where('idorder', $load);
+			$this->db->where('supplier_id', $supplier_id);
+			$query = $this->db->get('orders');
+			$order = $query->row_array();
+			
+			$this->db->where('id', $supplier_id);
+			$query = $this->db->get('suppliers');
+			$supplier = $query->row_array();
+			
+			if (empty($order)) {
+				die("Cannot cancel order: Cannot find order in database");
+			}
+			
+			if (empty($supplier)) {
+				die("Cannot cancel order: Cannot find supplier in database");
+			}
+			
+			$filename = $order['file'];
+			$data['order'] = $order;
+			$fileencode = str_replace("/", "-", $filename);
+			$data['filename']	= urlencode($fileencode);
+			$data['supplier'] = $supplier;
+			$headers = $this->hmw->headerVars(0, "/order/ViewOrders", "Cancel Order");
+			$this->load->view('jq_header_pre', $headers['header_pre']);
+			$this->load->view('jq_header_post', $headers['header_post']);
+			$this->load->view('order/confirmCancelOrder', $data);
+			$this->load->view('jq_footer');
+		}
+	}
 
 	public function sendOrder() {
 
@@ -971,6 +1052,10 @@ class Order extends CI_Controller {
 		if (isset($data['draft']) && $data['draft']!=''){
 			$ok=1;
 			$status[] = 'draft';
+		}
+		if (isset($data['canceled']) && $data['canceled']!=''){
+			$ok=1;
+			$status[] = 'canceled';
 		}
 		if (isset($status) && !empty($status)) {
 			$this->db->where_in('r.status', $status);

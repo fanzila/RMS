@@ -41,6 +41,8 @@
 										<label style="background-color: white;" for="draftcbk">Draft</label>
 									<input id="receivedcbk" type="checkbox" name="received" <?if (!isset($filters) || (isset($filters) && isset($filters['received']))) echo 'checked';?>>
 									<label style="background-color: white;" for="receivedcbk">Received</label>
+									<? if (!$keylogin) { ?><input id="canceledcbk" type="checkbox" name="canceled" <?if (isset($filters) && isset($filters['canceled'])) echo 'checked';?>> <? } ?>
+									<label style="background-color: white;" for="canceledcbk">Canceled</label>
 								</div>
 						</td>
 					</tr>
@@ -76,11 +78,14 @@
 						<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/viewProducts/<?=$rec['idorder']?>/<?=$rec['supplier_id']?>/order">Order from this</a></li>						
 						<? } ?>
 						<?if($rec['status'] != 'draft') { ?>
-							<?if($rec['status'] != 'received') { ?>
+							<?if($rec['status'] != 'received' && $rec['status'] != 'canceled') { ?>
 								<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/viewProducts/<?=$rec['idorder']?>/<?=$rec['supplier_id']?>/reception">Reception</a></li>
 							<? } ?>
-							<?if($rec['status'] == 'received') { ?>
+							<?if($rec['status'] == 'received' && $rec['status'] != 'canceled') { ?>
 								<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/viewProducts/<?=$rec['idorder']?>/<?=$rec['supplier_id']?>/viewreception">View/Edit reception</a></li>
+							<? } ?>
+							<? if (!$keylogin && $rec['status'] != 'canceled' && $rec['status'] != 'received') { ?>
+								<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/cancelOrder/<?=$rec['idorder']?>/<?=$rec['supplier_id']?>">Cancel Order</a></li>
 							<? } ?>
 						<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/downloadOrder/<?=$rec['idorder']?>_<?=$rec['supplier_name']?>">View BDC</a></li>
 						<?}?>
