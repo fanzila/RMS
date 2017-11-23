@@ -1,0 +1,1 @@
+ALTER TABLE `orders` CHANGE `status` `status` ENUM('draft','sent','received','canceled') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'draft';
