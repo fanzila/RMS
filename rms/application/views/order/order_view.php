@@ -75,6 +75,16 @@
 						<? } ?> 
 						
 						<? if(!$keylogin) { ?>
+						<div data-role="collapsible">
+							<h3>Comments (<?=$rec['countComments']?>)</h3>
+							<? foreach ($rec['comments'] as $comment) { ?>
+									<p><b><?=$comment['username']?></b> | <b><?=$comment['date']?></b> : <b><?=$comment['content']?></b></p>
+							<? } ?>
+								<form method="post" action="/order/saveComment/<?=$rec['idorder']?>" data-ajax="false">
+									<input type="text" name="comment" id="comment" required="" data-mini="true" data-clear-btn="true">
+									<input type="submit" name="submit" value="Envoyer commentaire">
+								</form>
+						</div>
 						<li data-inset="true" data-split-theme="a"> <a rel="external" data-ajax="false" href="/order/viewProducts/<?=$rec['idorder']?>/<?=$rec['supplier_id']?>/order">Order from this</a></li>						
 						<? } ?>
 						<?if($rec['status'] != 'draft') { ?>

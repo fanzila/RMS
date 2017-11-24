@@ -335,6 +335,10 @@ class Order extends CI_Controller {
 						$results[$key]['totalht'] = 'Unable to get total for this order';
 					}
 				}
+				$this->db->where('idorder', $rec['idorder']);
+				$query = $this->db->get('orders_comments');
+				$results[$key]['countComments'] = $query->num_rows();
+				$results[$key]['comments'] = $query->result_array(); 
 			}
 		}
 		
@@ -501,6 +505,26 @@ class Order extends CI_Controller {
 		$this->load->view('order/order_products',$data);
 		$this->load->view('jq_footer');
 
+	}
+	
+	public function saveComment($idorder = null) 
+	{	
+		$this->hmw->isLoggedIn();
+		if (empty($idorder)) {
+			die("Error: Missing Parameters");
+		}
+		$post = $this->input->post();
+		$date = date('Y-m-d H:i:s');
+		$user = $this->ion_auth->user()->row();
+		if (empty($post) || empty($post['comment']))
+			die("No data received");
+		$entry['content'] = $post['comment'];
+		$entry['username'] = $user->username;
+		$entry['idorder'] = $idorder;
+		$entry['date'] = $date;
+		$this->session->set_userdata('keep_filters', 'true');
+		$this->db->insert('orders_comments', $entry);
+		redirect('/order/viewOrders', 'auto');
 	}
 	
 	public function cancelReception() {
