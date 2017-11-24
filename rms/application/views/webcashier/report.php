@@ -44,6 +44,16 @@
 							<input type="text" data-role="date" id="edate" name="edate" value="<?=$filter['edate']?>" data-clear-btn="true" />
 						</div>
 					</div>
+					<div class="col-md">
+						<div class="box">
+							<label style="background-color: white;" for="status_ok" id="label">OK</label>
+							<input type="checkbox" id="status_ok" name="status_ok" data-clear-btn="true" <?if (!empty($filter['status_ok'])) { echo 'checked'; }?>>
+							<label style="background-color: white;" for="status_error" id="label">Error</label>
+							<input type="checkbox" id="status_error" name="status_error" data-clear-btn="true" <?if (!empty($filter['status_error'])) { echo 'checked'; }?>>
+							<label style="background-color: white;" for="status_validated" id="label">Validated</label>
+							<input type="checkbox" id="status_validated" name="status_validated" data-clear-btn="true" <?if (!empty($filter['status_validated'])) { echo 'checked'; }?>>
+						</div>
+					</div>
 			</div>
 			<input type="submit" name="sub" value="FILTER" />
 		</form>

@@ -240,6 +240,9 @@ class webCashier extends CI_Controller {
 		if ($this->input->post('user')) {	$filters['user-id'] = $this->input->post('user');	}	else { $filters['user-id'] = ""; }
 		if ($this->input->post('sdate')) { $filters['sdate'] = $this->input->post('sdate'); } else { $filters['sdate'] = ""; }
 		if ($this->input->post('edate')) { $filters['edate'] = $this->input->post('edate'); } else { $filters['edate'] = ""; }
+		if ($this->input->post('status_ok')) { $filters['status_ok'] = true; } else { $filters['status_ok'] = ""; }
+		if ($this->input->post('status_error')) { $filters['status_error'] = true; } else { $filters['status_error'] = ""; }
+		if ($this->input->post('status_validated')) { $filters['status_validated'] = true; } else { $filters['status_validated'] = ""; }
 		$data['filter'] = $filters;
 
 		$id_bu			 		=  $this->session->userdata('bu_id');
@@ -282,6 +285,10 @@ class webCashier extends CI_Controller {
 			if (!empty($filters['user-id'])) $this->db->where('u.id', $filters['user-id']);
 			if (!empty($filters['sdate'])) $this->db->where('pm.date >= ', $filters['sdate']);
 			if (!empty($filters['edate'])) $this->db->where('pm.date <= ', $filters['edate']);
+			if (!empty($filters['status_ok'])) $status[] = 'ok';
+			if (!empty($filters['status_error'])) $status[] = 'error';
+			if (!empty($filters['status_validated'])) $status[] = 'validated';
+			if (!empty($status)) $this->db->where_in('pm.status', $status);
 			$this->db->order_by('pm.id desc');
 			$this->db->limit(300);
 		$r_pm = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
