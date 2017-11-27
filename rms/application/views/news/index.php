@@ -10,8 +10,8 @@
 			$ret = $res->result_array();
 		?>
 		<li data-role="list-divider"><?php echo $news_item->title; ?> - <?php echo $news_item->date; ?> | <?php echo $news_item->username; ?> | <?php echo $news_item->name; ?> | 
-			<a href="#popupBasic_<?=$news_item->id?>" data-rel="popup">View confirmations</a>
-			<div data-role="popup" id="popupBasic_<?=$news_item->id?>" style="padding:7px">
+			<a href="#popupBasic_<?=$news_item->news_id?>" data-rel="popup">View confirmations</a>
+			<div data-role="popup" id="popupBasic_<?=$news_item->news_id?>" style="padding:7px">
 				<table style="padding:6px">
 					<?php foreach ($ret as $conf): ?> 
 						<tr style="padding:4px"><td style="padding:4px"><?=$conf['username']?></td><td style="padding:4px"><? $color="red"; if($conf['status'] == 'confirmed') { $color = "green"; } ?> <b><font color="<?=$color?>"><?=$conf['status']?></font></b></td><td style="padding:4px"><?=$conf['date_confirmed']?></td></tr>
