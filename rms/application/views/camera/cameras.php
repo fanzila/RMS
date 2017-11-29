@@ -18,6 +18,7 @@
 		<link rel="stylesheet" href="/public/droid2/css/nativedroid2.css" />
 		<!--A remplacer par une bu en local-->
 		<link rel="stylesheet" href="/public/fontAwesome/4.6.3/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="/public/cameras.css" />
 		<script type="text/javascript" src="/public/jquery-1.11.3.min.js"></script>
 	</head>
 	<body>
@@ -26,8 +27,18 @@
 	if($info_bu->id == 2) $bgcolor = '#e15849'; 
 	?>
 	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">[<a href="/"><?=$info_bu->name?></a>] | ARCH: <?=number_format($ca[1]['amount']/1000, 0, ',', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=number_format($ca[2]['amount']/1000, 0, ',', ' ')?>€ <small><?=$ca[2]['last']?></small> - <small><a href="/cameras/index/onebu/1">Current BU view only</a></small></div>
+	<!-- <div class="res-choose">
+		<div>
+			<label for="compression-range">Compression</label>
+			<input type="range" min="10" max="100" step="5" list="tickmarks" name="compression-range" id="compression-range">
+			
+		</div>
+		<div class="">
+			<input
+		</div>
+	</div> -->
 	<?foreach ($cameras as $camera) { ?>
-		<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/getStream/<?=$camera['name']?>"></iframe>
+		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>"></iframe>
 	<? } ?>
 <?
 $iname = 1;
