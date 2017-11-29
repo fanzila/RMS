@@ -17,7 +17,7 @@
 						<h3>Main</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
 						<? if(($keylogin || $userlevel >= 1) AND ($this->session->userdata('type') != 'kitchen')) { ?>
-							<li><a href="/cameras/"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
+							<li><a href="/cameras/" data-ajax="false"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
 						<? } ?>		
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
 						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> My skills</a></li>
