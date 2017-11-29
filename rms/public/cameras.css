@@ -1,7 +1,6 @@
 .camera {
   width: 49%;
-  height: 49%;
-  
+  height: auto;
 }
 
 .res-choose {
