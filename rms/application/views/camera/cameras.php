@@ -26,45 +26,10 @@
 	if($info_bu->id == 2) $bgcolor = '#e15849'; 
 	?>
 	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">[<a href="/"><?=$info_bu->name?></a>] | ARCH: <?=number_format($ca[1]['amount']/1000, 0, ',', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=number_format($ca[2]['amount']/1000, 0, ',', ' ')?>€ <small><?=$ca[2]['last']?></small> - <small><a href="/cameras/index/onebu/1">Current BU view only</a></small></div>
-<?if(isset($url['cam1'])) { ?>
-	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/1"></iframe>
-	<? 
-} 
-?>
-<?if(isset($url['cam2'])) { ?>
-	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/2"></iframe>	
-	<? 
-} 
-?>
-<?if(isset($url['cam3'])) { ?>
-	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/3"></iframe>		
-	<? 
-} 
-?>
-<?if(isset($url['cam4'])) { ?>
-	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/4"></iframe>			
-	<? 
-} 
-?>
-<?if(isset($url['cam5'])) { ?>
-	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/5"></iframe>			
-	<? 
-} 
-?>
-<?if(isset($url['cam6'])) { ?>
-	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/6"></iframe>			
-	<? 
-} 
-?>
-<?if(isset($url['cam7'])) { ?>
-	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/7"></iframe>			
-	<? 
-} 
-?>
-<?if(isset($url['cam8'])) { ?>
-	<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/frame/8"></iframe>			
-	<? 
-} 
+	<?foreach ($cameras as $camera) { ?>
+		<iframe width="640" marginheight="0" marginwidth="0" height="360" scrolling="no" frameborder="0" src="/cameras/getStream/<?=$camera['name']?>"></iframe>
+	<? } ?>
+<?
 $iname = 1;
 foreach($bu_postion_id AS $bupid) {
 

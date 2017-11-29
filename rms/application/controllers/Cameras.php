@@ -39,16 +39,7 @@ class Cameras extends CI_Controller {
 		}
 
 		$url = array();
-
-		if($onebu) { 
-			$this->db->from('cameras')->where('id_bu', $this->session->userdata('bu_id'));
-		} else {
-			$this->db->from('cameras');
-		}
-		$res = $this->db->get();
-		$row = $res->result();
-		$i = 1;
-		
+				
 		$local1			= false;
 		$local2			= false;
 		$ip 			= $this->input->ip_address();
@@ -56,6 +47,7 @@ class Cameras extends CI_Controller {
 		$data			= array();
 		$bu_postion_id	= array();
 		$buname 		= array();
+		$camera			= array();
 		$buinfo1 		= $this->hmw->getBuInfo(1);
 		$buinfo2 		= $this->hmw->getBuInfo(2);
 		
@@ -67,15 +59,18 @@ class Cameras extends CI_Controller {
 	 	$bal_ca = $this->db->get();
 		$ca[2] = $bal_ca->row_array();
 
-		if($ip == $buinfo1->net_ip) $local1 = true;
-		if($ip == $buinfo2->net_ip) $local2 = true;
-		
-		foreach ($row as $key => $var) {
-			$url['cam'.$i] = $var->adress;
-			if($local1 AND $var->id_bu == 1) $url['cam'.$i] = $var->adress_local;
-			if($local2 AND $var->id_bu == 2) $url['cam'.$i] = $var->adress_local;
-			$i++;	
+		if ($onebu) {
+			$id_bu = $this->session->userdata('bu_id');
+			if (!empty($id_bu))
+				$cameras = $this->getCamerasNamesFromDb($id_bu);
+			else
+				die("Can't find bu");
+		} else {
+			$cameras = $this->getCamerasNamesFromDb();	
 		}
+
+		if (empty($cameras))
+			die("Error when getting cameras from db");
 
 		$bu_postion_id[1]		= explode (',',$buinfo1->humanity_positions);
 		$bu_postion_id[2]		= explode (',',$buinfo2->humanity_positions);
@@ -87,13 +82,74 @@ class Cameras extends CI_Controller {
 		$data['bu_postion_id'] 	= $bu_postion_id;
 		$data['info_bu'] 		= $info_current_bu;
 		$data['buname'] 		= $buname;
-		$data['url'] 			= $url;
 		$data['ca']				= $ca;
 		$data['planning'] 		= $planning;
+		$data['cameras'] = $cameras;
 		$session_data['cam'] 	= $url;
 		
 		$this->session->set_userdata($session_data);
 		$this->load->view('camera/cameras', $data);
+	}
+	
+	private function getCamerasNamesFromDb($id_bu = null)
+	{
+		$this->load->library('hmw');
+		
+		if (!$this->hmw->isLoggedIn())
+			die();
+		$this->db->select('name');
+		if (!empty($id_bu)) $this->db->where('id_bu', $id_bu);
+		$query = $this->db->get('cameras');
+		if ($query->result_array() != NULL)
+			$cameras = $query->result_array();
+		else
+			$cameras = false;
+		return ($cameras);
+	}
+	
+ 	function getStream($camera_name) 
+	{
+		$this->load->database();
+		$camera_proxy = $this->load->library('camera_proxy');
+		$this->load->library('hmw');
+		
+		if (!$this->hmw->isLoggedIn())
+			die();
+			
+		session_write_close();
+		
+		$this->db->where('name', $camera_name);
+		$query = $this->db->get('cameras');
+		$camera = $query->row_array();
+		
+		if (empty($camera))
+			die('Camera not found in DB');
+		
+		// Register the wrapper
+		stream_wrapper_register("stream", "camera_proxy")
+		    or die("Failed to register protocol");
+				
+		// Open the "file"
+		$fp = fopen("stream://CameraCGIStreamContent", "r+")
+				or die;
+		# On envoie les memes headers que la Camera Axis
+		header('Content-Type: multipart/x-mixed-replace; boundary=myboundary');
+	
+		$ch = curl_init($camera['address']);
+		curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+
+		curl_exec($ch);
+
+		if (curl_error($ch))
+		{
+		  echo curl_error($ch);
+		  exit;
+		}
+
+		curl_close($ch);
+		fclose($fp);
 	}
 	
 	private function planning() 
@@ -155,4 +211,21 @@ class Cameras extends CI_Controller {
 		$data['num']  = $num;
 		$this->load->view('camera/frame', $data);
 	}
+}
+
+Class Camera_proxy {
+  
+  function stream_open($path, $mode, $options, &$opened_path)
+  {
+    // Has to be declared, it seems...
+    return true;
+  }
+  
+  public function stream_write($data)
+  {
+    echo $data;
+
+    return strlen($data);
+  }
+  
 }
