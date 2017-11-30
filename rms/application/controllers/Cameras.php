@@ -59,14 +59,19 @@ class Cameras extends CI_Controller {
 	 	$bal_ca = $this->db->get();
 		$ca[2] = $bal_ca->row_array();
 
-		if ($onebu) {
+		if ($this->ion_auth->in_group('Admin') && !$onebu) {
+			
+			$this->db->select('id, name');
+			$query = $this->db->get('bus');
+			$all_bus = $query->result_array();
+			
+			$cameras = $this->getCamerasNamesFromDb();
+		} else {
 			$id_bu = $this->session->userdata('bu_id');
 			if (!empty($id_bu))
 				$cameras = $this->getCamerasNamesFromDb($id_bu);
 			else
 				die("Can't find bu");
-		} else {
-			$cameras = $this->getCamerasNamesFromDb();	
 		}
 
 		if (empty($cameras))
@@ -79,6 +84,9 @@ class Cameras extends CI_Controller {
 		
 		$info_current_bu 		= $this->hmw->getBuInfo($this->session->userdata('bu_id'));
 		$planning 				= $this->planning();
+		if (!empty($all_bus)) {
+			$data['all_bus'] = $all_bus;
+		}
 		$data['bu_postion_id'] 	= $bu_postion_id;
 		$data['info_bu'] 		= $info_current_bu;
 		$data['buname'] 		= $buname;
@@ -97,7 +105,7 @@ class Cameras extends CI_Controller {
 		
 		if (!$this->hmw->isLoggedIn())
 			die();
-		$this->db->select('name');
+		$this->db->select('name, id_bu');
 		if (!empty($id_bu)) $this->db->where('id_bu', $id_bu);
 		$query = $this->db->get('cameras');
 		if ($query->result_array() != NULL)
@@ -110,14 +118,20 @@ class Cameras extends CI_Controller {
  	function getStream($camera_name) 
 	{
 		$this->load->database();
+		$this->load->library('ion_auth');
 		$camera_proxy = $this->load->library('camera_proxy');
 		$this->load->library('hmw');
+		
+		$is_admin = $this->ion_auth->in_group('Admin');
 		
 		if (!$this->hmw->isLoggedIn())
 			die();
 			
 		session_write_close();
 		
+		if ($is_admin === false) {
+			$this->db->where('id_bu', $this->session->userdata('bu_id'));
+		}
 		$this->db->where('name', $camera_name);
 		$query = $this->db->get('cameras');
 		$camera = $query->row_array();

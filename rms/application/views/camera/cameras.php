@@ -26,7 +26,7 @@
 	$bgcolor = '#f7bf35';
 	if($info_bu->id == 2) $bgcolor = '#e15849'; 
 	?>
-	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">[<a href="/"><?=$info_bu->name?></a>] | ARCH: <?=number_format($ca[1]['amount']/1000, 0, ',', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=number_format($ca[2]['amount']/1000, 0, ',', ' ')?>€ <small><?=$ca[2]['last']?></small> - <small><a href="/cameras/index/onebu/1">Current BU view only</a></small></div>
+	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;"><a href="/"><?=$info_bu->name?></a>] | ARCH: <?=number_format($ca[1]['amount']/1000, 0, ',', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=number_format($ca[2]['amount']/1000, 0, ',', ' ')?>€ <small><?=$ca[2]['last']?></small> - <small><a href="/cameras/index/onebu/1">Current BU view only</a></small></div>
 	<!-- <div class="res-choose">
 		<div>
 			<label for="compression-range">Compression</label>
@@ -37,8 +37,20 @@
 			<input
 		</div>
 	</div> -->
+	<?
+	if ($this->ion_auth->in_group('Admin')) {?>
+		<div class="chooseBu" data-role="collapsible">
+			<h3>Choose Bus</h3>
+			<?foreach ($all_bus as $bu) { ?>
+					<div class="bu">
+						<input class="checkBu" type="checkbox" value="<?=$bu['id']?>" name="bu_<?=$bu['id']?>" id="bu_<?=$bu['id']?>" onchange="chooseCamBu()" <?if ($info_bu->id === $bu['id']) echo "checked"?>>
+						<label for='bu_<?=$bu['id']?>'><?=$bu['name']?></label> 
+					</div>
+			<? } ?>
+		</div>
+	<? } ?>
 	<?foreach ($cameras as $camera) { ?>
-		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>"></iframe>
+		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" <?if ($this->ion_auth->in_group('Admin')) echo "data-id-bu=" . $camera['id_bu']; ?> <?if ($camera['id_bu'] != $info_bu->id) echo "hidden='true'";?> />
 	<? } ?>
 <?
 $iname = 1;
@@ -85,5 +97,26 @@ foreach($bu_postion_id AS $bupid) {
 	$iname++;
 }
 ?>
+<?if ($this->ion_auth->in_group('Admin')) {?>
+	<script>
+		
+		function chooseCamBu()
+		{
+			var ids_bu = new Array();
+			$('.checkBu').each(function(index) {
+				if ($(this).is(':checked')) {
+					ids_bu.push($(this).attr('value'));
+				}
+			});
+			$('.camera').each(function(index){
+				if ($.inArray($(this).attr('data-id-bu'), ids_bu) != -1) {
+					$(this).removeAttr("hidden");
+				} else {
+					$(this).attr("hidden", "true");
+				}
+			});
+		}
+	</script>
+<? } ?>
 </body>
 </html>
