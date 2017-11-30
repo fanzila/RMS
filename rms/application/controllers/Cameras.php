@@ -122,8 +122,7 @@ class Cameras extends CI_Controller {
 		$camera_proxy = $this->load->library('camera_proxy');
 		$this->load->library('hmw');
 		
-		$is_admin = $this->ion_auth->in_group('Admin');
-		
+		$is_admin = $this->ion_auth->in_group('admin');
 		if (!$this->hmw->isLoggedIn())
 			die();
 			
