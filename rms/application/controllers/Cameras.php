@@ -59,7 +59,7 @@ class Cameras extends CI_Controller {
 	 	$bal_ca = $this->db->get();
 		$ca[2] = $bal_ca->row_array();
 
-		if ($this->ion_auth->in_group('Admin') && !$onebu) {
+		if ($this->ion_auth->in_group('admin') && !$onebu) {
 			
 			$this->db->select('id, name');
 			$query = $this->db->get('bus');
