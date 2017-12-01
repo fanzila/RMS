@@ -260,7 +260,7 @@ class Sensors extends CI_Controller {
 				$min    = $val['min'];
 				$s_id   = $val['id_sensor'];
 
-				$this->db->select('st.temp, st.date, s.name, s.correction as correction')
+				$this->db->select('st.temp, st.date, s.name, s.correction as correction, sa.sms_count_day, s.sms_alert')
 					->from('sensors_temp as st')
 					->join('sensors as s', 'st.id_sensor = s.id')
 					->join('sensors_alarm as sa', 'sa.id_sensor = s.id')
@@ -268,14 +268,12 @@ class Sensors extends CI_Controller {
 					->where('s.id_bu', $id_bu)
 					->where("CAST(st.`date` AS DATE) = CAST(NOW() AS DATE)")
 					->where("sa.lastalarm <= DATE_ADD(NOW(), INTERVAL -600 SECOND)")
-					->where("CAST(NOW() AS TIME) BETWEEN CAST('08:00:00' AS TIME) AND CAST('23:30:00' AS TIME)")
 					->order_by('date desc')->limit(1);
 				$rs = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 				$is = $rs->result();
 				
 				if(!empty($is)) {
-
 					$temp		= $is[0]->temp; // + $correction;
 					$correction	= $is[0]->correction;
 
@@ -289,11 +287,13 @@ The temperature should be max: ".$max."° and min: ".$min."°";
 						$msg_notif = "Problème de température pour : '".$is[0]->name."'\n
 Température = ".$temp."°\n 
 ==> VOUS DEVEZ AGIR <==";
-							
-						$this->hmw->sendNotif($msg_notif, $id_bu);
-
+						
+						$curr_date = date('H');
+						if ($curr_date < 22 && $curr_date > 9) {
+							$this->hmw->sendNotif($msg_notif, $id_bu);
+						}
 						//get checklist BU, then manager2 + admin email of this BU
-						$this->db->select('users.username, users.email, users.id');
+						$this->db->select('users.username, users.email, users.id, users.phone');
 						$this->db->distinct('users.username');
 						$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 						$this->db->join('users_groups', 'users.id = users_groups.user_id');
@@ -308,6 +308,18 @@ Température = ".$temp."°\n
 						foreach ($query->result() as $row) {
 							$email['to']	= $row->email;
 							$this->mmail->sendEmail($email);
+						}
+						if ($curr_date >= 22 || $curr_date <= 9)
+						{
+							if ($is[0]->sms_count_day < 3) {
+								foreach($query->result() as $row) {
+									$this->hmw->sendSms($row->phone, $email);
+								}
+								$is[0]->sms_count_day += 1;
+								$this->db->set('sms_count_day', $is[0]->sms_count_day);
+							}
+						} else {
+							$this->db->set('sms_count_day', 0);
 						}
 						$this->db->set('lastalarm', "NOW()", FALSE)->where('id_sensor', $val['id_sensor']);
 						$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
