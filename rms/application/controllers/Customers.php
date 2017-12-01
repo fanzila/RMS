@@ -128,8 +128,13 @@ class customers extends CI_Controller {
           if (!empty($buName)) $customers[$key]['buName'] = $buName;
         }
       }
-      $data['countOptOut'] = $this->customers_lib->countOptOut();
-      $data['countOptIn'] = $this->customers_lib->countOptIn();
+      if (!empty($id_bu) && empty($all)) {
+        $data['countOptOut'] = $this->customers_lib->countOptOut($id_bu);
+        $data['countOptIn'] = $this->customers_lib->countOptIn($id_bu);
+      } else {
+        $data['countOptOut'] = $this->customers_lib->countOptOut();
+        $data['countOptIn'] = $this->customers_lib->countOptIn();
+      }
       $data['customers'] = $customers;
       $data['all'] = $all;
     } else {

@@ -82,26 +82,28 @@ Class Customers_lib {
     return ($ret);
   }
   
-  public function countOptOut() {
+  public function countOptOut($id_bu = NULL) {
     $CI = & get_instance();
     
     $CI->load->database();
     $CI->db->distinct();
     $CI->db->select('email');
     $CI->db->where('optout', 1);
+    if (!empty($id_bu)) $CI->db->where('id_bu', $id_bu);
     $CI->db->order_by('id', 'desc');
     $query = $CI->db->get('customers');
     $res = $query->num_rows();
     return ($res);
   }
   
-  public function countOptIn() {
+  public function countOptIn($id_bu = NULL) {
     $CI = & get_instance();
     
     $CI->load->database();
     $CI->db->distinct();
     $CI->db->select('email');
     $CI->db->where('optout', 0);
+    if (!empty($id_bu)) $CI->db->where('id_bu', $id_bu);
     $CI->db->order_by('id', 'desc');
     $query = $CI->db->get('customers');
     $res = $query->num_rows();
