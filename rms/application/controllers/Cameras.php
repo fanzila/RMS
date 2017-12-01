@@ -59,7 +59,7 @@ class Cameras extends CI_Controller {
 	 	$bal_ca = $this->db->get();
 		$ca[2] = $bal_ca->row_array();
 
-		if ($this->ion_auth->in_group('admin') && !$onebu) {
+		if (($this->ion_auth->in_group('admin') || $this->ion_auth->in_group('Manager') || $this->ion_auth->in_group('Assistant_manager')) && !$onebu) {
 			
 			$this->db->select('id, name');
 			$query = $this->db->get('bus');
@@ -122,7 +122,9 @@ class Cameras extends CI_Controller {
 		$camera_proxy = $this->load->library('camera_proxy');
 		$this->load->library('hmw');
 		
-		$is_admin = $this->ion_auth->in_group('admin');
+		if ($this->ion_auth->in_group('admin') || $this->ion_auth->in_group('Manager') || $this->ion_auth->in_group('Assistant_manager')) {
+			$is_admin = true;
+		}
 		if (!$this->hmw->isLoggedIn())
 			die();
 			
