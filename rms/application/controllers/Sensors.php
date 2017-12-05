@@ -150,7 +150,7 @@ class Sensors extends CI_Controller {
 				exit();
 			}
 
-			$this->db->where("date < DATE_ADD(NOW(), INTERVAL -30 DAY)");
+			$this->db->where("date < DATE_ADD(NOW(), INTERVAL -45 DAY)");
 			$r = $this->db->delete('sensors_temp') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		}
 	}
