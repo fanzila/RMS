@@ -73,8 +73,10 @@ class Sensors extends CI_Controller {
 	public function graphs() 
 	{
 		$this->hmw->keyLogin();
+		$id_bu = $this->session->userdata('bu_id');
 		
 		$this->db->select('id, name');
+		$this->db->where('id_bu', $id_bu);
 		$res = $this->db->get('sensors')->result_array();
 		
 		if (!empty($res)) {

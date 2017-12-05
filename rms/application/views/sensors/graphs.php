@@ -3,7 +3,9 @@
 </div>
 <div data-role="content" data-theme="a">
   <h3>Sensors Graphs</h3>
-  
+  <?if (empty($sensors)) {?> 
+    <p> No sensors graphs to view.
+  <? } ?>
   <?foreach($sensors as $sensor) { ?>
       <div id="graph-table">
         <div id="sensor-stat" style="max-width: 800px; max-height: 400px; min-width: 400px; min-height: 200px; margin-bottom: 100px;">
