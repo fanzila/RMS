@@ -1,1 +1,0 @@
-ALTER TABLE `stock_history` ADD `deleted` BOOLEAN NOT NULL DEFAULT FALSE ;

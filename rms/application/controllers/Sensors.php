@@ -353,7 +353,7 @@ Température = ".$temp."°\n
 						$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 						$this->db->join('users_groups', 'users.id = users_groups.user_id');
 						$this->db->where('users.active', 1);
-						$this->db->where_in('users_groups.group_id', array(1,4));
+						$this->db->where_in('users_groups.group_id', array(1,4,6));
 						$this->db->where('users_bus.bu_id', $id_bu);
 						$query = $this->db->get("users");
 
@@ -364,11 +364,11 @@ Température = ".$temp."°\n
 							$email['to']	= $row->email;
 							$this->mmail->sendEmail($email);
 						}
-						if ($curr_date >= 22 || $curr_date <= 9)
+						if (($curr_date >= 22 || $curr_date <= 9) AND $is[0]->sms_alert)
 						{
 							if ($is[0]->sms_count_day < 3) {
 								foreach($query->result() as $row) {
-									$this->hmw->sendSms($row->phone, $email);
+									$this->hmw->sendSms($row->phone, $msg);
 								}
 								$is[0]->sms_count_day += 1;
 								$this->db->set('sms_count_day', $is[0]->sms_count_day);
