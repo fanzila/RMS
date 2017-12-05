@@ -6,10 +6,11 @@
     <link type="text/css" rel="stylesheet" href="/public/jqplot/syntaxhighlighter/styles/shThemejqPlot.min.css" />
 	-->
 	 <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="/public/jqplot/excanvas.js"></script><![endif]-->
-	 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.js"></script>
-	</div>
+</div>
 <div data-role="content" data-theme="a">
 	<h3>Current temperature</h3>
+	<a data-role="button" href="/sensors/graphs/" data-ajax=false>View Graphs</a>
+	<br>
 	<?
 	if (isset($msg)) {
 		echo $msg;
@@ -54,34 +55,6 @@
 							<input type="hidden" name="s_id" value=<?=$val['sid']?>/>
 							<input type="submit" name="submit_pause" value="valider"/>
 						</form>
-					</td>
-					<td>
-						<div data-role="collapsible" style="width: 100%">
-							<h3>Graph</h3>
-							<div id="sensor-stat">
-					      <canvas id="s_<?=$val['sid']?>-canvas" width="400" height="400"></canvas>
-					    </div>
-							<script type="text/javascript">
-							  var ctx = $('#s_<?=$val['sid']?>-canvas');
-							  var myChart = new Chart(ctx, {
-							    type: 'line',
-							    data: {
-										labels: [<?=$val['lastMonthTemp']['dateList']?>],
-										datasets: [{
-											label: 'Sensor temps average for the month',
-											data: [<?=$val['lastMonthTemp']['tempList']?>],
-											lineTension: 0,
-											borderColor: "rgb(255, 0, 0)",
-											fill: false
-										}]
-									},
-							    options: {
-							      maintainAspectRatio: true,
-							      responsive: true
-							    }
-							  });
-							</script>
-						</div>
 					</td>
 				</tr>
 			<? } ?>

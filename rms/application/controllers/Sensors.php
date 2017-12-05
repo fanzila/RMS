@@ -59,22 +59,39 @@ class Sensors extends CI_Controller {
 				$val['ongoingDelay'] = NULL;
 				$val['date_fin'] = NULL;
 			}
-			if ($this->getLastMonthTemp($val['sid']) == true) {
-				$val['lastMonthTemp'] = $this->getLastMonthTemp($val['sid'], true);
-			} else {
-				$val['lastMonthTemp']['dateList'] = '';
-				$val['lastMonthTemp']['tempList'] = '';
-			}
-			// var_dump($val);
-			// die();
 		}
 		$data['title'] 		= 'Sensors';
 		$data['keylogin']	= $this->session->userdata('keylogin');
 
-		$headers = $this->hmw->headerVars(1, "/", "Sensors");
+		$headers = $this->hmw->headerVars(1, "/sensors/", "Sensors");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('sensors', $data);
+		$this->load->view('/sensors/index', $data);
+		$this->load->view('jq_footer');
+	}
+	
+	public function graphs() 
+	{
+		$this->hmw->keyLogin();
+		
+		$this->db->select('id, name');
+		$res = $this->db->get('sensors')->result_array();
+		
+		if (!empty($res)) {
+			foreach($res as &$sensor) {
+				if ($this->getLastMonthTemp($sensor['id']) == true) {
+					$sensor['lastMonthTemp'] = $this->getLastMonthTemp($sensor['id'], true);
+				} else {
+					$sensor['lastMonthTemp']['dateList'] = '';
+					$sensor['lastMonthTemp']['tempList'] = '';
+				}
+			}
+		}
+		$data['sensors'] = $res;
+		$headers = $this->hmw->headerVars(0, "/sensors/", "Sensors Graphs");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('/sensors/graphs', $data);
 		$this->load->view('jq_footer');
 	}
 	
