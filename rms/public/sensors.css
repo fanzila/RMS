@@ -1,0 +1,8 @@
+#graph-table {
+  width: 100%;
+  display: inline-block;
+  justify-content: center;
+}
+#sensor-stat {
+  display: inline-block;
+}
