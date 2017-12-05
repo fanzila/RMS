@@ -52,13 +52,21 @@ class Sensors extends CI_Controller {
 
 		$data['current'] 	= $info;
 		foreach ($data['current'] as $key => &$val) {
-			if ($this->checkForOngoingDelay($val['sid']) === true) {
+			if ($this->checkForOngoingDelay($val['sid']) == true) {
 				$val['ongoingDelay'] = $this->getOngoingDelay($val['sid']);
 			}
 			else {
 				$val['ongoingDelay'] = NULL;
 				$val['date_fin'] = NULL;
 			}
+			if ($this->getLastMonthTemp($val['sid']) == true) {
+				$val['lastMonthTemp'] = $this->getLastMonthTemp($val['sid'], true);
+			} else {
+				$val['lastMonthTemp']['dateList'] = '';
+				$val['lastMonthTemp']['tempList'] = '';
+			}
+			// var_dump($val);
+			// die();
 		}
 		$data['title'] 		= 'Sensors';
 		$data['keylogin']	= $this->session->userdata('keylogin');
@@ -68,6 +76,36 @@ class Sensors extends CI_Controller {
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('sensors', $data);
 		$this->load->view('jq_footer');
+	}
+	
+	private function getLastMonthTemp($id = null, $implodeArray = false)
+	{
+		if (empty($id)) {
+			return (false);
+		}
+		$this->db->select('CAST(date AS DATE) as simpledate, AVG(temp) as temp');
+		$this->db->where('id_sensor', $id);
+		$this->db->where("date < DATE_ADD(NOW(), INTERVAL -30 DAY)");
+		$this->db->group_by('simpledate');
+		$res = $this->db->get('sensors_temp') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$temps = $res->result_array();
+		if (!empty($temps)) {
+			if ($implodeArray === true) {
+				$lastMonthTemp = array();
+				$prefix = $tempList = $dateList = '';
+				foreach ($temps as $value) {
+					$dateList .= $prefix . '"' . $value['simpledate'] . '"';
+					$tempList .= $prefix . number_format($value['temp'], 2);
+    			$prefix = ', ';
+				}
+				$lastMonthTemp['tempList'] = $tempList;
+				$lastMonthTemp['dateList'] = $dateList;
+				return ($lastMonthTemp);
+			}
+			return ($temps);
+		} else {
+			return (false);
+		}
 	}
 
 	public function record()
@@ -95,7 +133,7 @@ class Sensors extends CI_Controller {
 				exit();
 			}
 
-			$this->db->where("date < DATE_ADD(NOW(), INTERVAL -10 DAY)");
+			$this->db->where("date < DATE_ADD(NOW(), INTERVAL -30 DAY)");
 			$r = $this->db->delete('sensors_temp') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		}
 	}
