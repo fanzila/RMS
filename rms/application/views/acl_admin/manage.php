@@ -1,9 +1,9 @@
-<h1>Manage</h1>
+</div>
+<div data-role="content" data-theme="a">
+  <h1>Manage</h1>
 
-<?php echo anchor('/dashboard', "Dashboard"); ?>
-
-<ul>
-    <li><?php echo anchor('/admin/permissions', "Manage Permission's"); ?></li>
-    <li><?php echo anchor('/admin/groups', "Manage Group's"); ?></li>
-    <li><?php echo anchor('/admin/users', "Manage User's"); ?></li>
-</ul>
+      <?php echo anchor('/acl_admin/permissions', "Manage Permissions", "data-ajax='false' data-role='button'"); ?>
+      <?php echo anchor('/acl_admin/groups', "Manage Groups Permissions", "data-ajax='false' data-role='button'"); ?>
+      <?php if (isset($user_manage)) echo anchor('/acl_admin/users', "Manage Users", "data-ajax='false' data-role='button'"); ?>
+</div>
+</div>

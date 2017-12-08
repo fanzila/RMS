@@ -1,5 +1,8 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
+//https://code.tutsplus.com/tutorials/a-better-login-system--net-3461
+
+
 /**
  * Admin.php
  *
@@ -13,6 +16,8 @@ class Acl_admin extends CI_Controller
     {
         parent::__construct();
         $this->load->library('ion_auth');
+        $this->load->library('hmw');
+        $this->load->library('form_validation');
         $this->load->library('ion_auth_acl');
         
         if( ! $this->ion_auth->logged_in() )
@@ -24,25 +29,33 @@ class Acl_admin extends CI_Controller
 
     public function index()
     {
-        redirect('/admin/manage');
+        redirect('/acl_admin/manage');
     }
 
     public function manage()
     {
-        $this->load->view('admin/manage');
+        $headers = $this->hmw->headerVars(0, "/dashboard", "ACL Admin");
+        $this->load->view('jq_header_pre', $headers['header_pre']);
+        $this->load->view('jq_header_post', $headers['header_post']);
+        $this->load->view('acl_admin/manage');
+        $this->load->view('jq_footer');
     }
 
     public function permissions()
     {
         $data['permissions']    =   $this->ion_auth_acl->permissions('full');
-
-        $this->load->view('admin/permissions', $data);
+        
+        $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "Manage Permissions");
+        $this->load->view('jq_header_pre', $headers['header_pre']);
+        $this->load->view('jq_header_post', $headers['header_post']);
+        $this->load->view('acl_admin/permissions', $data);
+        $this->load->view('jq_footer');
     }
 
     public function add_permission()
     {
         if( $this->input->post() && $this->input->post('cancel') )
-            redirect('/admin/permissions', 'refresh');
+            redirect('/acl_admin/permissions', 'refresh');
 
         $this->form_validation->set_rules('perm_key', 'key', 'required|trim');
         $this->form_validation->set_rules('perm_name', 'name', 'required|trim');
@@ -52,8 +65,12 @@ class Acl_admin extends CI_Controller
         if( $this->form_validation->run() === FALSE )
         {
             $data['message'] = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
-
-            $this->load->view('admin/add_permission', $data);
+            
+            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions", "Add Permission");
+            $this->load->view('jq_header_pre', $headers['header_pre']);
+            $this->load->view('jq_header_post', $headers['header_post']);
+            $this->load->view('acl_admin/add_permission', $data);
+            $this->load->view('jq_footer');
         }
         else
         {
@@ -63,7 +80,7 @@ class Acl_admin extends CI_Controller
                 // check to see if we are creating the permission
                 // redirect them back to the admin page
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect("/admin/permissions", 'refresh');
+                redirect("/acl_admin/permissions", 'refresh');
             }
         }
     }
@@ -71,14 +88,14 @@ class Acl_admin extends CI_Controller
     public function update_permission()
     {
         if( $this->input->post() && $this->input->post('cancel') )
-            redirect('admin/permissions', 'refresh');
+            redirect('acl_admin/permissions', 'refresh');
 
         $permission_id  =   $this->uri->segment(3);
 
         if( ! $permission_id )
         {
             $this->session->set_flashdata('message', "No permission ID passed");
-            redirect("admin/permissions", 'refresh');
+            redirect("acl_admin/permissions", 'refresh');
         }
 
         $permission =   $this->ion_auth_acl->permission($permission_id);
@@ -92,8 +109,11 @@ class Acl_admin extends CI_Controller
         {
             $data['message']    = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
             $data['permission'] = $permission;
-
-            $this->load->view('admin/edit_permission', $data);
+            $headers = $this->hmw->headerVars(0, "/permissions", "Edit Permission");
+            $this->load->view('jq_header_pre', $headers['header_pre']);
+            $this->load->view('jq_header_post', $headers['header_post']);
+            $this->load->view('acl_admin/edit_permission', $data);
+            $this->load->view('jq_footer');
         }
         else
         {
@@ -107,7 +127,7 @@ class Acl_admin extends CI_Controller
                 // check to see if we are creating the permission
                 // redirect them back to the admin page
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect("/admin/permissions", 'refresh');
+                redirect("/acl_admin/permissions", 'refresh');
             }
         }
     }
@@ -115,14 +135,14 @@ class Acl_admin extends CI_Controller
     public function delete_permission()
     {
         if( $this->input->post() && $this->input->post('cancel') )
-            redirect('/admin/permissions', 'refresh');
+            redirect('/acl_admin/permissions', 'refresh');
 
         $permission_id  =   $this->uri->segment(3);
 
         if( ! $permission_id )
         {
             $this->session->set_flashdata('message', "No permission ID passed");
-            redirect("admin/permissions", 'refresh');
+            redirect("/acl_admin/permissions", 'refresh');
         }
 
         if( $this->input->post() && $this->input->post('delete') )
@@ -130,7 +150,7 @@ class Acl_admin extends CI_Controller
             if( $this->ion_auth_acl->remove_permission($permission_id) )
             {
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect("admin/permissions", 'refresh');
+                redirect("/acl_admin/permissions", 'refresh');
             }
             else
             {
@@ -140,29 +160,37 @@ class Acl_admin extends CI_Controller
         else
         {
             $data['message'] = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
-
-            $this->load->view('/admin/delete_permission', $data);
+            
+            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions", "Delete Permission");
+            $this->load->view('jq_header_pre', $headers['header_pre']);
+            $this->load->view('jq_header_post', $headers['header_post']);
+            $this->load->view('/acl_admin/delete_permission', $data);
+            $this->load->view('jq_footer');
         }
     }
 
     public function groups()
     {
         $data['groups'] = $this->ion_auth->groups()->result();
-
-        $this->load->view('/admin/groups', $data);
+        
+        $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "Manage Groups");
+        $this->load->view('jq_header_pre', $headers['header_pre']);
+        $this->load->view('jq_header_post', $headers['header_post']);
+        $this->load->view('/acl_admin/groups', $data);
+        $this->load->view('jq_footer');
     }
 
     public function group_permissions()
     {
         if( $this->input->post() && $this->input->post('cancel') )
-            redirect('/admin/groups', 'refresh');
+            redirect('/acl_admin/groups', 'refresh');
 
         $group_id  =   $this->uri->segment(3);
 
         if( ! $group_id )
         {
             $this->session->set_flashdata('message', "No group ID passed");
-            redirect("admin/groups", 'refresh');
+            redirect("acl_admin/groups", 'refresh');
         }
 
         if( $this->input->post() && $this->input->post('save') )
@@ -180,20 +208,28 @@ class Acl_admin extends CI_Controller
                 }
             }
 
-            redirect('/admin/groups', 'refresh');
+            redirect('/acl_admin/groups', 'refresh');
         }
 
         $data['permissions']            =   $this->ion_auth_acl->permissions('full', 'perm_key');
         $data['group_permissions']      =   $this->ion_auth_acl->get_group_permissions($group_id);
-
-        $this->load->view('/admin/group_permissions', $data);
+          
+        $headers = $this->hmw->headerVars(0, "/acl_admin/groups", "Group Permissions");
+        $this->load->view('jq_header_pre', $headers['header_pre']);
+        $this->load->view('jq_header_post', $headers['header_post']);  
+        $this->load->view('/acl_admin/group_permissions', $data);
+        $this->load->view('jq_footer');
     }
 
     public function users()
     {
         $data['users']  =   $this->ion_auth->users()->result();
 
-        $this->load->view('/admin/users', $data);
+        $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "ACL Admin");
+        $this->load->view('jq_header_pre', $headers['header_pre']);
+        $this->load->view('jq_header_post', $headers['header_post']);
+        $this->load->view('/acl_admin/users', $data);
+        $this->load->view('jq_footer');
     }
 
     public function manage_user()
@@ -203,14 +239,18 @@ class Acl_admin extends CI_Controller
         if( ! $user_id )
         {
             $this->session->set_flashdata('message', "No user ID passed");
-            redirect("admin/users", 'refresh');
+            redirect("acl_admin/users", 'refresh');
         }
 
         $data['user']               =   $this->ion_auth->user($user_id)->row();
         $data['user_groups']        =   $this->ion_auth->get_users_groups($user_id)->result();
         $data['user_acl']           =   $this->ion_auth_acl->build_acl($user_id);
 
-        $this->load->view('/admin/manage_user', $data);
+        $headers = $this->hmw->headerVars(0, "/dashboard", "ACL Admin");
+        $this->load->view('jq_header_pre', $headers['header_pre']);
+        $this->load->view('jq_header_post', $headers['header_post']);
+        $this->load->view('/acl_admin/manage_user', $data);
+        $this->load->view('jq_footer');
     }
 
     public function user_permissions()
@@ -220,11 +260,11 @@ class Acl_admin extends CI_Controller
         if( ! $user_id )
         {
             $this->session->set_flashdata('message', "No user ID passed");
-            redirect("admin/users", 'refresh');
+            redirect("acl_admin/users", 'refresh');
         }
 
         if( $this->input->post() && $this->input->post('cancel') )
-            redirect("/admin/manage-user/{$user_id}", 'refresh');
+            redirect("/acl_admin/manage_user/{$user_id}", 'refresh');
 
 
         if( $this->input->post() && $this->input->post('save') )
@@ -242,7 +282,7 @@ class Acl_admin extends CI_Controller
                 }
             }
 
-            redirect("/admin/manage-user/{$user_id}", 'refresh');
+            redirect("/acl_admin/manage_user/{$user_id}", 'refresh');
         }
 
         $user_groups    =   $this->ion_auth_acl->get_user_groups($user_id);
@@ -252,7 +292,11 @@ class Acl_admin extends CI_Controller
         $data['group_permissions']      =   $this->ion_auth_acl->get_group_permissions($user_groups);
         $data['users_permissions']      =   $this->ion_auth_acl->build_acl($user_id);
 
-        $this->load->view('/admin/user_permissions', $data);
+        $headers = $this->hmw->headerVars(0, "/dashboard", "ACL Admin");
+        $this->load->view('jq_header_pre', $headers['header_pre']);
+        $this->load->view('jq_header_post', $headers['header_post']);
+        $this->load->view('/acl_admin/user_permissions', $data);
+        $this->load->view('jq_footer');
     }
 
 }

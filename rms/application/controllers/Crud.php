@@ -422,6 +422,32 @@ class Crud extends CI_Controller {
 				$output = $crud->render();
 				$this->_example_output($output);
 		}
+		
+		public function permissions()
+		{
+			$crud = new grocery_CRUD();
+			$crud->set_theme('bootstrap');
+			
+			$crud->columns('id', 'perm_key', 'perm_name');
+			$crud->set_table('permissions');
+			$output = $crud->render();
+			$this->_example_output($output);
+		}
+		
+		public function group_permissions()
+		{
+			$crud = new grocery_CRUD();
+			$crud->set_theme('bootstrap');
+			
+			$crud->columns('id', 'group_id', 'perm_id', 'value', 'created_at', 'updated_at');
+			$crud->display_as('group_id', 'group');
+			$crud->display_as('perm_id', 'permission');
+			$crud->set_relation('group_id', 'groups', 'name');
+			$crud->set_relation('perm_id', 'permissions', 'perm_name');
+			$crud->set_table('groups_permissions');
+			$output = $crud->render();
+			$this->_example_output($output);
+		}
 
 	public function _example_output($output = null)
 	{

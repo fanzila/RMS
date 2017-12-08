@@ -14,6 +14,7 @@ class Dashboard extends CI_Controller
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->library('ion_auth_acl');
+        $this->load->library('hmw');
 
         if( ! $this->ion_auth->logged_in() )
             redirect('/login');
@@ -24,7 +25,11 @@ class Dashboard extends CI_Controller
         $data['users_groups']           =   $this->ion_auth->get_users_groups()->result();
         $data['users_permissions']      =   $this->ion_auth_acl->build_acl();
 
+        $headers = $this->hmw->headerVars(1, "/dashboard", "ACL Dashboard");
+  			$this->load->view('jq_header_pre', $headers['header_pre']);
+  			$this->load->view('jq_header_post', $headers['header_post']);
         $this->load->view('acl_admin/dashboard', $data);
+        $this->load->view('jq_footer');
     }
 
 }

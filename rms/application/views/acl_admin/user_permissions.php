@@ -1,10 +1,9 @@
-<h1>Manage User Permissions</h1>
+</div>
+<div data-role="content" data-theme="a">
+  <h1>Manage User Permissions</h1>
 
-<ul>
-    <li><?php echo anchor("/admin/manage-user/{$user_id}", 'Back to user'); ?></li>
-</ul>
 
-<?php echo form_open(); ?>
+<?php echo form_open('', 'data-ajax="false"'); ?>
 
 <table>
     <thead>
@@ -39,3 +38,5 @@
 </p>
 
 <?php echo form_close(); ?>
+</div>
+</div>
