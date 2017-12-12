@@ -6,15 +6,16 @@
     <link type="text/css" rel="stylesheet" href="/public/jqplot/syntaxhighlighter/styles/shThemejqPlot.min.css" />
 	-->
 	 <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="/public/jqplot/excanvas.js"></script><![endif]-->
-
-	</div>
-	<div data-role="content" data-theme="a">
-<h3>Current temperature</h3>
-<?
-if (isset($msg)) {
-	echo $msg;
-}
-?>
+</div>
+<div data-role="content" data-theme="a">
+	<h3>Current temperature</h3>
+	<a data-role="button" href="/sensors/graphs/" data-ajax=false>View Graphs</a>
+	<br>
+	<?
+	if (isset($msg)) {
+		echo $msg;
+	}
+	?>
 <table data-role="table" id="table-custom-2" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a">
 		<thead>
 			<tr class="ui-bar-d">
@@ -51,7 +52,7 @@ if (isset($msg)) {
 								<option value="172800" <?if ($val['ongoingDelay'] > 28800 AND $val['ongoingDelay'] <= 172800) {echo 'selected';}?>>2 days</option>
 								<option value="864000" <?if ($val['ongoingDelay'] > 172800 AND $val['ongoingDelay'] <= 864000) {echo 'selected';}?>>10 days</option>
 							</select>
-							<input type="hidden" name="s_id" value=<?=$val['sid']?>>
+							<input type="hidden" name="s_id" value=<?=$val['sid']?>/>
 							<input type="submit" name="submit_pause" value="valider"/>
 						</form>
 					</td>

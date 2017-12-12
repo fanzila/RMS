@@ -52,7 +52,7 @@ class Sensors extends CI_Controller {
 
 		$data['current'] 	= $info;
 		foreach ($data['current'] as $key => &$val) {
-			if ($this->checkForOngoingDelay($val['sid']) === true) {
+			if ($this->checkForOngoingDelay($val['sid']) == true) {
 				$val['ongoingDelay'] = $this->getOngoingDelay($val['sid']);
 			}
 			else {
@@ -63,11 +63,68 @@ class Sensors extends CI_Controller {
 		$data['title'] 		= 'Sensors';
 		$data['keylogin']	= $this->session->userdata('keylogin');
 
-		$headers = $this->hmw->headerVars(1, "/", "Sensors");
+		$headers = $this->hmw->headerVars(1, "/sensors/", "Sensors");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('sensors', $data);
+		$this->load->view('/sensors/index', $data);
 		$this->load->view('jq_footer');
+	}
+	
+	public function graphs() 
+	{
+		$this->hmw->keyLogin();
+		$id_bu = $this->session->userdata('bu_id');
+		
+		$this->db->select('id, name');
+		$this->db->where('id_bu', $id_bu);
+		$res = $this->db->get('sensors')->result_array();
+		
+		if (!empty($res)) {
+			foreach($res as &$sensor) {
+				if ($this->getLastMonthTemp($sensor['id']) == true) {
+					$sensor['lastMonthTemp'] = $this->getLastMonthTemp($sensor['id'], true);
+				} else {
+					$sensor['lastMonthTemp']['dateList'] = '';
+					$sensor['lastMonthTemp']['tempList'] = '';
+				}
+			}
+		}
+		$data['sensors'] = $res;
+		$headers = $this->hmw->headerVars(0, "/sensors/", "Sensors Graphs");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('/sensors/graphs', $data);
+		$this->load->view('jq_footer');
+	}
+	
+	private function getLastMonthTemp($id = null, $implodeArray = false)
+	{
+		if (empty($id)) {
+			return (false);
+		}
+		$this->db->select('CAST(date AS DATE) as simpledate, AVG(temp) as temp');
+		$this->db->where('id_sensor', $id);
+		$this->db->where("date > DATE_ADD(NOW(), INTERVAL -30 DAY)");
+		$this->db->group_by('simpledate');
+		$res = $this->db->get('sensors_temp') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$temps = $res->result_array();
+		if (!empty($temps)) {
+			if ($implodeArray === true) {
+				$lastMonthTemp = array();
+				$prefix = $tempList = $dateList = '';
+				foreach ($temps as $value) {
+					$dateList .= $prefix . '"' . $value['simpledate'] . '"';
+					$tempList .= $prefix . number_format($value['temp'], 2);
+    			$prefix = ', ';
+				}
+				$lastMonthTemp['tempList'] = $tempList;
+				$lastMonthTemp['dateList'] = $dateList;
+				return ($lastMonthTemp);
+			}
+			return ($temps);
+		} else {
+			return (false);
+		}
 	}
 
 	public function record()
@@ -95,7 +152,7 @@ class Sensors extends CI_Controller {
 				exit();
 			}
 
-			$this->db->where("date < DATE_ADD(NOW(), INTERVAL -10 DAY)");
+			$this->db->where("date < DATE_ADD(NOW(), INTERVAL -45 DAY)");
 			$r = $this->db->delete('sensors_temp') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		}
 	}
@@ -260,7 +317,7 @@ class Sensors extends CI_Controller {
 				$min    = $val['min'];
 				$s_id   = $val['id_sensor'];
 
-				$this->db->select('st.temp, st.date, s.name, s.correction as correction')
+				$this->db->select('st.temp, st.date, s.name, s.correction as correction, sa.sms_count_day, s.sms_alert')
 					->from('sensors_temp as st')
 					->join('sensors as s', 'st.id_sensor = s.id')
 					->join('sensors_alarm as sa', 'sa.id_sensor = s.id')
@@ -268,14 +325,12 @@ class Sensors extends CI_Controller {
 					->where('s.id_bu', $id_bu)
 					->where("CAST(st.`date` AS DATE) = CAST(NOW() AS DATE)")
 					->where("sa.lastalarm <= DATE_ADD(NOW(), INTERVAL -600 SECOND)")
-					->where("CAST(NOW() AS TIME) BETWEEN CAST('08:00:00' AS TIME) AND CAST('23:30:00' AS TIME)")
 					->order_by('date desc')->limit(1);
 				$rs = $this->db->get() or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 				$is = $rs->result();
 				
 				if(!empty($is)) {
-
 					$temp		= $is[0]->temp; // + $correction;
 					$correction	= $is[0]->correction;
 
@@ -289,16 +344,18 @@ The temperature should be max: ".$max."° and min: ".$min."°";
 						$msg_notif = "Problème de température pour : '".$is[0]->name."'\n
 Température = ".$temp."°\n 
 ==> VOUS DEVEZ AGIR <==";
-							
-						$this->hmw->sendNotif($msg_notif, $id_bu);
-
+						
+						$curr_date = date('H');
+						if ($curr_date < 22 && $curr_date > 9) {
+							$this->hmw->sendNotif($msg_notif, $id_bu);
+						}
 						//get checklist BU, then manager2 + admin email of this BU
-						$this->db->select('users.username, users.email, users.id');
+						$this->db->select('users.username, users.email, users.id, users.phone');
 						$this->db->distinct('users.username');
 						$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 						$this->db->join('users_groups', 'users.id = users_groups.user_id');
 						$this->db->where('users.active', 1);
-						$this->db->where_in('users_groups.group_id', array(1,4));
+						$this->db->where_in('users_groups.group_id', array(1,4,6));
 						$this->db->where('users_bus.bu_id', $id_bu);
 						$query = $this->db->get("users");
 
@@ -308,6 +365,18 @@ Température = ".$temp."°\n
 						foreach ($query->result() as $row) {
 							$email['to']	= $row->email;
 							$this->mmail->sendEmail($email);
+						}
+						if (($curr_date >= 22 || $curr_date <= 9) AND $is[0]->sms_alert)
+						{
+							if ($is[0]->sms_count_day < 3) {
+								foreach($query->result() as $row) {
+									$this->hmw->sendSms($row->phone, $msg);
+								}
+								$is[0]->sms_count_day += 1;
+								$this->db->set('sms_count_day', $is[0]->sms_count_day);
+							}
+						} else {
+							$this->db->set('sms_count_day', 0);
 						}
 						$this->db->set('lastalarm', "NOW()", FALSE)->where('id_sensor', $val['id_sensor']);
 						$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
