@@ -292,9 +292,6 @@ class Hmw {
 		 	$bal_ca = $CI->db->get();
 			$ca = $bal_ca->row_array();
 
-			$door_device = null;
-			if(isset($buinfo->door_device)) $door_device = $buinfo->door_device;
-
 			$headers = array(
 				'header_pre'	=> array(
 					'title' => $title,
@@ -314,7 +311,6 @@ class Hmw {
 					'userlevel' 	=> $higher_level->level,
 					'username'		=> $username,
 					'user_id'		=> $user->id,
-					'door_device'	=> $door_device,
 					'user_door'		=> $user->door_open
 					)
 				);

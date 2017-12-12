@@ -24,6 +24,7 @@ class Skills extends CI_Controller {
 		parent::__construct();
 		$this->load->database();
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
@@ -139,7 +140,7 @@ class Skills extends CI_Controller {
 	
 	public function general()
 	{
-		if (!$this->ion_auth->is_admin()) {
+		if (!$this->ion_auth_acl->has_permission('skills_manage_crud')) {
 			$this->hmw->isLoggedIn();
 			redirect('skills', 'refresh');
 		}
@@ -155,7 +156,7 @@ class Skills extends CI_Controller {
 	
 	public function admin()
 	{
-		if (!$this->ion_auth->is_admin()) {
+		if (!$this->ion_auth_acl->has_permission('skills_admin')) {
 			$this->hmw->isLoggedIn();
 			redirect('skills', 'refresh');
 		}

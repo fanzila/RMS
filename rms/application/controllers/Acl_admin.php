@@ -109,7 +109,7 @@ class Acl_admin extends CI_Controller
         {
             $data['message']    = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
             $data['permission'] = $permission;
-            $headers = $this->hmw->headerVars(0, "/permissions", "Edit Permission");
+            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions", "Edit Permission");
             $this->load->view('jq_header_pre', $headers['header_pre']);
             $this->load->view('jq_header_post', $headers['header_post']);
             $this->load->view('acl_admin/edit_permission', $data);

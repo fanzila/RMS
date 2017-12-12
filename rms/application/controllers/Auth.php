@@ -6,6 +6,7 @@ class Auth extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->helper('security');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
@@ -31,6 +32,11 @@ class Auth extends CI_Controller {
 
 		if ($this->hmw->isLoggedIn() == true)
 		{
+			
+			if (!$this->ion_auth_acl->has_permission('extras')) {
+				die ('You are not allowed to view this page.');
+			}
+			
 			$txtmessage = $this->input->post('txtmessage');
 			$this->data['message']  = '';
 			$sento = '';
@@ -85,6 +91,10 @@ class Auth extends CI_Controller {
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 
 		if ($this->hmw->isLoggedIn() == true) {
+			
+			if (!$this->ion_auth_acl->has_permission('view_staff')) {
+				die ('You are not allowed to view this page.');
+			}
 			//set the flash data error message if there is one
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
@@ -382,7 +392,7 @@ class Auth extends CI_Controller {
 		{
 			$activation = $this->ion_auth->activate($id, $code);
 		}
-		else if ($this->ion_auth->is_admin())
+		else if ($this->ion_auth_acl->has_permission('activate_user'))
 		{
 			$activation = $this->ion_auth->activate($id);
 		}
@@ -438,7 +448,7 @@ class Auth extends CI_Controller {
 				}
 
 				// do we have the right userlevel?
-				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
+				if ($this->ion_auth_acl->has_permission('deactivate_user'))
 				{
 					$this->ion_auth->deactivate($id);
 				}
@@ -485,7 +495,7 @@ class Auth extends CI_Controller {
 				}
 
 				// do we have the right userlevel?
-				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
+				if ($this->ion_auth_acl->has_permission('delete_user'))
 				{
 					$user = $this->ion_auth->user($id)->row_array();
 					if (isset($user['WordPress_UID'])) {
@@ -515,9 +525,9 @@ class Auth extends CI_Controller {
 		
 		$this->hmw->isLoggedIn();
 		
-		if (!$this->ion_auth->is_admin())
+		if (!$this->ion_auth_acl->has_permission('create_user'))
 		{
-			redirect('auth', 'refresh');
+			die('You are not allowed to do this.');
 		}
 
 		$tables = $this->config->item('tables','ion_auth');
@@ -653,7 +663,7 @@ class Auth extends CI_Controller {
 		
 		$this->hmw->isLoggedIn();
 		
-		if (!$this->ion_auth->is_admin() && !$this->ion_auth->user()->row()->id == $id)
+		if (!$this->ion_auth_acl->has_permission('edit_user') && !$this->ion_auth->user()->row()->id == $id)
 		{
 			redirect('auth', 'refresh');
 		}
@@ -728,7 +738,7 @@ class Auth extends CI_Controller {
 				}
 
 				// Only allow updating groups if user is admin
-				if ($this->ion_auth->is_admin())
+				if ($this->ion_auth_acl->has_permission('edit_user_group'))
 				{
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
@@ -776,7 +786,7 @@ class Auth extends CI_Controller {
 				//check to see if we are creating the user
 				//redirect them back to the admin page
 				$this->session->set_flashdata('message', "User Saved");
-				if ($this->ion_auth->is_admin())
+				if ($this->ion_auth_acl->has_permission('edit_user'))
 				{
 					redirect('auth', 'refresh');
 				}
@@ -864,18 +874,16 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'type' => 'password'
 			);
-			if (isset($user->WordPress_UID) && $this->ion_auth->is_admin()) {
+			if (isset($user->WordPress_UID) && $this->ion_auth_acl->has_permission('edit_WP_user')) {
 				$this->data['WpUID'] = $user->WordPress_UID;
 			}
-			if (isset($user->first_shift) && $this->ion_auth->is_admin()) {
+			if (isset($user->first_shift) && $this->ion_auth_acl->has_permission('edit_first_shift_user')) {
 				$this->data['first_shift'] = $user->first_shift;
 			}
 		$this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
 		
-		$data['door_device'] = null;
 		$buinfo = $this->hmw->getBuInfo($id_bu);
-		if(isset($buinfo->door_device)) $this->data['door_device'] = $buinfo->door_device;
-
+		
 		$headers = $this->hmw->headerVars(0, "/auth/", "Users");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('auth/jq_header_spe');
@@ -891,7 +899,7 @@ class Auth extends CI_Controller {
 		
 		$this->hmw->isLoggedIn();
 		
-		if (!$this->ion_auth->is_admin())
+		if (!$this->ion_auth_acl->has_permission('create_group'))
 		{
 			redirect('auth', 'refresh');
 		}
@@ -956,7 +964,7 @@ class Auth extends CI_Controller {
 
 		$this->hmw->isLoggedIn();
 		
-		if (!$this->ion_auth->is_admin())
+		if (!$this->ion_auth_acl->has_permission('edit_group'))
 		{
 			redirect('auth', 'refresh');
 		}
@@ -1121,11 +1129,15 @@ class Auth extends CI_Controller {
 
 	public function edit_oneself($id=null)
 	{
+		
+		if (!$this->ion_auth_acl->has_permission('edit_self')) {
+			die('You are not allowed to view this.');
+		}
 		$this->data['title'] = "Edit User";
 
 		$this->hmw->isLoggedIn();
 		
-		if (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id))
+		if (!$this->ion_auth_acl->has_permission('edit_user') && !($this->ion_auth->user()->row()->id == $id))
 		{
 			redirect('auth', 'refresh');
 		}
@@ -1185,7 +1197,7 @@ class Auth extends CI_Controller {
 				}
 
 				// Only allow updating groups if user is admin
-				if ($this->ion_auth->is_admin())
+				if ($this->ion_auth_acl->has_permission('edit_self_group'))
 				{
 					//Update the groups user belongs to
 					$groupData = $this->input->post('groups');
@@ -1263,7 +1275,7 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'type' => 'password'
 			);
-			if (isset($user->WordPress_UID) && $this->ion_auth->is_admin()) {
+			if (isset($user->WordPress_UID) && $this->ion_auth_acl->has_permission('edit_WP_self')) {
 				$this->data['WpUID'] = $user->WordPress_UID;
 			}
 		$headers = $this->hmw->headerVars(1, "/auth/", "My account");

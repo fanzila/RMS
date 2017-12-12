@@ -2,7 +2,7 @@
 <div data-role="content" data-theme="a">
   <h1>Manage Group Permissions</h1>
 
-  <?php echo form_open(); ?>
+  <?php echo form_open('', 'data-ajax="false"'); ?>
 
   <table>
       <thead>
