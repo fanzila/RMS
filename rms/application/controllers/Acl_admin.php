@@ -21,7 +21,7 @@ class Acl_admin extends CI_Controller
         $this->load->library('ion_auth_acl');
         
         if( ! $this->ion_auth->logged_in() )
-            redirect('/login');
+            redirect('/auth/login');
 
         if( ! $this->ion_auth_acl->has_permission('access_admin') )
             redirect('/dashboard');
@@ -44,12 +44,24 @@ class Acl_admin extends CI_Controller
     public function permissions()
     {
         $data['permissions']    =   $this->ion_auth_acl->permissions('full');
+        $data['categories']     =   $this->ion_auth_acl->permissions_categories();
         
         $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "Manage Permissions");
         $this->load->view('jq_header_pre', $headers['header_pre']);
         $this->load->view('jq_header_post', $headers['header_post']);
         $this->load->view('acl_admin/permissions', $data);
         $this->load->view('jq_footer');
+    }
+    
+    public function permissions_categories()
+    {
+      $data['permissions']    =   $this->ion_auth_acl->permissions_categories();
+      
+      $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "Manage Categories");
+      $this->load->view('jq_header_pre', $headers['header_pre']);
+      $this->load->view('jq_header_post', $headers['header_post']);
+      $this->load->view('acl_admin/permissions_categories', $data);
+      $this->load->view('jq_footer');
     }
 
     public function add_permission()

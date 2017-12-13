@@ -964,7 +964,7 @@ class Auth extends CI_Controller {
 
 		$this->hmw->isLoggedIn();
 		
-		if (!$this->ion_auth_acl->has_permission('edit_group'))
+		if (!$this->ion_auth_acl->has_permission('edit_user_group'))
 		{
 			redirect('auth', 'refresh');
 		}

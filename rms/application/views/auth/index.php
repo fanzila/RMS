@@ -48,23 +48,23 @@
 		</div>
 	</div>
 	
-	<? if($users['0']->groups['0']->level >= 2) { ?>
+	<? if($this->ion_auth_acl->has_permission('view_groups_user')) { ?>
 	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b><?php echo lang('index_groups_th');?></b>
 		</div>
 	</div>
-	
+<? } if ($this->ion_auth_acl->has_permission('view_bus_user')) { ?>
 	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b>BU</b>
 		</div>
 	</div>
-	
-	<? if($users['0']->groups['0']->level >= 3) { ?>
+	<? } ?>
+	<? if($this->ion_auth_acl->has_permission('view_status_user')) { ?>
 	<div class="col-md" style="margin: 3px;">
 		<div class="box">
-			<b><?php echo lang('index_status_th');?> <? if($user_groups->level >= 10) { ?> | Delete <? } ?></b>
+			<b><?php echo lang('index_status_th');?> <? if($this->ion_auth_acl->has_permission('delete_user')) { ?> | Delete <? } ?></b>
 		</div>
 	</div>
 	<? } ?>
@@ -74,7 +74,6 @@
 			<b><?php echo lang('index_action_th');?></b>
 		</div>
 	</div>
-	<? } ?>
 </div>
 <?php foreach ($users as $user):?>
 	<? $bgcolor = ""; if($user->active == 0) $bgcolor = "#aaaaaa"; ?>
@@ -116,13 +115,14 @@
 			</div>
 		</div>
 		
-		<? if($users['0']->groups['0']->level >= 2) { ?>
+		<? if($this->ion_auth_acl->has_permission('view_groups_user')) { ?>
+		
 		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?$test_real = $this->ion_auth->is_real_admin($current_user->id);?>
 				<?$test_fake = $this->ion_auth->is_admin($current_user->id);?>
 				<?php foreach ($user->groups as $group):?>
-					<? if($user_groups->level >= 5) { ?><?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_group/".$group->id, htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')) ;?> <? } else { ?> <?=htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')?><? } ?>
+					<? if($this->ion_auth_acl->has_permission('edit_user_group')) { echo anchor("auth/edit_group/".$group->id, htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')) ;?> <? } else { ?> <?=htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')?><? } ?>
 					<br />
                 <?php endforeach?>
 			</div>

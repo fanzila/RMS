@@ -251,6 +251,45 @@ class Ion_auth_acl_model extends Ion_auth_model
 
         return $permissions;
     }
+    
+    /**
+     * Permissions Categories
+     *
+     * Returns all categories with the permissions within it
+     *
+     * @author Nael Awayes
+     * @return array
+     */
+     public function permissions_categories()
+     {
+       $this->trigger_events('permissions_categories');
+       
+       $categories = $this->db->get('permissions_categories')->result_array();
+       $permissions = $this->db->order_by('perm_name', 'ASC')->get('permissions')->result_array();
+       
+       if (!empty($categories)) {
+         $unsorted = array();
+         $unsorted['name'] = 'Unsorted';
+         $unsorted['id'] = 0;
+         foreach ($categories as &$category) {
+           $category['permissions'] = array();
+           foreach ($permissions as $permission) {
+             if ($permission['id_category'] == $category['id']) {
+               $category['permissions'][] =  array('id' => $permission['id'], 'key' => $permission['perm_key'], 'name' => $permission['perm_name'], 'id_category' =>$permission['id_category']);
+             } else if ($permission['id_category'] == 0) {
+               $unsorted['permissions'][] = array('id' => $permission['id'], 'key' => $permission['perm_key'], 'name' => $permission['perm_name'], 'id_category' =>$permission['id_category']);
+             }
+             $categories['unsorted'] = $unsorted;
+           }
+         }
+         // var_dump($categories);
+         // die();
+         return ($categories);
+       } else {
+         return (array());
+       }
+      
+     }
 
     /**
      * Permission
