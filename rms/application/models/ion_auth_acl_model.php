@@ -282,8 +282,6 @@ class Ion_auth_acl_model extends Ion_auth_model
              $categories['unsorted'] = $unsorted;
            }
          }
-         // var_dump($categories);
-         // die();
          return ($categories);
        } else {
          return (array());

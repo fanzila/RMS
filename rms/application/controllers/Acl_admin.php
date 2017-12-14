@@ -63,6 +63,28 @@ class Acl_admin extends CI_Controller
       $this->load->view('acl_admin/permissions_categories', $data);
       $this->load->view('jq_footer');
     }
+    
+    public function add_permission_to_category($id_perm, $id_category) 
+    {
+        // if (!$this->input->post()) {
+        //   die('No post data received');
+        // }
+        
+        //Check if category method_exists
+        $this->db->where('id', $id_category);
+        $check = $this->db->get('permissions_categories')->result_array();
+        
+        if (!empty($check) || $id_category == 0) {
+          $this->db->set('id_category', $id_category);
+          $this->db->where('id', $id_perm);
+          $this->db->update('permissions')
+            or die($this->mysqli->error);
+          $response = 'Successfully changed category';
+        } else {
+          $response = 'Category does not exist';
+        }
+        echo json_encode(['response' => $response]);
+    }
 
     public function add_permission()
     {
