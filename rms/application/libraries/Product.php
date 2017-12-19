@@ -233,7 +233,7 @@ class Product {
 		if($order) {
 			$CI->db->select('s.id as id, s.name, s.location, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.contact_sale_name, s.contact_sale_tel, s.contact_sale_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info, s.simple_order_form')
 				->from('suppliers as s')
-				->join('(SELECT date, user, status, supplier_id FROM orders WHERE status = "sent" AND date IS NOT null) as o','o.supplier_id = s.id','left')
+				->join('(SELECT date, user, status, supplier_id FROM orders WHERE (status = "sent" OR status = "received") AND date IS NOT null) as o','o.supplier_id = s.id','left')
 				->where('s.active', 1)
 				->where('s.deleted', 0)
 				->where('s.id_bu', $id_bu)
@@ -265,7 +265,8 @@ class Product {
 
 				$ret[$key['id']]['last_order'] = $interval->format('%h hour(s) and %i minute(s) ago');
 				if($dateBdd->diff($now)->days > 0) $ret[$key['id']]['last_order'] = $interval->format('%d day(s) ago');
-
+				if($dateBdd->diff($now)->m > 0) $ret[$key['id']]['last_order'] = $interval->format('%m month and %d day(s) ago');
+				
 				$ret[$key['id']]['last_order_user'] = $CI->hmw->getUser($rowl[0]['user']);
 			}
 		}
