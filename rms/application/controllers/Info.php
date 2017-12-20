@@ -10,6 +10,7 @@ class Info extends CI_Controller {
 		$this->load->library("pagination");
 		$this->load->helper("url");
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library("hmw");
 	}
 

@@ -15,6 +15,7 @@ Class Wp_access extends CI_Controller {
       $this->db = $this->load->database('default', TRUE);
       $this->wpdb = $this->load->database('wpdb', TRUE);
       $this->load->library('ion_auth');
+      $this->load->library('ion_auth_acl');
       $this->load->library('wp_rms');
       $this->load->helper('url');
     }

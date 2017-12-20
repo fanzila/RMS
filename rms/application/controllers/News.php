@@ -10,6 +10,7 @@ class News extends CI_Controller {
 		$this->load->library("pagination");
 		$this->load->helper("url");
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library("hmw");
 		$this->load->helper('html');
 	}
@@ -83,9 +84,7 @@ class News extends CI_Controller {
 		$error=0;
 		$this->hmw->isLoggedIn();
 
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 2)
-		{
+		if (!$this->ion_auth_acl->has_permission('create_news')) {
 			redirect('/news/');
 		}
 

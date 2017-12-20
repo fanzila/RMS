@@ -25,6 +25,7 @@ class Product_admin extends CI_Controller {
 
 
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library('email');
 		$this->load->library('hmw');
 		$this->hmw->keyLogin();

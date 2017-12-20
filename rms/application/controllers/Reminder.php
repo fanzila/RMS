@@ -26,6 +26,7 @@ class Reminder extends CI_Controller {
 		$this->load->database();
 		$this->load->library('email');
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		
 		
@@ -193,6 +194,7 @@ class Reminder extends CI_Controller {
 		$id_bu =  $this->session->userdata('bu_id');
 		$this->load->library('rmd');
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 
 		$rmd = $this->rmd->getAllTasks($id_bu);
 		$data = array(

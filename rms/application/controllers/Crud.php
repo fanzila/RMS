@@ -12,14 +12,12 @@ class Crud extends CI_Controller {
 		$this->load->library('grocery_CRUD');
 		$this->load->library('hmw');
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 
 		$this->hmw->isLoggedIn();
 
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 1)
-		{
-			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/news/');
+		if (!$this->ion_auth_acl->has_permission('access_cruds')) {
+			die ('You are not allowed to do this');
 		}
 		
 		$id_bu = $this->session->userdata('bu_id');		

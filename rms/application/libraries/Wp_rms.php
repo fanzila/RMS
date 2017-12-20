@@ -173,6 +173,8 @@
       $response = json_decode($result, true);
       if (filter_var($response, FILTER_VALIDATE_URL)) {
         redirect($response);
+      } else {
+        error_log($response['code'] . ': ' . $response['message']);
       }
     }
   

@@ -5,6 +5,7 @@ class Posmessage extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library("hmw");
 	}
 

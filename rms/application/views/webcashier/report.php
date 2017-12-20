@@ -139,16 +139,13 @@
 		$attributes = array('id' => $id_form, 'name' => $id_form);
 		echo form_open("webcashier/save_report_comment", $attributes);?>
 			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" />
-			<? foreach ($all_user_groups as $user_group) {
-			 if ($user_group->level >= 3 && $mov == 'close') { ?>
+			<? if ($this->ion_auth_acl->has_permission('quittance') && $mov == 'close') { ?>
 			 <? if (number_format($diff, 3) != 0) { ?>
 				<div class="box">
 					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?> />
 					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance Directeur</label>
 			 </div>
-			<? } ?>
-			 <? break;
-		 			}
+			<? }
 		 		} ?>
 			<input type="submit" id="sub<?=$m['mov']['id']?>" onclick="validate(<?=$m['mov']['id']?>)" name="submit" value="Save" data-mini="true" data-clear-btn="true" />
 			<input type="hidden" name="id" value="<?=$m['mov']['id']?>">

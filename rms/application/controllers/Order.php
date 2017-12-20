@@ -24,6 +24,7 @@ class Order extends CI_Controller {
 		parent::__construct();
 		$this->load->library('hmw');
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->model('order_model');
 		$this->load->library("pagination");
 		$this->load->helper(array('form', 'url'));

@@ -8,6 +8,7 @@
     <br>
     <a href="#" data-ajax="false" data-role="button" style="width:200px; margin-top: 50px; margin-bottom: 50px;" onclick="location.reload()">Reload data</a>
     <? foreach ($categories as $category) { ?>
+    <div class="category" data-role="collapsible">
       <h3><?=ucfirst($category['name'])?></h3>
       <? if (!empty($category['permissions'])) {?>
         <table cellpadding='10px'>
@@ -15,6 +16,9 @@
                 <tr>
                     <th>Key</th>
                     <th>Name</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +44,7 @@
             </tbody>
         </table>
       <? } else { echo "No permissions in this category";} ?>
+      </div>
     <? } ?>
     <script>
       function selectCat(perm_id, perm_name) {
@@ -63,5 +68,8 @@
   td {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
+  }
+  tr {
+    border-right: 1px solid black;
   }
 </style>

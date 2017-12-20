@@ -1,4 +1,4 @@
-			<?php if($users['0']->groups['0']->level >= 2) {?>
+			<?php if($this->ion_auth_acl->has_permission('create_user')) {?>
 				<a href="/auth/create_user/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a><? } ?>
 		</div>
 		<div data-role="content">
@@ -139,14 +139,14 @@
 		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php $attributes = array('rel' => 'external', 'data-ajax' => 'false');
-				if($test_real || ($test_fake && $group->name != 'admin')){
-					echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($user_groups->level >= 5) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? }} ?>
+				if($this->ion_auth->has_permission('deactivate_user')){
+					echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($this->ion_auth_acl->has_permission('delete_user')) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? }} ?>
 			</div>
 		</div>		
 
 		<div class="col-md" style="margin: 3px;">
 			<div class="box">
-				<?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_user/".$user->id, 'Edit', $attributes) ;?>
+				<?php if($this->ion_auth_acl->has_permission('edit_user')) echo anchor("auth/edit_user/".$user->id, 'Edit', $attributes) ;?>
 			</div>
 		</div>
 		<? } ?>

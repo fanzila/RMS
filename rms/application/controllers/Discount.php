@@ -26,6 +26,7 @@ class Discount extends CI_Controller {
 		$this->load->library('email');
 		$this->load->database();
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
