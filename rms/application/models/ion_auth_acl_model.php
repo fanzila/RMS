@@ -36,6 +36,144 @@ class Ion_auth_acl_model extends Ion_auth_model
         // initialize additional db join data
         $this->join     =   array_merge($this->join, $this->config->item('join', 'ion_auth_acl'));
     }
+    
+    
+    /**
+     * Update Category
+     *
+     * @author Nael Awayes
+     * @param bool|FALSE $category_id
+     * @param bool|FALSE $cat_id
+     * @param array $additional_data
+     * @return bool
+     */
+    public function update_category($category_id = FALSE, $perm_key = FALSE, $additional_data = array())
+    {
+        if (empty($category_id)) return FALSE;
+
+        $data = array();
+
+        if (!empty($perm_key))
+        {
+            // we are changing the perm key, so do some checks
+
+            // bail if the perm key already exists
+            $existing_category = $this->db->get_where($this->tables['permissions_categories'], array('key' => $perm_key))->row();
+            if(isset($existing_category->id) && $existing_category->id != $category_id)
+            {
+                $this->set_error('category_already_exists');
+                return FALSE;
+            }
+
+            $data['key'] = $perm_key;
+        }
+
+        // // restrict change of perm key of the admin category
+        // $category = $this->db->get_where($this->tables['permissions_categories'], array('id' => $category_id))->row();
+        // if($this->config->item('admin_category', 'ion_auth_acl') === $category->perm_key && $perm_key !== $category->perm_key)
+        // {
+        //     $this->set_error('category_key_admin_not_alter');
+        //     return FALSE;
+        // }
+
+
+        // IMPORTANT!! Third parameter was string type $description; this following code is to maintain backward compatibility
+        // New projects should work with 3rd param as array
+        if (is_string($additional_data)) $additional_data = array('name' => $additional_data);
+
+
+        // filter out any data passed that doesnt have a matching column in the permissions_categories table
+        // and merge the set permission data and the additional data
+        if (!empty($additional_data)) $data = array_merge($this->_filter_data($this->tables['permissions_categories'], $additional_data), $data);
+
+
+        $this->db->update($this->tables['permissions_categories'], $data, array('id' => $category_id));
+
+        $this->set_message('category_update_successful');
+
+        return TRUE;
+    }
+    
+    
+    /**
+     * Create Category
+     *
+     * @author Nael Awayes
+     * @param bool|FALSE $perm_key
+     * @param string $perm_name
+     * @return bool
+     */
+    public function create_category($cat_key =  FALSE, $cat_name = '')
+    {
+        // bail if the category key was not passed
+        if( ! $cat_key)
+        {
+            $this->set_error('categories_key_required');
+            return FALSE;
+        }
+
+        // bail if the category key already exists
+        $existing_categories = $this->db->get_where($this->tables['permissions_categories'], array('key' => $cat_key))->num_rows();
+        if($existing_categories !== 0)
+        {
+            $this->set_error('categories_already_exists');
+            return FALSE;
+        }
+
+        $data = array('key'=>$cat_key,'name'=>$cat_name);
+
+        $this->trigger_events('extra_category_set');
+
+        // insert the new category
+        $this->db->insert($this->tables['permissions_categories'], $data);
+        $category_id = $this->db->insert_id();
+
+        // report success
+        $this->set_message('category_creation_successful');
+        // return the brand new category id
+        return $category_id;
+    }
+    
+    /**
+     * Remove Category
+     *
+     * @author Nael Awayes
+     * @param bool|FALSE $category_id
+     * @return bool
+     */
+    public function remove_category($category_id = FALSE)
+    {
+        // bail if mandatory param not set
+        if(!$category_id || empty($category_id))
+        {
+            return FALSE;
+        }
+        
+        $this->trigger_events('pre_delete_category');
+
+        $this->db->trans_begin();
+
+        // set all id_category from permissions within this category to 0
+        $this->db->set('id_category', 0)->where('id_category', $category_id)->update($this->tables['permissions']);
+        
+        // remove the permission itself
+        $this->db->delete($this->tables['permissions_categories'], array('id' => $category_id));
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            $this->trigger_events(array('post_delete_category', 'post_delete_category_unsuccessful'));
+            $this->set_error('category_delete_unsuccessful');
+            return FALSE;
+        }
+
+        $this->db->trans_commit();
+
+        $this->trigger_events(array('post_delete_category', 'post_delete_category_successful'));
+        $this->set_message('category_delete_successful');
+        return TRUE;
+    }
+    
 
     /**
      * Create Permission
@@ -252,34 +390,66 @@ class Ion_auth_acl_model extends Ion_auth_model
         return $permissions;
     }
     
+    
     /**
-     * Permissions Categories
+     * Category
      *
-     * Returns all categories with the permissions within it
+     * Returns a category with the permissions within it
      *
      * @author Nael Awayes
      * @return array
      */
-     public function permissions_categories()
+     public function category($id_category = false) 
+     {
+       $this->trigger_events('category');
+       
+       if ( !$id_category ) return false;
+       
+       $this->db->where('id', $id_category);
+       $category = $this->db->get('permissions_categories')->row_array();
+       
+       if (!empty($category)) {
+         $this->db->where('id_category', $id_category);
+         $permissions = $this->db->order_by('perm_name', 'ASC')->get('permissions')->result_array();
+         
+         $category['permissions'] = $permissions;
+         return ($category);
+       } else {
+         return (array());
+       }
+     }
+    
+    
+    /**
+     * Permissions Categories
+     *
+     * Returns all categories optionally with permissions within it
+     *
+     * @author Nael Awayes
+     * @param bool|FALSE $nameonly
+     * @return array
+     */
+     public function permissions_categories($nameonly = false)
      {
        $this->trigger_events('permissions_categories');
        
        $categories = $this->db->get('permissions_categories')->result_array();
+       if ($nameonly === true) {
+         return ($categories);
+       } 
        $permissions = $this->db->order_by('perm_name', 'ASC')->get('permissions')->result_array();
        
-       if (!empty($categories)) {
+       if (!empty($permissions)) {
          $unsorted = array();
          $unsorted['name'] = 'Unsorted';
          $unsorted['id'] = 0;
+         $categories[] = $unsorted;
          foreach ($categories as &$category) {
            $category['permissions'] = array();
            foreach ($permissions as $permission) {
              if ($permission['id_category'] == $category['id']) {
                $category['permissions'][] =  array('id' => $permission['id'], 'key' => $permission['perm_key'], 'name' => $permission['perm_name'], 'id_category' =>$permission['id_category']);
-             } else if ($permission['id_category'] == 0) {
-               $unsorted['permissions'][] = array('id' => $permission['id'], 'key' => $permission['perm_key'], 'name' => $permission['perm_name'], 'id_category' =>$permission['id_category']);
              }
-             $categories['unsorted'] = $unsorted;
            }
          }
          return ($categories);

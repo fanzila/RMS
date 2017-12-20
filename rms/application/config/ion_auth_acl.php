@@ -24,6 +24,7 @@
 | -------------------------------------------------------------------------
 | Database table names.
 */
+$config['tables']['permissions_categories'] = 'permissions_categories';
 $config['tables']['permissions']            = 'permissions';
 $config['tables']['group_permissions']      = 'groups_permissions';
 $config['tables']['users_permissions']      = 'users_permissions';

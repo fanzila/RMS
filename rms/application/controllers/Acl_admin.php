@@ -20,11 +20,11 @@ class Acl_admin extends CI_Controller
         $this->load->library('form_validation');
         $this->load->library('ion_auth_acl');
         
-        if( ! $this->ion_auth->logged_in() )
+        if( ! $this->hmw->isLoggedIn() )
             redirect('/auth/login');
 
         if( ! $this->ion_auth_acl->has_permission('access_admin') )
-            redirect('/dashboard');
+            redirect('/');
     }
 
     public function index()
@@ -53,19 +53,140 @@ class Acl_admin extends CI_Controller
         $this->load->view('jq_footer');
     }
     
+    public function add_category() {
+      if( $this->input->post() && $this->input->post('cancel') )
+          redirect('/acl_admin/permissions_categories', 'refresh');
+
+      $this->form_validation->set_rules('cat_key', 'key', 'required|trim');
+      $this->form_validation->set_rules('cat_name', 'name', 'required|trim');
+
+      $this->form_validation->set_message('required', 'Please enter a %s');
+
+      if( $this->form_validation->run() === FALSE )
+      {
+          $data['message'] = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
+          
+          $headers = $this->hmw->headerVars(0, "/acl_admin/permissions_categories", "Add Category");
+          $this->load->view('jq_header_pre', $headers['header_pre']);
+          $this->load->view('jq_header_post', $headers['header_post']);
+          $this->load->view('acl_admin/add_category', $data);
+          $this->load->view('jq_footer');
+      }
+      else
+      {
+          $new_category_id = $this->ion_auth_acl->create_category($this->input->post('cat_key'), $this->input->post('cat_name'));
+          if($new_category_id)
+          {
+              // check to see if we are creating the permission
+              // redirect them back to the admin page
+              $this->session->set_flashdata('message', $this->ion_auth->messages());
+              redirect("/acl_admin/permissions_categories", 'refresh');
+          }
+      }
+    }
+    
+    public function update_category()
+    {
+        if( $this->input->post() && $this->input->post('cancel') )
+            redirect('acl_admin/permissions_categories', 'refresh');
+
+        $category_id  =   $this->uri->segment(3);
+
+        if( ! $category_id )
+        {
+            $this->session->set_flashdata('message', "No category ID passed");
+            redirect("acl_admin/permissions_categories", 'refresh');
+        }
+
+        $category =   $this->ion_auth_acl->category($category_id);
+
+        $this->form_validation->set_rules('cat_key', 'key', 'required|trim');
+        $this->form_validation->set_rules('cat_name', 'name', 'required|trim');
+
+        $this->form_validation->set_message('required', 'Please enter a %s');
+
+        if( $this->form_validation->run() === FALSE )
+        {
+            $data['message']    = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
+            $data['category'] = $category;
+            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions_categories", "Edit category");
+            $this->load->view('jq_header_pre', $headers['header_pre']);
+            $this->load->view('jq_header_post', $headers['header_post']);
+            $this->load->view('acl_admin/edit_category', $data);
+            $this->load->view('jq_footer');
+        }
+        else
+        {
+            $additional_data    =   array(
+                'name' =>  $this->input->post('cat_name')
+            );
+
+            $update_category = $this->ion_auth_acl->update_category($category_id, $this->input->post('perm_key'), $additional_data);
+            if($update_category)
+            {
+                // check to see if we are creating the category
+                // redirect them back to the admin page
+                $this->session->set_flashdata('message', $this->ion_auth->messages());
+                redirect("/acl_admin/permissions_categories", 'refresh');
+            }
+        }
+    }
+    
+    public function delete_category()
+    {
+        if( $this->input->post() && $this->input->post('cancel') )
+            redirect('/acl_admin/permissions_categories', 'refresh');
+
+        $category_id  =   $this->uri->segment(3);
+
+        if( ! $category_id )
+        {
+            $this->session->set_flashdata('message', "No category ID passed");
+            redirect("/acl_admin/permissions_categories", 'refresh');
+        }
+
+        if( $this->input->post() && $this->input->post('delete') )
+        {
+            if( $this->ion_auth_acl->remove_category($category_id) )
+            {
+                $this->session->set_flashdata('message', $this->ion_auth->messages());
+                redirect("/acl_admin/permissions_categories", 'refresh');
+            }
+            else
+            {
+                echo $this->ion_auth_acl->messages();
+            }
+        }
+        else
+        {
+            $data['message'] = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
+            
+            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions_categories", "Delete category");
+            $this->load->view('jq_header_pre', $headers['header_pre']);
+            $this->load->view('jq_header_post', $headers['header_post']);
+            $this->load->view('/acl_admin/delete_category', $data);
+            $this->load->view('jq_footer');
+        }
+    }
+    
     public function permissions_categories()
     {
-      $data['permissions']    =   $this->ion_auth_acl->permissions_categories();
+      $data['categories']    =   $this->ion_auth_acl->permissions_categories(true);
       
       $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "Manage Categories");
       $this->load->view('jq_header_pre', $headers['header_pre']);
       $this->load->view('jq_header_post', $headers['header_post']);
-      $this->load->view('acl_admin/permissions_categories', $data);
+      $this->load->view('acl_admin/categories', $data);
       $this->load->view('jq_footer');
     }
     
     public function add_permission_to_category($id_perm, $id_category) 
     {
+      if( ! $this->hmw->isLoggedIn() )
+          redirect('/auth/login');
+
+      if( ! $this->ion_auth_acl->has_permission('access_admin') )
+          redirect('/');
         // if (!$this->input->post()) {
         //   die('No post data received');
         // }
