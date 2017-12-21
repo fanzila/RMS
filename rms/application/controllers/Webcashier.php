@@ -661,6 +661,13 @@ class webCashier extends CI_Controller {
 		} else {
 			$this->db->trans_commit();
 		}
+		
+		$cancelledReceipts = $this->cashier->getArchivedCancelledReceipts($id_bu, $this->input->post('archive'));
+		if (count($cancelledReceipts) > 1) {
+			$this->db->set('status', 'error');
+			$this->db->where('id', $pmid);
+			$this->db->update('pos_movements');
+		}
 
 		$data['idtrans'] = $payid;
 
