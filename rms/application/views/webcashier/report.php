@@ -125,7 +125,7 @@
 								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - (FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€) - balance compte client</small></p>
 						<? 	
 						}
-							if (count($m['cancelledReceipts']) > 3) { ?>
+							if (count($m['cancelledReceipts']) > 1) { ?>
 								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>WARNING : <?=count($m['cancelledReceipts'])?> receipts have been cancelled for this shift.</b></p>
 						<? }
 					} 
