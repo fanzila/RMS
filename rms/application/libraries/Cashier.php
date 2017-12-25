@@ -81,6 +81,9 @@ class Cashier {
 	}
 	
 	public function getArchivedCancelledReceipts($id_bu, $file) {
+		
+		if(empty($file)) return	false;
+		
 		$CI = & get_instance();
 		$CI->load->database();
 		
