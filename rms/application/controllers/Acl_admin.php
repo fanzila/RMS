@@ -365,6 +365,13 @@ class Acl_admin extends CI_Controller
 
             redirect('/acl_admin/groups', 'refresh');
         }
+        
+        $this->db->select('name');
+        $this->db->where('id', $group_id);
+        
+        
+        $data['group_name'] = $this->db->get('groups')->row_array()['name'];
+        
 
         $data['permissions']            =   $this->ion_auth_acl->permissions_categories();
         $data['group_permissions']      =   $this->ion_auth_acl->get_group_permissions($group_id);

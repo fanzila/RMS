@@ -1,6 +1,6 @@
 </div>
 <div data-role="content" data-theme="a">
-  <h1>Manage Group Permissions</h1>
+  <h1>Manage Group Permissions (Name: <?=$group_name?>)</h1>
 
   <?php echo form_open('', 'data-ajax="false"'); ?>
       <?php if($permissions) : ?>
@@ -23,6 +23,9 @@
                   <div class="col-sm-1">
                     <span>Ignore</span>
                   </div>
+                </div>
+                <div class="row">
+                  &nbsp;
                 </div>
               <?php foreach($category['permissions'] as $v): ?>
                 <div class="row">
