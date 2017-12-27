@@ -366,7 +366,7 @@ class Acl_admin extends CI_Controller
             redirect('/acl_admin/groups', 'refresh');
         }
 
-        $data['permissions']            =   $this->ion_auth_acl->permissions('full', 'perm_key');
+        $data['permissions']            =   $this->ion_auth_acl->permissions_categories();
         $data['group_permissions']      =   $this->ion_auth_acl->get_group_permissions($group_id);
           
         $headers = $this->hmw->headerVars(0, "/acl_admin/groups", "Group Permissions");

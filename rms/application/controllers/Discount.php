@@ -113,8 +113,6 @@ class Discount extends CI_Controller {
 	{
 		$id_bu			= $this->session->userdata('bu_id');		
 		$data 			= $this->input->post();
-		$user_groups 	= $this->ion_auth->get_users_groups()->result();
-		$userlevel 		= $user_groups[0]->level;
 		$reponse 		= 'ok';
 		
 		$this->db->set('nature', $data['nature']);
@@ -134,7 +132,7 @@ class Discount extends CI_Controller {
 			} else {
 				
 				$this->db->set('used', $data['used']);
-				if($data['persistent'] == 1 AND $userlevel < 2) $this->db->set('used', false);
+				if($data['persistent'] == 1 AND $this->ion_auth_acl->has_permission('validate_persistent_discount')) $this->db->set('used', false);
 				
 				$this->db->where('id', $data['id']);
 				if (!$this->db->update('discount')) {

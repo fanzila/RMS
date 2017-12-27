@@ -199,11 +199,8 @@ class webCashier extends CI_Controller {
 	
 	public function safe()
 	{
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 2)
-		{
-			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/webcashier/');
+		if (!$this->ion_auth_acl->has_permission('view_safe')) {
+			redirect('/news/index');
 		}
 
 		$data = array();
@@ -229,11 +226,8 @@ class webCashier extends CI_Controller {
 	{
 		
 		$this->load->library('pagination');
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 2)
-		{
-			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/webCashier/');
+		if (!$this->ion_auth_acl->has_permission('view_report')) {
+			redirect('/news/index');
 		}
 
 		$data = array();

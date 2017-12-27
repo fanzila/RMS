@@ -87,6 +87,8 @@ class Pm_model extends CI_Model {
 		parent::__construct();
 		$this->ci = & get_instance();
 		$this->load->model('Pm_user_model', 'user_model');
+		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library('Table_model');
 		$this->load->library('session');
 		$this->table1 = new Table_model(TABLE_PM, $dateformat, $enforce_field_types);
@@ -144,7 +146,7 @@ class Pm_model extends CI_Model {
 		{
 			// Message types RECEIVED
 			case MSG_NONDELETED:
-				if($this->user_level < 2) $this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
+				if(!$this->ion_auth_acl->has_permission('send_message')) $this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
 				$this->db->where(TF_PMTO_DELETED, NULL);
 				break;
 			case MSG_DELETED:
@@ -199,9 +201,9 @@ class Pm_model extends CI_Model {
 		$this->db->from($t1);
 		// this produces "(A AND B) OR (A AND C)" = "A AND (B OR C)"
 		$this->db->where(TF_PM_ID, $msg_id);
-		if($this->user_level < 2)  $this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
+		if(!$this->ion_auth_acl->has_permission('send_message'))  $this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
 		$this->db->or_where(TF_PM_ID, $msg_id);
-		if($this->user_level < 2)  $this->db->where(TF_PM_AUTHOR, $this->user_id);
+		if(!$this->ion_auth->has_permission('send_message'))  $this->db->where(TF_PM_AUTHOR, $this->user_id);
 		$this->db->join($t2, TF_PMTO_MESSAGE.' = '.TF_PM_ID);
 
 		return $this->table1->get_data();
