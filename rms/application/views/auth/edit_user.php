@@ -83,7 +83,7 @@ echo form_open(uri_string(), $attributes);
                         break;
                         }
                     }
-				if((!$this->ion_auth_acl->has_permission('edit_admin_user_group')) { 
+				if(!$this->ion_auth_acl->has_permission('edit_admin_user_group')) { 
 					echo ""; 
 				} else {
                 ?>
