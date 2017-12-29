@@ -874,7 +874,7 @@ class Auth extends CI_Controller {
 			'data-clear-btn' => "true",
 			'type' => 'password'
 			);
-			if (isset($user->WordPress_UID) && $this->ion_auth_acl->has_permission('edit_WP_user')) {
+			if (isset($user->WordPress_UID) && $this->ion_auth_acl->has_permission('edit_user')) {
 				$this->data['WpUID'] = $user->WordPress_UID;
 			}
 			if (isset($user->first_shift) && $this->ion_auth_acl->has_permission('edit_first_shift_user')) {
