@@ -82,7 +82,7 @@ INSERT INTO `permissions` (`id`, `perm_key`, `perm_name`, `id_category`) VALUES
 (48, 'tools_panel', 'Display the tools section in the sidebar menu', 12),
 (49, 'additional_tools_panel', 'Access all tools on the sidepanel', 12),
 (50, 'admin_panel_sidebar', 'Display the admin section in the sidebar menu', 12),
-(51, 'addition_admin_panel_sidebar', 'Display all admin links in the sidebar', 12),
+(51, 'additional_admin_panel_sidebar', 'Display all admin links in the sidebar', 12),
 (52, 'edit_admin_user_group', 'Ability to add and remove any group from another user', 10),
 (53, 'send_report_managers', 'Ability to send a report to every Manager of a BU', 8),
 (54, 'additional_menu_pm', 'View every link in the menu from the PM controller', 8),
