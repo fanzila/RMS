@@ -6,6 +6,8 @@ class Book extends CI_Controller {
 		parent::__construct();
 		$this->load->database();
 		$this->load->library("hmw");
+		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 	}
 
 	public function index($login=null)
