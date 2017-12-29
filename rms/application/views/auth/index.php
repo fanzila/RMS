@@ -139,7 +139,7 @@
 		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php $attributes = array('rel' => 'external', 'data-ajax' => 'false');
-				if($this->ion_auth->has_permission('deactivate_user')){
+				if($this->ion_auth_acl->has_permission('deactivate_user')){
 					echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($this->ion_auth_acl->has_permission('delete_user')) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? }} ?>
 			</div>
 		</div>		

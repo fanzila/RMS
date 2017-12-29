@@ -203,7 +203,7 @@ class Pm_model extends CI_Model {
 		$this->db->where(TF_PM_ID, $msg_id);
 		if(!$this->ion_auth_acl->has_permission('send_message'))  $this->db->where(TF_PMTO_RECIPIENT, $this->user_id);
 		$this->db->or_where(TF_PM_ID, $msg_id);
-		if(!$this->ion_auth->has_permission('send_message'))  $this->db->where(TF_PM_AUTHOR, $this->user_id);
+		if(!$this->ion_auth_acl->has_permission('send_message'))  $this->db->where(TF_PM_AUTHOR, $this->user_id);
 		$this->db->join($t2, TF_PMTO_MESSAGE.' = '.TF_PM_ID);
 
 		return $this->table1->get_data();
