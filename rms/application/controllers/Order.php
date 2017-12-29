@@ -302,11 +302,17 @@ class Order extends CI_Controller {
 		$config["per_page"] 	= 10;
 		$config["uri_segment"] 	= 3;
 		$config['first_link'] 	= 'First';
-		$config['prev_link'] 	= 'previous';
-		$config['next_link'] 	= 'next';
+		$config['prev_link'] 	= 'Previous';
+		$config['next_link'] 	= 'Next';
 		$config['last_link'] 	= 'Last';
 		$config['num_links'] 	= 4;
-
+		$config['prev_tag_close'] = '&nbsp;&nbsp;';
+		$config['next_tag_close'] = '&nbsp;&nbsp;';
+		$config['next_tag_open'] = '&nbsp;';
+		$config['first_tag_close'] = '&nbsp;&nbsp;';
+		$config['last_tag_close'] = '&nbsp;';
+		$config['num_tag_close'] = '&nbsp;';
+		$config['cur_tag_close'] = '&nbsp;';
 		$this->pagination->initialize($config);
 
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;

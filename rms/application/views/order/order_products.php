@@ -23,6 +23,7 @@ $today = getdate();
 			<div id='hide-<?=$line['id']?>' class="hide-<?=$hide?>" style="border: 1px solid lightgray; padding: 8px; margin-bottom: 10px;">
 				<li>
 					<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper($line['name'])?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
+						<br />Catégorie : <?=strtoupper($line['category_name'])?> 
 						<br />Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ | Colisage: <?=$line['packaging']?>  <br />
 						<? if(!empty($line['supplier_reference'])) { ?>Ref. supplier: <?=$line['supplier_reference']?> | <? } ?> <? if(!empty($line['comment'])) { ?> Comment: <?=$line['comment']?> <? } ?>
 						<? if($line['manage_stock']) { ?>
