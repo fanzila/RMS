@@ -52,10 +52,9 @@
 							<ul data-role="listview" data-icon="false">
 								<li><a rel="external" data-ajax="false" href="http://drive.google.com/" onclick="window.open(this.href);return false;"><i class="fa fa-google"></i> Google Drive</a></li>
 								<li><a rel="external" data-ajax="false" href="http://redmine.hankrestaurant.com/" onclick="window.open(this.href);return false;"><i class="fa fa-trello"></i> Redmine</a></li>
-								<li><a rel="external" data-ajax="false" href="http://mail.hankrestaurant.com" onclick="window.open(this.href);return false;"><i class="fa fa-envelope"></i> Email Hank</a></li>
-								<li><a rel="external" data-ajax="false" href="http://dropbox.com/home" onclick="window.open(this.href);return false;"><i class="fa fa-dropbox"></i> Dropbox</a></li>
-
 								<?if($this->ion_auth_acl->has_permission('additional_tools_panel')){?>
+									<li><a rel="external" data-ajax="false" href="http://mail.hankrestaurant.com" onclick="window.open(this.href);return false;"><i class="fa fa-envelope"></i> Webmail Hank</a></li>
+								<li><a rel="external" data-ajax="false" href="http://dropbox.com/home" onclick="window.open(this.href);return false;"><i class="fa fa-dropbox"></i> Dropbox</a></li>
 									<li><a rel="external" data-ajax="false" href="https://hank.recruiterbox.com/app/#candidates/overview" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-open-in-new zmd-fw"></i>Recruiter Box (RB)</a></li>
 									<li><a rel="external" data-ajax="false" href="https://www.cashpad.net" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-money zmd-fw"></i>Reporting Cashpad</a></li>
 									<li><a rel="external" data-ajax="false" href="https://secure.tiime.fr" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-open-in-new zmd-fw"></i>Tiime (compta)</a></li>
@@ -68,26 +67,59 @@
 							<h3>Admin</h3>
 							<ul data-role="listview" data-icon="false">
 								<li><a rel="external" data-ajax="false" href="/dashboard/"><i class="fa fa-user" aria-hidden="true"></i> ACL Admin </a></li>
-								<li><a rel="external" data-ajax="false" href="/reminder/admin"><i class="fa fa-hdd-o"></i> Reminder tasks management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklistTasks/"><i class="fa fa-hdd-o"></i> Checklists tasks management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/discount/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Discounts</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliers/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers</a></li>
-								<?if($this->ion_auth_acl->has_permission('additional_admin_panel_sidebar')){?>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklists/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Checklists management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/products/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsUnit/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsUnit</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsStock/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsStock</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products Category</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/report/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Report</a></li>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_rmd_task_management')){?>
+									<li><a rel="external" data-ajax="false" href="/reminder/admin"><i class="fa fa-hdd-o"></i> Reminder tasks management</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_wifi_customers_management')){?>						
+									<li><a rel="external" data-ajax="false" href="/customers/" onclick="window.open(this.href);return false;"><i class="fa fa-user" aria-hidden="true"></i> Wifi Customers</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_checklist_task')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklistTasks/"><i class="fa fa-hdd-o"></i> Checklists tasks management</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_discount')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/discount/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Discounts</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_suppliers')){?>									
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliers/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_suppliers_category')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_checklist')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklists/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Checklists management</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_products')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/products/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_products_unit')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsUnit/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsUnit</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_products_stock')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsStock/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsStock</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_products_category')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products Category</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_report')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/report/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Report</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_rmd_task')){?>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdMeta/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder task management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdNotif/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder notification management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdTasks/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensorsAlarm/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors alarm management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
-								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/wpRmsGroups/"><i class="fa fa-hdd-o" aria-hidden="true"></i> WP Roles Management</a></li>								
-								<li><a rel="external" data-ajax="false" href="/customers/" onclick="window.open(this.href);return false;"><i class="fa fa-user" aria-hidden="true"></i> Wifi Customers</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_rmd_notif_management')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdNotif/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder notification management</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_rmd_tasks')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdTasks/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder management</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors_alarm')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensorsAlarm/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors alarm management</a></li>
+								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_wp_roles')){?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/wpRmsGroups/"><i class="fa fa-hdd-o" aria-hidden="true"></i> WP Roles Management</a></li>		
 								<?}?>
 							</ul>
 						</div>

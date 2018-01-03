@@ -12,8 +12,6 @@
                   <div class="col-md-5" style="display: flex; flex-flow: row wrap; justify-content: center;">
                     <span><b>Name</b></span>
                   </div>
-                  <div class="col-md" style="display: flex; flex-flow: row wrap; justify-content: center;">
-                  </div>
                   <div class="col-sm-2" style="display: flex; flex-flow: row wrap; justify-content: center;">
                     <span><b>Allow</b></span>
                   </div>
@@ -27,18 +25,16 @@
                 <hr></hr>
               <?php foreach($category['permissions'] as $v): ?>
                 <div class="row" id="permissions_cat_<?=$category['id']?>">
-                  <div class="col-md-5">
+                  <div class="col-md-5" style="border: 1px solid lightgray;">
                     <?php echo $v['name']; ?>
                   </div>
-                  <div class="col-md" style="display: flex; flex-flow: row wrap; justify-content: center;">
-                  </div>
-                  <div class="col-sm-2" style="display: flex; flex-flow: row wrap; justify-content: center;">
+                  <div class="col-sm-2" style="display: flex; flex-flow: row wrap; justify-content: center; border: 1px solid lightgray;">
                     <?php echo form_radio("perm_{$v['id']}", '1', set_radio("perm_{$v['id']}", '1', ( array_key_exists($v['key'], $group_permissions) && $group_permissions[$v['key']]['value'] === TRUE ) ? TRUE : FALSE)); ?>
                   </div>
-                  <div class="col-sm-2" style="display: flex; flex-flow: row wrap; justify-content: center;">
+                  <div class="col-sm-2" style="display: flex; flex-flow: row wrap; justify-content: center; border: 1px solid lightgray;">
                     <?php echo form_radio("perm_{$v['id']}", '0', set_radio("perm_{$v['id']}", '0', ( array_key_exists($v['key'], $group_permissions) && $group_permissions[$v['key']]['value'] != TRUE ) ? TRUE : FALSE)); ?>
                   </div>
-                  <div class="col-sm-2" style="display: flex; flex-flow: row wrap; justify-content: center;">
+                  <div class="col-sm-2" style="display: flex; flex-flow: row wrap; justify-content: center; border: 1px solid lightgray;">
                     <?php echo form_radio("perm_{$v['id']}", 'X', set_radio("perm_{$v['id']}", 'X', ( ! array_key_exists($v['key'], $group_permissions) ) ? TRUE : FALSE)); ?>
                   </div>
                 </div>
@@ -48,8 +44,6 @@
               </div>
               <div class="row">
                 <div class="col-md-5">
-                </div>
-                <div class="col-md">
                 </div>
                 <div class="col-sm-2" style="display: flex; flex-flow: row wrap; justify-content: center;">
                   <a data-role="button" href="#" onclick="allow_all(<?=$category['id']?>)" data-mini="true" data-ajax="false">Allow All</a>

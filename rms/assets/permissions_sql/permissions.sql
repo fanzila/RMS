@@ -77,7 +77,7 @@ INSERT INTO `permissions` (`id`, `perm_key`, `perm_name`, `id_category`) VALUES
 (43, 'validate_persistent_discount', 'Ability to mark a persistent discount as used', 0),
 (44, 'orders', 'Ability to access the Order Controller', 9),
 (45, 'reminders', 'Ability to access the reminders controller', 0),
-(46, 'posmessage', 'Abiility to access the cashier message controller', 8),
+(46, 'posmessage', 'Abiility to access the POS message controller', 13),
 (47, 'wp_access', 'Ability to access the WordPress twin site', 10),
 (48, 'tools_panel', 'Display the tools section in the sidebar menu', 12),
 (49, 'additional_tools_panel', 'Access all tools on the sidepanel', 12),

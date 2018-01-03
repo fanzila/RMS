@@ -46,7 +46,8 @@ INSERT INTO `permissions_categories` (`id`, `name`, `key`) VALUES
 (9, 'Order/Products', 'order_products'),
 (10, 'Users', 'users'),
 (11, 'Checklists', 'checklists'),
-(12, 'miscelleanous', 'misc');
+(12, 'miscelleanous', 'misc'),
+(13, 'POS message', 'posmessage');
 
 --
 -- Index pour les tables exportées
