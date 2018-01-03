@@ -1,4 +1,4 @@
-			<?php if($users['0']->groups['0']->level >= 2) {?>
+			<?php if($this->ion_auth_acl->has_permission('create_user')) {?>
 				<a href="/auth/create_user/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a><? } ?>
 		</div>
 		<div data-role="content">
@@ -48,23 +48,23 @@
 		</div>
 	</div>
 	
-	<? if($users['0']->groups['0']->level >= 2) { ?>
+	<? if($this->ion_auth_acl->has_permission('view_groups_user')) { ?>
 	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b><?php echo lang('index_groups_th');?></b>
 		</div>
 	</div>
-	
+<? } if ($this->ion_auth_acl->has_permission('view_bus_user')) { ?>
 	<div class="col-md" style="margin: 3px;">
 		<div class="box">
 			<b>BU</b>
 		</div>
 	</div>
-	
-	<? if($users['0']->groups['0']->level >= 3) { ?>
+	<? } ?>
+	<? if($this->ion_auth_acl->has_permission('view_status_user')) { ?>
 	<div class="col-md" style="margin: 3px;">
 		<div class="box">
-			<b><?php echo lang('index_status_th');?> <? if($user_groups->level >= 10) { ?> | Delete <? } ?></b>
+			<b><?php echo lang('index_status_th');?> <? if($this->ion_auth_acl->has_permission('delete_user')) { ?> | Delete <? } ?></b>
 		</div>
 	</div>
 	<? } ?>
@@ -74,7 +74,6 @@
 			<b><?php echo lang('index_action_th');?></b>
 		</div>
 	</div>
-	<? } ?>
 </div>
 <?php foreach ($users as $user):?>
 	<? $bgcolor = ""; if($user->active == 0) $bgcolor = "#aaaaaa"; ?>
@@ -116,13 +115,14 @@
 			</div>
 		</div>
 		
-		<? if($users['0']->groups['0']->level >= 2) { ?>
+		<? if($this->ion_auth_acl->has_permission('view_groups_user')) { ?>
+		
 		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?$test_real = $this->ion_auth->is_real_admin($current_user->id);?>
 				<?$test_fake = $this->ion_auth->is_admin($current_user->id);?>
 				<?php foreach ($user->groups as $group):?>
-					<? if($user_groups->level >= 5) { ?><?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_group/".$group->id, htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')) ;?> <? } else { ?> <?=htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')?><? } ?>
+					<? if($this->ion_auth_acl->has_permission('edit_user_group')) { echo anchor("auth/edit_group/".$group->id, htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')) ;?> <? } else { ?> <?=htmlspecialchars($group->name,ENT_QUOTES,'UTF-8')?><? } ?>
 					<br />
                 <?php endforeach?>
 			</div>
@@ -139,14 +139,14 @@
 		<div class="col-md" style="margin: 3px;">
 			<div class="box">
 				<?php $attributes = array('rel' => 'external', 'data-ajax' => 'false');
-				if($test_real || ($test_fake && $group->name != 'admin')){
-					echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($user_groups->level >= 5) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? }} ?>
+				if($this->ion_auth_acl->has_permission('deactivate_user')){
+					echo ($user->active) ? anchor("auth/deactivate/".$user->id, lang('index_active_link'), $attributes) : anchor("auth/activate/". $user->id, lang('index_inactive_link'), $attributes);?> <? if($this->ion_auth_acl->has_permission('delete_user')) { ?> | <? echo anchor("auth/delete/".$user->id, 'Delete', $attributes);  ?><? }} ?>
 			</div>
 		</div>		
 
 		<div class="col-md" style="margin: 3px;">
 			<div class="box">
-				<?php if($test_real || ($test_fake && $group->name != 'admin')) echo anchor("auth/edit_user/".$user->id, 'Edit', $attributes) ;?>
+				<?php if($this->ion_auth_acl->has_permission('edit_user')) echo anchor("auth/edit_user/".$user->id, 'Edit', $attributes) ;?>
 			</div>
 		</div>
 		<? } ?>

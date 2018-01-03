@@ -11,13 +11,13 @@
 				<a href="/order/loss/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">LOSS</a>
 			</div>
 		</div>
-		<?php if($user_groups->level >= 1) { ?>
+		<?php if($this->ion_auth_acl->has_permission('view_stock_log')) { ?>
 			<div class="col-xs">
 				<div class="box">
 					<a href="/crud/StockLog/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Stock log</a>
 				</div>
 			</div>
-			<?php if($user_groups->level >= 2) { ?>
+			<?php if($this->ion_auth_acl->has_permission('product_admin')) { ?>
 			<div class="col-xs">
 				<div class="box">
 					<a href="/product_admin/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Products admin</a>

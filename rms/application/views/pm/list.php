@@ -10,14 +10,14 @@
 			}
 		}?>
 			<?php if($j>0):?>
-				<table data-role="table" id="table-custom-2" data-insert="true" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" <? if($userlevel >= 1){?>data-filter="true" data-filter-placeholder="Filter message"<?}?>>
+				<table data-role="table" id="table-custom-2" data-insert="true" data-mode="reflow" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" <? if($this->ion_auth_acl->has_permission('additional_menu_pm')){?>data-filter="true" data-filter-placeholder="Filter message"<?}?>>
 					<thead>
 						<tr>
 						<th>From</th>
 						<th>To</th>
 						<th>Subject</th>
 						<th>Date</th>
-						<? if($userlevel >= 1){?>
+						<? if($this->ion_auth_acl->has_permission('additional_menu_pm')){?>
 							<? if($type == MSG_SENT){?>
 								<th><? echo 'Archive';?></th>
 							<? }else if($type == MSG_DELETED){?>
@@ -44,7 +44,7 @@
 									</th>
 									<th><a data-ajax="false" href='<?php echo site_url().'/pm/message/'.$messages[$i][TF_PM_ID]; ?>'><?php echo $messages[$i][TF_PM_SUBJECT] ?></a></th>
 									<th><?php echo $messages[$i][TF_PM_DATE]; ?></th>
-									<? if($userlevel >= 1){?>
+									<? if($this->ion_auth_acl->has_permission('additional_menu_pm')){?>
 										<? if($type == MSG_SENT && $messages[$i][TF_PM_AUTHOR]==$username){?>
 											<th><? echo '<a data-ajax="false" href="'.site_url().'/pm/delete/'.$messages[$i][TF_PM_ID].'/'.$type.'"> x </a>';?></th>
 										<? }else if($type == MSG_DELETED){?>

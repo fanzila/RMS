@@ -38,7 +38,7 @@
 		</div>
 	</div> -->
 	<?
-	if ($this->ion_auth->in_group('admin') || $this->ion_auth->in_group('Manager') || $this->ion_auth->in_group('Assistant_manager')) {?>
+	if ($this->ion_auth_acl->has_permission('choose_cam_bu')) {?>
 		<div class="chooseBu" data-role="collapsible">
 			<h3>Choose Bus</h3>
 			<?foreach ($all_bus as $bu) { ?>
@@ -50,8 +50,8 @@
 		</div>
 	<? } ?>
 	<?foreach ($cameras as $camera) { ?>
-		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" <?if (($this->ion_auth->in_group('admin') || $this->ion_auth->in_group('Manager') || $this->ion_auth->in_group('Assistant_manager'))
-) echo "data-id-bu=" . $camera['id_bu']; ?> <?if ($camera['id_bu'] != $info_bu->id) echo "hidden='true'";?> />
+		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" <?if ($this->ion_auth_acl->has_permission('choose_cam_bu'))
+		 echo "data-id-bu=" . $camera['id_bu']; ?> <?if ($camera['id_bu'] != $info_bu->id) echo "hidden='true'";?> />
 	<? } ?>
 <?
 $iname = 1;
@@ -98,7 +98,7 @@ foreach($bu_postion_id AS $bupid) {
 	$iname++;
 }
 ?>
-<?if ($this->ion_auth->in_group('admin') || $this->ion_auth->in_group('Manager') || $this->ion_auth->in_group('Assistant_manager')) {?>
+<?if ($this->ion_auth_acl->has_permission('choose_cam_bu')) {?>
 	<script>
 		
 		function chooseCamBu()

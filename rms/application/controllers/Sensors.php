@@ -5,6 +5,7 @@ class Sensors extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library("hmw");
 		$this->load->library('mmail');
 
@@ -104,7 +105,7 @@ class Sensors extends CI_Controller {
 		}
 		$this->db->select('CAST(date AS DATE) as simpledate, AVG(temp) as temp');
 		$this->db->where('id_sensor', $id);
-		$this->db->where("date > DATE_ADD(NOW(), INTERVAL -30 DAY)");
+		$this->db->where("date > DATE_ADD(NOW(), INTERVAL -45 DAY)");
 		$this->db->group_by('simpledate');
 		$res = $this->db->get('sensors_temp') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 		$temps = $res->result_array();

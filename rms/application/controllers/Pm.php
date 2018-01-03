@@ -101,6 +101,7 @@ class Pm extends CI_Controller {
 		$this->load->library('session');
 		$this->load->library('hmw');
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library('form_validation');
 		$this->load->model('Pm_model','pm_model');
 		$this->load->model('Pm_user_model','user_model');
@@ -153,7 +154,6 @@ class Pm extends CI_Controller {
 
 		$user		= $this->ion_auth->user()->row();
 		$bus_list	= $this->hmw->getBus(null, $user->id);
-		$user_groups = $this->ion_auth->get_users_groups()->result();
 		if($message)
 		{
 			$message = reset($message);
@@ -177,9 +177,7 @@ class Pm extends CI_Controller {
 		$headers = $this->hmw->headerVars(0, "/pm/", "Reports");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		if($user_groups[0]->level >= 1){
-			$this->load->view('pm/menu');
-		}
+		$this->load->view('pm/menu');
 		$this->load->view('pm/details', $data);
 		$this->load->view('jq_footer');
 	}
@@ -216,9 +214,7 @@ class Pm extends CI_Controller {
 
 		$user		= $this->ion_auth->user()->row();
 		$bus_list	= $this->hmw->getBus(null, $user->id);
-		$user_groups = $this->ion_auth->get_users_groups()->result();
 		$data['username'] = $user->username;
-
 		if($messages)
 		{
 			// Get recipients & get usernames instead of user ids
@@ -263,9 +259,7 @@ class Pm extends CI_Controller {
 		$headers = $this->hmw->headerVars(1, "/pm/", "Reports - ".$titre);
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		if($user_groups[0]->level >= 1){
-			$this->load->view('pm/menu');
-		}
+		$this->load->view('pm/menu');
 		$this->load->view('pm/list', $data);
 		$this->load->view('jq_footer');
 	}

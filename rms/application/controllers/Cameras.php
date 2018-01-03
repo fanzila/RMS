@@ -26,18 +26,16 @@ class Cameras extends CI_Controller {
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 		
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		$this->load->library('session');
 
 		$this->hmw->isLoggedIn();
-		
-		$group_info = $this->ion_auth_model->get_users_groups()->result();
-		if ($group_info[0]->level < 1)
-		{
-			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
-			redirect('/news/');
+	
+		if (!$this->ion_auth_acl->has_permission('cameras')) {
+			die('You are not allowed to view this page');
 		}
-
+		
 		$url = array();
 				
 		$local1			= false;
@@ -119,10 +117,11 @@ class Cameras extends CI_Controller {
 	{
 		$this->load->database();
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$camera_proxy = $this->load->library('camera_proxy');
 		$this->load->library('hmw');
 		
-		if ($this->ion_auth->in_group('admin') || $this->ion_auth->in_group('Manager') || $this->ion_auth->in_group('Assistant_manager')) {
+		if ($this->ion_auth_acl->has_permission('view_all_cameras')) {
 			$is_admin = true;
 		}
 		if (!$this->hmw->isLoggedIn())
@@ -215,6 +214,7 @@ class Cameras extends CI_Controller {
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 		
 		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		$this->load->library('session');
 

@@ -5,6 +5,7 @@ class customers extends CI_Controller {
   {
     parent::__construct();
     $this->load->library('ion_auth');
+    $this->load->library('ion_auth_acl');
     $this->load->library('hmw');
     $this->load->library('mmail');
     $this->load->library('customers_lib');

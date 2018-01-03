@@ -103,7 +103,7 @@
 																					else $bkg_color = $rouge_petard?>
 																					<input type="checkbox" name="<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" id="task-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" class="custom" <?if($skills_item->checked == true) { ?>checked<? } ?> />
 																					<label style="background-color: <?=$bkg_color?>" for="task-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" id="label-<?=$skills_item->i_name?>"> <?=$skills_item->i_name?> <i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
-																					<?if($userlevel!=0){?>
+																					<?if($this->ion_auth_acl->has_permission('add_comment_skill')){?>
 																						<label style="font-size:smaller" for="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>">Comment :</label>
 																						<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" name="comment-<?=$skills_item->i_id?>-<?=$skills_item->c_name?>-<?=$skills_item->sub_name?>" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
 																					<?}?>
@@ -124,7 +124,7 @@
 								<?}?>
 							<?}?>
 						</div><!-- /skills filter -->
-						<?if($userlevel!=0){?><input type="button" name="save" onClick="validator();" value="SAVE (pas fonctionnel!)" style="background-color: #303030" ><?}?>
+						<?if($this->ion_auth_acl->has_permission('create_skill')){?><input type="button" name="save" onClick="validator();" value="SAVE (pas fonctionnel!)" style="background-color: #303030" ><?}?>
 					<?}?>
 				</div><!-- /theme -->
 			</div><!-- /content -->

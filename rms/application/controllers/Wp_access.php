@@ -15,6 +15,7 @@ Class Wp_access extends CI_Controller {
       $this->db = $this->load->database('default', TRUE);
       $this->wpdb = $this->load->database('wpdb', TRUE);
       $this->load->library('ion_auth');
+      $this->load->library('ion_auth_acl');
       $this->load->library('wp_rms');
       $this->load->helper('url');
     }
@@ -73,7 +74,7 @@ Class Wp_access extends CI_Controller {
     
     public function delete($id) {
       $user = $this->ion_auth->user()->row();
-      if ($this->ion_auth->is_admin()) {
+      if ($this->ion_auth_acl->has_permission('delete_WP_user')) {
         if ($wpUID = $this->wp_rms->hasWpAccount($id)) {
           if ($this->wp_rms->deleteWPUser($wpUID, 0) === true) {
             $WpUID = array('WordPress_UID' => NULL);

@@ -85,7 +85,7 @@
 																	<?$bkg_color = '';
 																	if($skills_item->checked == true) $bkg_color = $vert_pomme;
 																	else $bkg_color = $rouge_petard?>
-																	<?if($userlevel!=0){?>
+																	<?if($this->ion_auth_acl->has_permission('add_comment_skill')){?>
 																							<li>
 																								<input type="checkbox" class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?>>
 																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
@@ -132,7 +132,7 @@
 																					<?$bkg_color = '';
 																					if($skills_item->checked == true) $bkg_color = $vert_pomme;
 																					else $bkg_color = $rouge_petard?>
-																						<?if($userlevel!=0){?>
+																						<?if($this->ion_auth_acl->has_permission('add_comment_skill')){?>
 																							<li>
 																								<input type="checkbox" class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?>>
 																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->date!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
@@ -164,7 +164,7 @@
 						</div><!-- /skills filter -->
 						<input type="hidden" id="id_record" name="id_record" value="<?=$skills_item->id?>">
 						<input type="hidden" id="i" name="i" value="<?=$i?>">
-						<?if($userlevel!=0){?><input type="button" id="save" name="save" value="SAVE" style="background-color: #303030" ><?}?>
+						<?if($this->ion_auth_acl->has_permission('create_skill')){?><input type="button" id="save" name="save" value="SAVE" style="background-color: #303030" ><?}?>
 					<?}else{?>
 						<h2>You have no sponsor yet.</h2>
 					<?}?>

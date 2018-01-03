@@ -5,11 +5,11 @@
 	<tr>
     <td style="padding:10px;">
 		<a data-ajax="false" href="<?php echo site_url()."/pm"?>"><i class="zmdi zmdi-email-open zmd-fw "></i>Inbox</a> &nbsp;&nbsp;&nbsp;
-		<? if($userlevel >= 1){?>
+		<? if($this->ion_auth_acl->has_permission('additional_menu_pm')){?>
 			<!--<a data-ajax="false" href="<php echo site_url()."/pm/messages/".MSG_UNREAD?>">Unread</a> &nbsp;&nbsp;&nbsp; -->
 			<a data-ajax="false" href="<?php echo site_url()."/pm/messages/".MSG_SENT?>"><i class="zmdi zmdi-mail-send zmd-fw"></i>Sent</a> &nbsp;&nbsp;&nbsp;
 			<a data-ajax="false" href="<?php echo site_url()."/pm/messages/".MSG_DELETED?>"><i class="zmdi zmdi-archive zmd-fw"></i>Archived</a> &nbsp;&nbsp;&nbsp;
-			<? if($userlevel >= 2){?>
+			<? if($this->ion_auth_acl->has_permission('send_message')){?>
 			<a data-ajax="false" href="<?php echo site_url()."/pm/send"?>"><i class="zmdi zmdi-plus-circle-o zmd-fw"></i>New Report</a>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<? } ?>
 		<? } ?>

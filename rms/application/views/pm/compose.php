@@ -40,7 +40,7 @@
 						<td width="95%">
 							<select style="background-color:#a1ff7c" name="recipients" id="recipients" data-inline="true" data-theme="a" required>
 								<option value="">Select a Recipient</option>
-								<? if($userlevel >= 2){ ?>
+								<? if($this->ion_auth_acl->has_permission('send_report_managers')){ ?>
 									<option value="<?=$managers?>">All managers of <?=$bu_name?></option>
 								<?}?>
 								<?foreach ($users as $user) {
