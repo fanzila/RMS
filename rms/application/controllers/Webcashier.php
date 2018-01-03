@@ -96,7 +96,7 @@ class webCashier extends CI_Controller {
 		$server_name = $this->hmw->getParam('server_name');
 							
 		$email['subject'] 	= $subject;
-		$email['msg'] 		= 'Comment on report for '.$bu_name.' on ID: '.$data['id'].' | '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']]."<br /><a href='http://".$server_name."/webcashier/report/#".$data['id']."'>http://".$server_name."/webcashier/report/#".$data['id']."</a>";
+		$email['msg'] 		= 'Comment on report for '.$bu_name.' from '.$user.' on ID: '.$data['id'].' | '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']]."<br /><a href='http://".$server_name."/webcashier/report/#".$data['id']."'>http://".$server_name."/webcashier/report/#".$data['id']."</a>";
 		
 		foreach ($query->result() as $row) {
 			$email['to']	= $row->email;	
@@ -526,15 +526,6 @@ class webCashier extends CI_Controller {
 		$values = "('" . $postmov . "', " . $userid . ", '" . addslashes($this->input->post('comment')) . "', '" . $this->input->post('prelevement') . "', '" 
 							. $this->cashier->calc('safe_current_cash_amount', $id_bu) . "', '" . $this->cashier->calc('safe_current_tr_num', $id_bu) . "', '"
 							. $id_bu . "', '" . serialize($employees_sp) . "'"; 
-		
-		// $this->db->query('movement', $postmov)
-		// ->set('id_user', $userid)
-		// ->set('comment', addslashes($this->input->post('comment')))
-		// ->set('prelevement_amount', $this->input->post('prelevement'))
-		// ->set('safe_cash_amount', $this->cashier->calc('safe_current_cash_amount', $id_bu))
-		// ->set('safe_tr_amount', $this->cashier->calc('safe_current_tr_num', $id_bu))
-		// ->set('id_bu', $id_bu)
-		// ->set('employees_sp', serialize($employees_sp));
 
 		$comment_report = $this->input->post('comment_report');
 		if(!empty($comment_report)){
@@ -576,9 +567,6 @@ class webCashier extends CI_Controller {
 				if($this->input->post('mov') == 'safe_out') $val2man = -1 * abs($val2man);
 				$queryStringPp = "INSERT INTO `pos_payments` (id_payment, id_movement, amount_pos, amount_user) VALUES ('" . $idp . "', '" . $pmid . "', '" . $this->cashier->clean_number($val2['pos']) . "', '" . $val2man . "');";  
 				$this->db->query($queryStringPp);
-				// $this->db->set('id_payment', $idp)->set('id_movement', $pmid)->set('amount_pos', $this->cashier->clean_number($val2['pos']))->set('amount_user', $val2man);
-				// $this->db->insert('pos_payments');
-				// $rpp = $this->db->get('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}
 		}
 		
@@ -614,12 +602,13 @@ class webCashier extends CI_Controller {
 			$test_diff = false;
             if($diff <= $alert_amount['cashier_alert_amount_close_min']) $test_diff = true;
             if($diff >= $alert_amount['cashier_alert_amount_close_max']) $test_diff = true;
-
+			
             if (($test_diff)) {
 				if (!$this->input->post('blc')) {
 					$this->db->trans_rollback();
 					$form_values = $this->input->post();
 					$form_values['cashpad_amount'] = $cashpad_amount;
+					$form_values['diff'] = $diff;
 					$this->session->set_flashdata('form_values', $form_values);
 					$this->session->set_flashdata('pay_values', $pay_values);
 					
@@ -638,8 +627,9 @@ class webCashier extends CI_Controller {
 					$this->db->select('name');
 					$this->db->where('id', $id_bu);
 					$bu_name = $this->db->get('bus')->row_array()['name'];
+					$operand = $this->addOperand($num);
 					$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
-					$email['msg'] 		= "BU: ".$bu_name." | ID: ".$pmid."<br />Difference de " . number_format($diff, 2) ."€ <br /><a href='http://".$server_name."/webcashier/report/#".$pmid."'>http://".$server_name."/webcashier/report/#".$pmid."</a>";
+					$email['msg'] 		= "BU: ".$bu_name." | ID: ".$pmid."<br />Difference de $operand" . number_format($diff, 2) ."€ <br /><a href='http://".$server_name."/webcashier/report/#".$pmid."'>http://".$server_name."/webcashier/report/#".$pmid."</a>";
 					foreach ($query->result() as $row) {
 						$email['to']	= $row->email;	
 						$this->mmail->sendEmail($email);
@@ -707,6 +697,11 @@ class webCashier extends CI_Controller {
 
 		$this->db->set('closing_file', $file)->set('closing_id', $d['seqid'])->where('id', $pmid)->where('id_bu', $id_bu);
 		$this->db->update('pos_movements') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+	}
+	
+	private function addOperand($num) {
+		if($num > 0) return "+";
+		return "";
 	}
 
 }

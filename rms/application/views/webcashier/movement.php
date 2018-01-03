@@ -32,25 +32,32 @@
 						<tr>
 							<td><?=$value['name']?></td>
 							<? if ($value['id'] == 9) { ?>
-								<td><?=$value['man']?></td>
+								<td><?=number_format($value['man'], 2)?></td>
 								<td> - </td>
 								
 							<? } elseif ($value['id'] == 12) { ?>
 								<td> - </td>
-								<td><?=$value['pos']?></td>
+								<td><?=number_format($value['pos'], 2)?></td>
 								
 							<? } else { ?>
-							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo $value['man']; } else { echo "0"; }?></td>
+							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo number_format($value['man'], 2); } else { echo "0"; }?></td>
 	
-							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['pos']) AND !empty($value['pos'])) { echo $value['pos']; } else { echo "0"; }?></td>
+							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['pos']) AND !empty($value['pos'])) { echo number_format($value['pos'], 2); } else { echo "0"; }?></td>
 							<? } ?>
 							<? if ($value['id'] == 9) { ?>
 								<td> - </td>
 							<? } else { ?>
-								<td><?=$value['man']-$value['pos']?></td>
+								<td>
+								<?
+								$calcdiff = $value['man']-$value['pos'];
+								echo number_format($calcdiff, 2) 
+								?></td>
 							<? } ?>
 						</tr>
 					<? }?>
+					<tr style="background-color: #ff7c76; margin-top:10px">
+						<td colspan="4">Ecart = <b><?=number_format($form_values['diff'], 2)?></b> </td>
+					</tr>
 				</table>
 		<? } ?> 
 		<br />

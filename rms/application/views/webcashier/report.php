@@ -123,8 +123,10 @@
 						</table>
 						<? if($mov == 'close') { ?>
 							<small>Total CA: <?=$total?>€</small>
-							<? if (number_format($diff, 3) != 0) { ?>
-								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - (FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€) - balance compte client</small></p>
+							<? 
+							$operand = ""; if($diff > 0) $operand = "+";
+							if (number_format($diff, 3) != 0) { ?>
+								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=$operand?><?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - (FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€) - balance compte client</small></p>
 						<? 	
 						}
 					} 

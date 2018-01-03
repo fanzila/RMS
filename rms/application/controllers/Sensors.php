@@ -339,11 +339,11 @@ class Sensors extends CI_Controller {
 					if(($temp >= $max OR $temp <= $min) AND ($temp != 85 AND $temp > -100 AND $temp < 100) AND ($this->checkForOngoingDelay($s_id) == false)) {
 						$buinfo = $this->hmw->getBuInfo($id_bu);
 						
-						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."° at ".$is[0]->date."\n
-The temperature should be max: ".$max."° and min: ".$min."°";
+						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."c at ".$is[0]->date."\n
+The temperature should be max: ".$max."c and min: ".$min."c";
 
 						$msg_notif = "Problème de température pour : '".$is[0]->name."'\n
-Température = ".$temp."°\n 
+Température = ".$temp."c\n 
 ==> VOUS DEVEZ AGIR <==";
 						
 						$curr_date = date('H');
