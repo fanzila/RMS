@@ -88,14 +88,12 @@
 																	<?if($this->ion_auth_acl->has_permission('add_comment_skill')){?>
 																							<li>
 																								<input type="checkbox" class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?>>
-																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
+																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>> Comment : <?=$skills_item->comment?><?}?></label> <?if(!empty($skills_item->i_link)) { ?><small><a target="_blank" href="<?=$skills_item->i_link?>">> BOOK</a></small><?}?>
 																								
-																								<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
-																								<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
-																							</li>
+<label style="font-size:smaller" for="comment[<?=$i?>]">> Comment :</label>																								<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />											</li>
 																						<?}else{?>
 																							<li>
-																								<label id="label[<?=$i?>]"><?if($skills_item->checked == true){?><font size="3" color="<?=$V_font_color?>"><i class="zmdi zmdi-check-circle"></i><?}else{?><font size="4" color="<?=$R_font_color?>"><i class="zmdi zmdi-circle-o"></i><?}?> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></font></label>
+																								<label id="label[<?=$i?>]"><?if($skills_item->checked == true){?><font size="3" color="<?=$V_font_color?>"><i class="zmdi zmdi-check-circle"></i><?}else{?><font size="4" color="<?=$R_font_color?>"><i class="zmdi zmdi-circle-o"></i><?}?> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>> Comment : <?=$skills_item->comment?><?}?></font></label> <?if(!empty($skills_item->i_link)) { ?><small><a target="_blank" href="<?=$skills_item->i_link?>">> BOOK</a></small><?}?>
 																							</li>
 																						<?}?>
 																	<input type="hidden" id="id_item[<?=$i?>]" name="id_item[<?=$i?>]" value="<?=$skills_item->i_id?>">
@@ -135,14 +133,15 @@
 																						<?if($this->ion_auth_acl->has_permission('add_comment_skill')){?>
 																							<li>
 																								<input type="checkbox" class="custom" name="checked[<?=$i?>]" id="checked[<?=$i?>]" <?if($skills_item->checked == true) { ?>checked<? } ?>>
-																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->date!=null){?>Comments : <?=$skills_item->comment?><?}?></label>
-																								
-																								<label style="font-size:smaller" for="comment[<?=$i?>]">Comment :</label>
-																								<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" />
+																								<label style="background-color: <?=$bkg_color?>" for="checked[<?=$i?>]" id="label[<?=$i?>]"> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->date!=null){?>> Comment : <?=$skills_item->comment?><?}?></label>
+
+<?if(!empty($skills_item->i_link)) { ?><small><a target="_blank" href="<?=$skills_item->i_link?>">> BOOK</a></small><?}?>																
+																								<label style="font-size:smaller" for="comment[<?=$i?>]">> Comment :</label>
+																								<input data-inline="true" data-theme="a" class="input" data-form="ui-body-a" type="text" id="comment[<?=$i?>]" name="comment[<?=$i?>]" value="<?=$skills_item->comment?>"  data-clear-btn="true" /> 
 																							</li>
 																						<?}else{?>
 																							<li>
-																								<label id="label[<?=$i?>]"><?if($skills_item->checked == true){?><font size="3" color="<?=$V_font_color?>"><i class="zmdi zmdi-check-circle"></i><?}else{?><font size="4" color="<?=$R_font_color?>"><i class="zmdi zmdi-circle-o"></i><?}?> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>Comments : <?=$skills_item->comment?><?}?></font></label>
+																								<label id="label[<?=$i?>]"><?if($skills_item->checked == true){?><font size="3" color="<?=$V_font_color?>"><i class="zmdi zmdi-check-circle"></i><?}else{?><font size="4" color="<?=$R_font_color?>"><i class="zmdi zmdi-circle-o"></i><?}?> <?=$skills_item->i_name?> <?if($skills_item->date!=null){?><i><span style="font-size:smaller">(recorded the : <?=$skills_item->date?>)<br/></span></i><?}?><?if($skills_item->comment!=null){?>> Comment : <?=$skills_item->comment?><?}?></font></label>
 																							</li>
 																						<?}?>
 																					<input type="hidden" id="id_item[<?=$i?>]" name="id_item[<?=$i?>]" value="<?=$skills_item->i_id?>">
@@ -164,7 +163,7 @@
 						</div><!-- /skills filter -->
 						<input type="hidden" id="id_record" name="id_record" value="<?=$skills_item->id?>">
 						<input type="hidden" id="i" name="i" value="<?=$i?>">
-						<?if($this->ion_auth_acl->has_permission('create_skill')){?><input type="button" id="save" name="save" value="SAVE" style="background-color: #303030" ><?}?>
+						<?if($this->ion_auth_acl->has_permission('add_comment_skill')){?><input type="button" id="save" name="save" value="SAVE" style="background-color: #303030" ><?}?>
 					<?}else{?>
 						<h2>You have no sponsor yet.</h2>
 					<?}?>

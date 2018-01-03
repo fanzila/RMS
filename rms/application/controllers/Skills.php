@@ -75,7 +75,7 @@ class Skills extends CI_Controller {
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-		$this->db->select('R.id, RI.date, R.id_user, RI.checked, RI.comment, I.name as i_name, I.id as i_id, skills.name as s_name, cat.name as c_name, subcat.name as sub_name, skills.id as s_id, cat.id as c_id, subcat.id as sub_id')
+		$this->db->select('R.id, RI.date, R.id_user, RI.checked, RI.comment, I.name as i_name, I.id as i_id, skills.name as s_name, cat.name as c_name, subcat.name as sub_name, skills.id as s_id, cat.id as c_id, I.link as i_link, subcat.id as sub_id')
 			->from('skills_record as R')
 			->join('skills_record_item as RI', 'R.id = RI.id_skills_record')
 			->join('skills_item as I', 'I.id = RI.id_skills_item')
