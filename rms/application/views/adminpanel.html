@@ -42,7 +42,7 @@
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 						<? } ?>
 						<?if($this->ion_auth_acl->has_permission('wp_access')) { ?>
-						<li><a rel="external" data-ajax="false" href="/wp_access/" onclick="window.open(this.href);return false;"><i class="fa fa-wordpress"></i> Wordpress</a></li>
+						<li><a rel="external" data-ajax="false" href="/wp_access/" onclick="window.open(this.href);return false;"><i class="fa fa-wordpress"></i> Worflow</a></li>
 						<? } ?>
 						</ul>
 					</div>
@@ -68,10 +68,10 @@
 							<ul data-role="listview" data-icon="false">
 								<li><a rel="external" data-ajax="false" href="/dashboard/"><i class="fa fa-user" aria-hidden="true"></i> ACL Admin </a></li>
 								<?if($this->ion_auth_acl->has_permission('admin_panel_rmd_task_management')){?>
-									<li><a rel="external" data-ajax="false" href="/reminder/admin"><i class="fa fa-hdd-o"></i> Reminder tasks management</a></li>
+									<li><a rel="external" data-ajax="false" href="/reminder/admin"><i class="fa fa-tasks"></i> Reminder tasks management</a></li>
 								<?}?>
 								<?if($this->ion_auth_acl->has_permission('admin_panel_wifi_customers_management')){?>						
-									<li><a rel="external" data-ajax="false" href="/customers/" onclick="window.open(this.href);return false;"><i class="fa fa-user" aria-hidden="true"></i> Wifi Customers</a></li>
+									<li><a rel="external" data-ajax="false" href="/customers/" onclick="window.open(this.href);return false;"><i class="fa fa-database" aria-hidden="true"></i> Wifi Customers</a></li>
 								<?}?>
 								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_checklist_task')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklistTasks/"><i class="fa fa-hdd-o"></i> Checklists tasks management</a></li>

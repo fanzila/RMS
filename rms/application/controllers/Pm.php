@@ -177,9 +177,7 @@ class Pm extends CI_Controller {
 		$headers = $this->hmw->headerVars(0, "/pm/", "Reports");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		if(!$this->ion_auth_acl->has_permission('view_pm_menu')){
-			$this->load->view('pm/menu');
-		}
+		$this->load->view('pm/menu');
 		$this->load->view('pm/details', $data);
 		$this->load->view('jq_footer');
 	}
@@ -217,7 +215,6 @@ class Pm extends CI_Controller {
 		$user		= $this->ion_auth->user()->row();
 		$bus_list	= $this->hmw->getBus(null, $user->id);
 		$data['username'] = $user->username;
-
 		if($messages)
 		{
 			// Get recipients & get usernames instead of user ids
@@ -262,9 +259,7 @@ class Pm extends CI_Controller {
 		$headers = $this->hmw->headerVars(1, "/pm/", "Reports - ".$titre);
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		if(!$this->ion_auth_acl->has_permission('view_pm_menu')){
-			$this->load->view('pm/menu');
-		}
+		$this->load->view('pm/menu');
 		$this->load->view('pm/list', $data);
 		$this->load->view('jq_footer');
 	}
