@@ -105,6 +105,7 @@ class Cameras extends CI_Controller {
 			die();
 		$this->db->select('name, id_bu');
 		if (!empty($id_bu)) $this->db->where('id_bu', $id_bu);
+		$this->db->where('active', true);
 		$query = $this->db->get('cameras');
 		if ($query->result_array() != NULL)
 			$cameras = $query->result_array();
