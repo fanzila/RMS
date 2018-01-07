@@ -51,7 +51,7 @@
 	<? } ?>
 	<?foreach ($cameras as $camera) { ?>
 		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" <?if ($this->ion_auth_acl->has_permission('choose_cam_bu'))
-		 echo "data-id-bu=" . $camera['id_bu']; ?> <?if ($camera['id_bu'] != $info_bu->id) echo "hidden='true'";?> />
+		 echo "data-id-bu=" . $camera['id_bu']; ?> />
 	<? } ?>
 <?
 $iname = 1;
