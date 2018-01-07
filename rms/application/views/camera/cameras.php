@@ -43,7 +43,7 @@
 			<h3>Choose Bus</h3>
 			<?foreach ($all_bus as $bu) { ?>
 					<div class="bu">
-						<input class="checkBu" type="checkbox" value="<?=$bu['id']?>" name="bu_<?=$bu['id']?>" id="bu_<?=$bu['id']?>" onchange="chooseCamBu()" <?if ($info_bu->id === $bu['id']) echo "checked"?>>
+						<input class="checkBu" type="checkbox" value="<?=$bu['id']?>" name="bu_<?=$bu['id']?>" id="bu_<?=$bu['id']?>" onchange="chooseCamBu()" checked>
 						<label for='bu_<?=$bu['id']?>'><?=$bu['name']?></label> 
 					</div>
 			<? } ?>
