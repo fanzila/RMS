@@ -32,9 +32,10 @@ class Crud extends CI_Controller {
 		
 		
 		$crud->set_table('checklist_tasks');
-		$crud->fields('id_checklist','name','comment','priority','active','order','day_week_num','day_month_num');
-        $crud->required_fields('id_checklist','name','priority','active','order');
+		$crud->fields('id_checklist','name','comment','priority','active','order','day_week_num','day_month_num','id_bu');
+        $crud->required_fields('id_checklist','name','priority','active','order','id_bu');
 		$crud->display_as('priority','Priority<br />(1=normal, 2=medium, 3=high)')->display_as('day_week_num','Number of the day-week<br />(0=Sunday, 1=Monday...)')->display_as('day_month_num','Number of the day-month <br />(1,2,3...28)')->display_as('id_checklist','Checklist');
+		$crud->set_relation('id_bu', 'bus', 'name');
 		$crud->set_relation('id_checklist','checklists','name');
 
         $output = $crud->render();
