@@ -11,6 +11,12 @@
 				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.amber.css" />
 			<?}else if($bu_id==2){?>
 				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.red.css" />
+			<?}else if($bu_id==3){?>
+				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.orange.css" />
+			<?}else if($bu_id==4){?>
+				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.blue.css" />
+			<?}else if($bu_id==5){?>
+				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.lime.css" />
 			<?}?>
 			<?if($index==1){?>
 				<a href="#adminpanel" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-menu"></i></a>
