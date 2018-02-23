@@ -70,7 +70,7 @@
 			<div id="<?=$m['mov']['id']?>" data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> 
 				<?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "#ec7470";} 
 				else if ($m['mov']['status'] == 'validated') { echo "#d5ecd2";}} else { echo "rgb(220, 220, 220)";}?>" >
-				<h2><a id="<?=$m['mov']['id']?>"></a>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'Y-m-d'); echo " [".$m['mov']['id']."]";    ?> - <?=strtoupper($m['mov']['movement'])?> <?if ($mov == 'close' && (count($m['cancelledReceipts']) > 1)) { echo "<strong>" . count($m['cancelledReceipts']) ." receipts cancelled</strong>";}?></h2>
+				<h2><a id="<?=$m['mov']['id']?>"></a>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'Y-m-d'); echo " [".$m['mov']['id']."]";    ?> - <?=strtoupper($m['mov']['movement'])?><?if ($mov == 'close') { ?> -  <?=$m['mov']['username']?><? } ?> <?if ($mov == 'close' && (count($m['cancelledReceipts']) > 1)) { echo " - <strong>" . count($m['cancelledReceipts']) ." receipts cancelled</strong>";}?></h2>
 				<ul data-role="listview" data-theme="d" data-divider-theme="d">
 					<li>
 						<h3>Date: <?=$m['mov']['date']?></h3>
@@ -144,7 +144,7 @@
 		echo form_open("webcashier/save_report_comment", $attributes);?>
 			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" />
 			<? if ($this->ion_auth_acl->has_permission('quittance') && $mov == 'close') { ?>
-			 <? if (number_format($diff, 3) != 0) { ?>
+			 <? if (number_format($diff, 3) != 0) { ?>	
 				<div class="box">
 					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?> />
 					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance Directeur</label>
@@ -155,10 +155,10 @@
 			<input type="hidden" name="id" value="<?=$m['mov']['id']?>">
 			<input type="hidden" name="diff-<?=$m['mov']['id']?>" id="diff-<?=$m['mov']['id']?>" value="<?=$diff?>">
 		</form>
-	</tr></td>
+	</td></tr>
 	<? foreach ($m['comments'] as $comment) { ?>
 			<tr>
-				<td>
+				<td style="white-space: normal;">
 					<b><?=$comment['username']?></b> | <b><?=$comment['date']?></b> : <b><?=$comment['content']?></b>
 				</td>
 			</tr>

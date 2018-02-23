@@ -272,7 +272,7 @@ class webCashier extends CI_Controller {
 		$config_pages['per_page'] = 50;
 		$config_pages['use_page_numbers'] = TRUE;
 		
-		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.prelevement_amount, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_amount, pm.closing_file, pm.comment_report, pm.status, pm.employees_sp')
+		$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.prelevement_amount, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_amount, pm.closing_file, pm.corrected, pm.comment_report, pm.status, pm.employees_sp')
 			->from('pos_movements as pm')
 			->join('users as u', 'u.id = pm.id_user', 'left')
 			->where('pm.id_bu', $id_bu);
