@@ -81,12 +81,15 @@ class Crud extends CI_Controller {
 		$this->_example_output($output); 
     }
 
-    public function StockLog()
+    public function SystemLog()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 		
-		
+		if (!$this->ion_auth_acl->has_permission('access_system_log')) {
+			die ('You are not allowed to do this');
+		}
+	
 		$crud->unset_edit();
 		$crud->unset_delete();
 		$crud->unset_add();
@@ -104,7 +107,7 @@ class Crud extends CI_Controller {
 		$crud->display_as('val4','Previous stock (if set)');
         $crud->set_table('log');
         $output = $crud->render();
- 
+
 		$this->_example_output($output); 
     }
 

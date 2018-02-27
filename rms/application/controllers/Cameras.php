@@ -75,6 +75,11 @@ class Cameras extends CI_Controller {
 		if (empty($cameras))
 			die("Error when getting cameras from db");
 
+		$p = array(
+				'type'		=>  'user_access_cam'
+			);
+		$this->hmw->LogRecord($p, $this->session->userdata('bu_id'));
+		
 		$bu_postion_id[1]		= explode (',',$buinfo1->humanity_positions);
 		$bu_postion_id[2]		= explode (',',$buinfo2->humanity_positions);
 		$buname[1] 				= $buinfo1->name;
