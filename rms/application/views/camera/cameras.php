@@ -23,40 +23,13 @@
 	</head>
 	<body>
 		<? 
-	$bgcolor = '#f7bf35';
-	if($info_bu->id == 2) $bgcolor = '#e15849'; 
+	$bgcolor = '#FFF';
 	?>
-	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;"><a href="/"><?=$info_bu->name?></a>] | ARCH: <?=number_format($ca[1]['amount']/1000, 0, ',', ' ')?>€  <small><?=$ca[1]['last']?></small> | GRAV: <?=number_format($ca[2]['amount']/1000, 0, ',', ' ')?>€ <small><?=$ca[2]['last']?></small> - <small><a href="/cameras/index/onebu/1">Current BU view only</a></small></div>
-	<!-- <div class="res-choose">
-		<div>
-			<label for="compression-range">Compression</label>
-			<input type="range" min="10" max="100" step="5" list="tickmarks" name="compression-range" id="compression-range">
-			
-		</div>
-		<div class="">
-			<input
-		</div>
-	</div> -->
-	<?
-	if ($this->ion_auth_acl->has_permission('choose_cam_bu')) {?>
-		<div class="chooseBu" data-role="collapsible">
-			<h3>Choose Bus</h3>
-			<?foreach ($all_bus as $bu) { ?>
-					<div class="bu">
-						<input class="checkBu" type="checkbox" value="<?=$bu['id']?>" name="bu_<?=$bu['id']?>" id="bu_<?=$bu['id']?>" onchange="chooseCamBu()" checked>
-						<label for='bu_<?=$bu['id']?>'><?=$bu['name']?></label> 
-					</div>
-			<? } ?>
-		</div>
-	<? } ?>
+	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;"><a href="/">[<?=$info_bu->name?></a>] | TO: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€  | <small>Last ticket: <?=$ca['last']?></small></div>
 	<?foreach ($cameras as $camera) { ?>
-		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" <?if ($this->ion_auth_acl->has_permission('choose_cam_bu'))
-		 echo "data-id-bu=" . $camera['id_bu']; ?> />
+		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" />
 	<? } ?>
 <?
-$iname = 1;
-foreach($bu_postion_id AS $bupid) {
-
 	$avatars_url = 'https://s3.amazonaws.com/uf.shiftplanning.com/';
 	$p = $planning['data'];
 	$i=false;
@@ -65,7 +38,7 @@ foreach($bu_postion_id AS $bupid) {
 		<div class="row">
 			<div class="col-md" style="margin: 3px;">
 				<div class="box">
-					<b>Who's on now @<?=$buname[$iname]?>?</b>
+					<b>Who's on now @<?=$info_bu->name?>?</b>
 				</div>
 			</div>
 		</div>		
@@ -75,8 +48,8 @@ foreach($bu_postion_id AS $bupid) {
 			$av_json_decode = json_decode($r['employee_avatar_url']);
 			$avatar = $av_json_decode->small;
 		}
-
-		$pos = in_array ($r['schedule_id'], $bupid);	
+		
+		$pos = in_array ($r['schedule_id'], $bu_postion_id);	
 		if($pos) {
 			$i=true;
 			?>
@@ -95,29 +68,6 @@ foreach($bu_postion_id AS $bupid) {
 		?><p>No one.</p><? 
 		}
 	} 
-	$iname++;
-}
 ?>
-<?if ($this->ion_auth_acl->has_permission('choose_cam_bu')) {?>
-	<script>
-		
-		function chooseCamBu()
-		{
-			var ids_bu = new Array();
-			$('.checkBu').each(function(index) {
-				if ($(this).is(':checked')) {
-					ids_bu.push($(this).attr('value'));
-				}
-			});
-			$('.camera').each(function(index){
-				if ($.inArray($(this).attr('data-id-bu'), ids_bu) != -1) {
-					$(this).removeAttr("hidden");
-				} else {
-					$(this).attr("hidden", "true");
-				}
-			});
-		}
-	</script>
-<? } ?>
 </body>
 </html>

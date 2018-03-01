@@ -38,40 +38,22 @@ class Cameras extends CI_Controller {
 		
 		$url = array();
 				
-		$local1			= false;
-		$local2			= false;
+		$local			= false;
 		$ip 			= $this->input->ip_address();
 		$ca 			= array();
 		$data			= array();
 		$bu_postion_id	= array();
 		$buname 		= array();
 		$camera			= array();
-		$buinfo1 		= $this->hmw->getBuInfo(1);
-		$buinfo2 		= $this->hmw->getBuInfo(2);
+		$id_bu 			= $this->session->userdata('bu_id');	
+		$buinfo 		= $this->hmw->getBuInfo($id_bu);
 		
-		$this->db->from('turnover')->order_by('date desc')->where('id_bu',1)->limit(1);
+		$this->db->from('turnover')->order_by('date desc')->where('id_bu',$id_bu)->limit(1);
 	 	$bal_ca = $this->db->get();
-		$ca[1] = $bal_ca->row_array();
-
-		$this->db->from('turnover')->order_by('date desc')->where('id_bu',2)->limit(1);
-	 	$bal_ca = $this->db->get();
-		$ca[2] = $bal_ca->row_array();
-
-		if (($this->ion_auth->in_group('admin') || $this->ion_auth->in_group('Manager') || $this->ion_auth->in_group('Assistant_manager')) && !$onebu) {
-			
-			$this->db->select('id, name');
-			$query = $this->db->get('bus');
-			$all_bus = $query->result_array();
-			
-			$cameras = $this->getCamerasNamesFromDb();
-		} else {
-			$id_bu = $this->session->userdata('bu_id');
-			if (!empty($id_bu))
-				$cameras = $this->getCamerasNamesFromDb($id_bu);
-			else
-				die("Can't find bu");
-		}
-
+		$ca = $bal_ca->row_array();
+					
+		$cameras = $this->getCamerasNamesFromDb($id_bu);
+		
 		if (empty($cameras))
 			die("Error when getting cameras from db");
 
@@ -80,22 +62,13 @@ class Cameras extends CI_Controller {
 			);
 		$this->hmw->LogRecord($p, $this->session->userdata('bu_id'));
 		
-		$bu_postion_id[1]		= explode (',',$buinfo1->humanity_positions);
-		$bu_postion_id[2]		= explode (',',$buinfo2->humanity_positions);
-		$buname[1] 				= $buinfo1->name;
-		$buname[2]				= $buinfo2->name;
-		
 		$info_current_bu 		= $this->hmw->getBuInfo($this->session->userdata('bu_id'));
 		$planning 				= $this->planning();
-		if (!empty($all_bus)) {
-			$data['all_bus'] = $all_bus;
-		}
-		$data['bu_postion_id'] 	= $bu_postion_id;
+		$data['bu_postion_id']	= explode (',',$buinfo->humanity_positions);
 		$data['info_bu'] 		= $info_current_bu;
-		$data['buname'] 		= $buname;
 		$data['ca']				= $ca;
 		$data['planning'] 		= $planning;
-		$data['cameras'] = $cameras;
+		$data['cameras'] 		= $cameras;
 		$session_data['cam'] 	= $url;
 		
 		$this->session->set_userdata($session_data);
@@ -126,7 +99,7 @@ class Cameras extends CI_Controller {
 		$this->load->library('ion_auth_acl');
 		$camera_proxy = $this->load->library('camera_proxy');
 		$this->load->library('hmw');
-		
+
 		if ($this->ion_auth_acl->has_permission('view_all_cameras')) {
 			$is_admin = true;
 		}
@@ -141,7 +114,7 @@ class Cameras extends CI_Controller {
 		$this->db->where('name', $camera_name);
 		$query = $this->db->get('cameras');
 		$camera = $query->row_array();
-		
+
 		if (empty($camera))
 			die('Camera not found in DB');
 		
@@ -154,7 +127,7 @@ class Cameras extends CI_Controller {
 				or die;
 		# On envoie les memes headers que la Camera Axis
 		header('Content-Type: multipart/x-mixed-replace; boundary=myboundary');
-	
+
 		$ch = curl_init($camera['address']);
 		curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
