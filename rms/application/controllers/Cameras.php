@@ -100,17 +100,12 @@ class Cameras extends CI_Controller {
 		$camera_proxy = $this->load->library('camera_proxy');
 		$this->load->library('hmw');
 
-		if ($this->ion_auth_acl->has_permission('view_all_cameras')) {
-			$is_admin = true;
-		}
 		if (!$this->hmw->isLoggedIn())
 			die();
-			
+		
 		session_write_close();
 		
-		if ($is_admin === false) {
-			$this->db->where('id_bu', $this->session->userdata('bu_id'));
-		}
+		$this->db->where('id_bu', $this->session->userdata('bu_id'));
 		$this->db->where('name', $camera_name);
 		$query = $this->db->get('cameras');
 		$camera = $query->row_array();
