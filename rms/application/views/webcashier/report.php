@@ -126,7 +126,9 @@
 							<? 
 							$operand = ""; if($diff > 0) $operand = "+";
 							if (number_format($diff, 3) != 0) { ?>
-								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=$operand?><?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - (FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€) - balance compte client</small></p>
+								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=$operand?><?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - (FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€) - balance compte client</small><br>
+								<? if(!empty($m['mov']['corrected'])) { ?> <span style="color : black; font: 16px Arial, Verdana, sans-serif;">Corrected DIFF: <b><?=$m['mov']['corrected']?>€</b></span></p> <? } ?>
+								
 						<? 	
 						}
 					} 
@@ -143,14 +145,19 @@
 		$attributes = array('id' => $id_form, 'name' => $id_form);
 		echo form_open("webcashier/save_report_comment", $attributes);?>
 			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" />
-			<? if ($this->ion_auth_acl->has_permission('quittance') && $mov == 'close') { ?>
-			 <? if (number_format($diff, 3) != 0) { ?>	
+			 <? if (number_format($diff, 3) != 0 && $mov == 'close') { ?>
+			<? if ($this->ion_auth_acl->has_permission('set_corrected_diff')) { ?>
+				<div class="box">
+						 <p><small>CORRECTED DIFF:</small> <input data-role="none" data-enhance="false" type="text" name="corrected-<?=$m['mov']['id']?>" id="corrected-<?=$m['mov']['id']?>" style="width: 100px;" value="<?=$m['mov']['corrected']?>" />€ </p>
+						</div>
+			<? } ?>	
+			<? if ($this->ion_auth_acl->has_permission('quittance')) { ?>
 				<div class="box">
 					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?> />
 					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance Directeur</label>
 			 </div>
-			<? }
-		 		} ?>
+			<? } ?>
+		<? } ?>
 			<input type="submit" id="sub<?=$m['mov']['id']?>" onclick="validate(<?=$m['mov']['id']?>)" name="submit" value="Save" data-mini="true" data-clear-btn="true" />
 			<input type="hidden" name="id" value="<?=$m['mov']['id']?>">
 			<input type="hidden" name="diff-<?=$m['mov']['id']?>" id="diff-<?=$m['mov']['id']?>" value="<?=$diff?>">
@@ -368,7 +375,7 @@
 											}
 											return false;
 										} else if(done == 0){
-											alert('WARNING! ERROR at saving : '+ json.reponse);
+											alert('ERROR at saving : '+ json.reponse);
 											return false;
 										}
 									}
@@ -377,7 +384,7 @@
 								}).fail(function(data) {
 									done = done + 1;
 									if(done <= 1) { 
-										alert('WARNING! ERROR at saving!');
+										alert('ERROR at saving!');
 										return false; 
 									}
 								});

@@ -47,11 +47,12 @@ class webCashier extends CI_Controller {
 		$curr_date = date('Y-m-d H:i:s');
 		$reponse = 'ok';
 		$data = $this->input->post();
+		$updatedb = true;
 
 		$this->db->select('name');
 		$this->db->where('id', $id_bu);
 		$bu_name = $this->db->get('bus')->row_array()['name'];
-		$subject = "WARNING $bu_name : New comment on report";
+		$subject = "CASHIER $bu_name : New comment on report";
 		
 		$comment_data = array(
 			'content' => $data['comment-'.$data['id']],
@@ -60,24 +61,33 @@ class webCashier extends CI_Controller {
 			'mov_id' => $data['id']
 		);
 		
-		if(!$this->db->insert('pos_comment_report', $comment_data)) {
-			$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+		if(!empty($data['comment-'.$data['id']])) {
+			if(!$this->db->insert('pos_comment_report', $comment_data)) {
+				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+			}	
 		}
 		
 		if (isset($data['validate-'.$data['id']])) {
 			$this->db->set('status', 'validated');
+			$subject .= " (Director Validated)";
+		} else {
+			if ($data['diff-'.$data['id']] != '0') $this->db->set('status', 'error');
+		}
+		
+		if (!empty($data['corrected-'.$data['id']])) {
+			$data['corrected-'.$data['id']] = str_replace(',', '.', $data['corrected-'.$data['id']]);
+			if(!is_numeric($data['corrected-'.$data['id']])) { 
+				$reponse = "corrected DIFF must be a number";
+				$updatedb = false;
+			} else {
+				$this->db->set('corrected', $data['corrected-'.$data['id']]);
+			}
+		}		
+	
+		if($updatedb) { 
 			$this->db->where('id', $data['id']);
 			if (!$this->db->update('pos_movements')) {
 				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-			}
-			$subject .= " (Director Validated)";
-		} else {
-			if ($data['diff-'.$data['id']] != '0') {
-				$this->db->set('status', 'error');
-				$this->db->where('id', $data['id']);
-				if (!$this->db->update('pos_movements')) {
-					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-				}
 			}
 		}
 		
