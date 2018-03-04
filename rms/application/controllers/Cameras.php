@@ -20,15 +20,17 @@ class Cameras extends CI_Controller {
 
 	public function index($onebu = false)
 	{		
-		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-		header("Cache-Control: post-check=0, pre-check=0", false);
-		header("Pragma: no-cache");
-		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-		
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		$this->load->library('session');
+		
+		$this->hmw->changeBu();// GENERIC changement de Bu
+				
+		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+		header("Cache-Control: post-check=0, pre-check=0", false);
+		header("Pragma: no-cache");
+		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 
 		$this->hmw->isLoggedIn();
 	
@@ -61,6 +63,10 @@ class Cameras extends CI_Controller {
 				'type'		=>  'user_access_cam'
 			);
 		$this->hmw->LogRecord($p, $this->session->userdata('bu_id'));
+		
+		$user					= $this->ion_auth->user()->row();
+		$data['bus_list']		= $this->hmw->getBus(null, $user->id);
+		$data['bu_id']			= $this->session->userdata('bu_id');
 		
 		$info_current_bu 		= $this->hmw->getBuInfo($this->session->userdata('bu_id'));
 		$planning 				= $this->planning();

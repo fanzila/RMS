@@ -101,10 +101,10 @@ class Product {
 
 		$CI->db->order_by("$ordersql, p.id_supplier ASC");
 		if ($page == 1) {
-			$CI->db->limit(20);
+			$CI->db->limit(80);
 		} else {
-			$offset = 20 * ($page - 1);
-			$CI->db->limit(20, $offset);
+			$offset = 80 * ($page - 1);
+			$CI->db->limit(80, $offset);
 		}
 		$req = $CI->db->get() or die($this->mysqli->error);
 		$ret = array();

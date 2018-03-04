@@ -222,18 +222,11 @@ class Product_admin extends CI_Controller {
 			if (!$this->db->insert('stock_history', $historyEntry)) {
 				$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
-			// $sql = "DELETE FROM stock_history WHERE id_product = $id_product AND
-			// 				id NOT IN
-			// 				(SELECT * FROM
-			// 				(SELECT id FROM stock_history order by id desc limit 100)
- 			// 				as temp)";
-			// $this->db->query($sql);
 		}
 		
 		echo json_encode(['reponse' => $reponse]);
 		exit();
 	}
-
 
 	public function tableProductHistory($pdt_id)
 	{

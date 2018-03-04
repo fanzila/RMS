@@ -25,7 +25,14 @@
 		<? 
 	$bgcolor = '#FFF';
 	?>
-	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;"><a href="/">[<?=$info_bu->name?></a>] | TO: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€  | <small>Last ticket: <?=$ca['last']?></small></div>
+	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">
+		<table><tr><td></td><td><form action="#" method="POST">
+			<select name="bus" class="ui-btn" onchange="this.form.submit()">
+			<? foreach ($bus_list as $bu) { ?>
+  				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
+			<? } ?>
+			</select>
+		</form> </td><td> <a href="/">[BACK]</a> | TO: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€ </td><td> | <small>Last ticket: <?=$ca['last']?></small></td></tr></table></div>
 	<?foreach ($cameras as $camera) { ?>
 		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" />
 	<? } ?>
