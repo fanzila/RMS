@@ -13,7 +13,8 @@
 				<br/>
 				<br/>
 				<div data-role="collapsible-set" data-inset="false">
-					<div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+					<div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">	
+						<ul data-role="listview" data-inset="false" data-icon="false"><li>TO: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€</li></ul>
 						<h3>Main</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
 						<? if(($keylogin || $this->ion_auth_acl->has_permission('cameras')) AND ($this->session->userdata('type') != 'kitchen')) { ?>
