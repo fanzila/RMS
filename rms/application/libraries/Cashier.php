@@ -818,6 +818,7 @@ class Cashier {
 		$dir	= $this->getPosArchivesDir($id_bu);
 
 		if(empty($dir)) exit('No db found for BU ID '.$id_bu);
+		if(!is_dir($dir)) exit('No archives directory found for BU ID '.$id_bu.'. You might need to do an init POS closing');
 		$files		= scandir($dir, 0);
 		$line2		= null;
 		$line 		= null;
