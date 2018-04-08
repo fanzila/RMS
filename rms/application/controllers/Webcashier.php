@@ -55,79 +55,64 @@ class webCashier extends CI_Controller {
 		$data["keylogin"] 		= $this->session->userdata('keylogin');
 		$data['title'] 			= 'Cashier - Sales stats';
 		$data['bu_name'] 		=  $this->session->userdata('bu_name');
-
+		
+		$this->db->select('name, id_pos');
+		$this->db->where('deleted', 0);
+		$this->db->where('id_bu', $id_bu);
+		$this->db->order_by('name', 'asc'); 
+		$query = $this->db->get("users_pos");
+		$data['users'] = $query->result_array();
+		
 		$pos_burger_category 	= '1A41C9AC-2BDA-421D-A64A-876A82F2A84F';
 		$pos_dessert_category 	= '19E864A9-7FE1-4982-989D-F930E2C50091';
 		$pos_potatoes 			= '2CC9930D-5A03-4206-841B-512B060EE030';
 		$pos_cheese		 		= 'AE147589-5B91-42C1-B168-ACC2FAFE3193';
 		
-		$stats = array();
-		$post_date = $this->input->post('date');
-		$rdate = "LIKE '".$post_date."%'";
+		$stats					= array();
+		$post_user 				= $this->input->post('user');
+		$post_date 				= $this->input->post('date');
+		$rdate 					= "LIKE '".$post_date."%'";
 
 		if(isset($post_date)) {
 		if(!empty($post_date)) {
-			//select user
-			$q_user = "SELECT UPPER(id_pos) as id_pos, name, id_bu FROM users_pos
-				WHERE deleted = 0 AND id_pos is not null";
-			$r_user = $this->db->query($q_user) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			$o_user = $r_user->result_object();
-
-			foreach ($o_user as $key => $value) {
 
 				//select total CA by user
 				$q_total = "SELECT ROUND(SUM(amount_total)/1000) AS amount FROM sales_receipt AS sr 
 					WHERE date_closed $rdate  
-					AND sr.owner = '".$value->id_pos."'
+					AND sr.owner = '".$post_user."'
 					AND sr.id_bu = $id_bu
 					AND sr.canceled = 0";
 				$r_total = $this->db->query($q_total) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				$o_total = $r_total->result_array();
-				$stats[$value->id_pos]['total'] = $o_total[0]['amount'];
-				$stats[$value->id_pos]['name'] = $value->name;
-echo "
+				$stats[$post_user]['total'] = $o_total[0]['amount'];
+				$stats[$post_user]['name'] = '';
 
-$q_total
-
-";
 				//select burger by users
 				$q_burger = "
 					SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
 					WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_burger_category."')
-					AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)
+					AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$post_user."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)
 					";
 
 				$r_burger = $this->db->query($q_burger) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				$o_burger = $r_burger->result_array();
-				$stats[$value->id_pos]['burger'] = $o_burger[0]['count'];
+				$stats[$post_user]['burger'] = $o_burger[0]['count'];
 
-				echo "
-					BURGER 
-				$q_burger
-
-				";
-				
 				//select dessert by users
 				$q_dessert = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
 				WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_dessert_category."')
-				AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
+				AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$post_user."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
 			$r_dessert = $this->db->query($q_dessert) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_dessert = $r_dessert->result_array();
-			$stats[$value->id_pos]['dessert'] = $o_dessert[0]['count'];	
-
-			echo "
-				DESSERT
-			$q_dessert
-
-			";
+			$stats[$post_user]['dessert'] = $o_dessert[0]['count'];	
 			
 			//select potatoes by users
 			$q_potatoes = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
 				WHERE sri.product = '".$pos_potatoes."'
-				AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
+				AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$post_user."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
 			$r_potatoes = $this->db->query($q_potatoes) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_potatoes = $r_potatoes->result_array();
-			$stats[$value->id_pos]['potatoes'] = $o_potatoes[0]['count'];
+			$stats[$post_user]['potatoes'] = $o_potatoes[0]['count'];
 
 			//select potatoes cheese by users
 			$q_cheese = "SELECT SUM(sria.quantity) AS count 
@@ -135,29 +120,28 @@ $q_total
 				JOIN sales_receiptitem AS sri ON sri.id = sria.receiptitem
 				JOIN sales_receipt AS sr ON sri.receipt = sr.id 
 				WHERE sria.productaddon = '".$pos_cheese."'
-				AND sr.owner = '".$value->id_pos."' 
+				AND sr.owner = '".$post_user."' 
 				AND sr.canceled = 0 
 				AND sr.id_bu = $id_bu 
 				AND sr.date_closed $rdate";
-
-			echo "
-				CHEESE
-			$q_cheese
-
-			";
-			
+				
 			$r_cheese = $this->db->query($q_cheese) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_cheese = $r_cheese->result_array();
-			$stats[$value->id_pos]['cheese'] = $o_cheese[0]['count'];	
+			$stats[$post_user]['cheese'] = $o_cheese[0]['count'];	
 			
 			$data['form_values']['date'] = $post_date;	
-		} } 		
+			$data['form_values']['user'] = $post_user;
+		} 		
 
 		$data['stats_sorted'] 	= $this->array_sort($stats, 'total', SORT_DESC);
+/**
 		$data['sum_cheese']		= array_sum(array_column($stats, 'cheese'));
 		$data['sum_potatoes']	= array_sum(array_column($stats, 'potatoes'));
 		$data['sum_dessert']	= array_sum(array_column($stats, 'dessert'));
 		$data['sum_burger']		= array_sum(array_column($stats, 'burger'));
+		
+**/
+		
 	}
 
 		$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier - Sales stats");
