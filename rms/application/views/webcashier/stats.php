@@ -4,7 +4,7 @@
 		<? $title = "Stats"; if(isset($form_values['date'])) $title = "Stats for: ".$form_values['date']; ?>
 		<h4><?=$title?></h4>
 		
-		<form id="pos" name="pos" method="post" action="/webcashier/stats">
+		<form id="pos" name="pos" method="post" action="/webcashier/stats" data-ajax="false">
 		<label for="date" id="date_label"><i>Pick a date, format: YYYY-MM-DD example : 2019-01-28:</i></label>
 		<input type="text" name="date" id="date" data-clear-btn="true" value="<? if(isset($form_values['date'])) echo $form_values['date']; ?>"/>
 		<input type="submit" name="SELECT" value="SELECT">

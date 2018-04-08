@@ -66,9 +66,9 @@ class webCashier extends CI_Controller {
 		$post_date = $this->input->post('date');
 
 		if(isset($post_date)) {
-
+		if(!empty($post_date)) {
 			//select user
-			$q_user = "SELECT id_pos, name, id_bu FROM users_pos
+			$q_user = "SELECT UPPER(id_pos), name, id_bu FROM users_pos
 				WHERE deleted = 0";
 			$r_user = $this->db->query($q_user) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_user = $r_user->result_object();
@@ -76,7 +76,7 @@ class webCashier extends CI_Controller {
 			foreach ($o_user as $key => $value) {
 
 				//select total CA by user
-				$q_total = "SELECT sr.owner, ROUND(SUM(amount_total)/1000) AS amount FROM sales_receipt AS sr 
+				$q_total = "SELECT UPPER(sr.owner), ROUND(SUM(amount_total)/1000) AS amount FROM sales_receipt AS sr 
 					WHERE date_closed $rdate  
 					AND sr.owner = '".$value->id_pos."'
 					AND sr.id_bu = $id_bu
@@ -85,7 +85,11 @@ class webCashier extends CI_Controller {
 				$o_total = $r_total->result_array();
 				$stats[$value->id_pos]['total'] = $o_total[0]['amount'];
 				$stats[$value->id_pos]['name'] = $value->name;
+echo "
 
+$q_total
+
+";
 				//select burger by users
 				$q_burger = "
 					SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
@@ -97,6 +101,12 @@ class webCashier extends CI_Controller {
 				$o_burger = $r_burger->result_array();
 				$stats[$value->id_pos]['burger'] = $o_burger[0]['count'];
 
+				echo "
+
+				$q_burger
+
+				";
+				
 				//select dessert by users
 				$q_dessert = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
 				WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_dessert_category."')
@@ -105,6 +115,12 @@ class webCashier extends CI_Controller {
 			$o_dessert = $r_dessert->result_array();
 			$stats[$value->id_pos]['dessert'] = $o_dessert[0]['count'];	
 
+			echo "
+
+			$q_dessert
+
+			";
+			
 			//select potatoes by users
 			$q_potatoes = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
 				WHERE sri.product = '".$pos_potatoes."'
@@ -126,10 +142,16 @@ class webCashier extends CI_Controller {
 				AND sr.date_closed $rdate)
 				";
 
+			echo "
+
+			$q_cheese
+
+			";
+			
 			$r_cheese = $this->db->query($q_cheese) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_cheese = $r_cheese->result_array();
 			$stats[$value->id_pos]['cheese'] = $o_cheese[0]['count'];		
-		}			
+		} } 		
 
 		$data['stats_sorted'] 	= $this->array_sort($stats, 'total', SORT_DESC);
 		$data['sum_cheese']		= array_sum(array_column($stats, 'cheese'));
