@@ -1,8 +1,14 @@
 	</div>
 	<div data-role="content" data-theme="a">
 		
-		<? $title = "Stats for today"; if(isset($form_values['date'])) $title = "Stats for: ".$form_values['date']; ?>
+		<? $title = "Stats"; if(isset($form_values['date'])) $title = "Stats for: ".$form_values['date']; ?>
 		<h4><?=$title?></h4>
+		
+		<form id="pos" name="pos" method="post" action="/webcashier/stats">
+		<label for="date" id="date_label"><i>Pick a date, format: YYYY-MM-DD example : 2019-01-28:</i></label>
+		<input type="text" name="date" id="date" data-clear-btn="true" value="<? if(isset($form_values['date'])) echo $form_values['date']; ?>"/>
+		<input type="submit" name="SELECT" value="SELECT">
+		<? if(isset($stats_sorted)) { ?>
 		<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
 		  <thead>
 		    <tr>
@@ -44,11 +50,6 @@
   </tr>
 </tbody>
 	</table>
-	<br />
-	
-	<form id="pos" name="pos" method="post" action="/webcashier/stats">
-	<label for="date" id="date_label"><i>Pick a date, format: YYYY-MM-DD example : 2019-01-28:</i></label>
-	<input type="text" name="date" id="date" data-clear-btn="true" value="<? if(isset($form_values['date'])) echo $form_values['date']; ?>"/>
-	<input type="submit" name="SELECT" value="SELECT">
+	<? } ?>
 	</div>
 </div>

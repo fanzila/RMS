@@ -47,7 +47,7 @@ class webCashier extends CI_Controller {
 		$this->hmw->keyLogin();
 		
 		$data = array();
-		$id_bu			 		=  $this->session->userdata('bu_id');
+		$id_bu			 		= $this->session->userdata('bu_id');
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$data['username']		= $user->username;
@@ -64,68 +64,66 @@ class webCashier extends CI_Controller {
 		$stats = array();
 		$rdate = ">= DATE(NOW())";
 		$post_date = $this->input->post('date');
+
 		if(isset($post_date)) {
-			$rdate = "LIKE '".$this->input->post('date')."%'";
-			$data['form_values']['date'] = $this->input->post('date');
-		}
-			 
-		//select user
-		$q_user = "SELECT id_pos, name, id_bu FROM users_pos
-			WHERE deleted = 0";
-		$r_user = $this->db->query($q_user) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		$o_user = $r_user->result_object();
 
-		foreach ($o_user as $key => $value) {
+			//select user
+			$q_user = "SELECT id_pos, name, id_bu FROM users_pos
+				WHERE deleted = 0";
+			$r_user = $this->db->query($q_user) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o_user = $r_user->result_object();
 
-			//select total CA by user
-			$q_total = "SELECT sr.owner, ROUND(SUM(amount_total)/1000) AS amount FROM sales_receipt AS sr 
-				WHERE date_closed $rdate  
-				AND sr.owner = '".$value->id_pos."'
-				AND sr.id_bu = $id_bu
-				AND sr.canceled = 0";
-			$r_total = $this->db->query($q_total) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			$o_total = $r_total->result_array();
-			$stats[$value->id_pos]['total'] = $o_total[0]['amount'];
-			$stats[$value->id_pos]['name'] = $value->name;
+			foreach ($o_user as $key => $value) {
 
-			//select burger by users
-			$q_burger = "
-			SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
-			WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_burger_category."')
-			AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)
-				";
-		
-			$r_burger = $this->db->query($q_burger) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			$o_burger = $r_burger->result_array();
-			$stats[$value->id_pos]['burger'] = $o_burger[0]['count'];
-			
-			//select dessert by users
-			$q_dessert = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
+				//select total CA by user
+				$q_total = "SELECT sr.owner, ROUND(SUM(amount_total)/1000) AS amount FROM sales_receipt AS sr 
+					WHERE date_closed $rdate  
+					AND sr.owner = '".$value->id_pos."'
+					AND sr.id_bu = $id_bu
+					AND sr.canceled = 0";
+				$r_total = $this->db->query($q_total) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				$o_total = $r_total->result_array();
+				$stats[$value->id_pos]['total'] = $o_total[0]['amount'];
+				$stats[$value->id_pos]['name'] = $value->name;
+
+				//select burger by users
+				$q_burger = "
+					SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
+					WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_burger_category."')
+					AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)
+					";
+
+				$r_burger = $this->db->query($q_burger) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				$o_burger = $r_burger->result_array();
+				$stats[$value->id_pos]['burger'] = $o_burger[0]['count'];
+
+				//select dessert by users
+				$q_dessert = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
 				WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_dessert_category."')
 				AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
 			$r_dessert = $this->db->query($q_dessert) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_dessert = $r_dessert->result_array();
 			$stats[$value->id_pos]['dessert'] = $o_dessert[0]['count'];	
-			
+
 			//select potatoes by users
 			$q_potatoes = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
-						WHERE sri.product = '".$pos_potatoes."'
-						AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
+				WHERE sri.product = '".$pos_potatoes."'
+				AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
 			$r_potatoes = $this->db->query($q_potatoes) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_potatoes = $r_potatoes->result_array();
 			$stats[$value->id_pos]['potatoes'] = $o_potatoes[0]['count'];
-			
+
 			//select potatoes cheese by users
 			$q_cheese = "
-						SELECT SUM(sria.quantity) AS count 
-						FROM sales_receiptitemaddon AS sria 
-						WHERE sria.productaddon = '".$pos_cheese."'
-						AND sria.receiptitem IN (SELECT sri.id FROM sales_receiptitem AS sri 
-							JOIN sales_receipt AS sr ON sri.receipt = sr.id 
-							WHERE sr.owner = '".$value->id_pos."' 
-								AND sr.canceled = 0 
-								AND sr.id_bu = $id_bu 
-								AND sr.date_closed $rdate)
+				SELECT SUM(sria.quantity) AS count 
+				FROM sales_receiptitemaddon AS sria 
+				WHERE sria.productaddon = '".$pos_cheese."'
+			AND sria.receiptitem IN (SELECT sri.id FROM sales_receiptitem AS sri 
+				JOIN sales_receipt AS sr ON sri.receipt = sr.id 
+				WHERE sr.owner = '".$value->id_pos."' 
+				AND sr.canceled = 0 
+				AND sr.id_bu = $id_bu 
+				AND sr.date_closed $rdate)
 				";
 
 			$r_cheese = $this->db->query($q_cheese) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -138,6 +136,7 @@ class webCashier extends CI_Controller {
 		$data['sum_potatoes']	= array_sum(array_column($stats, 'potatoes'));
 		$data['sum_dessert']	= array_sum(array_column($stats, 'dessert'));
 		$data['sum_burger']		= array_sum(array_column($stats, 'burger'));
+	}
 
 		$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier - Sales stats");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
