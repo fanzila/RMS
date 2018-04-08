@@ -1,7 +1,7 @@
 	</div>
 	<div data-role="content" data-theme="a">
 		
-		<? $title = "Stats for the last 2 days"; if(isset($form_values['date'])) $title = "Stats for: ".$form_values['date']; ?>
+		<? $title = "Stats for today"; if(isset($form_values['date'])) $title = "Stats for: ".$form_values['date']; ?>
 		<h4><?=$title?></h4>
 		<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
 		  <thead>
