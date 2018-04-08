@@ -40,6 +40,148 @@ class webCashier extends CI_Controller {
 		$this->load->view('jq_footer');
 	}
 
+	public function stats()
+	{		
+
+		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->hmw->keyLogin();
+		
+		$data = array();
+		$id_bu			 		=  $this->session->userdata('bu_id');
+		$user					= $this->ion_auth->user()->row();
+		$user_groups 			= $this->ion_auth->get_users_groups()->result();
+		$data['username']		= $user->username;
+		$data['user_groups']	= $user_groups[0];
+		$data["keylogin"] 		= $this->session->userdata('keylogin');
+		$data['title'] 			= 'Cashier - Sales stats';
+		$data['bu_name'] =  $this->session->userdata('bu_name');
+
+		$pos_burger_category 	= '1A41C9AC-2BDA-421D-A64A-876A82F2A84F';
+		$pos_dessert_category 	= '19E864A9-7FE1-4982-989D-F930E2C50091';
+		$pos_potatoes 			= '2CC9930D-5A03-4206-841B-512B060EE030';
+		$pos_cheese		 		= 'AE147589-5B91-42C1-B168-ACC2FAFE3193';
+		
+		$stats = array();
+		$rdate = ">= DATE(NOW()) - INTERVAL 7000 DAY";
+		$post_date = $this->input->post('date');
+		if(isset($post_date)) {
+			$rdate = "LIKE '".$this->input->post('date')."%'";
+			$data['form_values']['date'] = $this->input->post('date');
+		}
+			 
+		//select user
+		$q_user = "SELECT id_pos, name, id_bu FROM users_pos
+			WHERE deleted = 0";
+		$r_user = $this->db->query($q_user) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$o_user = $r_user->result_object();
+
+		foreach ($o_user as $key => $value) {
+
+			//select total CA by user
+			$q_total = "SELECT sr.owner, ROUND(SUM(amount_total)/1000) AS amount FROM sales_receipt AS sr 
+				WHERE date_closed $rdate  
+				AND sr.owner = '".$value->id_pos."'
+				AND sr.id_bu = $id_bu
+				AND sr.canceled = 0";
+			$r_total = $this->db->query($q_total) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o_total = $r_total->result_array();
+			$stats[$value->id_pos]['total'] = $o_total[0]['amount'];
+			$stats[$value->id_pos]['name'] = $value->name;
+
+			//select burger by users
+			$q_burger = "
+			SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
+			WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_burger_category."')
+			AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)
+				";
+		
+			$r_burger = $this->db->query($q_burger) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o_burger = $r_burger->result_array();
+			$stats[$value->id_pos]['burger'] = $o_burger[0]['count'];
+			
+			//select dessert by users
+			$q_dessert = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
+				WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_dessert_category."')
+				AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
+			$r_dessert = $this->db->query($q_dessert) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o_dessert = $r_dessert->result_array();
+			$stats[$value->id_pos]['dessert'] = $o_dessert[0]['count'];	
+			
+			//select potatoes by users
+			$q_potatoes = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
+						WHERE sri.product = '".$pos_potatoes."'
+						AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
+			$r_potatoes = $this->db->query($q_potatoes) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o_potatoes = $r_potatoes->result_array();
+			$stats[$value->id_pos]['potatoes'] = $o_potatoes[0]['count'];
+			
+			//select potatoes cheese by users
+			$q_cheese = "
+						SELECT SUM(sria.quantity) AS count 
+						FROM sales_receiptitemaddon AS sria 
+						WHERE sria.productaddon = '".$pos_cheese."'
+						AND sria.receiptitem IN (SELECT sri.id FROM sales_receiptitem AS sri 
+							JOIN sales_receipt AS sr ON sri.receipt = sr.id 
+							WHERE sr.owner = '".$value->id_pos."' 
+								AND sr.canceled = 0 
+								AND sr.id_bu = $id_bu 
+								AND sr.date_closed $rdate)
+				";
+
+			$r_cheese = $this->db->query($q_cheese) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$o_cheese = $r_cheese->result_array();
+			$stats[$value->id_pos]['cheese'] = $o_cheese[0]['count'];		
+		}			
+
+		$data['stats_sorted'] 	= $this->array_sort($stats, 'total', SORT_DESC);
+		$data['sum_cheese']		= array_sum(array_column($stats, 'cheese'));
+		$data['sum_potatoes']	= array_sum(array_column($stats, 'potatoes'));
+		$data['sum_dessert']	= array_sum(array_column($stats, 'dessert'));
+		$data['sum_burger']		= array_sum(array_column($stats, 'burger'));
+
+		$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier - Sales stats");
+		$this->load->view('jq_header_pre', $headers['header_pre']);
+		$this->load->view('jq_header_post', $headers['header_post']);
+		$this->load->view('webcashier/stats',$data);
+		$this->load->view('webcashier/jq_footer_spe');
+		$this->load->view('jq_footer');
+	}
+	
+	private function array_sort($array, $on, $order=SORT_ASC)
+	{
+	    $new_array = array();
+	    $sortable_array = array();
+
+	    if (count($array) > 0) {
+	        foreach ($array as $k => $v) {
+	            if (is_array($v)) {
+	                foreach ($v as $k2 => $v2) {
+	                    if ($k2 == $on) {
+	                        $sortable_array[$k] = $v2;
+	                    }
+	                }
+	            } else {
+	                $sortable_array[$k] = $v;
+	            }
+	        }
+
+	        switch ($order) {
+	            case SORT_ASC:
+	                asort($sortable_array);
+	            break;
+	            case SORT_DESC:
+	                arsort($sortable_array);
+	            break;
+	        }
+
+	        foreach ($sortable_array as $k => $v) {
+	            $new_array[$k] = $array[$k];
+	        }
+	    }
+
+	    return $new_array;
+	}
+	
 	public function save_report_comment()
 	{
 		$id_bu = $this->session->userdata('bu_id');
@@ -423,6 +565,7 @@ class webCashier extends CI_Controller {
 				$data['archive_date'] = $archive_date;
 				$this->cashier->InsertTerminals($id_bu);
 				$this->cashier->posInfo('updateUsers', $param_pos_info);
+				$this->cashier->posInfo('updateProductCategory', $param_pos_info);
 			} else {
 				$force = $this->input->get('force');
 				if(!empty($force)) { 

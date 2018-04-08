@@ -6,7 +6,11 @@
 				<li><a rel="external" data-ajax="false" href="/webcashier/safe/">Safe</a></li>
 			<?php } if($this->ion_auth_acl->has_permission('view_report')) { ?>
 			<li><a rel="external" data-ajax="false" href="/webcashier/report/">Report</a></li>
-			<?php } ?>
+			<?php } 
+			if($this->ion_auth_acl->has_permission('view_sales_stats')) { ?>
+			<li><a rel="external" data-ajax="false" href="/webcashier/stats/">Sales stats</a></li>
+			<?php } 
+			?>
 		</ul>
 	</div>
 </div>

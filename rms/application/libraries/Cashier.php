@@ -628,17 +628,23 @@ class Cashier {
 			break;
 			
 			case 'updateUsers':
-			foreach ($CI->hmw->getUsers() as $key) {
-				$sql 	= "SELECT ID FROM USER WHERE lower(NAME)='".strtolower($key->username)."' AND DELETED != 1";
-				$result = $db->query($sql);
-				$res	= $result->fetchArray(SQLITE3_ASSOC);
-				if(is_array($res)) {
-					$sqlu = "INSERT INTO users_pos SET id_pos = '".$res['ID']."', id_user = ".$key->id.", id_bu = $param[id_bu] ON DUPLICATE KEY UPDATE id_pos = '".$res['ID']."'";
-					$resu = $CI->db->query($sqlu);
-				}
+			$sql 	= "SELECT ID, NAME, DELETED FROM USER";
+			$result = $db->query($sql);
+			while($row=$result->fetchArray(SQLITE3_ASSOC)){
+				$sqlu = "INSERT INTO users_pos SET id_pos = '".strtoupper($row['ID'])."', name = '".$row['NAME']."', deleted = '".$row['DELETED']."',id_bu = $param[id_bu] ON DUPLICATE KEY UPDATE id_pos = '".strtoupper($row['ID'])."', name = '".$row['NAME']."', deleted = '".$row['DELETED']."'";
+				$resu = $CI->db->query($sqlu);
 			}
 			break;
-			
+
+			case 'updateProductCategory':
+			$sql 	= "SELECT ID, NAME, DELETED FROM PRODUCTCATEGORY";
+			$result = $db->query($sql);
+			while($row=$result->fetchArray(SQLITE3_ASSOC)){
+				$sqlu = "INSERT INTO sales_productcategory SET id = '".strtoupper($row['ID'])."', name = '".$row['NAME']."', deleted = '".$row['DELETED']."',id_bu = $param[id_bu] ON DUPLICATE KEY UPDATE id = '".strtoupper($row['ID'])."', name = '".$row['NAME']."', deleted = '".$row['DELETED']."'";
+				$resu = $CI->db->query($sqlu);
+			}
+			break;
+						
 			case 'updateTurnover':
 			$res 	= array();
 			$result_to = $db->query("select SUM(AMOUNT_PAID) FROM RECEIPT");
