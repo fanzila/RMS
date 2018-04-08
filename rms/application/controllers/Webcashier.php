@@ -62,7 +62,7 @@ class webCashier extends CI_Controller {
 		$pos_cheese		 		= 'AE147589-5B91-42C1-B168-ACC2FAFE3193';
 		
 		$stats = array();
-		$rdate = ">= DATE(NOW()) - INTERVAL 7 DAY";
+		$rdate = ">= DATE(NOW()) - INTERVAL 2 DAY";
 		$post_date = $this->input->post('date');
 		if(isset($post_date)) {
 			$rdate = "LIKE '".$this->input->post('date')."%'";
