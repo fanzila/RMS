@@ -644,17 +644,17 @@ class Order extends CI_Controller {
 					foreach ($var as $id_pdt => $value) {
 						if($value > 0) {
 							$order['pdt'][$id_pdt] = array(
-								'qtty' => $value,
-								'name' => $post['pdt_name'][$id_pdt],
-								'price' => $post['price'][$id_pdt],
+								'qtty' => trim($value),
+								'name' => trim($post['pdt_name'][$id_pdt]),
+								'price' => trim($post['price'][$id_pdt]),
 								'subtotal' => $post['price'][$id_pdt]*$value
 								);
 						}
 						if(!empty($value) AND !is_numeric($value)) exit('Qtty has to be numeric, invalid: '.$value);
 						if(!empty($value) AND is_numeric($value)) $do_something	= true;
 						if($post['pkg'][$id_pdt] <= 0) exit('Colisage incorrect, doit être supérieur à 0 pour '.$post['pdt_name'][$id_pdt].'.');
-						$packaging_check = $value/$post['pkg'][$id_pdt];
-						if(!is_int($packaging_check)) exit('Colisage incorrect, entrez un multiple de '.$post['pkg'][$id_pdt].' pour '.$post['pdt_name'][$id_pdt].'.');
+						$packaging_check = trim($value/$post['pkg'][$id_pdt]);
+						if(is_float($packaging_check)) exit('Colisage incorrect: '.$packaging_check.', entrez un multiple de '.$post['pkg'][$id_pdt].' pour '.$post['pdt_name'][$id_pdt].'.');
 						
 						$pricetotal += $post['price'][$id_pdt]*$value;
 					}
