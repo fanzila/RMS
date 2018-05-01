@@ -42,9 +42,10 @@
 						<? if($this->ion_auth_acl->has_permission('posmessage')) { ?>								
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 						<? } ?>
+						<? if($this->config->item('wordpress_connection')) { ?>
 						<?if($this->ion_auth_acl->has_permission('wp_access')) { ?>
 						<li><a rel="external" data-ajax="false" href="/wp_access/" onclick="window.open(this.href);return false;"><i class="fa fa-wordpress"></i> Worflow</a></li>
-						<? } ?>
+						<? } } ?>
 						</ul>
 					</div>
 					<? if($this->ion_auth_acl->has_permission('tools_panel')) { ?>
@@ -119,9 +120,10 @@
 								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors_alarm')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensorsAlarm/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors alarm management</a></li>
 								<?}?>
+								<? if($this->config->item('wordpress_connection')) { ?>
 								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_wp_roles')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/wpRmsGroups/"><i class="fa fa-hdd-o" aria-hidden="true"></i> WP Roles Management</a></li>		
-								<?}?>
+								<? } } ?>
 								<?if($this->ion_auth_acl->has_permission('access_system_log')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/SystemLog/"><i class="fa fa-hdd-o" aria-hidden="true"></i> System logs</a></li>		
 								<?}?>

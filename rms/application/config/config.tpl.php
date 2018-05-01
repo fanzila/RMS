@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://hmw.dev/';
+$config['base_url']	= 'http://rms_demo.test/';
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +27,15 @@ $config['base_url']	= 'http://hmw.dev/';
 |
 */
 $config['index_page'] = 'index.php';
+
+/*
+|--------------------------------------------------------------------------
+| Using wordpress connection
+|--------------------------------------------------------------------------
+|
+|
+*/
+$config['wordpress_connection'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -224,7 +233,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = 'JAIMELATECHNOLOGIEAPARIS75';
+$config['encryption_key'] = 'DEMO';
 
 /*
 |--------------------------------------------------------------------------

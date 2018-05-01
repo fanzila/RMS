@@ -53,7 +53,7 @@ $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
 $db['default']['password'] = '';
 $db['default']['database'] = 'rms';
-$db['default']['dbdriver'] = 'mysql';
+$db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
 $db['default']['db_debug'] = TRUE;
@@ -65,16 +65,19 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
+//Uncomment if wordpress connection 
+/**
 $db['wpdb']['hostname'] = 'localhost';
 $db['wpdb']['username'] = 'root';
 $db['wpdb']['password'] = '';
-$db['wpdb']['database'] = 'wp';
+$db['wpdb']['database'] = 'wordpress';
 $db['wpdb']['dbdriver'] = 'mysqli';
 $db['wpdb']['pconnect'] = TRUE;
 $db['wpdb']['cache_on'] = FALSE;
 $db['wpdb']['cachedir'] = '';
 $db['wpdb']['charset'] = 'utf8';
 $db['wpdb']['dbcollat'] = 'utf8_general_ci';
+**/
 
 //require_once('../../../config.ini');
 
