@@ -50,14 +50,10 @@ class Cameras extends CI_Controller {
 		$id_bu 			= $this->session->userdata('bu_id');	
 		$buinfo 		= $this->hmw->getBuInfo($id_bu);
 		
-		$this->db->from('turnover')->order_by('date desc')->where('id_bu',$id_bu)->limit(1);
-	 	$bal_ca = $this->db->get();
-		$ca = $bal_ca->row_array();
+		$bal_ca = $this->db->get('turnover');
+		$ca = $bal_ca->result_array();
 					
 		$cameras = $this->getCamerasNamesFromDb($id_bu);
-		
-		if (empty($cameras))
-			die("Error when getting cameras from db");
 
 		$p = array(
 				'type'		=>  'user_access_cam'
@@ -66,12 +62,11 @@ class Cameras extends CI_Controller {
 		
 		$user					= $this->ion_auth->user()->row();
 		$data['bus_list']		= $this->hmw->getBus(null, $user->id);
-		$data['bu_id']			= $this->session->userdata('bu_id');
+		$data['bu_id']			= $id_bu;
 		
-		$info_current_bu 		= $this->hmw->getBuInfo($this->session->userdata('bu_id'));
 		$planning 				= $this->planning();
 		$data['bu_postion_id']	= explode (',',$buinfo->humanity_positions);
-		$data['info_bu'] 		= $info_current_bu;
+		$data['info_bu'] 		= $buinfo;
 		$data['ca']				= $ca;
 		$data['planning'] 		= $planning;
 		$data['cameras'] 		= $cameras;

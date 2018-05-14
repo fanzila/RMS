@@ -24,7 +24,22 @@
 	<body>
 		<? 
 	$bgcolor = '#FFF';
-	?>
+	$ca_amount = "0";
+	$ca_last = "-";
+	$total_ca = 0;
+	$buname = array();
+	foreach ($bus_list as $bu) { $buname[$bu->id] = $bu->name; }
+	
+	foreach ($ca as $caline) {
+		if($caline['id_bu'] == $bu_id) {
+			$ca_amount = $caline['amount'];
+			$ca_last = $caline['last'];
+		}
+		
+		$conca_ca[] = $buname[$caline['id_bu']].": ". number_format($caline['amount']/1000, 0, ',', ' ')."€ <small>- ".$caline['last']."</small><br />";
+		$total_ca += $caline['amount'];
+	}	
+?>
 	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">
 		<table><tr><td></td><td><form action="#" method="POST">
 			<select name="bus" class="ui-btn" onchange="this.form.submit()">
@@ -32,10 +47,22 @@
   				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
 			<? } ?>
 			</select>
-		</form> </td><td> <a href="/">[BACK]</a> | TO: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€ </td><td> | <small>Last ticket: <?=$ca['last']?></small></td></tr></table></div>
-	<?foreach ($cameras as $camera) { ?>
+		</form> </td><td> <a href="/">[BACK]</a> | TO: <?=number_format($ca_amount/1000, 0, ',', ' ')?>€ </td><td> | <small>Last ticket: <?=$ca_last?></small></td></tr></table></div>
+		
+	<? if(empty($cameras)) { ?>
+		No cam.
+		<? } else { 	
+	foreach ($cameras as $camera) { ?>
 		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" />
-	<? } ?>
+	<? } } ?>
+	
+<p><b>TO by BUs</b><br />
+<? 
+foreach ($conca_ca as $line) { 
+	echo $line; 
+	}
+?> 
+<b>Total: <?=number_format($total_ca/1000, 0, ',', ' ')?>€</b></p>
 <?
 	$avatars_url = 'https://s3.amazonaws.com/uf.shiftplanning.com/';
 	$p = $planning['data'];
