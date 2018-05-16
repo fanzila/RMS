@@ -27,6 +27,7 @@
 						<td> - </td>
 					</tr>
 						<? foreach ($pay_values as $key => $value) { 
+							$value['man'] = str_replace(',', '.', $value['man']);
 							if ($value['id'] == 1) $value['pos'] = $form_values['cashpad_amount']-$form_values['prelevement']; 
 							?>
 						<tr>
