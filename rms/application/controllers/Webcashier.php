@@ -351,10 +351,10 @@ class webCashier extends CI_Controller {
 			$info_user_cashier4 = '-';
 			if(isset($res_ic[4]['id_user_cashier'])) $info_user_cashier4 = $this->hmw->getUser($res_ic[4]['id_user_cashier'])->username;
 			$txt .= "<td>".$info_user_cashier;
-			if(isset($res_ic[1]['id_user'])) $txt .= "<br />".$info_user_cashier1;
-			if(isset($res_ic[2]['id_user'])) $txt .= "<br />".$info_user_cashier2;
-			if(isset($res_ic[3]['id_user'])) $txt .= "<br />".$info_user_cashier3;
-			if(isset($res_ic[4]['id_user'])) $txt .= "<br />".$info_user_cashier4;
+			if(isset($res_ic[1]['id_user_cashier'])) $txt .= "<br />".$info_user_cashier1;
+			if(isset($res_ic[2]['id_user_cashier'])) $txt .= "<br />".$info_user_cashier2;
+			if(isset($res_ic[3]['id_user_cashier'])) $txt .= "<br />".$info_user_cashier3;
+			if(isset($res_ic[4]['id_user_cashier'])) $txt .= "<br />".$info_user_cashier4;
 			$txt .= "</td>";
 
 			$bgcolor = '#fff';
