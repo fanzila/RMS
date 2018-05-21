@@ -265,6 +265,9 @@ class webCashier extends CI_Controller {
 	
 	public function cliCheckClose($id_bu) 
 	{
+		
+		if(!is_cli()) exit();
+			
 		$currentDate =  date('Y-m-d');
 		
 		$this->db->select('date');
@@ -296,10 +299,110 @@ class webCashier extends CI_Controller {
 			}
 		}
 	}
+
+	// cd /var/www/hank/rms/rms && php index.php webcashier cliReport
+	public function cliReport() 
+	{
+
+		if(!is_cli()) exit();
+		
+		$this->db->select('id, name');
+		$query = $this->db->get('bus');
+		$txt = "<font family='arial'><p><h2>RMS CLOSE REPORT ". date('d/m/Y'). "</h2></p><table border='1' cellspacing='0' cellpadding='10'><tr bgcolor='#ffc300'>
+		<td>BU</td>
+		<td>TO</td>
+		<td>Cashier user</td>
+		<td>Status</td>
+		<td>Date cashier</td>
+		<td>Diff</td>
+		<td>Comment close</td>
+		<td>Checklist</td>
+		<td>Checklist user</td>
+		<td>Date checklist</td>
+		</tr>		
+		";
+		
+		foreach ($query->result() as $row) {
+
+			$txt .= "<tr><td>$row->name</td>";
+			
+			//pos movement
+			$this->db->select('SUM(pos_payments.amount_pos) as TO_POS'); 
+			$this->db->select('pos_movements.id_user, pos_movements.status, pos_movements.comment, pos_movements.date, pos_movements.id_bu');
+			$this->db->where('DATE_FORMAT( pos_movements.date,  \'%Y-%m-%d\' ) = CURDATE()');
+			$this->db->where('pos_movements.movement', 'close');
+			$this->db->where('pos_movements.id_bu', $row->id);
+			$this->db->join('pos_movements', 'pos_movements.id = pos_payments.id_movement');
+			$query_mo = $this->db->get("pos_payments");
+			$res_mo = $query_mo->result_array();
+		
+			$info_user_cashier = '-';
+			if(isset($res_mo[0]['id_user'])) $info_user_cashier = $this->hmw->getUser($res_mo[0]['id_user'])->username;
+
+			if(isset($res_mo[0])) { 
+				$bgcolor = '#fff';
+				if($res_mo[0]['status'] == 'error') $bgcolor = '#ff6400';
+				$txt .= "<td>".number_format($res_mo[0]['TO_POS'], 2)."€ </td>";
+				$txt .= "<td>".$info_user_cashier."</td>";
+				$txt .= "<td align='center' bgcolor='$bgcolor'>".$res_mo[0]['status']."</td>";
+				$txt .= "<td>".$res_mo[0]['date']."</td>";
+			}
+
+			//infos_close
+			$this->db->where('DATE_FORMAT( infos_close.date,  \'%Y-%m-%d\' ) = CURDATE()');
+			$this->db->where('bu_id', $row->id);
+			$query_ic = $this->db->get("infos_close");
+			$res_ic = $query_ic->result_array();
+			
+			if(isset($res_ic[0])) $operand = $this->addOperand($res_ic[0]['cashier_diff']);
+			$txt .= "<td>";
+			if(isset($res_ic[0])) $txt .= "$operand". number_format($res_ic[0]['cashier_diff'], 2)."€";
+			$txt .= "</td>";
+			$txt .= "<td>";
+			if(isset($res_ic[0])) $txt .= $res_ic[0]['comment_cashier'];
+			$txt .= "</td>";
+			
+			//checklist
+			$this->db->where('DATE_FORMAT( checklist_records.date,  \'%Y-%m-%d\' ) = CURDATE()');
+			$this->db->where('checklists.id_bu', $row->id);
+			$this->db->like('checklists.name', 'CLOSING');
+			$this->db->join('checklists', 'checklists.id = checklist_records.id_checklist');
+			$query_cl = $this->db->get("checklist_records");
+			$res_cl = $query_cl->result_array();
+			
+			$info_user_cl = '-';
+			if(isset($res_cl[0]['user'])) $info_user_cl = $this->hmw->getUser($res_cl[0]['user'])->username;
+			
+			$txt .= "<td align='center'>";
+			if(isset($res_cl[0])) $txt .=  "X";
+			$txt .= "</td>";
+			$txt .= "<td>";
+			if(isset($res_cl[0])) $txt .=  $info_user_cl;			
+			$txt .= "</td>";
+			$txt .= "<td>";
+			if(isset($res_cl[0])) $txt .=  $res_cl[0]['date'];
+			$txt .= "</td>";
+			
+			$txt .= "</tr>";
+			
+			
+		}
+		$txt .= "</table></font>";
+		//echo $txt;
+
+		$email['subject'] 	= 'RMS CLOSE REPORT';
+		$email['msg'] 		= $txt;
+		$email['to']	= $this->hmw->getParam('emails_send_infos_close'); 	
+		$this->mmail->sendEmail($email);
 	
+	}
+		
 	// cd /var/www/hank/rms/rms && php index.php webcashier cliAlertSafe 1
 	
 	public function cliAlertSafe($id_bu) {
+		
+		if(!is_cli()) exit();
+		
 		$currentAmount = $this->cashier->calc('safe_current_cash_amount', $id_bu);
 		
 		if ($currentAmount < 1) {
@@ -785,6 +888,8 @@ class webCashier extends CI_Controller {
 					$this->db->where('id', $id_bu);
 					$bu_name = $this->db->get('bus')->row_array()['name'];
 					$operand = $this->addOperand($num);
+					
+					//send email
 					$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
 					$email['msg'] 		= "BU: ".$bu_name." | ID: ".$pmid."<br />Difference de $operand" . number_format($diff, 2) ."€ <br /><a href='http://".$server_name."/webcashier/report/#".$pmid."'>http://".$server_name."/webcashier/report/#".$pmid."</a>";
 					foreach ($query->result() as $row) {
@@ -792,11 +897,27 @@ class webCashier extends CI_Controller {
 						$this->mmail->sendEmail($email);
 					}
 				}
+				
+				//insert into infos_close
+				$this->db->set('cashier_diff', $diff);
+				$this->db->set('bu_id', $id_bu);
+				$this->db->set('id_pos_movements', $pmid);
+				$this->db->set('id_user_cashier', $userid);
+				$this->db->set('status', 'error');
+				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+					
 				$this->db->trans_commit();
 				$this->db->set('status', 'error');
 				$this->db->where('id', $pmid);
 				$this->db->update('pos_movements');
 			} else {
+				
+				//insert into infos_close
+				$this->db->set('bu_id', $id_bu);
+				$this->db->set('id_pos_movements', $pmid);
+				$this->db->set('id_user_cashier', $userid);
+				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				
 				$this->db->trans_commit();
 			}
 			$this->closing($this->input->post('archive'), $pmid);
