@@ -308,7 +308,7 @@ class webCashier extends CI_Controller {
 		
 		$this->db->select('id, name');
 		$query = $this->db->get('bus');
-		$txt = "<font family='arial'><p><h2>RMS CLOSE REPORT ". date('d/m/Y'). "</h2></p><table border='1' cellspacing='0' cellpadding='10'><tr bgcolor='#ffc300'>
+		$txt = "<font face='arial'><p><b>RMS CLOSE REPORT ". date('d/m/Y'). "</b></p><table border='1' cellspacing='0' cellpadding='5'><tr bgcolor='#ffc300'>
 		<td>BU</td>
 		<td>TO</td>
 		<td>Cashier user</td>
@@ -339,13 +339,50 @@ class webCashier extends CI_Controller {
 			$info_user_cashier = '-';
 			if(isset($res_mo[0]['id_user'])) $info_user_cashier = $this->hmw->getUser($res_mo[0]['id_user'])->username;
 
+			$info_user_cashier1 = '-';
+			if(isset($res_mo[1]['id_user'])) $info_user_cashier1 = $this->hmw->getUser($res_mo[1]['id_user'])->username;
+			$info_user_cashier2 = '-';
+			if(isset($res_mo[2]['id_user'])) $info_user_cashier2 = $this->hmw->getUser($res_mo[2]['id_user'])->username;
+			$info_user_cashier3 = '-';
+			if(isset($res_mo[3]['id_user'])) $info_user_cashier3 = $this->hmw->getUser($res_mo[3]['id_user'])->username;
+			$info_user_cashier4 = '-';
+			if(isset($res_mo[4]['id_user'])) $info_user_cashier4 = $this->hmw->getUser($res_mo[4]['id_user'])->username;
+			
 			if(isset($res_mo[0])) { 
 				$bgcolor = '#fff';
 				if($res_mo[0]['status'] == 'error') $bgcolor = '#ff6400';
-				$txt .= "<td>".number_format($res_mo[0]['TO_POS'], 2)."€ </td>";
-				$txt .= "<td>".$info_user_cashier."</td>";
-				$txt .= "<td align='center' bgcolor='$bgcolor'>".$res_mo[0]['status']."</td>";
-				$txt .= "<td>".$res_mo[0]['date']."</td>";
+				if(isset($res_mo[1]['status'])) if($res_mo[1]['status'] == 'error') $bgcolor = '#ff6400';
+				if(isset($res_mo[2]['status'])) if($res_mo[2]['status'] == 'error') $bgcolor = '#ff6400';
+				if(isset($res_mo[3]['status'])) if($res_mo[3]['status'] == 'error') $bgcolor = '#ff6400';
+				if(isset($res_mo[4]['status'])) if($res_mo[4]['status'] == 'error') $bgcolor = '#ff6400';
+
+				$txt .= "<td>".number_format($res_mo[0]['TO_POS'], 2)."€";
+				if(isset($res_mo[1]['TO_POS'])) $txt .= "<br />".number_format($res_mo[1]['TO_POS'], 2)."€";
+				if(isset($res_mo[2]['TO_POS'])) $txt .= "<br />".number_format($res_mo[2]['TO_POS'], 2)."€";
+				if(isset($res_mo[3]['TO_POS'])) $txt .= "<br />".number_format($res_mo[3]['TO_POS'], 2)."€";
+				if(isset($res_mo[4]['TO_POS'])) $txt .= "<br />".number_format($res_mo[4]['TO_POS'], 2)."€";		
+				$txt .= "</td>";
+				
+				$txt .= "<td>".$info_user_cashier;
+				if(isset($res_mo[1]['id_user'])) $txt .= "<br />".$info_user_cashier1;
+				if(isset($res_mo[2]['id_user'])) $txt .= "<br />".$info_user_cashier2;
+				if(isset($res_mo[3]['id_user'])) $txt .= "<br />".$info_user_cashier3;
+				if(isset($res_mo[4]['id_user'])) $txt .= "<br />".$info_user_cashier4;
+				$txt .= "</td>";
+				
+				$txt .= "<td align='center' bgcolor='$bgcolor'>".$res_mo[0]['status'];
+				if(isset($res_mo[1]['status'])) $txt .= "<br />".$res_mo[1]['status'];
+				if(isset($res_mo[2]['status'])) $txt .= "<br />".$res_mo[2]['status'];
+				if(isset($res_mo[3]['status'])) $txt .= "<br />".$res_mo[3]['status'];
+				if(isset($res_mo[4]['status'])) $txt .= "<br />".$res_mo[4]['status'];
+				$txt .= "</td>";
+				
+				$txt .= "<td>".$res_mo[0]['date'];
+				if(isset($res_mo[1]['date'])) $txt .= "<br />".$res_mo[1]['date'];
+				if(isset($res_mo[2]['date'])) $txt .= "<br />".$res_mo[2]['date'];
+				if(isset($res_mo[3]['date'])) $txt .= "<br />".$res_mo[3]['date'];
+				if(isset($res_mo[4]['date'])) $txt .= "<br />".$res_mo[4]['date'];
+				$txt .= "</td>";
 			}
 
 			//infos_close
@@ -355,11 +392,24 @@ class webCashier extends CI_Controller {
 			$res_ic = $query_ic->result_array();
 			
 			if(isset($res_ic[0])) $operand = $this->addOperand($res_ic[0]['cashier_diff']);
+			if(isset($res_ic[1])) $operand1 = $this->addOperand($res_ic[1]['cashier_diff']);
+			if(isset($res_ic[2])) $operand2 = $this->addOperand($res_ic[2]['cashier_diff']);
+			if(isset($res_ic[3])) $operand3 = $this->addOperand($res_ic[3]['cashier_diff']);
+			if(isset($res_ic[4])) $operand4 = $this->addOperand($res_ic[4]['cashier_diff']);
+			
 			$txt .= "<td>";
 			if(isset($res_ic[0])) $txt .= "$operand". number_format($res_ic[0]['cashier_diff'], 2)."€";
+			if(isset($res_ic[1])) $txt .= "<br />$operand1". number_format($res_ic[1]['cashier_diff'], 2)."€";
+			if(isset($res_ic[2])) $txt .= "<br />$operand2". number_format($res_ic[2]['cashier_diff'], 2)."€";
+			if(isset($res_ic[3])) $txt .= "<br />$operand3". number_format($res_ic[3]['cashier_diff'], 2)."€";
+			if(isset($res_ic[4])) $txt .= "<br />$operand4". number_format($res_ic[4]['cashier_diff'], 2)."€";
 			$txt .= "</td>";
 			$txt .= "<td>";
 			if(isset($res_ic[0])) $txt .= $res_ic[0]['comment_cashier'];
+			if(isset($res_ic[1])) $txt .= "<br />".$res_ic[1]['comment_cashier'];
+			if(isset($res_ic[2])) $txt .= "<br />".$res_ic[2]['comment_cashier'];
+			if(isset($res_ic[3])) $txt .= "<br />".$res_ic[3]['comment_cashier'];
+			if(isset($res_ic[4])) $txt .= "<br />".$res_ic[4]['comment_cashier'];
 			$txt .= "</td>";
 			
 			//checklist
@@ -371,16 +421,38 @@ class webCashier extends CI_Controller {
 			$res_cl = $query_cl->result_array();
 			
 			$info_user_cl = '-';
+			$info_user_cl1 = '-';
+			$info_user_cl2 = '-';
+			$info_user_cl3 = '-';
+			$info_user_cl4 = '-';
 			if(isset($res_cl[0]['user'])) $info_user_cl = $this->hmw->getUser($res_cl[0]['user'])->username;
+			if(isset($res_cl[1]['user'])) $info_user_cl1 = $this->hmw->getUser($res_cl[1]['user'])->username;
+			if(isset($res_cl[2]['user'])) $info_user_cl2 = $this->hmw->getUser($res_cl[2]['user'])->username;
+			if(isset($res_cl[3]['user'])) $info_user_cl3 = $this->hmw->getUser($res_cl[3]['user'])->username;
+			if(isset($res_cl[4]['user'])) $info_user_cl4 = $this->hmw->getUser($res_cl[4]['user'])->username;
 			
 			$txt .= "<td align='center'>";
 			if(isset($res_cl[0])) $txt .=  "X";
+			if(isset($res_cl[1])) $txt .=  "<br />X";
+			if(isset($res_cl[2])) $txt .=  "<br />X";
+			if(isset($res_cl[3])) $txt .=  "<br />X";
+			if(isset($res_cl[4])) $txt .=  "<br />X";			
 			$txt .= "</td>";
+			
 			$txt .= "<td>";
-			if(isset($res_cl[0])) $txt .=  $info_user_cl;			
+			if(isset($res_cl[0])) $txt .=  $info_user_cl;
+			if(isset($res_cl[1])) $txt .=  "<br />".$info_user_cl1;
+			if(isset($res_cl[2])) $txt .=  "<br />".$info_user_cl2;
+			if(isset($res_cl[3])) $txt .=  "<br />".$info_user_cl3;
+			if(isset($res_cl[4])) $txt .=  "<br />".$info_user_cl4;
+						
 			$txt .= "</td>";
 			$txt .= "<td>";
 			if(isset($res_cl[0])) $txt .=  $res_cl[0]['date'];
+			if(isset($res_cl[1])) $txt .=  "<br>".$res_cl[1]['date'];
+			if(isset($res_cl[2])) $txt .=  "<br>".$res_cl[2]['date'];
+			if(isset($res_cl[3])) $txt .=  "<br>".$res_cl[3]['date'];
+			if(isset($res_cl[4])) $txt .=  "<br>".$res_cl[4]['date'];
 			$txt .= "</td>";
 			
 			$txt .= "</tr>";
