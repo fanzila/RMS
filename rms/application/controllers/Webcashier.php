@@ -455,8 +455,7 @@ class webCashier extends CI_Controller {
 			if(isset($res_cl[4])) $txt .=  "<br>".$res_cl[4]['date'];
 			$txt .= "</td>";
 			
-			$txt .= "</tr>";
-			
+			$txt .= "</tr>";	
 			
 		}
 		$txt .= "</table></font>";
@@ -985,6 +984,7 @@ class webCashier extends CI_Controller {
 			} else {
 				
 				//insert into infos_close
+				$this->db->set('cashier_diff', $diff);
 				$this->db->set('bu_id', $id_bu);
 				$this->db->set('id_pos_movements', $pmid);
 				$this->db->set('id_user_cashier', $userid);
