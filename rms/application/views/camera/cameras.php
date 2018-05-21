@@ -79,7 +79,7 @@ foreach ($conca_ca as $line) {
 		<div class="row">
 			<div class="col-md" style="margin: 3px;">
 				<div class="box">
-					<b>Who's on now @<?=$info_bu->name?>?</b>
+					<h4>Who's on now @<?=$info_bu->name?>?</h4>
 				</div>
 			</div>
 		</div>		
