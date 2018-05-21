@@ -304,7 +304,7 @@ class webCashier extends CI_Controller {
 	public function cliReport() 
 	{
 
-		if(!is_cli()) exit();
+		//if(!is_cli()) exit();
 		
 		$this->db->select('id, name');
 		$query = $this->db->get('bus');
@@ -326,77 +326,65 @@ class webCashier extends CI_Controller {
 
 			$txt .= "<tr><td>$row->name</td>";
 			
-			//pos movement
-			$this->db->select('SUM(pos_payments.amount_pos) as TO_POS'); 
-			$this->db->select('pos_movements.id_user, pos_movements.status, pos_movements.comment, pos_movements.date, pos_movements.id_bu');
-			$this->db->where('DATE_FORMAT( pos_movements.date,  \'%Y-%m-%d\' ) = CURDATE()');
-			$this->db->where('pos_movements.movement', 'close');
-			$this->db->where('pos_movements.id_bu', $row->id);
-			$this->db->join('pos_movements', 'pos_movements.id = pos_payments.id_movement');
-			$query_mo = $this->db->get("pos_payments");
-			$res_mo = $query_mo->result_array();
-		
-			$info_user_cashier = '-';
-			if(isset($res_mo[0]['id_user'])) $info_user_cashier = $this->hmw->getUser($res_mo[0]['id_user'])->username;
-
-			$info_user_cashier1 = '-';
-			if(isset($res_mo[1]['id_user'])) $info_user_cashier1 = $this->hmw->getUser($res_mo[1]['id_user'])->username;
-			$info_user_cashier2 = '-';
-			if(isset($res_mo[2]['id_user'])) $info_user_cashier2 = $this->hmw->getUser($res_mo[2]['id_user'])->username;
-			$info_user_cashier3 = '-';
-			if(isset($res_mo[3]['id_user'])) $info_user_cashier3 = $this->hmw->getUser($res_mo[3]['id_user'])->username;
-			$info_user_cashier4 = '-';
-			if(isset($res_mo[4]['id_user'])) $info_user_cashier4 = $this->hmw->getUser($res_mo[4]['id_user'])->username;
-			
-			if(isset($res_mo[0])) { 
-				$bgcolor = '#fff';
-				if($res_mo[0]['status'] == 'error') $bgcolor = '#ff6400';
-				if(isset($res_mo[1]['status'])) if($res_mo[1]['status'] == 'error') $bgcolor = '#ff6400';
-				if(isset($res_mo[2]['status'])) if($res_mo[2]['status'] == 'error') $bgcolor = '#ff6400';
-				if(isset($res_mo[3]['status'])) if($res_mo[3]['status'] == 'error') $bgcolor = '#ff6400';
-				if(isset($res_mo[4]['status'])) if($res_mo[4]['status'] == 'error') $bgcolor = '#ff6400';
-
-				$txt .= "<td>".number_format($res_mo[0]['TO_POS'], 2)."€";
-				if(isset($res_mo[1]['TO_POS'])) $txt .= "<br />".number_format($res_mo[1]['TO_POS'], 2)."€";
-				if(isset($res_mo[2]['TO_POS'])) $txt .= "<br />".number_format($res_mo[2]['TO_POS'], 2)."€";
-				if(isset($res_mo[3]['TO_POS'])) $txt .= "<br />".number_format($res_mo[3]['TO_POS'], 2)."€";
-				if(isset($res_mo[4]['TO_POS'])) $txt .= "<br />".number_format($res_mo[4]['TO_POS'], 2)."€";		
-				$txt .= "</td>";
-				
-				$txt .= "<td>".$info_user_cashier;
-				if(isset($res_mo[1]['id_user'])) $txt .= "<br />".$info_user_cashier1;
-				if(isset($res_mo[2]['id_user'])) $txt .= "<br />".$info_user_cashier2;
-				if(isset($res_mo[3]['id_user'])) $txt .= "<br />".$info_user_cashier3;
-				if(isset($res_mo[4]['id_user'])) $txt .= "<br />".$info_user_cashier4;
-				$txt .= "</td>";
-				
-				$txt .= "<td align='center' bgcolor='$bgcolor'>".$res_mo[0]['status'];
-				if(isset($res_mo[1]['status'])) $txt .= "<br />".$res_mo[1]['status'];
-				if(isset($res_mo[2]['status'])) $txt .= "<br />".$res_mo[2]['status'];
-				if(isset($res_mo[3]['status'])) $txt .= "<br />".$res_mo[3]['status'];
-				if(isset($res_mo[4]['status'])) $txt .= "<br />".$res_mo[4]['status'];
-				$txt .= "</td>";
-				
-				$txt .= "<td>".$res_mo[0]['date'];
-				if(isset($res_mo[1]['date'])) $txt .= "<br />".$res_mo[1]['date'];
-				if(isset($res_mo[2]['date'])) $txt .= "<br />".$res_mo[2]['date'];
-				if(isset($res_mo[3]['date'])) $txt .= "<br />".$res_mo[3]['date'];
-				if(isset($res_mo[4]['date'])) $txt .= "<br />".$res_mo[4]['date'];
-				$txt .= "</td>";
-			}
-
 			//infos_close
 			$this->db->where('DATE_FORMAT( infos_close.date,  \'%Y-%m-%d\' ) = CURDATE()');
 			$this->db->where('bu_id', $row->id);
 			$query_ic = $this->db->get("infos_close");
 			$res_ic = $query_ic->result_array();
+		
+			if(!isset($res_ic[0]['to'])) $res_ic[0]['to'] = 0;
+			$txt .= "<td>".number_format($res_ic[0]['to'], 2)."€";
+			if(isset($res_ic[1]['to'])) $txt .= "<br />".number_format($res_ic[1]['to'], 2)."€";
+			if(isset($res_ic[2]['to'])) $txt .= "<br />".number_format($res_ic[2]['to'], 2)."€";
+			if(isset($res_ic[3]['to'])) $txt .= "<br />".number_format($res_ic[3]['to'], 2)."€";
+			if(isset($res_ic[4]['to'])) $txt .= "<br />".number_format($res_ic[4]['to'], 2)."€";		
+			$txt .= "</td>";
 			
+			$info_user_cashier = '-';
+			if(isset($res_ic[0]['id_user_cashier'])) $info_user_cashier = $this->hmw->getUser($res_ic[0]['id_user_cashier'])->username;
+			$info_user_cashier1 = '-';
+			if(isset($res_ic[1]['id_user_cashier'])) $info_user_cashier1 = $this->hmw->getUser($res_ic[1]['id_user_cashier'])->username;
+			$info_user_cashier2 = '-';
+			if(isset($res_ic[2]['id_user_cashier'])) $info_user_cashier2 = $this->hmw->getUser($res_ic[2]['id_user_cashier'])->username;
+			$info_user_cashier3 = '-';
+			if(isset($res_ic[3]['id_user_cashier'])) $info_user_cashier3 = $this->hmw->getUser($res_ic[3]['id_user_cashier'])->username;
+			$info_user_cashier4 = '-';
+			if(isset($res_ic[4]['id_user_cashier'])) $info_user_cashier4 = $this->hmw->getUser($res_ic[4]['id_user_cashier'])->username;
+			$txt .= "<td>".$info_user_cashier;
+			if(isset($res_ic[1]['id_user'])) $txt .= "<br />".$info_user_cashier1;
+			if(isset($res_ic[2]['id_user'])) $txt .= "<br />".$info_user_cashier2;
+			if(isset($res_ic[3]['id_user'])) $txt .= "<br />".$info_user_cashier3;
+			if(isset($res_ic[4]['id_user'])) $txt .= "<br />".$info_user_cashier4;
+			$txt .= "</td>";
+
+			$bgcolor = '#fff';
+			if(!isset($res_ic[0]['status'])) $res_ic[0]['status'] = '';
+			if($res_ic[0]['status'] == 'error') $bgcolor = '#ff6400';
+			if(isset($res_ic[1]['status'])) if($res_ic[1]['status'] == 'error') $bgcolor = '#ff6400';
+			if(isset($res_ic[2]['status'])) if($res_ic[2]['status'] == 'error') $bgcolor = '#ff6400';
+			if(isset($res_ic[3]['status'])) if($res_ic[3]['status'] == 'error') $bgcolor = '#ff6400';
+			if(isset($res_ic[4]['status'])) if($res_ic[4]['status'] == 'error') $bgcolor = '#ff6400';
+			$txt .= "<td align='center' bgcolor='$bgcolor'>".$res_ic[0]['status'];
+			if(isset($res_ic[1]['status'])) $txt .= "<br />".$res_ic[1]['status'];
+			if(isset($res_ic[2]['status'])) $txt .= "<br />".$res_ic[2]['status'];
+			if(isset($res_ic[3]['status'])) $txt .= "<br />".$res_ic[3]['status'];
+			if(isset($res_ic[4]['status'])) $txt .= "<br />".$res_ic[4]['status'];
+			$txt .= "</td>";
+				
+			if(!isset($res_ic[0]['date'])) $res_ic[0]['date'] = '';
+			$txt .= "<td>".$res_ic[0]['date'];
+			if(isset($res_ic[1]['date'])) $txt .= "<br />".$res_ic[1]['date'];
+			if(isset($res_ic[2]['date'])) $txt .= "<br />".$res_ic[2]['date'];
+			if(isset($res_ic[3]['date'])) $txt .= "<br />".$res_ic[3]['date'];
+			if(isset($res_ic[4]['date'])) $txt .= "<br />".$res_ic[4]['date'];
+			$txt .= "</td>";
+			
+			if(!isset($res_ic[0]['cashier_diff'])) $res_ic[0]['cashier_diff'] = 0;
 			if(isset($res_ic[0])) $operand = $this->addOperand($res_ic[0]['cashier_diff']);
 			if(isset($res_ic[1])) $operand1 = $this->addOperand($res_ic[1]['cashier_diff']);
 			if(isset($res_ic[2])) $operand2 = $this->addOperand($res_ic[2]['cashier_diff']);
 			if(isset($res_ic[3])) $operand3 = $this->addOperand($res_ic[3]['cashier_diff']);
-			if(isset($res_ic[4])) $operand4 = $this->addOperand($res_ic[4]['cashier_diff']);
-			
+			if(isset($res_ic[4])) $operand4 = $this->addOperand($res_ic[4]['cashier_diff']);			
 			$txt .= "<td>";
 			if(isset($res_ic[0])) $txt .= "$operand". number_format($res_ic[0]['cashier_diff'], 2)."€";
 			if(isset($res_ic[1])) $txt .= "<br />$operand1". number_format($res_ic[1]['cashier_diff'], 2)."€";
@@ -404,7 +392,9 @@ class webCashier extends CI_Controller {
 			if(isset($res_ic[3])) $txt .= "<br />$operand3". number_format($res_ic[3]['cashier_diff'], 2)."€";
 			if(isset($res_ic[4])) $txt .= "<br />$operand4". number_format($res_ic[4]['cashier_diff'], 2)."€";
 			$txt .= "</td>";
+			
 			$txt .= "<td>";
+			if(!isset($res_ic[0]['comment_cashier'])) $res_ic[0]['comment_cashier'] = '';
 			if(isset($res_ic[0])) $txt .= $res_ic[0]['comment_cashier'];
 			if(isset($res_ic[1])) $txt .= "<br />".$res_ic[1]['comment_cashier'];
 			if(isset($res_ic[2])) $txt .= "<br />".$res_ic[2]['comment_cashier'];
@@ -459,12 +449,12 @@ class webCashier extends CI_Controller {
 			
 		}
 		$txt .= "</table></font>";
-		//echo $txt;
+		echo $txt;
 
 		$email['subject'] 	= 'RMS CLOSE REPORT';
 		$email['msg'] 		= $txt;
 		$email['to']	= $this->hmw->getParam('emails_send_infos_close'); 	
-		$this->mmail->sendEmail($email);
+		//$this->mmail->sendEmail($email);
 	
 	}
 		
@@ -876,7 +866,8 @@ class webCashier extends CI_Controller {
 
 		$payid = $pmid;
 		$pay = array();
-
+		$total_to = 0;
+		
 		if($this->input->post('mov')) { 
 			foreach ($this->input->post() as $key => $val) {	
 				$ex = @explode('_',$key);
@@ -898,6 +889,7 @@ class webCashier extends CI_Controller {
 				if($this->input->post('mov') == 'safe_out') $val2man = -1 * abs($val2man);
 				$queryStringPp = "INSERT INTO `pos_payments` (id_payment, id_movement, amount_pos, amount_user) VALUES ('" . $idp . "', '" . $pmid . "', '" . $this->cashier->clean_number($val2['pos']) . "', '" . $val2man . "');";  
 				$this->db->query($queryStringPp);
+				$total_to += $this->cashier->clean_number($val2['pos']); 
 			}
 		}
 		
@@ -974,6 +966,7 @@ class webCashier extends CI_Controller {
 				$this->db->set('bu_id', $id_bu);
 				$this->db->set('id_pos_movements', $pmid);
 				$this->db->set('id_user_cashier', $userid);
+				$this->db->set('to', $total_to);
 				$this->db->set('status', 'error');
 				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 					
@@ -988,6 +981,7 @@ class webCashier extends CI_Controller {
 				$this->db->set('bu_id', $id_bu);
 				$this->db->set('id_pos_movements', $pmid);
 				$this->db->set('id_user_cashier', $userid);
+				$this->db->set('to', $total_to);
 				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				
 				$this->db->trans_commit();
