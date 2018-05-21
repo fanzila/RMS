@@ -22,6 +22,7 @@
 		<script type="text/javascript" src="/public/jquery-1.11.3.min.js"></script>
 	</head>
 	<body>
+		<font face="arial">
 		<? 
 	$bgcolor = '#FFF';
 	$ca_amount = "0";
@@ -36,7 +37,7 @@
 			$ca_last = $caline['last'];
 		}
 		
-		$conca_ca[] = $buname[$caline['id_bu']].": ". number_format($caline['amount']/1000, 0, ',', ' ')."€ <small>- ".$caline['last']."</small><br />";
+		$conca_ca[] = "<tr><td>".$buname[$caline['id_bu']]."</td><td>". number_format($caline['amount']/1000, 0, ',', ' ')."€</td><td> ".$caline['last']."</td></tr>";
 		$total_ca += $caline['amount'];
 	}	
 ?>
@@ -56,13 +57,19 @@
 		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" />
 	<? } } ?>
 	
-<p><b>TO by BUs</b><br />
+<p><h4>TO BY BUS</h4></p>
+<table border='1' cellspacing='0' cellpadding='10'><tr bgcolor='#ffc300'>
+<td>BU</td>
+<td>TO</td>
+<td>Last ticket</td>
+</tr>
 <? 
 foreach ($conca_ca as $line) { 
 	echo $line; 
 	}
 ?> 
-<b>Total: <?=number_format($total_ca/1000, 0, ',', ' ')?>€</b></p>
+<tr><td colspan="3">TOTAL: <?=number_format($total_ca/1000, 0, ',', ' ')?>€</td></tr>
+</table>
 <?
 	$avatars_url = 'https://s3.amazonaws.com/uf.shiftplanning.com/';
 	$p = $planning['data'];
@@ -103,5 +110,6 @@ foreach ($conca_ca as $line) {
 		}
 	} 
 ?>
+</font>
 </body>
 </html>
