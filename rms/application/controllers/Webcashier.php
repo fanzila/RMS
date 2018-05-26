@@ -965,6 +965,7 @@ class webCashier extends CI_Controller {
 				$this->db->set('cashier_diff', $diff);
 				$this->db->set('bu_id', $id_bu);
 				$this->db->set('id_pos_movements', $pmid);
+				$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
 				$this->db->set('id_user_cashier', $userid);
 				$this->db->set('to', $total_to);
 				$this->db->set('status', 'error');
@@ -980,6 +981,7 @@ class webCashier extends CI_Controller {
 				$this->db->set('cashier_diff', $diff);
 				$this->db->set('bu_id', $id_bu);
 				$this->db->set('id_pos_movements', $pmid);
+				$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
 				$this->db->set('id_user_cashier', $userid);
 				$this->db->set('to', $total_to);
 				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
