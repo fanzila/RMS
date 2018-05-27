@@ -304,11 +304,13 @@ class webCashier extends CI_Controller {
 	public function cliReport() 
 	{
 
-		//if(!is_cli()) exit();
+		if(!is_cli()) exit();
 		
 		$this->db->select('id, name');
 		$query = $this->db->get('bus');
-		$txt = "<font face='arial'><p><b>RMS CLOSE REPORT ". date('d/m/Y'). "</b></p><table border='1' cellspacing='0' cellpadding='5'><tr bgcolor='#ffc300'>
+		$txt = "<html><body><font face='arial'><table rules='all' style='border-color: #667;' border='1' cellspacing='0' cellpadding='5'>
+		<tr><td colspan='10'><b>RMS CLOSE REPORT ". date('d/m/Y'). "</b></td></tr>
+		<tr bgcolor='#ffc300'>
 		<td>BU</td>
 		<td>TO</td>
 		<td>Cashier user</td>
@@ -331,14 +333,17 @@ class webCashier extends CI_Controller {
 			$this->db->where('bu_id', $row->id);
 			$query_ic = $this->db->get("infos_close");
 			$res_ic = $query_ic->result_array();
+			$total_ca = 0;
 		
 			if(!isset($res_ic[0]['to'])) $res_ic[0]['to'] = 0;
 			$txt .= "<td>".number_format($res_ic[0]['to'], 2)."€";
-			if(isset($res_ic[1]['to'])) $txt .= "<br />".number_format($res_ic[1]['to'], 2)."€";
-			if(isset($res_ic[2]['to'])) $txt .= "<br />".number_format($res_ic[2]['to'], 2)."€";
-			if(isset($res_ic[3]['to'])) $txt .= "<br />".number_format($res_ic[3]['to'], 2)."€";
-			if(isset($res_ic[4]['to'])) $txt .= "<br />".number_format($res_ic[4]['to'], 2)."€";		
+			if(isset($res_ic[1]['to'])) { $txt .= "<br />".number_format($res_ic[1]['to'], 2)."€"; $total_ca += $res_ic[1]['to']; }
+			if(isset($res_ic[2]['to'])) { $txt .= "<br />".number_format($res_ic[2]['to'], 2)."€"; $total_ca += $res_ic[2]['to']; }
+			if(isset($res_ic[3]['to'])) { $txt .= "<br />".number_format($res_ic[3]['to'], 2)."€"; $total_ca += $res_ic[3]['to']; }
+			if(isset($res_ic[4]['to'])) { $txt .= "<br />".number_format($res_ic[4]['to'], 2)."€"; $total_ca += $res_ic[4]['to'];	}	 
 			$txt .= "</td>";
+			
+			$total_ca = 
 			
 			$info_user_cashier = '-';
 			if(isset($res_ic[0]['id_user_cashier'])) $info_user_cashier = $this->hmw->getUser($res_ic[0]['id_user_cashier'])->username;
@@ -448,13 +453,13 @@ class webCashier extends CI_Controller {
 			$txt .= "</tr>";	
 			
 		}
-		$txt .= "</table></font>";
-		echo $txt;
+		$txt .= "</table></font></body></html>";
+		//echo $txt;
 
 		$email['subject'] 	= 'RMS CLOSE REPORT';
 		$email['msg'] 		= $txt;
 		$email['to']	= $this->hmw->getParam('emails_send_infos_close'); 	
-		//$this->mmail->sendEmail($email);
+		$this->mmail->sendEmail($email);
 	
 	}
 		
