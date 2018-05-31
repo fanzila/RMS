@@ -1,24 +1,29 @@
 		<a href="/discount/creation/1/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 		</div>
-
-		<div role="main" class="ui-content wow fadeIn" data-inset="false">
-
 			<div data-role="content">
 				<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
-					
-					<div class="row">
-						<a href="/discount/log/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Log</a>
-					</div>
-					<br/>
 					<?if($msg) { ?>
 						<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
 							<?=$msg?> Thanks! Have A Nice Karma!"
 						</div>
 					<?}?>
-					<? if(empty($discount)) { ?>
-						<br />Great! No discount today!<br /><br /> 	
-					<? } else { ?>
-						<div data-role="collapsible-set" data-inset="false" data-filter="true" data-filter-placeholder="Filter discounts">
+						<?$attributes = array('id' => "search", 'name' => "search", 'data-ajax' => "false", 'method'=> 'get');
+						echo form_open("discount/", $attributes);?>
+						<ul data-role="listview" data-inset="true" data-filter="false">
+							<li>
+								<input type ="text" id="search" name="q" data-inset="true" value="<?if(isset($q)) { ?><?=$q?><? } ?>">
+								<?$attributes = array('id' => "sub", 'name' => "submit");
+								echo form_submit($attributes, 'Search');?>
+							</li>
+						</ul>
+						</form>
+					<h4>
+					<?if(!empty($q)) { ?>Showing results for <?=$q?><? } ?>
+					<?if(empty($q)) { ?>Showing last 30 discounts<? } ?>
+					</h4>
+					<? if(isset($q) AND empty($discount)) { ?>No result, please check your spelling.<? } ?>
+
+						<div data-role="collapsible-set" data-inset="false" data-filter="false" data-filter-placeholder="Filter discounts">
 							<?foreach ($discount as $line) {
 								if($line->tused == false){
 									$bkg_color	= '';
@@ -94,7 +99,8 @@
 																}
 															}
 														}).done(function(data) {
-															location.reload(true);
+															//location.reload(true);
+															location = "/discount/?save=1";
 														}).fail(function(data) {
 															alert('WARNING! ERROR at saving!');
 														});
@@ -108,8 +114,11 @@
 								<?}
 							}?>
 						</div><!-- /collapsible-set -->
-					<?}?>
 				</div><!-- /theme -->
+				
+				<div class="row">
+					<a href="/discount/log/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Log</a>
+				</div>
+				
 			</div><!-- /content -->
-		</div>
 	</div><!-- /page -->
