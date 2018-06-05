@@ -94,7 +94,7 @@
 								<? 
 								$total += $m2['amount_pos'];
 								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
-								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4 OR $m2['id'] == 11) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
+								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4 OR $m2['id'] == 5 OR $m2['id'] == 11) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
 								<? if($m2['id'] == 1) $cash_amount = number_format($m2['amount_user'],2); ?>
 								<tr style="border: 1px solid #dedcd7;">
