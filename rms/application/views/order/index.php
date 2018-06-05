@@ -11,12 +11,6 @@
 				<a href="/order/loss/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">LOSS</a>
 			</div>
 		</div>
-		<?php if($this->ion_auth_acl->has_permission('view_stock_log')) { ?>
-			<div class="col-xs">
-				<div class="box">
-					<a href="/crud/StockLog/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Stock log</a>
-				</div>
-			</div>
 			<?php if($this->ion_auth_acl->has_permission('product_admin')) { ?>
 			<div class="col-xs">
 				<div class="box">
@@ -56,8 +50,7 @@
 				<li><a data-ajax="false" href="/order/viewProducts/0/<?=$varsup['id']?>"><?=strtoupper($varsup['name'])?> 
 					<? if(isset($varsup['last_order'])) { ?><small>  <i>Last order: <?=$varsup['last_order']?> by <?=$varsup['last_order_user']->username?></i></small><? } ?></a></li>
 					<? } ?>
-			</ul>
-				<? } ?>					
+			</ul>				
 					</div><!-- /content -->
 					<div id="view"></div>
 				</div><!-- /page -->
