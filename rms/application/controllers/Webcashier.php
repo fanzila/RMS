@@ -964,23 +964,27 @@ class webCashier extends CI_Controller {
 						$email['to']	= $row->email;	
 						$this->mmail->sendEmail($email);
 					}
+					
 				}
-				
-				//insert into infos_close
-				$this->db->set('cashier_diff', $diff);
-				$this->db->set('bu_id', $id_bu);
-				$this->db->set('id_pos_movements', $pmid);
-				$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
-				$this->db->set('id_user_cashier', $userid);
-				$this->db->set('to', $total_to);
-				$this->db->set('status', 'error');
-				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 					
 				$this->db->trans_commit();
 				$this->db->set('status', 'error');
 				$this->db->where('id', $pmid);
 				$this->db->update('pos_movements');
+				
+				//insert into infos_close
+				$this->db->set('cashier_diff', $diff);
+				$this->db->set('bu_id', $id_bu);
+				$this->db->set('id_pos_movements', $pmid);
+				$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
+				$this->db->set('id_user_cashier', $userid);
+				$this->db->set('to', $total_to);
+				$this->db->set('status', 'error');
+				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+				
 			} else {
+								
+				$this->db->trans_commit();
 				
 				//insert into infos_close
 				$this->db->set('cashier_diff', $diff);
@@ -991,7 +995,6 @@ class webCashier extends CI_Controller {
 				$this->db->set('to', $total_to);
 				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				
-				$this->db->trans_commit();
 			}
 			$this->closing($this->input->post('archive'), $pmid);
 		} else {
