@@ -1094,7 +1094,7 @@ class Auth extends CI_Controller {
 			$this->db->select('users.email');
 			$this->db->join('users_groups', 'users.id = users_groups.user_id');
 			$this->db->join('users_bus', 'users.id = users_bus.user_id');
-			$this->db->where_in('users_groups.group_id', array(3,4));
+			$this->db->where_in('users_groups.group_id', array(3,4,6,1));
 			$this->db->where('users.active', 1);
 			$this->db->where('users_bus.bu_id', $id_bu);
 			$managers = $this->db->get('users')->result_array();
