@@ -10,7 +10,7 @@
   </div>
 
   <div id="update-forms" data-role="collapsible-set">
-    <? foreach ($suppliers as $supplier) {
+    <?php foreach ($suppliers as $supplier) {
       $bgcolor = $supplier->active ? '#eceeff' : '#bbbdbd';
     ?>
       <div data-role="collapsible" style="background-color: <?= $bgcolor ?>">
