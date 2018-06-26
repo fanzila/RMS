@@ -32,7 +32,7 @@ $supplier_id = property_exists($supplier, 'id') ? $supplier->id : 'create';
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
       <div class="box">
         <label for="category-<?= $supplier_id ?>">Category:</label>
-        <select id="category-<?= $supplier_id ?>" name="category">
+        <select id="category-<?= $supplier_id ?>" name="id_category">
           <?php foreach ($categories as $category) { ?>
             <option value="<?= $category->id ?>"
               <?php if (!$category->active) echo 'disabled'; ?>
@@ -238,5 +238,8 @@ $supplier_id = property_exists($supplier, 'id') ? $supplier->id : 'create';
     </div>
   </div>
 
-  <input type="hidden" name="id" value="<?= $supplier_id ?>">
+  <?php
+    if (property_exists($supplier, 'id') && !empty($supplier->id))
+      echo '<input type="hidden" name="id" value="' . $supplier_id . '">';
+  ?>
 </form>

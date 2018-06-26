@@ -14,7 +14,7 @@ class Supplier extends CI_Controller
     $this->load->library('spplr');
   }
 
-  public function admin()
+  public function index()
   {
     $this->hmw->keyLogin();
     $this->hmw->changeBu();
@@ -41,26 +41,18 @@ class Supplier extends CI_Controller
 
   public function save()
   {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
 		$id_bu = $this->session->userdata('bu_id');
 
 		$data = $this->input->post();
 
     if (array_key_exists('id', $data) && !empty($data['id']))
-      $result = $this->spplr->save($data, $data['id']);
+      $result = $this->spplr->save($data, $id_bu, $data['id']);
     else
-      $result = $this->spplr->save($data);
+      $result = $this->spplr->save($data, $id_bu);
 
-    if (!$result['success'])
-    {
-      return print(json_encode([
-        'success' => false,
-        'message' => $result['message']
-      ]));
-    }
-
-    return print(json_encode([
-      'success' => true
-    ]));
+    return print(json_encode($result));
   }
 
   private function createEmptySupplier($withForeign = false) {

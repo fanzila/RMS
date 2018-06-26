@@ -32,7 +32,8 @@ class Spplr
     'comment_delivery_info',
     'simple_order_form',
     'no_chased_email',
-    'active'
+    'active',
+    'id_category'
   ];
 
   public function getUpdatableFields() {
@@ -91,7 +92,7 @@ class Spplr
     return $CI->db->get()->result();
   }
 
-  public function save($data, $id = null)
+  public function save($data, $id_bu, $id = null)
   {
     $CI = &get_instance();
 
@@ -107,12 +108,55 @@ class Spplr
     }
     else
     {
-      $success = $CI->db->insert('suppliers', $this->convertData($data));
+      $insert = $this->convertData($data);
+      $insert['id_bu'] = $id_bu;
+      $success = $CI->db->insert('suppliers', $insert);
+      $id = $CI->db->insert_id();
     }
 
-    return !$success
-      ? [ 'success' => false, 'message' => $this->db->_error_message() ]
-      : [ 'success' => true ];
+    if (!$success)
+      return [ 'success' => false, 'message' => $CI->db->_error_message() ];
+
+    $CI->db->select(implode(', ', [
+      's.id',
+      's.name',
+      's.main_product',
+      's.location',
+      's.delivery_days',
+      's.carriage_paid',
+      's.payment_type',
+      's.payment_delay',
+      's.contact_sale_name',
+      's.contact_sale_tel',
+      's.contact_sale_email',
+      's.contact_order_name',
+      's.contact_order_tel',
+      's.contact_order_email',
+      's.order_method',
+      's.website',
+      's.comment_internal',
+      's.comment_order',
+      's.comment_delivery',
+      's.comment_delivery_info',
+      's.simple_order_form',
+      's.no_chased_email',
+      's.active',
+      'c.name AS category_name',
+      'c.active AS category_active'
+    ]));
+    $CI->db->from('suppliers AS s');
+    $CI->db->join('suppliers_category AS c', 's.id_category = c.id AND c.active = 1');
+    $CI->db->where('s.id_bu', $id_bu);
+    $CI->db->where('s.deleted', 0);
+    $CI->db->where('s.id', $id);
+    $CI->db->order_by('s.active DESC, s.name ASC');
+
+    $entities = $CI->db->get()->result();
+
+    return [
+      'success' => true,
+      'entity' => count($entities > 0) ? $entities[0] : null
+    ];
   }
 
   private function convertData($raw)
