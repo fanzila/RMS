@@ -108,183 +108,170 @@ class Crud extends CI_Controller {
         $crud->set_table('log');
         $output = $crud->render();
 
-		$this->_example_output($output); 
+		$this->_example_output($output);
     }
 
     public function rmdTasks()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
 		$crud->columns('id','task', 'comment', 'active', 'priority', 'id_bu', 'type');
 		$crud->required_fields('task', 'prority', 'active', 'type');
         $crud->set_table('rmd_tasks');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function rmdMeta()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
 		$crud->columns('id_task', 'start','repeat_interval','repeat_year','repeat_month','repeat_day','repeat_week','repeat_weekday');
 		$crud->set_relation('id_task','rmd_tasks','task');
 		$crud->required_fields('id_task','start');
         $crud->set_table('rmd_meta');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function rmdNotif()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
 		$crud->columns('id_task', 'start','end','interval');
 		$crud->set_relation('id_task','rmd_tasks','task');
 		$crud->required_fields('id_task','start','end','interval');
         $crud->set_table('rmd_notif');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function productsUnit()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
         $crud->set_table('products_unit');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function productsStock()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
         $crud->set_table('products_stock');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function productsCategory()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
         $crud->set_table('products_category');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function products()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
 		$crud->set_relation('id_supplier','suppliers','name');
 		$crud->set_relation('id_unit','products_unit','name');
 		$crud->set_relation('id_category','products_category','name');
         $crud->set_table('products');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function productsAttribut()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
 		$crud->set_relation('id_product','products','name');
         $crud->set_table('products_attribut');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function suppliersCategory()
-    {	
-		$crud = new grocery_CRUD();
-		$crud->set_theme('bootstrap');
-		
-        $crud->set_table('suppliers_category');
-        $output = $crud->render();
- 
-		$this->_example_output($output); 
-    }
-
-    public function suppliers()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
-		$crud->set_relation('id_category','suppliers_category','name');
-		$crud->set_relation('id_bu','bus','name');
-        $crud->set_table('suppliers');
+
+        $crud->set_table('suppliers_category');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
-    
+
     public function discount()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
         $crud->columns('id', 'client', 'nature', 'reason', 'date','id_user', 'id_bu');
         $crud->required_fields('id', 'client', 'nature', 'reason', 'date', 'id_user');
         $crud->set_table('discount');
         $output = $crud->render();
- 
-        $this->_example_output($output); 
+
+        $this->_example_output($output);
     }
 
     public function report()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
         $crud->columns('id', 'name', 'text');
         $crud->required_fields('id', 'name', 'text', 'bu_id');
         $crud->set_table('report_subjects');
         $output = $crud->render();
- 
-        $this->_example_output($output); 
+
+        $this->_example_output($output);
     }
 
     public function skills()
     {
 		$id_bu = $this->session->userdata('bu_id');
-		
+
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
         $crud->columns('id', 'name', 'order', 'deleted', 'id_bu');
         $crud->set_relation('id_bu', 'bus', 'name');
         $crud->required_fields('id', 'name', 'id_bu');
 		$crud->where('id_bu',$id_bu);
         $crud->set_table('skills');
         $output = $crud->render();
- 
-        $this->_example_output($output); 
+
+        $this->_example_output($output);
     }
 
     public function skills_item()
     {
 		$id_bu = $this->session->userdata('bu_id');
-	
+
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
         $crud->columns('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat', 'order', 'deleted');
         $crud->required_fields('id', 'id_skills', 'name', 'id_cat', 'id_sub_cat');
 
