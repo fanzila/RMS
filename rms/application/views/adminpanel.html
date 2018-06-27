@@ -72,17 +72,18 @@
 								<?if($this->ion_auth_acl->has_permission('admin_panel_rmd_task_management')){?>
 									<li><a rel="external" data-ajax="false" href="/reminder/admin"><i class="fa fa-tasks"></i> Reminder tasks management</a></li>
 								<?}?>
+								<?if($this->ion_auth_acl->has_permission('admin_panel_suppliers')){?>
+									<li><a rel="external" data-ajax="false" href="/supplier/"><i class="fa fa-tasks" aria-hidden="true"></i> Suppliers</a></li>
+								<?}?>
 								<?if($this->ion_auth_acl->has_permission('admin_panel_wifi_customers_management')){?>						
 									<li><a rel="external" data-ajax="false" href="/customers/" onclick="window.open(this.href);return false;"><i class="fa fa-database" aria-hidden="true"></i> Wifi Customers</a></li>
 								<?}?>
+								<hr />
 								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_checklist_task')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/cklChecklistTasks/"><i class="fa fa-hdd-o"></i> Checklists tasks management</a></li>
 								<?}?>
 								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_discount')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/discount/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Discounts</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_suppliers')){?>
-									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/supplier/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers</a></li>
 								<?}?>
 								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_suppliers_category')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
