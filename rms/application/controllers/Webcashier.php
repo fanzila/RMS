@@ -93,48 +93,48 @@ class webCashier extends CI_Controller {
 
 			//select burger by users
 			$q_burger = "
-			SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
+			SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri
 			WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_burger_category."')
 			AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)
 				";
-		
+
 			$r_burger = $this->db->query($q_burger) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_burger = $r_burger->result_array();
 			$stats[$value->id_pos]['burger'] = $o_burger[0]['count'];
-			
+
 			//select dessert by users
-			$q_dessert = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
+			$q_dessert = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri
 				WHERE sri.product IN (SELECT sp.id_pos FROM sales_product AS sp JOIN sales_productcategory AS spc ON spc.id = sp.category WHERE spc.id = '".$pos_dessert_category."')
 				AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
 			$r_dessert = $this->db->query($q_dessert) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_dessert = $r_dessert->result_array();
-			$stats[$value->id_pos]['dessert'] = $o_dessert[0]['count'];	
-			
+			$stats[$value->id_pos]['dessert'] = $o_dessert[0]['count'];
+
 			//select potatoes by users
-			$q_potatoes = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri 
+			$q_potatoes = "SELECT ROUND(SUM(sri.quantity)/1000) AS count FROM sales_receiptitem AS sri
 						WHERE sri.product = '".$pos_potatoes."'
 						AND sri.receipt IN (SELECT id FROM sales_receipt WHERE owner = '".$value->id_pos."' AND canceled = 0 AND id_bu = $id_bu AND date_closed $rdate)";
 			$r_potatoes = $this->db->query($q_potatoes) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_potatoes = $r_potatoes->result_array();
 			$stats[$value->id_pos]['potatoes'] = $o_potatoes[0]['count'];
-			
+
 			//select potatoes cheese by users
 			$q_cheese = "
-						SELECT SUM(sria.quantity) AS count 
-						FROM sales_receiptitemaddon AS sria 
+						SELECT SUM(sria.quantity) AS count
+						FROM sales_receiptitemaddon AS sria
 						WHERE sria.productaddon = '".$pos_cheese."'
-						AND sria.receiptitem IN (SELECT sri.id FROM sales_receiptitem AS sri 
-							JOIN sales_receipt AS sr ON sri.receipt = sr.id 
-							WHERE sr.owner = '".$value->id_pos."' 
-								AND sr.canceled = 0 
-								AND sr.id_bu = $id_bu 
+						AND sria.receiptitem IN (SELECT sri.id FROM sales_receiptitem AS sri
+							JOIN sales_receipt AS sr ON sri.receipt = sr.id
+							WHERE sr.owner = '".$value->id_pos."'
+								AND sr.canceled = 0
+								AND sr.id_bu = $id_bu
 								AND sr.date_closed $rdate)
 				";
 
 			$r_cheese = $this->db->query($q_cheese) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			$o_cheese = $r_cheese->result_array();
-			$stats[$value->id_pos]['cheese'] = $o_cheese[0]['count'];		
-		}			
+			$stats[$value->id_pos]['cheese'] = $o_cheese[0]['count'];
+		}
 
 		$data['stats_sorted'] 	= $this->array_sort($stats, 'total', SORT_DESC);
 		$data['sum_cheese']		= array_sum(array_column($stats, 'cheese'));
@@ -199,77 +199,68 @@ class webCashier extends CI_Controller {
 		$this->db->where('id', $id_bu);
 		$bu_name = $this->db->get('bus')->row_array()['name'];
 		$subject = "CASHIER $bu_name : New comment on report";
-		
+
 		$comment_data = array(
 			'content' => $data['comment-'.$data['id']],
 			'date' => $curr_date,
 			'username' => $user,
 			'mov_id' => $data['id']
 		);
-		
+
 		if(!empty($data['comment-'.$data['id']])) {
 			if(!$this->db->insert('pos_comment_report', $comment_data)) {
 				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-			}	
+			}
 		}
-		
+
 		if (isset($data['validate-'.$data['id']])) {
 			$this->db->set('status', 'validated');
 			$subject .= " (Director Validated)";
 		} else {
 			if ($data['diff-'.$data['id']] != '0') $this->db->set('status', 'error');
 		}
-		
+
 		if (!empty($data['corrected-'.$data['id']])) {
 			$data['corrected-'.$data['id']] = str_replace(',', '.', $data['corrected-'.$data['id']]);
-			if(!is_numeric($data['corrected-'.$data['id']])) { 
+			if(!is_numeric($data['corrected-'.$data['id']])) {
 				$reponse = "corrected DIFF must be a number";
 				$updatedb = false;
 			} else {
 				$this->db->set('corrected', $data['corrected-'.$data['id']]);
 			}
-		}		
-	
-		if($updatedb) { 
+		}
+
+		if($updatedb) {
 			$this->db->where('id', $data['id']);
 			if (!$this->db->update('pos_movements')) {
 				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
 		}
-		
+
 		$this->db->select('movement, date');
 		$this->db->where('id', $data['id']);
 		$mov = $this->db->get('pos_movements')->row_array();
-		$this->db->select('users.username, users.email, users.id');
-		$this->db->distinct('users.username');
-		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-		$this->db->join('users_groups', 'users.id = users_groups.user_id');
-		$this->db->where('users.active', 1);
-		$this->db->where_in('users_groups.group_id', array(1,4));
-		$this->db->where('users_bus.bu_id', $id_bu);
-		$query = $this->db->get("users");
 
 		$server_name = $this->hmw->getParam('server_name');
-							
-		$email['subject'] 	= $subject;
-		$email['msg'] 		= 'Comment on report for '.$bu_name.' from '.$user.' on ID: '.$data['id'].' | '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']]."<br /><a href='http://".$server_name."/webcashier/report/#".$data['id']."'>http://".$server_name."/webcashier/report/#".$data['id']."</a>";
-		
-		foreach ($query->result() as $row) {
-			$email['to']	= $row->email;	
-			$this->mmail->sendEmail($email);
-		}
+
+		$msg = 'Comment on report for '.$bu_name.' from '.$user.' on ID: '.$data['id'].' | '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']]."<br /><a href='http://".$server_name."/webcashier/report/#".$data['id']."'>http://".$server_name."/webcashier/report/#".$data['id']."</a>";
+
+    $this->mmail->prepare($subject, $msg)
+      ->toGroup([ 1, 4 ], $id_bu)
+      ->send();
+
 		echo json_encode(['reponse' => $reponse]);
 	}
-	
+
 	// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckClose 1
-	
-	public function cliCheckClose($id_bu) 
+
+	public function cliCheckClose($id_bu)
 	{
-		
+
 		if(!is_cli()) exit();
-			
+
 		$currentDate =  date('Y-m-d');
-		
+
 		$this->db->select('date');
 		$this->db->from('pos_movements');
 		$this->db->where('movement', 'close');
@@ -278,34 +269,26 @@ class webCashier extends CI_Controller {
 		$lastCloseDate = $result->row()->date;
 		$createDate = new DateTime($lastCloseDate);
 		$strip = $createDate->format('Y-m-d');
-		if ($strip < $currentDate) {
-			$this->db->select('users.username, users.email, users.id');
-			$this->db->distinct('users.username');
-			$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-			$this->db->join('users_groups', 'users.id = users_groups.user_id');
-			$this->db->where('users.active', 1);
-			$this->db->where_in('users_groups.group_id', array(1,4));
-			$this->db->where('users_bus.bu_id', $id_bu);
-			$query = $this->db->get("users");
-			
-			$this->db->select('name');
-			$this->db->where('id', $id_bu);
-			$bu_name = $this->db->get('bus')->row_array()['name'];
-			$email['subject'] 	= 'WARNING '.$bu_name.': No close for this evening';
-			$email['msg'] 		= 'Cashier '.$bu_name.' wasn\'t closed this evening';
-			foreach ($query->result() as $row) {
-				$email['to']	= $row->email;	
-				$this->mmail->sendEmail($email);
-			}
-		}
+    if ($strip < $currentDate) {
+
+      $this->db->select('name');
+      $this->db->where('id', $id_bu);
+      $bu_name = $this->db->get('bus')->row_array()['name'];
+
+      $subject = 'WARNING ' . $bu_name . ': No close for this evening';
+      $msg     = 'Cashier ' . $bu_name . ' wasn\'t closed this evening';
+      $this->mmail->prepare($subject, $msg)
+        ->toGroup([ 1, 4 ], $id_bu)
+        ->send();
+    }
 	}
 
 	// cd /var/www/hank/rms/rms && php index.php webcashier cliReport
-	public function cliReport() 
+	public function cliReport()
 	{
 
 		if(!is_cli()) exit();
-		
+
 		$this->db->select('id, name');
 		$query = $this->db->get('bus');
 		$txt = "<html><body><font face='arial'><table rules='all' style='border-color: #667;' border='1' cellspacing='0' cellpadding='5'>
@@ -449,79 +432,60 @@ class webCashier extends CI_Controller {
 			if(isset($res_cl[3])) $txt .=  "<br>".$res_cl[3]['date'];
 			if(isset($res_cl[4])) $txt .=  "<br>".$res_cl[4]['date'];
 			$txt .= "</td>";
-			
-			$txt .= "</tr>";	
-			
+
+			$txt .= "</tr>";
+
 		}
 		$txt .= "</table></font></body></html>";
 		//echo $txt;
 
-		$email['subject'] 	= 'RMS CLOSE REPORT';
-		$email['msg'] 		= $txt;
-		$email['to']	= $this->hmw->getParam('emails_send_infos_close'); 	
-		$this->mmail->sendEmail($email);
-	
+    $this->mmail->prepare('RMS CLOSE REPORT', $txt)
+      ->to($this->hmw->getParam('emails_send_infos_close'))
+      ->send();
+
 	}
-		
+
 	// cd /var/www/hank/rms/rms && php index.php webcashier cliAlertSafe 1
-	
+
 	public function cliAlertSafe($id_bu) {
-		
+
 		if(!is_cli()) exit();
-		
+
 		$currentAmount = $this->cashier->calc('safe_current_cash_amount', $id_bu);
-		
+
 		if ($currentAmount < 1) {
-			$this->db->select('users.username, users.email, users.id');
-			$this->db->distinct('users.username');
-			$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-			$this->db->join('users_groups', 'users.id = users_groups.user_id');
-			$this->db->join('groups', 'users_groups.group_id = groups.id');
-			$this->db->where('users.active', 1);
-			$this->db->where('groups.level', 3);
-			$this->db->where('users_bus.bu_id', $id_bu);
-			$query = $this->db->get("users");
-			
 			$this->db->select('name');
 			$this->db->where('id', $id_bu);
 			$bu_name = $this->db->get('bus')->row_array()['name'];
-			
-			$email['subject'] 	= 'WARNING '.$bu_name.': Safe cash under 1 €';
-			$email['msg'] 		= 'Safe '.$bu_name.' cash amount is '.$currentAmount.' €';
-			foreach ($query->result() as $row) {
-				
-				$email['to']	= $row->email;	
-				$this->mmail->sendEmail($email);
-			}
+
+      $subject = 'WARNING ' . $bu_name . ': Safe cash under 1 €';
+      $msg     = 'Safe ' . $bu_name . ' cash amount is ' . $currentAmount . ' €';
+
+      $this->mmail->prepare($subject, $msg)
+        ->toGroup(3, $id_bu)
+        ->send();
 		} else {
 			$this->db->select('cashier_alert_amount_safe');
 			$this->db->from('bus');
 			$this->db->where('id', $id_bu);
 			$cashierAlertAmountSafe = $this->db->get()->row_array()['cashier_alert_amount_safe'];
-			
+
 			if ($currentAmount > $cashierAlertAmountSafe) {
-				$this->db->select('users.username, users.email, users.id');
-				$this->db->distinct('users.username');
-				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-				$this->db->join('users_groups', 'users.id = users_groups.user_id');
-				$this->db->where('users.active', 1);
-				$this->db->where_in('users_groups.group_id', array(3));
-				$this->db->where('users_bus.bu_id', $id_bu);
-				$query = $this->db->get("users");
-				
 				$this->db->select('name');
 				$this->db->where('id', $id_bu);
 				$bu_name = $this->db->get('bus')->row_array()['name'];
-				$email['subject'] 	= 'WARNING '.$bu_name.': Safe cash is above '.$cashierAlertAmountSafe.' €';
-				$email['msg'] 		= 'Safe '.$bu_name.' cash amount is '.$currentAmount;
-				foreach ($query->result() as $row) {
-					$email['to']	= $row->email;	
-					$this->mmail->sendEmail($email);
-				}
+
+        $subject = 'WARNING ' . $bu_name . ': Safe cash is above '
+          . $cashierAlertAmountSafe . ' €';
+        $msg     = 'Safe ' . $bu_name . ' cash amount is ' . $currentAmount;
+
+        $this->mmail->prepare($subject, $msg)
+          ->toGroup(3, $id_bu)
+          ->send();
 			}
 		}
 	}
-	
+
 	public function safe()
 	{
 		if (!$this->ion_auth_acl->has_permission('view_safe')) {
@@ -950,28 +914,33 @@ class webCashier extends CI_Controller {
 					$this->db->where_in('users_groups.group_id', array(1,4));
 					$this->db->where('users_bus.bu_id', $id_bu);
 					$query = $this->db->get("users");
-						
+
 					$server_name = $this->hmw->getParam('server_name');
 					$this->db->select('name');
 					$this->db->where('id', $id_bu);
 					$bu_name = $this->db->get('bus')->row_array()['name'];
 					$operand = $this->addOperand($num);
-					
-					//send email
-					$email['subject'] 	= 'RMS CASHIER WARNING '.$bu_name.': Erreur de caisse';
-					$email['msg'] 		= "BU: ".$bu_name." | ID: ".$pmid."<br />Difference de $operand" . number_format($diff, 2) ."€ <br /><a href='http://".$server_name."/webcashier/report/#".$pmid."'>http://".$server_name."/webcashier/report/#".$pmid."</a>";
-					foreach ($query->result() as $row) {
-						$email['to']	= $row->email;	
-						$this->mmail->sendEmail($email);
-					}
-					
+
+          // send email
+
+          $subject = 'RMS CASHIER WARNING ' . $bu_name . ': Erreur de caisse';
+
+          $link = 'http://' . $server_name . '/webcashier/report/#' . $pmid;
+
+          $msg = 'BU: ' . $bu_name . ' | ID: ' . $pmid . '<br />Difference de '
+            . $operand . number_format($diff , 2) . '€ <br /><a href="'
+            . $link . '">' . $link . "</a>";
+
+          $this->mmail->prepare($subject, $msg)
+            ->toGroup([ 1, 4 ], $id_bu)
+            ->send();
 				}
-					
+
 				$this->db->trans_commit();
 				$this->db->set('status', 'error');
 				$this->db->where('id', $pmid);
 				$this->db->update('pos_movements');
-				
+
 				//insert into infos_close
 				$this->db->set('cashier_diff', $diff);
 				$this->db->set('bu_id', $id_bu);
@@ -1052,7 +1021,7 @@ class webCashier extends CI_Controller {
 		$this->db->set('closing_file', $file)->set('closing_id', $d['seqid'])->where('id', $pmid)->where('id_bu', $id_bu);
 		$this->db->update('pos_movements') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 	}
-	
+
 	private function addOperand($num) {
 		if($num > 0) return "+";
 		return "";

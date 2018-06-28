@@ -48,14 +48,15 @@ class Auth extends CI_Controller {
 						$sento .= $userinfo->username." by sms at ".$userinfo->phone ."<br/>";
 						$this->hmw->sendSms($userinfo->phone, $txtmessage);
 					}
-					if($line[0] == 'email') {
-						$userinfo = $this->hmw->getUser($line[1]);							
-						$email['to']	= $userinfo->email;
-						$email['subject'] = 'Open shift @Hank!';
-						$email['msg'] = $txtmessage;
-						$sento .= $userinfo->username." by email at ".$userinfo->email." <br/>";
-						$this->mmail->sendEmail($email);
-					}
+          if($line[0] == 'email') {
+            $userinfo = $this->hmw->getUser($line[1]);
+
+            $this->mmail->prepare('Open shift @Hank!', $txtMessage)
+              ->toEmail($userinfo->email)
+              ->send();
+
+            $sento .= $userinfo->username . ' by email at ' . $userinfo->email . ' <br/>';
+          }
 				}
 				$this->data['message']  = '<b>Message sent to:</b> <br />'.$sento;
 			}
@@ -564,13 +565,11 @@ class Auth extends CI_Controller {
 		{
 			$welcome_email = $this->input->post('welcome_email');
 
-			if(!empty($welcome_email)) {						
-				$email 				= array();
-				$email['to']		= strtolower($this->input->post('email'));
-				$email['subject']	= 'Welcome from Hank!';
-				$email['msg'] 		= $this->input->post('txtmessage');
-				$this->mmail->sendEmail($email);
-			}
+      if(!empty($welcome_email)) {
+        $this->mmail->prepare('Welcome from Hank!', $this->input->post('txtmessage'))
+          ->toEmail($this->input->post('email'))
+          ->send();
+      }
 
 			//check to see if we are creating the user
 			//redirect them back to the news page
@@ -1091,39 +1090,32 @@ class Auth extends CI_Controller {
 				// echo "No user need skills validation\n"; 						//uncomment to debug
 				return (false);
 			}
-			$this->db->select('users.email');
-			$this->db->join('users_groups', 'users.id = users_groups.user_id');
-			$this->db->join('users_bus', 'users.id = users_bus.user_id');
-			$this->db->where_in('users_groups.group_id', array(3,4,6,1));
-			$this->db->where('users.active', 1);
-			$this->db->where('users_bus.bu_id', $id_bu);
-			$managers = $this->db->get('users')->result_array();
-			$managers_email = array();
-			foreach ($managers as $manager) {
-				$managers_email[] = $manager['email'];
-			}
-			if (empty($managers_email)) {
-				die ('Could not find any manager for this bu');
-			}
-			$email['to'] = $managers_email;
-			$email['subject'] = '[' . $bu_info->name . '] Users that need skills reporting !';
-			$email['mailtype'] = 'html';
-			$msg = '<p>Hello Managers, here are the users that need skill review as of now :</p><p>* First Report : <br />';
-			foreach($employees_first_rmd as $employee) {
-				$msg .= '- '.$employee . '<br />';
-			}
-			$msg .= '</p><hr><p>* Second Report : <br />';
-			foreach($employees_second_rmd as $employee) {
-				$msg .= '- '.$employee . '<br />';
-			}
-			$msg .= '</p><hr><p>* Quarterly Report : <br />';
-			foreach($employees_rmd as $employee) {
-				$msg .= '- '.$employee . '<br />';
-			}
-			$msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
-			$email['msg'] = $msg;
 
-			$this->mmail->sendEmail($email);
+      $subject = '[' . $bu_info->name . '] Users that need skills reporting !';
+
+      $msg = '<p>Hello Managers, here are the users that need skill review as of now :</p><p>* First Report : <br />';
+      foreach ($employees_first_rmd as $employee)
+      {
+        $msg .= '- '.$employee . '<br />';
+      }
+
+      $msg .= '</p><hr><p>* Second Report : <br />';
+      foreach($employees_second_rmd as $employee)
+      {
+        $msg .= '- '.$employee . '<br />';
+      }
+
+      $msg .= '</p><hr><p>* Quarterly Report : <br />';
+      foreach($employees_rmd as $employee)
+      {
+        $msg .= '- '.$employee . '<br />';
+      }
+
+      $msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
+      $this->mmail->prepare($subject, $msg)
+        ->toGroup([ 3, 4, 6, 1 ], $id_bu)
+        ->send();
+
 			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
 			$this->db->where_in('username', $employees_to_update);
 			$this->db->update('users', array('last_shift_rmd' => $current_date_string));
