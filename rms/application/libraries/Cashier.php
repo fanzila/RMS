@@ -893,5 +893,13 @@ class Cashier {
 		$t3 = preg_replace("/[^0-9,.]/", "", $t2);
 		return $t3;
 	}
+
+  public function getCashFund($id_bu) {
+		$CI = & get_instance();
+		$file	= $this->getPosDbDir($id_bu);
+		$db = new SQLite3($file);
+
+		return $db->querySingle('SELECT SUM(CASH_FLOAT_IN) FROM CASHFLOAT;');
+  }
 }
 ?>

@@ -1052,11 +1052,40 @@ class webCashier extends CI_Controller {
 		$this->db->set('closing_file', $file)->set('closing_id', $d['seqid'])->where('id', $pmid)->where('id_bu', $id_bu);
 		$this->db->update('pos_movements') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 	}
-	
+
 	private function addOperand($num) {
 		if($num > 0) return "+";
 		return "";
 	}
 
+	// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckClose 1
+  public function cliCheckClose($id_bu)
+  {
+    if (!is_cli()) return 1;
+
+    $this->load->library('bu', [ 'id_bu' => intval($id_bu) ]);
+
+    $cashFund = $this->cashier->getCashFund($id_bu);
+
+    if ($cashFund > 0)
+      return 0;
+
+    $bu_name = $this->bu->getInfos()->name;
+    $users   = $this->bu->getUsersToEmail([ 1, 4 ]);
+    $email = [
+      'subject' => 'WARNING ' . $bu_name . ': no cash fund for opening',
+      'msg'     => 'Cashier ' . $bu_name . ' has no cash fund for today\'s opening'
+    ];
+
+    foreach ($users as $user)
+    {
+      var_dump($user);
+      $email['to'] = $user->email;
+      $this->mmail->sendEmail($email);
+
+      if (!empty($user['phone']))
+        $this->hmw->sendSms($user['phone'], $email['subject']);
+    }
+  }
 }
 ?>
