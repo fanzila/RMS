@@ -24,7 +24,7 @@
 			</div>
 				<div class="col-xs">
 					<div class="box">
-						<a href="/crud/suppliers/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Suppliers</a>
+						<a href="/supplier/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised" onclick="window.open(this.href);return false;">Suppliers</a>
 					</div>
 				</div>
 				<!--

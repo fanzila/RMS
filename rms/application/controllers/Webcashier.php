@@ -1027,5 +1027,38 @@ class webCashier extends CI_Controller {
 		return "";
 	}
 
+	// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckCashFund 1
+  public function cliCheckCashFund($id_bu)
+  {
+    if (!is_cli()) return 1;
+
+    $this->load->library('bu', [ 'id_bu' => intval($id_bu) ]);
+
+    $cashFund = $this->cashier->getCashFund($id_bu);
+
+    if ($cashFund > 0)
+      return 0;
+	
+	//do not use thoose functions, use libraries/hmw
+    $bu_name = $this->bu->getInfos()->name;
+    $users   = $this->bu->getUsersToEmail([ 1, 3, 4, 6 ]);
+	//////////////////////
+
+    $email = [
+      'subject' => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse!',
+      'msg'     => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse! Insérer le fond de caisse.'
+    ];
+
+    foreach ($users as $user)
+    {
+
+      $email['to'] = $user->email;
+      $this->mmail->sendEmail($email);
+
+    }
+	
+	//add notif
+	$this->hmw->sendNotif($email['msg'], $id_bu);
+  }
 }
 ?>
