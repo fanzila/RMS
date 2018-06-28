@@ -1058,8 +1058,8 @@ class webCashier extends CI_Controller {
 		return "";
 	}
 
-	// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckClose 1
-  public function cliCheckClose($id_bu)
+	// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckCashFund 1
+  public function cliCheckCashFund($id_bu)
   {
     if (!is_cli()) return 1;
 
@@ -1069,23 +1069,27 @@ class webCashier extends CI_Controller {
 
     if ($cashFund > 0)
       return 0;
-
+	
+	//do not use thoose functions, use libraries/hmw
     $bu_name = $this->bu->getInfos()->name;
-    $users   = $this->bu->getUsersToEmail([ 1, 4 ]);
+    $users   = $this->bu->getUsersToEmail([ 1, 3, 4, 6 ]);
+	//////////////////////
+
     $email = [
-      'subject' => 'WARNING ' . $bu_name . ': no cash fund for opening',
-      'msg'     => 'Cashier ' . $bu_name . ' has no cash fund for today\'s opening'
+      'subject' => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse!',
+      'msg'     => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse! Insérer le fond de caisse.'
     ];
 
     foreach ($users as $user)
     {
-      var_dump($user);
+
       $email['to'] = $user->email;
       $this->mmail->sendEmail($email);
 
-      if (!empty($user['phone']))
-        $this->hmw->sendSms($user['phone'], $email['subject']);
     }
+	
+	//add notif
+	$this->hmw->sendNotif($email['msg'], $id_bu);
   }
 }
 ?>
