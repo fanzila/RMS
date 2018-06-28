@@ -166,17 +166,17 @@ class Ion_auth
 
 					$this->load->library('mmail');
 					$key 	= md5(microtime().rand());
-					$email['from']		= $this->config->item('admin_email', 'ion_auth');
-					$email['from_name']	= $this->config->item('site_title', 'ion_auth');
-					$email['to']		= $user->email;
-					$email['replyto'] 	= "noreply@hankrestaurant.com";
-					$email['subject']	= $this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_forgotten_password_subject');
-					$email['mailtype']	= 'html';
-					$email['msg'] = $message;
-				
+					$subject	= $this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_forgotten_password_subject');
+
 					$this->mmail->sendEmail($email);
 					return TRUE;
 
+          $this->mmail->prepare($subject, $message)
+            ->from($this->config->item('admin_email', 'ion_auth'), $this->config->item('site_title', 'ion_auth'))
+            ->toEmail($user->email)
+            ->send();
+
+          return TRUE;
 
 					/*if ($this->email->send())
 					{
@@ -394,7 +394,7 @@ class Ion_auth
 	public function logout()
 	{
 		$this->ion_auth_model->trigger_events('logout');
-		
+
 		$remember_code = get_cookie($this->config->item('remember_cookie_name', 'ion_auth'));
 		if ($this->ion_auth_model->logout_db($remember_code) === FALSE) {
 			$this->set_message('logout_unsuccessful');

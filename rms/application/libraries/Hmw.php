@@ -106,73 +106,73 @@ class Hmw {
 	}
 
 	public function getBuInfo($id_bu) {
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->db->where('bus.id', $id_bu);
 		$query = $CI->db->get("bus");
 		$res = $query->result();
 		return $res[0];
 	}
-		
-	public function updateUserBu($id_bu, $id_user) 
+
+	public function updateUserBu($id_bu, $id_user)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		if($id_user){
 			$CI->db->set('current_bu_id', $id_bu)->where('id', $id_user);
 		 	$CI->db->update('users');
 		}
 	}
-	
-	public function getUsers() 
+
+	public function getUsers()
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		$res_params = $CI->db->get('users');
-		return $res_params->result();	
+		return $res_params->result();
 	}
 
 	public function getEmail($type, $id_bu)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
-		
+
 		if($type == 'order') {
 			$CI->db->select('email_order')->from('bus')->where('id', $id_bu);
 			$res_params = $CI->db->get();
 			$res = $res_params->result();
 			return $res[0]->email_order;
 		}
-		
+
 	}
-	
+
 	public function sendSms($num, $msg) {
-		
-		$CI = & get_instance(); 
+
+		$CI = & get_instance();
 		$CI->load->library('mmail');
-		
-		$sms_user	= $this->getParam('ovh_sms_user'); 
-		$sms_pass	= $this->getParam('ovh_sms_pass'); 
-		$sms_nic	= $this->getParam('ovh_sms_nic'); 
-		
-		$sms = array();
-		$sms['to']			= "email2sms@ovh.net";
-		$sms['subject'] 	= $sms_nic.":".$sms_user.":".$sms_pass.":HANK:".$num.":::1";
-		$sms['msg'] 		= $msg;
-		$CI->mmail->sendEmail($sms);
+
+		$sms_user	= $this->getParam('ovh_sms_user');
+		$sms_pass	= $this->getParam('ovh_sms_pass');
+		$sms_nic	= $this->getParam('ovh_sms_nic');
+
+		$subject = $sms_nic . ':' . $sms_user . ':' . $sms_pass . ':HANK:' . $num . ':::1';
+
+    $CI->mmail->prepare($subject, $msg)
+      ->toEmail('email2sms@ovh.net')
+      ->send();
 	}
-	
+
 	public function sendNotif($msg, $id_bu, $devParam = null) {
-		
+
 		$address	= $this->getParam('pushover_address');
 		$token		= $this->getParam('pushover_token');
 		$user		= $this->getParam('pushover_user');
 		$buinfo 	= $this->getBuInfo($id_bu);
 		$device 	= $buinfo->pushover_device;
-		
+
 		if ($devParam === 'kitchen') {
 			$device = $buinfo->pushover_device_kitchen;
 		}
-		
+
 		curl_setopt_array(
 			$ch = curl_init(), array(
 				CURLOPT_URL => $address,
@@ -237,18 +237,20 @@ class Hmw {
 				$CI->session->set_userdata('pageBeforeLogin', current_url());
 				redirect('auth/login');
 			}
-			
+
 		}
-		
+
 		$data['bu_name'] =  $CI->session->userdata('bu_name');
 		$data['username'] = $CI->session->userdata('identity');
-		if(empty($data['username'])) {
-						$email['subject'] 	= "RMS SESSION ERROR";
-						$email['msg'] 		= 'RMS SESSION ERROR';
-						$email['to']		= 'pierre@hankrestaurant.com';
-						$CI->mmail->sendEmail($email);	
-			exit('Erreur d\'un truc, simplement se relogger ou fermer et relancer l\'application RMS, ca va marcher!');
-		}
+
+    if(empty($data['username']))
+    {
+      $this->mmail->prepare('RMS SESSION ERROR', 'RMS SESSION ERROR')
+        ->toEmail('pierre@hankrestaurant.com')
+        ->send();
+
+      exit('Erreur d\'un truc, simplement se relogger ou fermer et relancer l\'application RMS, ca va marcher!');
+    }
 	}
 
 	public function changeBu() {
