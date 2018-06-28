@@ -349,11 +349,6 @@ Température = ".$temp."c\n
 						$this->db->where('users_bus.bu_id', $id_bu);
 						$query = $this->db->get("users");
 
-						foreach ($query->result() as $row) {
-							$email['to']	= $row->email;
-							$this->mmail->sendEmail($email);
-						}
-
             $subject = $buinfo->name . ' Sensor \'' . $is[0]->name . '\' error!';
             $this->mmail->prepare($subject, $msg)
               ->toGroup($groups, $id_bu)
