@@ -186,10 +186,11 @@
 					</table>
 				</div>
 
-				<?php if($level >= 3) { ?>
+			<?if($this->ion_auth_acl->has_permission('skills_admin')){?>
+				<?php if($level > 1) { ?>
 					<p><a href="/skills/general/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Manage Skills</a></p>
 				<?php } ?>
-
+			<?php } ?>
 			</div><!--/collapsible set-->
 		</div><!-- /content -->
 	</div><!-- /page -->
