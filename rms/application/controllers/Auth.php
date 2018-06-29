@@ -664,19 +664,21 @@ class Auth extends CI_Controller {
 		$this->data['title'] = "Edit User";
 		$this->load->library('hmw');
 		$id_bu =  $this->session->userdata('bu_id');
-		
+
 		$this->hmw->isLoggedIn();
-		
+
 		if (!$this->ion_auth_acl->has_permission('edit_user') && !$this->ion_auth->user()->row()->id == $id)
 		{
 			redirect('auth', 'refresh');
 		}
 
-		$user = $this->ion_auth->user($id)->row();
-		$groups=$this->ion_auth->groups()->result_array();
-		$bus=$this->ion_auth->bus()->result_array();
-		$currentGroups = $this->ion_auth->get_users_groups($id)->result();
-		$currentBus = $this->ion_auth->get_users_bus($id)->result();
+    $user              = $this->ion_auth->user($id)->row();
+    $groups            = $this->ion_auth->groups()->result_array();
+    $bus               = $this->ion_auth->bus()->result_array();
+    $mails_lists       = $this->ion_auth->mails_lists()->result_array();
+    $currentGroups     = $this->ion_auth->get_users_groups($id)->result();
+    $currentBus        = $this->ion_auth->get_users_bus($id)->result();
+    $currentMailsLists = $this->ion_auth->get_users_mails_lists($id)->result();
 
 		//validate form input
 		$this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'required|xss_clean');
@@ -732,7 +734,7 @@ class Auth extends CI_Controller {
 						$data_WP['password'] = $this->input->post('password');
 					}
 				}
-				
+
 
 				$this->ion_auth->update($user->id, $data);
 				if (isset($user->WordPress_UID)) {
@@ -745,8 +747,9 @@ class Auth extends CI_Controller {
 				if ($this->ion_auth_acl->has_permission('edit_user_group'))
 				{
 					//Update the groups user belongs to
-					$groupData = $this->input->post('groups');
-					$buData    = $this->input->post('bus');
+					$groupData      = $this->input->post('groups');
+					$buData         = $this->input->post('bus');
+					$mailsListsData = $this->input->post('mails_lists');
 					$first_shift = $this->input->post('sdate');
 					if (isset($user->WordPress_UID)) {
 						$user_WP_role = $this->wp_rms->userWPRole($id);
@@ -778,6 +781,10 @@ class Auth extends CI_Controller {
 						}
 
 					}
+
+          !empty($mailsListsData) OR $mailsListsData = [];
+          $this->ion_auth->set_mails_lists($mailsListsData, $id);
+
 					if (isset($first_shift) && !empty($first_shift)) {
 						$this->db->where('id', $id);
 						$this->db->update('users', array('first_shift' => $first_shift));
@@ -811,8 +818,10 @@ class Auth extends CI_Controller {
 		$this->data['user'] = $user;
 		$this->data['groups'] = $groups;
 		$this->data['bus'] = $bus;
+		$this->data['mails_lists'] = $mails_lists;
 		$this->data['currentGroups'] = $currentGroups;
 		$this->data['currentBus'] = $currentBus;
+		$this->data['currentMailsLists'] = $currentMailsLists;
 
 		$this->data['username2'] = $this->session->userdata('identity');
 		$this->data['bu_name'] =  $this->session->userdata('bu_name');

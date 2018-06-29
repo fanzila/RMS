@@ -99,6 +99,7 @@ $lang['edit_user_validation_company_label']          = 'Société';
 $lang['edit_user_validation_groups_label']           = 'Groupes';
 $lang['edit_user_validation_password_label']         = 'Mot de passe';
 $lang['edit_user_validation_password_confirm_label'] = 'Confirmation du Mot de passe';
+$lang['edit_user_mails_lists_heading']             	 = 'Listes de mails';
 
 // Create Group
 $lang['create_group_title']                  = 'Créer le Groupe';

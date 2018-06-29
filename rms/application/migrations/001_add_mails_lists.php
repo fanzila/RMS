@@ -9,28 +9,27 @@ class Migration_Add_mails_lists extends CI_Migration
     // create mails_lists table
     $this->dbforge->add_field('id');
     $this->dbforge->add_field('name VARCHAR(255) NOT NULL');
-    $this->dbforge->add_key('id');
     $this->dbforge->create_table('mails_lists');
 
-    // create mails_lists_users table which links users to mails lists
-    $mails_lists_users_schema = [
-      'id_mail_list' => [
+    // create users_mails_lists table which links users to mails lists
+    $users_mails_lists_schema = [
+      'mail_list_id' => [
         'type' => 'INT',
         'constraint' => 9
       ],
-      'id_user' => [
+      'user_id' => [
         'type' => 'INT',
         'constraint' => 9
       ]
     ];
-    $this->dbforge->add_field($mails_lists_users_schema);
-    $this->dbforge->add_key([ 'id_mail_list', 'id_user' ]);
-    $this->dbforge->create_table('mails_lists_users');
+    $this->dbforge->add_field($users_mails_lists_schema);
+    $this->dbforge->create_table('users_mails_lists');
+    $this->db->query('ALTER TABLE `users_mails_lists` ADD PRIMARY KEY (mail_list_id, user_id)');
   }
 
   public function down()
   {
-    $this->dbforge->drop_table('mails_lists_users');
+    $this->dbforge->drop_table('users_mails_lists');
     $this->dbforge->drop_table('mails_lists');
   }
 }

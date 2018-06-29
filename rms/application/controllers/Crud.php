@@ -441,6 +441,15 @@ class Crud extends CI_Controller {
 		$this->load->view('crud.php',$output);
 	}
 
+  public function mails_lists()
+  {
+    $crud = new grocery_CRUD();
+    $crud->set_theme('bootstrap');
 
+    $crud->columns('id', 'name');
+    $crud->set_table('mails_lists');
+    $output = $crud->render();
 
+    $this->_example_output($output);
+  }
 }

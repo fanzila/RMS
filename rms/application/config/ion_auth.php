@@ -27,22 +27,25 @@
 | -------------------------------------------------------------------------
 | Database table names.
 */
-$config['tables']['users']           = 'users';
-$config['tables']['groups']          = 'groups';
-$config['tables']['users_groups']    = 'users_groups';
-$config['tables']['bus']    		 = 'bus';
-$config['tables']['users_bus']    	 = 'users_bus';
-$config['tables']['login_attempts']  = 'login_attempts';
-$config['tables']['users_remember']  = 'users_remember'; 
+$config['tables']['users']             = 'users';
+$config['tables']['groups']            = 'groups';
+$config['tables']['users_groups']      = 'users_groups';
+$config['tables']['bus']               = 'bus';
+$config['tables']['users_bus']         = 'users_bus';
+$config['tables']['login_attempts']    = 'login_attempts';
+$config['tables']['users_remember']    = 'users_remember';
+$config['tables']['mails_lists']       = 'mails_lists';
+$config['tables']['users_mails_lists'] = 'users_mails_lists';
 /*
  | Users table column and Group table column you want to join WITH.
  |
  | Joins from users.id
  | Joins from groups.id
  */
-$config['join']['users']  = 'user_id';
-$config['join']['groups'] = 'group_id';
-$config['join']['bus'] 	  = 'bu_id';
+$config['join']['users']       = 'user_id';
+$config['join']['groups']      = 'group_id';
+$config['join']['bus']         = 'bu_id';
+$config['join']['mails_lists'] = 'mail_list_id';
 
 /*
  | -------------------------------------------------------------------------
