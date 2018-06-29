@@ -47,23 +47,24 @@ class Cameras extends CI_Controller {
 		$bu_postion_id	= array();
 		$buname 		= array();
 		$camera			= array();
-		$id_bu 			= $this->session->userdata('bu_id');	
+		$id_bu 			= $this->session->userdata('bu_id');
 		$buinfo 		= $this->hmw->getBuInfo($id_bu);
-		
+
 		$bal_ca = $this->db->get('turnover');
 		$ca = $bal_ca->result_array();
-					
+
 		$cameras = $this->getCamerasNamesFromDb($id_bu);
 
 		$p = array(
 				'type'		=>  'user_access_cam'
 			);
 		$this->hmw->LogRecord($p, $this->session->userdata('bu_id'));
-		
+
 		$user					= $this->ion_auth->user()->row();
 		$data['bus_list']		= $this->hmw->getBus(null, $user->id);
+		$data['all_bus']		= $this->hmw->getBus(null, null);
 		$data['bu_id']			= $id_bu;
-		
+
 		$planning 				= $this->planning();
 		$data['bu_postion_id']	= explode (',',$buinfo->humanity_positions);
 		$data['info_bu'] 		= $buinfo;
@@ -204,18 +205,18 @@ class Cameras extends CI_Controller {
 }
 
 Class Camera_proxy {
-  
+
   function stream_open($path, $mode, $options, &$opened_path)
   {
     // Has to be declared, it seems...
     return true;
   }
-  
+
   public function stream_write($data)
   {
     echo $data;
 
     return strlen($data);
   }
-  
+
 }
