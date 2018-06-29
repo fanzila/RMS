@@ -160,13 +160,37 @@ class RMS_Email
     return $this;
   }
 
-  // public function toList($list_name, $id_bu = null)
-  // {
-  //   $CI = &get_instance();
-  //   $CI->load->database();
+  public function toList($list_name, $id_bu = null)
+  {
+    $CI = &get_instance();
+    $CI->load->database();
 
-  //   return $this;
-  // }
+    $this->db->select('u.email');
+    $this->db->from('users AS u');
+    $this->db->distinct('u.email');
+    $this->db->join('users_mails_lists AS lu', 'u.id = lu.user_id');
+    $this->db->join('mails_lists AS l', 'l.id = lu.mail_list_id');
+
+    if (is_array($list_name))
+      $this->db->where_in('l.name', $list_name);
+    else
+      $this->db->where('l.name', $list_name);
+
+    if (!empty($id_bu))
+    {
+      $this->db->join('users_bus AS b', 'u.id = b.user_id', 'left');
+      $this->db->where('b.bu_id', $id_bu);
+    }
+
+    $this->db->where('u.active', 1);
+
+    $result = $this->db->get()->result();
+
+    foreach ($result as $user)
+      array_push($this->to, $user->email);
+
+    return $this;
+  }
 
   public function send()
   {
