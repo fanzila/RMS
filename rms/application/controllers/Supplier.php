@@ -30,7 +30,7 @@ class Supplier extends CI_Controller
       'username'       => $this->session->userdata('identity')
     ];
 
-    $headers = $this->hmw->headerVars(1, '/supplier/admin', 'Supplier admin');
+    $headers = $this->hmw->headerVars(0, '/order/', 'Supplier admin');
 
     $this->load->view('jq_header_pre', $headers['header_pre']);
     $this->load->view('supplier/jq_header_spe');
