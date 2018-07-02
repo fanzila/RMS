@@ -26,6 +26,7 @@ class Checklist extends CI_Controller {
 		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		$this->load->library('mmail');
+		$this->load->library('chkl');
 		$this->load->database();
 	}
 
@@ -284,12 +285,73 @@ class Checklist extends CI_Controller {
 				$this->hmw->sendNotif($msg, $id_bu);
 			}
 			return;
-		} else { 
+		} else {
 			echo "Access refused.";
-			return; 
+			return;
 		}
 
 
 	}
 
+  public function admin()
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+    $id_bu = $this->session->userdata('bu_id');
+
+    $data = [
+      'checklists' => $this->chkl->getAllChecklists($id_bu, true),
+      'empty_checklist' => $this->createEmptyChecklist(true),
+      'types' => [
+        'service',
+        'kitchen'
+      ]
+    ];
+
+    $headers = $this->hmw->headerVars(1, '/checklist/admin/', 'Checklist admin');
+
+    $this->load->view('jq_header_pre', $headers['header_pre']);
+    $this->load->view('checklist/jq_header_spe');
+    $this->load->view('jq_header_post', $headers['header_post']);
+    $this->load->view('checklist/checklist_admin', $data);
+    $this->load->view('jq_footer');
+  }
+
+  public function save()
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+		$id_bu = $this->session->userdata('bu_id');
+
+		$data = $this->input->post();
+
+    if (array_key_exists('id', $data) && !empty($data['id']))
+      $result = $this->chkl->save($data, $id_bu, $data['id']);
+    else
+      $result = $this->chkl->save($data, $id_bu);
+
+    return print(json_encode($result));
+  }
+
+  private function createEmptyChecklist($withTask = false)
+  {
+    $checklist =  new StdClass();
+    $updatable = $this->chkl->getUpdatableFields();
+
+    foreach ($updatable as $field)
+      $checklist->$field = null;
+
+    $checklist->active = 1;
+
+    if ($withTask)
+    {
+      $checklist->tasks = [ new StdClass() ];
+      $task_updatable = $this->chkl->getTasksUpdatableFields();
+
+      foreach ($task_updatable as $task_field)
+        $checklist->tasks[0]->$field = null;
+    }
+
+    return $checklist;
+  }
 }
