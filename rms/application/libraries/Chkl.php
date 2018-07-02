@@ -166,6 +166,24 @@ class Chkl
     ];
   }
 
+  public function setOrder($ids)
+  {
+    $CI = &get_instance();
+    $db = $CI->db;
+
+    $db->trans_start();
+
+    foreach ($ids as $order => $id)
+    {
+      $db->where('id', $id);
+      $db->update('checklists', [ 'order' => $order ]);
+    }
+
+    $db->trans_complete();
+
+    return $db->trans_status();
+  }
+
   private function prepareGet($with_tasks = false)
   {
     $CI = &get_instance();
@@ -199,7 +217,7 @@ class Chkl
 
     $db->select(implode(', ', $select));
     $db->from('checklists AS c');
-    $db->order_by('c.active DESC, c.order ASC, c.name ASC');
+    $db->order_by('c.order ASC, c.name ASC');
 
     if (!$with_tasks)
       return $db;

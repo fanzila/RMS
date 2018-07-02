@@ -333,6 +333,16 @@ class Checklist extends CI_Controller {
     return print(json_encode($result));
   }
 
+  public function order()
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+
+    $success = $this->chkl->setOrder($this->input->post()['ids']);
+
+    return print(json_encode([ 'success' => $success ]));
+  }
+
   private function createEmptyChecklist($withTask = false)
   {
     $checklist =  new StdClass();

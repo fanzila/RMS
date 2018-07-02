@@ -1,0 +1,7 @@
+.sort-icon {
+  float: right;
+}
+
+.saving-sort .sort-icon {
+  color: transparent;
+}

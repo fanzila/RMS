@@ -1,7 +1,5 @@
 <?php
-
 $checklist_id = property_exists($checklist, 'id') ? $checklist->id : 'create';
-
 ?>
 
 <form class="checklist-update" id="checklist-<?= $checklist_id ?>" name="checklist-<?= $checklist_id ?>" method="post" action="/checklist/save">

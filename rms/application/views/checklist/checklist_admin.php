@@ -1,5 +1,6 @@
   <a href="#create" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 </div>
+<script type="text/javascript" src="/public/Sortable.min.js"></script>
 
 <div data-role="content">
   <div id="creation-form" style="display: none;">
@@ -13,8 +14,11 @@
     <?php foreach ($checklists as $checklist) {
       $bgcolor = $checklist->active ? '#eceeff' : '#bbbdbd';
     ?>
-      <div data-role="collapsible" style="background-color: <?= $bgcolor ?>">
-        <h2>ID: <?= $checklist->id ?> | <? $checklist->order ?>&nbsp;<?= $checklist->name ?> | <small> <?= $checklist->type ?></small></h2>
+      <div data-id="<?= $checklist->id ?>" data-role="collapsible" style="background-color: <?= $bgcolor ?>">
+        <h2>
+          ID: <?= $checklist->id ?> | <?= $checklist->name ?> | <small> <?= $checklist->type ?></small>
+          <span class="sort-icon"><?= $checklist->order ?>&nbsp;<i class="fa fa-sort"></i></span>
+        </h2>
         <ul data-role="listview" data-theme="d" data-divider-theme="d">
           <li>
             <?php require('checklist_form.php'); ?>
@@ -75,6 +79,49 @@
           });
 
           form.on('submit', submitForm);
+        });
+
+        // sort checklists
+        function saveOrder()
+        {
+          update.addClass('saving-sort');
+          checklistsSort.option('disabled', true);
+
+          var orderedIds = [];
+
+          update.children().each(function(idx, elem) {
+            var toUpdate = elem.dataset
+              && elem.dataset.id !== undefined
+              && elem.dataset.id !== null;
+
+            if (toUpdate) {
+              orderedIds.push(elem.dataset.id);
+
+              var orderElem = elem.getElementsByClassName('sort-icon')[0];
+              setTimeout(function() {
+                orderElem.innerHTML = idx + '&nbsp;<i class="fa fa-sort"></i>';
+              }, 0);
+            }
+          });
+
+          $.ajax({
+            url: '/checklist/order',
+            type: 'POST',
+            data: { ids: orderedIds },
+            dataType: 'json'
+          }).done(function(data) {
+            checklistsSort.option('disabled', false);
+            update.removeClass('saving-sort');
+
+            if (!data.success)
+              return alert(data.message || 'An unknown error occured, not saved');
+          });
+        }
+        var checklistsSort = new Sortable(update.get(0), {
+          group: 'checklists',
+          sort: true,
+          handle: '.sort-icon',
+          onUpdate: saveOrder
         });
       });
     </script>
