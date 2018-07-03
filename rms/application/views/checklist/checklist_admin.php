@@ -17,7 +17,7 @@
       <div data-id="<?= $checklist->id ?>" data-role="collapsible" style="background-color: <?= $bgcolor ?>">
         <h2>
           ID: <?= $checklist->id ?> | <?= $checklist->name ?> | <small> <?= $checklist->type ?></small>
-          <span class="sort-icon"><?= $checklist->order ?>&nbsp;<i class="fa fa-sort"></i></span>
+          <span class="sort-icon checklists-sort"><?= $checklist->order ?>&nbsp;<i class="fa fa-sort"></i></span>
         </h2>
         <ul data-role="listview" data-theme="d" data-divider-theme="d">
           <li>
@@ -55,10 +55,36 @@
           var idField = elem.find('input[name="id"]');
           var isUpdate = idField && idField.val();
 
+          var tasks = {};
+          var data = elem.serializeArray().reduce(function(data, entry) {
+            var name = entry.name, value = entry.value;
+
+            if (name.indexOf('task-') === -1) {
+              data[name] = value;
+            } else {
+              var infos = name.split('-');
+              var id = parseInt(infos[infos.length - 1], 10);
+              var field = infos.slice(1, -1);
+
+              if (!tasks[id])
+                tasks[id] = {};
+
+              tasks[id][field] = value;
+            }
+
+            return data;
+          }, {
+            tasks: []
+          });
+
+          for (var i in tasks)
+            data.tasks.push(tasks[i]);
+
+          console.log(data);
           $.ajax({
             url: elem.attr('action'),
             type: elem.attr('method'),
-            data: elem.serialize(),
+            data: data,
             dataType: 'json'
           }).done(function(data) {
             if (!data.success)
@@ -97,7 +123,7 @@
             if (toUpdate) {
               orderedIds.push(elem.dataset.id);
 
-              var orderElem = elem.getElementsByClassName('sort-icon')[0];
+              var orderElem = elem.getElementsByClassName('checklists-sort')[0];
               setTimeout(function() {
                 orderElem.innerHTML = idx + '&nbsp;<i class="fa fa-sort"></i>';
               }, 0);
@@ -120,7 +146,7 @@
         var checklistsSort = new Sortable(update.get(0), {
           group: 'checklists',
           sort: true,
-          handle: '.sort-icon',
+          handle: '.checklists-sort',
           onUpdate: saveOrder
         });
       });

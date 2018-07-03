@@ -53,6 +53,12 @@ class Chkl
     if (!$with_tasks)
       return $result;
 
+    $tasks_number_fields = [
+      'active',
+      'order',
+      'priority'
+    ];
+
     $grouping = [];
 
     foreach ($result as $line)
@@ -72,19 +78,27 @@ class Chkl
         $grouping[$id]->tasks = [];
       }
 
-      $fields = array_keys((array)$line);
-      $task = [];
-
-      foreach ($fields as $field)
+      if (isset($line->task_id) && $line->task_id !== null)
       {
-        if (strpos($field, 'task_') === 0)
-        {
-          $count = 1; // only variables can be passed as references
-          $task[str_replace('task_', '', $field, $count)] = $line->$field;
-        }
-      }
+        $fields = array_keys((array)$line);
+        $task = [];
 
-      array_push($grouping[$id]->tasks, (object)$task);
+        foreach ($fields as $field)
+        {
+          if (strpos($field, 'task_') === 0)
+          {
+            $count = 1; // only variables can be passed as references
+            $real_field = str_replace('task_', '', $field, $count);
+            $value = in_array($real_field, $tasks_number_fields, TRUE)
+              ? intval($line->$field)
+              : $line->$field;
+
+            $task[$real_field] = $value;
+          }
+        }
+
+        array_push($grouping[$id]->tasks, (object)$task);
+      }
     }
 
     return array_values($grouping); // reset array keys
@@ -106,12 +120,18 @@ class Chkl
     $checklist = (object)[
       'id'     => $result->id,
       'name'   => $result->name,
-      'active' => $result->active,
-      'order'  => $result->order,
+      'active' => intval($result->active),
+      'order'  => intval($result->order),
       'type'   => $result->type
     ];
 
     $checklist->tasks = [];
+
+    $tasks_number_fields = [
+      'active',
+      'order',
+      'priority'
+    ];
 
     foreach ($result as $line)
     {
@@ -123,7 +143,12 @@ class Chkl
         if (strpos($field, 'task_') === 0)
         {
           $count = 1; // only variables can be passed as references
-          $task[str_replace('task_', '', $field, $count)] = $line->$field;
+          $real_field = str_replace('task_', '', $field, $count);
+          $value = in_array($real_field, $tasks_number_fields, TRUE)
+            ? intval($line->$field)
+            : $line->$field;
+
+          $task[$real_field] = $value;
         }
       }
 
@@ -158,7 +183,46 @@ class Chkl
     if (!$success)
       return [ 'success' => false, 'message' => $CI->db->_error_message() ];
 
-    $with_tasks = !empty($data->tasks);
+    $with_tasks = !empty($data['tasks']);
+
+    if (!$with_tasks)
+    {
+      return [
+        'success' => true,
+        'entity' => $this->getOneChecklist($id, $with_tasks)
+      ];
+    }
+
+    $tasks = $data['tasks'];
+    $ids = [];
+
+    $CI->db->trans_start();
+
+    foreach ($tasks as $task)
+    {
+      if ($task['id'] && $task['id'] !== 'create')
+      {
+        array_push($ids, $task['id']);
+
+        $CI->db->where('id', $task['id']);
+        unset($task['id']);
+        $CI->db->update('checklist_tasks', $task);
+      }
+      else
+      {
+        unset($task['id']);
+        $CI->db->insert('checklist_tasks', $task);
+      }
+    }
+
+    $CI->db->where('id_checklist', $id);
+    $CI->db->where_not_in('id', $ids);
+    $CI->db->delete('checklist_tasks');
+
+    $CI->db->trans_complete();
+
+    if (!$CI->db->trans_status())
+      return [ 'success' => false, 'message' => $CI->db->_error_message() ];
 
     return [
       'success' => true,

@@ -301,10 +301,16 @@ class Checklist extends CI_Controller {
 
     $data = [
       'checklists' => $this->chkl->getAllChecklists($id_bu, true),
-      'empty_checklist' => $this->createEmptyChecklist(true),
+      'empty_checklist' => $this->createEmptyChecklist(),
+      'empty_task' => $this->createEmptyTask(),
       'types' => [
         'service',
         'kitchen'
+      ],
+      'priorities' => [
+        1 => 'normal',
+        2 => 'medium',
+        3 => 'high'
       ]
     ];
 
@@ -343,7 +349,7 @@ class Checklist extends CI_Controller {
     return print(json_encode([ 'success' => $success ]));
   }
 
-  private function createEmptyChecklist($withTask = false)
+  private function createEmptyChecklist()
   {
     $checklist =  new StdClass();
     $updatable = $this->chkl->getUpdatableFields();
@@ -352,16 +358,21 @@ class Checklist extends CI_Controller {
       $checklist->$field = null;
 
     $checklist->active = 1;
-
-    if ($withTask)
-    {
-      $checklist->tasks = [ new StdClass() ];
-      $task_updatable = $this->chkl->getTasksUpdatableFields();
-
-      foreach ($task_updatable as $task_field)
-        $checklist->tasks[0]->$field = null;
-    }
+    $checklist->tasks = [];
 
     return $checklist;
+  }
+
+  private function createEmptyTask()
+  {
+    $task =  new StdClass();
+    $updatable = $this->chkl->getTasksUpdatableFields();
+
+    foreach ($updatable as $field)
+      $task->$field = null;
+
+    $task->active = 1;
+
+    return $task;
   }
 }

@@ -41,13 +41,38 @@ $checklist_id = property_exists($checklist, 'id') ? $checklist->id : 'create';
     </div>
   </div>
 
-  <!--<div class="row">
+  <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
       <div class="box" style="background-color: #fbf19e;">
         <h3 style="padding: 0.5em;">Tasks</h3>
       </div>
     </div>
-  </div>-->
+  </div>
+
+  <div class="row">
+    <div id="tasks-<?= $checklist_id ?>" data-role="collapsible-set" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <div class="box">
+        <?php foreach ($checklist->tasks as $task) {
+          $bgcolor = $task->active ? '#eceeff' : '#bbbdbd';
+        ?>
+          <div data-id="<?= $task->id ?>" data-role="collapsible" data-mini="true" style="background-color: <?= $bgcolor ?>">
+            <h2>
+              ID: <?= $task->id ?> | <?= $task->name ?>
+              <?php if (property_exists($task, 'priority') && $task->priority !== null) { ?>
+                | <small> <?= $priorities[$task->priority] ?></small>
+              <?php } ?>
+              <span class="sort-icon tasks-sort"><?= $task->order ?>&nbsp;<i class="fa fa-sort"></i></span>
+            </h2>
+            <ul data-role="listview" data-theme="d" data-divider-theme="d">
+              <li>
+                <?php require('task_form.php'); ?>
+              </li>
+            </ul>
+          </div>
+        <?php } ?>
+      </div>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
