@@ -41,4 +41,5 @@ $task_id = property_exists($task, 'id') ? $task->id : $task->id . '-task-create'
   </div>
 </div>
 
+<input type="hidden" name="task-order-<?= $task_id ?>" value="<?= $task->order ?>" class="task-order">
 <input type="hidden" name="task-id-<?= $task_id ?>" value="<?= $task_id ?>">

@@ -10,11 +10,11 @@
     ?>
   </div>
 
-  <div id="update-forms" data-role="collapsible-set">
+  <div id="update-forms">
     <?php foreach ($checklists as $checklist) {
       $bgcolor = $checklist->active ? '#eceeff' : '#bbbdbd';
     ?>
-      <div data-id="<?= $checklist->id ?>" data-role="collapsible" style="background-color: <?= $bgcolor ?>">
+      <div data-id="<?= $checklist->id ?>" data-role="collapsible" style="background-color: <?= $bgcolor ?>" class="draggable">
         <h2>
           ID: <?= $checklist->id ?> | <?= $checklist->name ?> | <small> <?= $checklist->type ?></small>
           <span class="sort-icon checklists-sort"><?= $checklist->order ?>&nbsp;<i class="fa fa-sort"></i></span>
@@ -80,7 +80,6 @@
           for (var i in tasks)
             data.tasks.push(tasks[i]);
 
-          console.log(data);
           $.ajax({
             url: elem.attr('action'),
             type: elem.attr('method'),
@@ -148,6 +147,27 @@
           sort: true,
           handle: '.checklists-sort',
           onUpdate: saveOrder
+        });
+
+        // sort tasks
+        function updateTasksOrder(parent)
+        {
+          parent.children().each(function (idx, elem) {
+            setTimeout(function() {
+              elem.find('.sort-icon').html(idx + '&nbsp;<i class="fa fa-sort"></i>');
+              elem.find('.task-order').val(idx);
+            }, 0);
+          });
+        }
+        update.find('.tasks-sorting').each(function (idx, tasksSorting) {
+          var id = tasksSorting.dataset.id;
+
+          var checklistsSort = new Sortable(tasksSorting, {
+            group: 'tasks-' + id,
+            sort: true,
+            handle: '.tasks-sort',
+            onUpdate: function() { updateTasksOrder($(tasksSorting)); }
+          });
         });
       });
     </script>

@@ -51,7 +51,7 @@ $checklist_id = property_exists($checklist, 'id') ? $checklist->id : 'create';
 
   <div class="row">
     <div id="tasks-<?= $checklist_id ?>" data-role="collapsible-set" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-      <div class="box">
+    <div class="box tasks-sorting " data-id="<?= $checklist_id ?>">
         <?php foreach ($checklist->tasks as $task) {
           $bgcolor = $task->active ? '#eceeff' : '#bbbdbd';
         ?>
