@@ -217,7 +217,7 @@ class Checklist extends CI_Controller {
 		$msg .= "All good!\nUser: ". $user[0]->first_name." ".$user[0]->last_name;
 
     $this->mmail->prepare($subject, $msg)
-      ->toGroup([ 1, 4 ], $id_bu)
+      ->toList('checklists_editions', $id_bu)
       ->send();
 
 		if (!$req) {
@@ -264,7 +264,7 @@ class Checklist extends CI_Controller {
 				$query = $this->db->get("users");
 
         $this->mmail->prepare($msg, $msg)
-          ->toGroup([ 1, 4 ], $id_bu)
+          ->toList('checklists_notifications', $id_bu)
           ->send();
 
 				$this->hmw->sendNotif($msg, $id_bu);

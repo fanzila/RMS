@@ -254,7 +254,7 @@ class Order extends CI_Controller {
 					$msg = "WARNING! " . $info->name . " CASHPAD NOT CLOSED!";
 
           $this->mmail->prepare($msg, $msg)
-            ->toGroup([ 1, 4 ], $id_bu)
+            ->toList('cashier_alerts', $id_bu)
             ->send();
 
           $this->hmw->sendNotif($msg, $id_bu);

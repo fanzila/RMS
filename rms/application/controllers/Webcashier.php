@@ -246,7 +246,7 @@ class webCashier extends CI_Controller {
 		$msg = 'Comment on report for '.$bu_name.' from '.$user.' on ID: '.$data['id'].' | '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']]."<br /><a href='http://".$server_name."/webcashier/report/#".$data['id']."'>http://".$server_name."/webcashier/report/#".$data['id']."</a>";
 
     $this->mmail->prepare($subject, $msg)
-      ->toGroup([ 1, 4 ], $id_bu)
+      ->toList('reports', $id_bu)
       ->send();
 
 		echo json_encode(['reponse' => $reponse]);
@@ -278,7 +278,7 @@ class webCashier extends CI_Controller {
       $subject = 'WARNING ' . $bu_name . ': No close for this evening';
       $msg     = 'Cashier ' . $bu_name . ' wasn\'t closed this evening';
       $this->mmail->prepare($subject, $msg)
-        ->toGroup([ 1, 4 ], $id_bu)
+        ->toList('cashier_alerts', $id_bu)
         ->send();
     }
 	}
@@ -462,7 +462,7 @@ class webCashier extends CI_Controller {
       $msg     = 'Safe ' . $bu_name . ' cash amount is ' . $currentAmount . ' €';
 
       $this->mmail->prepare($subject, $msg)
-        ->toGroup(3, $id_bu)
+        ->toList('cashier_alerts', $id_bu)
         ->send();
 		} else {
 			$this->db->select('cashier_alert_amount_safe');
@@ -480,7 +480,7 @@ class webCashier extends CI_Controller {
         $msg     = 'Safe ' . $bu_name . ' cash amount is ' . $currentAmount;
 
         $this->mmail->prepare($subject, $msg)
-          ->toGroup(3, $id_bu)
+          ->toList('cashier_alerts', $id_bu)
           ->send();
 			}
 		}
@@ -932,7 +932,7 @@ class webCashier extends CI_Controller {
             . $link . '">' . $link . "</a>";
 
           $this->mmail->prepare($subject, $msg)
-            ->toGroup([ 1, 4 ], $id_bu)
+            ->toList('cachier_alerts', $id_bu)
             ->send();
 				}
 
