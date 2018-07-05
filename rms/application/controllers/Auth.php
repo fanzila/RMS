@@ -1122,7 +1122,7 @@ class Auth extends CI_Controller {
 
       $msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
       $this->mmail->prepare($subject, $msg)
-        ->toList('shifts_management', $id_bu)
+        ->toList('staff_meetings_reports', $id_bu)
         ->send();
 
 			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);

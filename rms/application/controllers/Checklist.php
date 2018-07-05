@@ -217,7 +217,7 @@ class Checklist extends CI_Controller {
 		$msg .= "All good!\nUser: ". $user[0]->first_name." ".$user[0]->last_name;
 
     $this->mmail->prepare($subject, $msg)
-      ->toList('checklists_editions', $id_bu)
+      ->toList('checklists_notifications', $id_bu)
       ->send();
 
 		if (!$req) {
