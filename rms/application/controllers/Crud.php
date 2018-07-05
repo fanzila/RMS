@@ -19,82 +19,52 @@ class Crud extends CI_Controller {
 		if (!$this->ion_auth_acl->has_permission('access_cruds')) {
 			die ('You are not allowed to do this');
 		}
-		
-		$id_bu = $this->session->userdata('bu_id');		
-	
+
+		$id_bu = $this->session->userdata('bu_id');
+
 	}
-
-    public function cklChecklistTasks()
-    {
-	
-		$crud = new grocery_CRUD();
-		$crud->set_theme('bootstrap');
-		
-		$crud->set_table('checklist_tasks');
-		$crud->fields('id_checklist','name','comment','priority','active','order','day_week_num','day_month_num');
-        $crud->required_fields('id_checklist','name','priority','active','order','id_bu');
-		$crud->display_as('priority','Priority<br />(1=normal, 2=medium, 3=high)')->display_as('day_week_num','Number of the day-week<br />(0=Sunday, 1=Monday...)')->display_as('day_month_num','Number of the day-month <br />(1,2,3...28)')->display_as('id_checklist','Checklist');
-//		$crud->set_relation('id_checklist','checklists','name');
-		
-        $output = $crud->render();
-
-		$this->_example_output($output); 
-    }
-
-    public function cklChecklists()
-    {
-	
-		$crud = new grocery_CRUD();
-		$crud->set_theme('bootstrap');
-		
-		$crud->fields('id','name','active','order','id_bu','type');
-        $crud->set_table('checklists');
-        $output = $crud->render();
- 
-		$this->_example_output($output); 
-    }
 
     public function Sensors()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
 		$crud->columns('id','name','reference');
 		$crud->required_fields('name','reference');
         $crud->set_table('sensors');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function SensorsAlarm()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
 		$crud->columns('id_sensor','max', 'min');
 		$crud->set_relation('id_sensor','sensors','name');
 		$crud->required_fields('id_sensor','max', 'min');
         $crud->set_table('sensors_alarm');
         $output = $crud->render();
- 
-		$this->_example_output($output); 
+
+		$this->_example_output($output);
     }
 
     public function SystemLog()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-		
+
 		if (!$this->ion_auth_acl->has_permission('access_system_log')) {
 			die ('You are not allowed to do this');
 		}
-	
+
 		$crud->unset_edit();
 		$crud->unset_delete();
 		$crud->unset_add();
 		$crud->unset_operations();
-		
+
 		$crud->columns('type','date', 'keylogin', 'user_id','val1','val2','val3','val4','id_bu' );
 		$crud->set_relation('user_id','users','username');
 		$crud->set_relation('val1','products','name');
