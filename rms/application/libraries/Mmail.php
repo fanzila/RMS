@@ -207,7 +207,9 @@ class RMS_Email
     $success = [];
     $fail = [];
 
-    foreach ($this->to as $to)
+    $emails = array_unique($this->to);
+
+    foreach ($emails as $to)
     {
       if ($this->sendOne($config, $to))
         array_push($success, $to);
