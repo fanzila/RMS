@@ -3,28 +3,28 @@
 class Hmw {
 
 	public function LogRecord($p, $id_bu=null) {
-		
+
 		$CI = & get_instance();
-		
+
 		if(!isset($id_bu)) $id_bu = $CI->session->userdata('bu_id');
 		if($CI->session->userdata('keylogin') != NULL) $keylogin = $CI->session->userdata('keylogin');
-		
+
 		$user		= $CI->ion_auth->user()->row();
-		
+
 		$CI->db->set('type', $p['type']);
 		$CI->db->set('id_bu', $id_bu);
-		
+
 		if(isset($keylogin)) $CI->db->set('keylogin', $keylogin);
 		if(isset($user->id)) $CI->db->set('user_id', $user->id);
-		
+
 		if(isset($p['val1'])) $CI->db->set('val1', "$p[val1]");
 		if(isset($p['val2'])) $CI->db->set('val2', "$p[val2]");
 		if(isset($p['val3'])) $CI->db->set('val3', "$p[val3]");
 		if(isset($p['val4'])) $CI->db->set('val4', "$p[val4]");
-		
+
 		$CI->db->insert('log');
 	}
-	
+
 
 	public function cleanNumber($num) {
 		$t1 = str_replace ( ',' , '.' , $num);
@@ -32,42 +32,42 @@ class Hmw {
 		//$t3 = preg_replace("/[^0-9,.]/", "", $t2);
 		return $t2;
 	}
-		
-	public function getParam($param) 
+
+	public function getParam($param)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		$CI->db->select('val')->from('params')->where('key', $param)->limit(1);
 		$res_params = $CI->db->get();
-		$r = $res_params->result();	
+		$r = $res_params->result();
 		return $r[0]->val;
 	}
 
-	public function callBox($data) 
+	public function callBox($data)
 	{
-	
+
 		/** DEMO
 		$_GET = array(
 		'key'	=> $key,
-		'order' => 'chacun', 
+		'order' => 'chacun',
 		'module' => 'switch', // or 'dimmer'
 		'value' => 'on', // or '1' to '255'
 		'id' => '2');
 
 		$_GET = array(
 		'key'	=> $key,
-		'order' => 'sound', 
-		'jingle' => '/home/pos/sncf2.mp3', 
+		'order' => 'sound',
+		'jingle' => '/home/pos/sncf2.mp3',
 		'type' => 'audio', //or 'text'
 		'message' => '/home/pos/evening.mp3'); // or text : 'Good morning planet.'
 		**/
-		
-		
-		$CI = & get_instance(); 
+
+
+		$CI = & get_instance();
 		$CI->load->database();
-		
+
 		$jdata = json_encode($data);
-		
+
 		$ch = curl_init();
 		$api_box_url = $this->getParam('api_box_url');
 		$key = $this->getParam('keylogin');
@@ -84,19 +84,19 @@ class Hmw {
 		curl_close ($ch);
 	}
 
-	public function getUser($id) 
+	public function getUser($id)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		$CI->db->select('*')->from('users')->where('id', $id)->limit(1);
 		$res_params = $CI->db->get();
-		$r = $res_params->result();	
+		$r = $res_params->result();
 		return $r[0];
 	}
 
-	public function getBus($id = null, $iduser = null) 
+	public function getBus($id = null, $iduser = null)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		$CI->db->select('bus.id, bus.name, bus.country, bus.zip, bus.description')->from('bus as bus');
 		if($iduser) $CI->db->join('users_bus as ub', 'ub.bu_id = bus.id')->where('ub.user_id', $iduser);
@@ -187,11 +187,11 @@ class Hmw {
 		curl_exec($ch);
 		curl_close($ch);
 	}
-	
+
 	public function isLoggedIn() {
 		$CI = & get_instance();
 		$CI->load->library('ion_auth');
-		
+
 		if (!$CI->ion_auth->logged_in()) {
 				$CI->session->set_userdata('pageBeforeLogin', current_url());
 				redirect('auth/login');
@@ -199,27 +199,27 @@ class Hmw {
 			return (true);
 		}
 	}
-	
+
 	public function keyLogin() {
 
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->library('ion_auth');
 		$CI->load->library('hmw');
-		$CI->load->library('session');	
+		$CI->load->library('session');
 		$CI->load->library('email');
 		$CI->load->library('mmail');
 
 		$getkey	= $CI->input->get('keylogin');
 		$id_bu	= $CI->input->get('id_bu');
 		$type		= $CI->input->get('type');
-		
+
 		if(!empty($getkey)) {
 			$keyl = $this->getParam('keylogin');
 			if($getkey == $keyl) {
-				
+
 				$user = $this->getParam('keylogin_user_'.$id_bu);
 				$pass = $this->getParam('keylogin_pass_'.$id_bu);
-				
+
 				if ($type == 'kitchen') {
 					$CI->session->set_userdata('type', 'kitchen');
 				}
@@ -259,19 +259,19 @@ class Hmw {
 		if(!empty($change_bu)) {
 			$bu_info = $CI->hmw->getBus($change_bu);
 			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
-			$CI->hmw->updateUserBu($change_bu, $CI->session->userdata('user_id')); 
+			$CI->hmw->updateUserBu($change_bu, $CI->session->userdata('user_id'));
 			$CI->session->set_userdata($session_data);
 		}
 	}
 
 	public function headerVars($index, $indexlocation, $title){
 		$CI = & get_instance();
-		
+
 		if($index!=-1){
 			$user			= $CI->ion_auth->user()->row();
 			$bus_list		= $CI->hmw->getBus(null, $user->id);
 			$user_groups	= $CI->ion_auth->get_users_groups()->result();
-			
+
 			$higher_level = new stdClass();
 			$higher_level->level = -1;
       foreach ($user_groups as $key => $value) {
@@ -285,7 +285,7 @@ class Hmw {
 			$username		= $CI->session->userdata('identity');
 
 			$buinfo 		= $CI->hmw->getBuInfo($bu_id);
-	
+
 			//$CI->db->select('val')->from('bank_balance');
 			//$bal_res = $CI->db->get();
 			//$bal = $bal_res->row_array();
@@ -316,7 +316,7 @@ class Hmw {
 					'user_door'		=> $user->door_open
 					)
 				);
-				
+
 			}else{
 				$headers = array(
 				'header_pre'	=> array(
@@ -342,5 +342,26 @@ class Hmw {
 		return $headers;
 	}
 
+  public function getBuUsers($id_bu, $groups = null)
+  {
+    $CI = &get_instance();
+    $CI->load->database();
+
+    $CI->db->select('users.username, users.email, users.id');
+    $CI->db->distinct('users.username');
+    $CI->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+    $CI->db->join('users_groups', 'users.id = users_groups.user_id');
+    $CI->db->where('users_bus.bu_id', $id_bu);
+    $CI->db->where_in('users.active', 1);
+
+    if (!empty($groups))
+    {
+      if (is_array($groups))
+        $CI->db->where_in('users_groups.group_id', $groups);
+      else
+        $CI->db->where('users_groups.group_id', $groups);
+    }
+
+    return $CI->db->get('users')->result();
+  }
 }
-?>

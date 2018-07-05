@@ -23,23 +23,23 @@
 	</head>
 	<body>
 		<font face="arial">
-		<? 
+		<?
 	$bgcolor = '#FFF';
 	$ca_amount = "0";
 	$ca_last = "-";
 	$total_ca = 0;
 	$buname = array();
-	foreach ($bus_list as $bu) { $buname[$bu->id] = $bu->name; }
-	
+	foreach ($all_bus as $bu) { $buname[$bu->id] = $bu->name; }
+
 	foreach ($ca as $caline) {
 		if($caline['id_bu'] == $bu_id) {
 			$ca_amount = $caline['amount'];
 			$ca_last = $caline['last'];
 		}
-		
+
 		$conca_ca[] = "<tr><td>".$buname[$caline['id_bu']]."</td><td>". number_format($caline['amount']/1000, 0, ',', ' ')."€</td><td> ".$caline['last']."</td></tr>";
 		$total_ca += $caline['amount'];
-	}	
+	}
 ?>
 	<div style="width:99%; background-color: <?=$bgcolor?>; padding:6px; margin: 0 auto 5px; font: 17px 'Lucida Grande', Lucida, Verdana, sans-serif; font-weight: bold;">
 		<table><tr><td></td><td><form action="#" method="POST">
