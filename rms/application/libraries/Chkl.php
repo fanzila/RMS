@@ -112,17 +112,17 @@ class Chkl
     if ($with_tasks)
       $query->order_by('t.order ASC');
 
-    $result = $query->get()->result()[0];
+    $result = $query->get()->result();
 
     if (!$with_tasks)
-      return $result;
+      return $result[0];
 
     $checklist = (object)[
-      'id'     => $result->id,
-      'name'   => $result->name,
-      'active' => intval($result->active),
-      'order'  => intval($result->order),
-      'type'   => $result->type
+      'id'     => $result[0]->id,
+      'name'   => $result[0]->name,
+      'active' => intval($result[0]->active),
+      'order'  => intval($result[0]->order),
+      'type'   => $result[0]->type
     ];
 
     $checklist->tasks = [];
@@ -200,7 +200,7 @@ class Chkl
 
     foreach ($tasks as $task)
     {
-      if ($task['id'] && $task['id'] !== 'create')
+      if (array_key_exists('id', $task) && $task['id'] !== 'create')
       {
         array_push($ids, $task['id']);
 
@@ -211,10 +211,14 @@ class Chkl
       else
       {
         unset($task['id']);
+        $task['id_checklist'] = $id;
         $CI->db->insert('checklist_tasks', $task);
+        $new_id = $CI->db->insert_id();
+        array_push($ids, intval($new_id));
       }
     }
 
+    $CI->db->trans_commit();
     $CI->db->where('id_checklist', $id);
     $CI->db->where_not_in('id', $ids);
     $CI->db->delete('checklist_tasks');

@@ -1,5 +1,6 @@
 .sort-icon {
   float: right;
+  cursor: move;
 }
 
 .saving-sort .sort-icon {

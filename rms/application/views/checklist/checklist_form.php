@@ -51,25 +51,33 @@ $checklist_id = property_exists($checklist, 'id') ? $checklist->id : 'create';
 
   <div class="row">
     <div id="tasks-<?= $checklist_id ?>" data-role="collapsible-set" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div class="box tasks-sorting " data-id="<?= $checklist_id ?>">
+    <div class="box tasks-sorting" id="checklist-tasks-<?= $checklist_id ?>" data-id="<?= $checklist_id ?>">
         <?php foreach ($checklist->tasks as $task) {
           $bgcolor = $task->active ? '#eceeff' : '#bbbdbd';
         ?>
-          <div data-id="<?= $task->id ?>" data-role="collapsible" data-mini="true" style="background-color: <?= $bgcolor ?>">
+          <div data-id="<?= $task->id ?>" data-role="collapsible" data-mini="true" style="background-color: <?= $bgcolor ?>" class="checklist-task">
             <h2>
               ID: <?= $task->id ?> | <?= $task->name ?>
               <?php if (property_exists($task, 'priority') && $task->priority !== null) { ?>
-                | <small> <?= $priorities[$task->priority] ?></small>
+                | <small><?= $priorities[$task->priority] ?></small>
               <?php } ?>
               <span class="sort-icon tasks-sort"><?= $task->order ?>&nbsp;<i class="fa fa-sort"></i></span>
             </h2>
-            <ul data-role="listview" data-theme="d" data-divider-theme="d">
-              <li>
-                <?php require('task_form.php'); ?>
-              </li>
-            </ul>
+            <div data-role="listview" style="background-color: #fff;">
+              <?php require('task_form.php'); ?>
+            </div>
           </div>
         <?php } ?>
+
+        <div style="background-color: #fbf19e;">
+          <h4 style="padding: 0.5em;">Create task</43>
+        </div>
+        <div id="checklist-task-create-<?= $checklist_id ?>" style="background-color: #fff;">
+          <?php
+            $task = $empty_task;
+            require('task_form.php');
+          ?>
+        </div>
       </div>
     </div>
   </div>
