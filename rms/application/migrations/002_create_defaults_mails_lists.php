@@ -8,51 +8,55 @@ class Migration_Create_defaults_mails_lists extends CI_Migration
   {
     $groups_list_mapping = [
       'admin' => [
-        'checklists_editions',
         'checklists_notifications',
-        'shifts_management',
+        'staff_meetings_reports',
         'sensors_notifications',
         'reports',
-        'cashier_alerts'
+        'cashier_alerts',
+        'news'
       ],
       'Staff' => [
-        'cashier_alerts'
+        'cashier_alerts',
+        'news'
       ],
       'Assistant_manager' => [
         'checklists_notifications',
         'sensors_notifications',
-        'cashier_alerts'
+        'cashier_alerts',
+        'news'
       ],
       'Manager' => [
         'checklists_notifications',
-        'shifts_management',
+        'staff_meetings_reports',
         'sensors_notifications',
         'reports',
-        'cashier_alerts'
-      ],
-      'extra' => [
-        'shifts_management'
+        'cashier_alerts',
+        'news'
       ],
       'Director' => [
-        'checklists_editions',
         'checklists_notifications',
-        'shifts_management',
         'sensors_notifications',
         'reports',
-        'cashier_alerts'
+        'cashier_alerts',
+        'news'
       ]
     ];
 
     $this->db->trans_begin();
 
     $this->db->insert_batch('mails_lists', [
-      [ 'name' => 'checklists_editions' ],
       [ 'name' => 'checklists_notifications' ],
-      [ 'name' => 'shifts_management' ],
+      [ 'name' => 'staff_meetings_reports' ],
       [ 'name' => 'sensors_notifications' ],
       [ 'name' => 'reports' ],
-      [ 'name' => 'cashier_alerts' ]
+      [ 'name' => 'cashier_alerts' ],
+      [ 'name' => 'close_reports' ],
+      [ 'name' => 'orders' ]
     ]);
+    //
+    // TO ADD
+    //  - news
+    //
 
     $this->db->trans_commit();
 
@@ -102,7 +106,7 @@ class Migration_Create_defaults_mails_lists extends CI_Migration
 
   private function get_users_groups()
   {
-    $this->db->select('g.name, u.id AS user_id');
+    $this->db->select('g.name, u.user_id');
     $this->db->from('groups AS g');
     $this->db->join('users_groups AS u', 'u.group_id = g.id');
 
