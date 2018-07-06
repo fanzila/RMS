@@ -2,6 +2,11 @@
 </div>
 <script type="text/javascript" src="/public/Sortable.min.js"></script>
 
+<?php
+  $can_edit_checklists = $this->ion_auth_acl->has_permission('admin_panel_checklist');
+  $can_edit_tasks = $this->ion_auth_acl->has_permission('admin_panel_checklist_task');
+?>
+
 <div data-role="content">
   <div id="creation-form" style="display: none;">
     <?php
@@ -17,7 +22,9 @@
       <div data-id="<?= $checklist->id ?>" data-role="collapsible" style="background-color: <?= $bgcolor ?>;" class="collapsible-checklist">
         <h2>
           ID: <?= $checklist->id ?> | <?= $checklist->name ?> | <small> <?= $checklist->type ?></small>
-          <span class="sort-icon checklists-sort"><?= $checklist->order ?>&nbsp;<i class="fa fa-sort"></i></span>
+          <?php if ($can_edit_checklists) { ?>
+            <span class="sort-icon checklists-sort"><?= $checklist->order ?>&nbsp;<i class="fa fa-sort"></i></span>
+          <?php } ?>
         </h2>
         <div data-role="listview" style="background-color: #fff;">
           <?php require('checklist_form.php'); ?>
