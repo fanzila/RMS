@@ -440,7 +440,7 @@ class webCashier extends CI_Controller {
 		//echo $txt;
 
     $this->mmail->prepare('RMS CLOSE REPORT', $txt)
-      ->to($this->hmw->getParam('emails_send_infos_close'))
+      ->toList('close_reports')
       ->send();
 
 	}
