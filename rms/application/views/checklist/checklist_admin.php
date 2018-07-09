@@ -1,11 +1,14 @@
-  <a href="#create" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
-</div>
-<script type="text/javascript" src="/public/Sortable.min.js"></script>
+  <?php
 
-<?php
   $can_edit_checklists = $this->ion_auth_acl->has_permission('admin_panel_checklist');
   $can_edit_tasks = $this->ion_auth_acl->has_permission('admin_panel_checklist_task');
-?>
+
+  if ($can_edit_checklists) { ?>
+    <a href="#create" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
+  <?php } ?>
+
+</div>
+<script type="text/javascript" src="/public/Sortable.min.js"></script>
 
 <div data-role="content">
   <div id="creation-form" style="display: none;">
