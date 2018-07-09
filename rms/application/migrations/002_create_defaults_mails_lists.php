@@ -62,6 +62,9 @@ class Migration_Create_defaults_mails_lists extends CI_Migration
 
     foreach ($users_groups as $group => $users)
     {
+      if (!array_key_exists($gruop, $groups_list_mapping))
+        continue;
+
       $lists = $groups_list_mapping[$group];
 
       foreach ($users as $user)
