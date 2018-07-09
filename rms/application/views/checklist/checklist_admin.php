@@ -33,7 +33,20 @@
           <?php require('checklist_form.php'); ?>
         </div>
       </div>
+    <?php } if ($can_edit_tasks) { ?>
+      <div>
+        <div style="background-color: #fbf19e;">
+          <h3 style="padding: 0.5em;">Create task</h3>
+        </div>
+        <form id="task-create" method="post" action="/checklist/createTask">
+          <?php
+            $task = $empty_task;
+            require('task_form.php');
+          ?>
+        </form>
+      </div>
     <?php } ?>
+
     <script type="text/javascript">
       $(document).ready(function() {
         'use strict';
@@ -213,6 +226,35 @@
             sort: true,
             handle: '.tasks-sort',
             onUpdate: function() { updateTasksOrder($(tasksSorting)); }
+          });
+        });
+
+        // create tasks
+        $('#task-create').on('submit', function(evt) {
+          evt.preventDefault();
+
+          var elem = $(this);
+
+          var data = elem.serializeArray().reduce(function(data, entry) {
+            var name = entry.name, value = entry.value;
+            var field = name.split('-').slice(1, -1)[0];
+
+            data[field] = value;
+
+            return data;
+          }, {});
+
+          $.ajax({
+            url: elem.attr('action'),
+            type: elem.attr('method'),
+            data: data,
+            dataType: 'json'
+          }).done(function(resp) {
+            if (!resp.success)
+              return alert(resp.message || 'An unknown error occured, not saved');
+
+            window.location.hash = data.id_checklist;
+            window.location.reload(true);
           });
         });
       });

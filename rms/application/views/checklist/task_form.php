@@ -1,5 +1,5 @@
 <?php
-$task_id = property_exists($task, 'id') ? $task->id : $checklist_id . '-create';
+$task_id = property_exists($task, 'id') ? $task->id : 'create';
 ?>
 
 <div class="row">
@@ -35,8 +35,8 @@ $task_id = property_exists($task, 'id') ? $task->id : $checklist_id . '-create';
 <div class="row">
   <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <div class="box">
-      <label for="task-day_week-num-<?= $task_id ?>">Day week num:</label>
-      <input id="task-day_week-num-<?= $task_id ?>" name="task-day_week_num-<?= $task_id ?>" type="text" value="<?= stripslashes($task->day_week_num) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
+      <label for="task-day-week-num-<?= $task_id ?>">Day week num:</label>
+      <input id="task-day-week-num-<?= $task_id ?>" name="task-day_week_num-<?= $task_id ?>" type="text" value="<?= stripslashes($task->day_week_num) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
     </div>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -58,11 +58,26 @@ $task_id = property_exists($task, 'id') ? $task->id : $checklist_id . '-create';
   </div>
 </div>
 
-<?php
-  $order = $task_id !== $checklist_id . '-create'
-    ? $task->order
-    : count($checklist->tasks);
-?>
-
-<input type="hidden" name="task-order-<?= $task_id ?>" value="<?= $order ?>" class="task-order">
-<input type="hidden" name="task-id-<?= $task_id ?>" value="<?= $task_id ?>">
+<?php if ($task_id !== 'create') { ?>
+  <input type="hidden" name="task-order-<?= $task_id ?>" value="<?= $task->order ?>" class="task-order">
+  <input type="hidden" name="task-id-<?= $task_id ?>" value="<?= $task_id ?>">
+<?php } else { ?>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+      <div class="box">
+      <select name="task-id_checklist-<?= $checklist_id ?>" required>
+          <option value="">Checklist</option>
+          <?php foreach ($checklists as $checklist) { ?>
+            <option value="<?= $checklist->id ?>"><?= $checklist->id ?>: <?= $checklist->name ?></option>
+          <?php } ?>
+        </select>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+      <div class="box">
+        <input type="submit" value="Save"/>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" name="task-order-<?= $task_id ?>" value="-1">
+<?php } ?>

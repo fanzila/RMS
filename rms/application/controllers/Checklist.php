@@ -349,6 +349,18 @@ class Checklist extends CI_Controller {
     return print(json_encode([ 'success' => $success ]));
   }
 
+  public function createTask()
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+		$id_bu = $this->session->userdata('bu_id');
+
+    $this->load->model('task_model');
+    $result = $this->task_model->insert_entry($this->input->post());
+
+    return print(json_encode([ 'success' => $result ]));
+  }
+
   private function createEmptyChecklist()
   {
     $checklist =  new StdClass();

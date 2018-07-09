@@ -7,14 +7,6 @@ $task_readonly = $can_edit_tasks ? '' : 'readonly disabled';
 
 <form class="checklist-update" id="checklist-<?= $checklist_id ?>" name="checklist-<?= $checklist_id ?>" method="post" action="/checklist/save">
   <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-      <div class="box" style="background-color: #fbf19e;">
-        <h3 style="padding: 0.5em;">Checklist</h3>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
       <div class="box">
         <label for="name-<?= $checklist_id ?>">Name:</label>
@@ -71,18 +63,6 @@ $task_readonly = $can_edit_tasks ? '' : 'readonly disabled';
             <div data-role="listview" style="background-color: #fff;">
               <?php require('task_form.php'); ?>
             </div>
-          </div>
-        <?php } ?>
-
-        <?php if ($can_edit_tasks) { ?>
-          <div style="background-color: #fbf19e;">
-            <h4 style="padding: 0.5em;">Create task</43>
-          </div>
-          <div id="checklist-task-create-<?= $checklist_id ?>" style="background-color: #fff;">
-            <?php
-              $task = $empty_task;
-              require('task_form.php');
-            ?>
           </div>
         <?php } ?>
       </div>
