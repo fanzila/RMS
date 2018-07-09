@@ -2,11 +2,9 @@
 
 class Mmail
 {
-
   public function sendEmail($email, $dest = [], $id_bu = null)
   {
 
-    // CI
     $CI = &get_instance();
 
     $CI->load->library('email');
@@ -56,6 +54,7 @@ class RMS_Email
   private $type;
   private $reply_to;
   private $attach;
+  private $hooks;
 
   public function __construct($subject, $body)
   {
@@ -71,6 +70,7 @@ class RMS_Email
     $this->cc = null;
     $this->reply_to = null;
     $this->attach = null;
+    $this->hooks = [];
   }
 
   public function type($type)
@@ -103,9 +103,9 @@ class RMS_Email
   public function toEmail($email)
   {
     if (is_array($email))
-      $this->email = array_merge($this->email, $email);
+      $this->to = array_merge($this->to, $email);
     else
-      array_push($this->email, $email);
+      array_push($this->to, $email);
 
     return $this;
   }
@@ -135,24 +135,24 @@ class RMS_Email
     $CI = &get_instance();
     $CI->load->database();
 
-    $this->db->select('u.email');
-    $this->db->from('users AS u');
-    $this->db->distinct('u.email');
-    $this->db->join('users_groups AS g', 'u.id = g.user_id');
+    $CI->db->select('u.email');
+    $CI->db->from('users AS u');
+    $CI->db->distinct('u.email');
+    $CI->db->join('users_groups AS g', 'u.id = g.user_id');
 
     if (is_array($group_id))
-      $this->db->where_in('g.group_id', $group_id);
+      $CI->db->where_in('g.group_id', $group_id);
     else
-      $this->db->where('g.group_id', $group_id);
+      $CI->db->where('g.group_id', $group_id);
 
     if (!empty($id_bu))
     {
-      $this->db->join('users_bus AS b', 'u.id = b.user_id', 'left');
-      $this->db->where('b.bu_id', $id_bu);
+      $CI->db->join('users_bus AS b', 'u.id = b.user_id', 'left');
+      $CI->db->where('b.bu_id', $id_bu);
     }
 
-    $this->db->where('u.active', 1);
-    $result = $this->db->get()->result();
+    $CI->db->where('u.active', 1);
+    $result = $CI->db->get()->result();
 
     foreach ($result as $user)
       array_push($this->to, $user->email);
@@ -165,30 +165,42 @@ class RMS_Email
     $CI = &get_instance();
     $CI->load->database();
 
-    $this->db->select('u.email');
-    $this->db->from('users AS u');
-    $this->db->distinct('u.email');
-    $this->db->join('users_mails_lists AS lu', 'u.id = lu.user_id');
-    $this->db->join('mails_lists AS l', 'l.id = lu.mail_list_id');
+    $CI->db->select('u.email');
+    $CI->db->from('users AS u');
+    $CI->db->distinct('u.email');
+    $CI->db->join('users_mails_lists AS lu', 'u.id = lu.user_id');
+    $CI->db->join('mails_lists AS l', 'l.id = lu.mail_list_id');
 
     if (is_array($list_name))
-      $this->db->where_in('l.name', $list_name);
+      $CI->db->where_in('l.name', $list_name);
     else
-      $this->db->where('l.name', $list_name);
+      $CI->db->where('l.name', $list_name);
 
     if (!empty($id_bu))
     {
-      $this->db->join('users_bus AS b', 'u.id = b.user_id', 'left');
-      $this->db->where('b.bu_id', $id_bu);
+      $CI->db->join('users_bus AS b', 'u.id = b.user_id', 'left');
+      $CI->db->where('b.bu_id', $id_bu);
     }
 
-    $this->db->where('u.active', 1);
+    $CI->db->where('u.active', 1);
 
-    $result = $this->db->get()->result();
+    $result = $CI->db->get()->result();
 
     foreach ($result as $user)
       array_push($this->to, $user->email);
 
+    return $this;
+  }
+
+  public function before($cb)
+  {
+    $this->hooks['before'] = $cb;
+    return $this;
+  }
+
+  public function after($cb)
+  {
+    $this->hooks['after'] = $cb;
     return $this;
   }
 
@@ -229,27 +241,77 @@ class RMS_Email
     $CI = &get_instance();
     $CI->load->library('email');
 
+    $subject   = $this->subject;
+    $body      = $this->body;
+    $from      = $config['from'];
+    $from_name = $config['from_name'];
+    $cc        = isset($this->cc) && !empty($this->cc)
+      ? $this->cc
+      : NULL;
+    $reply_to  = isset($this->reply_to) && !empty($this->reply_to)
+      ? $this->reply_to
+      : NULL;
+
+    if (array_key_exists('before', $this->hooks) && is_callable($this->hooks['before']))
+    {
+      $before_args = [
+        'subject'   => $subject,
+        'body'      => $body,
+        'from'      => $from,
+        'from_name' => $from,
+        'cc'        => $cc,
+        'reply_to'  => $from
+      ];
+
+      $before_args_read = [
+        'email' => $to,
+        'type' => $this->type
+      ];
+
+      // use array_merge to make a copy of the first array
+      $result = $this->hooks['before'](array_merge($before_args_read, $before_args));
+
+      if (!empty($result))
+      {
+        foreach ($before_args as $key => $original)
+        {
+          if (array_key_exists($key, $result) && !empty($result[$key]))
+            $$key = $result[$key];
+        }
+      }
+    }
+
     $CI->email->initialize($config);
     $CI->email->clear(TRUE);
 
-    $CI->email->from($config['from'], $config['from_name']);
+    $CI->email->from($from, $from_name);
     $CI->email->to($to);
-    $CI->email->subject($this->subject);
+    $CI->email->subject($subject);
 
-    $body = $this->type === 'html'
-      ? nl2br($this->body)
-      : $this->body;
+    if (!$this->type === 'html')
+      $body = nl2br($body);
+
     $CI->email->message($body);
 
-    if (isset($this->cc))
-      $CI->email->cc($this->cc);
+    if (!empty($cc))
+      $CI->email->cc($cc);
 
-    if (isset($this->reply_to))
-      $CI->email->reply_to($this->reply_to, 'HANK');
+    if (!empty($reply_to))
+      $CI->email->reply_to($reply_to, 'HANK');
 
     if (isset($this->attach))
       $CI->email->attach($this->attach);
 
-    return $CI->email->send(TRUE);
+    $result = $CI->email->send(TRUE);
+
+    if (array_key_exists('after', $this->hooks) && is_callable($this->hooks['after']))
+    {
+      $this->hooks['after']([
+        'email'   => $to,
+        'success' => $result
+      ]);
+    }
+
+    return $result;
   }
 }
