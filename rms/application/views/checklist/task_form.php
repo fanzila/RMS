@@ -33,6 +33,21 @@ $task_id = property_exists($task, 'id') ? $task->id : $checklist_id . '-create';
 </div>
 
 <div class="row">
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="box">
+      <label for="task-day_week-num-<?= $task_id ?>">Day week num:</label>
+      <input id="task-day_week-num-<?= $task_id ?>" name="task-day_week_num-<?= $task_id ?>" type="text" value="<?= stripslashes($task->day_week_num) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="box">
+      <label for="task-day-month-num-<?= $task_id ?>">Day month num:</label>
+      <input id="task-day-month-num-<?= $task_id ?>" name="task-day_month_num-<?= $task_id ?>" type="text" value="<?= stripslashes($task->day_month_num) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
+    </div>
+  </div>
+</div>
+
+<div class="row">
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <div class="box">
       <label for="task-comment-<?= $task_id ?>">Comment:</label>
