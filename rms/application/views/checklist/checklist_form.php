@@ -37,14 +37,6 @@ $task_readonly = $can_edit_tasks ? '' : 'readonly disabled';
   </div>
 
   <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-      <div class="box" style="background-color: #fbf19e;">
-        <h3 style="padding: 0.5em;">Tasks</h3>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
     <div id="tasks-<?= $checklist_id ?>" data-role="collapsible-set" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <div class="box tasks-sorting" id="checklist-tasks-<?= $checklist_id ?>" data-id="<?= $checklist_id ?>">
         <?php foreach ($checklist->tasks as $task) {

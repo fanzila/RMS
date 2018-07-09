@@ -36,7 +36,7 @@
     <?php } if ($can_edit_tasks) { ?>
       <div>
         <div style="background-color: #fbf19e;">
-          <h3 style="padding: 0.5em;">Create task</h3>
+          <h4 style="padding: 0.5em;">Create task</h4>
         </div>
         <form id="task-create" method="post" action="/checklist/createTask">
           <?php
