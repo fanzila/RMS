@@ -51,12 +51,9 @@ class Migration_Create_defaults_mails_lists extends CI_Migration
       [ 'name' => 'reports' ],
       [ 'name' => 'cashier_alerts' ],
       [ 'name' => 'close_reports' ],
-      [ 'name' => 'orders' ]
+      [ 'name' => 'orders' ],
+      [ 'name' => 'news' ]
     ]);
-    //
-    // TO ADD
-    //  - news
-    //
 
     $this->db->trans_commit();
 
