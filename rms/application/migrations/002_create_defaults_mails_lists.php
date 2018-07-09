@@ -7,7 +7,7 @@ class Migration_Create_defaults_mails_lists extends CI_Migration
   public function up()
   {
     $groups_list_mapping = [
-      'admin' => [
+      'Admin' => [
         'checklists_notifications',
         'staff_meetings_reports',
         'sensors_notifications',
