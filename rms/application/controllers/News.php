@@ -149,45 +149,53 @@ class News extends CI_Controller {
 				$this->load->library('mmail');
 				$bus = $this->input->post('bus');
 
-				$this->db->select('users.username, users.email, users.id');
-				$this->db->distinct('users.username');
-				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-				$this->db->join('users_groups', 'users.id = users_groups.user_id', 'left');
-				$this->db->join('groups', 'groups.id = users_groups.group_id', 'left');
-				$this->db->where('users.active', 1);
-				$this->db->where('groups.name !=', 'extra');
-				$this->db->where_in('users_bus.bu_id', $bus);
-				$query = $this->db->get("users");
-
         $subject = 'Hank news! ' . $this->input->post('title');
 
-				foreach ($query->result() as $row) {
-          $key  = md5(microtime().rand());
-          $link = 'http://' . $server_name . '/news/confirm/' . $key;
-          $confirm = [
-            'key'     => $key,
-            'id_user' => $row->id,
-            'id_news' => $news_id,
-            'status'  => 'sent'
-          ];
+        $msg = '';
 
-          $this->db->insert('news_confirm', $confirm);
+        if ($checkUpload)
+          $msg = '<img src="http://' . $server_name . '/public/pictures/' . $picName
+            . '" class="img-responsive" style="max-height: 300px; max-width: 300px;" alt="" /><br/><br/>';
 
-          $msg = '';
+        $msg .= $this->input->post('text');
 
-          if ($checkUpload)
-            $msg = '<img src="http://'.$server_name.'/public/pictures/'.$picName.'" class="img-responsive" style="max-height: 300px; max-width: 300px;" alt=""/><br /><br />';
+        $this->mmail->prepare($subject, $msg)
+          ->from('news@hankrestaurant.com', 'HANK NEWS')
+          ->replyTo('news@hankrestaurant.com')
+          ->toList('news')
+          ->before(function($config) use ($server_name, $news_id) {
+            $this->db->select('id, username');
+            $this->db->where('email', $config['email']);
+            $result = $this->db->get('users')->result();
 
-          $msg .= $this->input->post('text')
-              . "\r\n\r\n->>>>Merci de confirmer la lecture de ce message en cliquant ici : $link"
-              . "\r\n-- \r\n$user->username";
+            if (empty($result))
+              return;
 
-          $this->mmail->prepare($subject, $msg)
-            ->from('news@hankrestaurant.com', 'HANK NEWS')
-            ->toEmail($row->email)
-            ->replyTo('news@hankrestaurant.com')
-            ->send();
-				}
+            $user = $result[0];
+
+            $key  = md5(microtime().rand());
+            $link = 'http://' . $server_name . '/news/confirm/' . $key;
+            $confirm = [
+              'key'     => $key,
+              'id_user' => $user->id,
+              'id_news' => $news_id,
+              'status'  => 'sent'
+            ];
+
+            $this->db->insert('news_confirm', $confirm);
+
+            $config['body'] .= "\r\n\r\n->>>>Merci de confirmer la lecture de ce message en cliquant ici :";
+
+              if ($config['type'] === 'html')
+                $config['body'] .= '<a href="' . $link . '">' . $link
+                  . "</a>\r\n-- \r\n" . $user->username;
+              else
+                $config['body'] .= $link . "\r\n-- \r\n" . $user->username;
+
+            return $config;
+          })
+          ->send();
+
 				$this->load->view('jq_header_pre', $headers['header_pre']);
 				$this->load->view('news/jq_header_spe');
 				$this->load->view('jq_header_post', $headers['header_post']);
