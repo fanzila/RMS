@@ -670,11 +670,11 @@ CREATE TABLE IF NOT EXISTS `groups` (
 --
 
 INSERT INTO `groups` (`id`, `name`, `description`, `level`) VALUES
-(1, 'admin', 'Administrator', 10),
+(1, 'Admin', 'Administrator', 10),
 (2, 'Staff', 'Staff', 0),
 (3, 'Assistant_manager', 'Assistant_manager', 1),
 (4, 'Manager', 'Manager', 2),
-(5, 'extra', 'extra', 0),
+(5, 'Extra', 'extra', 0),
 (6, 'Director', 'Director', 3),
 (7, 'Desk', 'Desk', 2);
 
