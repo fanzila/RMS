@@ -162,15 +162,20 @@ class Chkl
   {
     $CI = &get_instance();
 
+    $success = true;
+
     if (!empty($id))
     {
       $update = $this->convertData($data);
 
-      foreach ($update as $field => $value)
-        $CI->db->set($field, $value);
+      if (!empty($update))
+      {
+        foreach ($update as $field => $value)
+          $CI->db->set($field, $value);
 
-      $CI->db->where('id', $id);
-      $success = $CI->db->update('checklists');
+        $CI->db->where('id', $id);
+        $success = $CI->db->update('checklists');
+      }
     }
     else
     {
