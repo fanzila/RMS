@@ -44,23 +44,32 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
 </div>
 
 <div class="row">
-  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-    <div class="box">
-      <label for="task-day-week-num-<?= $task_id ?>">Week days:</label>
-      <select multiple data-native-menu="false" name="task-day_week_num[]-<?= $task_id ?>">
-        <?php foreach ($day_week_num as $value => $display) { ?>
-          <option value="<?= $value ?>" <?php if (in_array($value, $task->day_week_num)) echo 'selected'; ?>>
-            <?= $display ?>
-          </option>
-        <?php } ?>
-      </select>
-    </div>
-  </div>
-  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
     <div class="box">
       <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <strong>Week days:</strong>
+        </div>
+        <?php foreach ($day_week_num as $value => $display) { ?>
+          <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <input type="checkbox" value="<?= $value ?>"
+              name="task-day_week_num[]-<?= $task_id ?>"
+              id="task-day-week-num[]-<?= $task_id ?>-<?= $value ?>"
+              <?php if (in_array($value, $task->day_week_num)) echo 'checked'; ?>>
+            <label for="task-day-week-num[]-<?= $task_id ?>-<?= $value ?>"><?= $display ?></label>
+          </div>
+        <?php } ?>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+    <div class="box">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <strong>Month days:</strong>
+        </div>
         <?php for ($i = 1 ; $i <= 28 ; $i++) { ?>
-          <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+          <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2">
             <input type="checkbox" value="<?= $i ?>"
               name="task-day_month_num[]-<?= $task_id ?>"
               id="task-day-month-num[]-<?= $task_id ?>-<?= $i ?>"
