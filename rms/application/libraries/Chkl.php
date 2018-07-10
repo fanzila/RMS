@@ -61,7 +61,7 @@ class Chkl
 
     $tasks_set_fields = [
       'day_week_num',
-      // 'day_month_num'
+      'day_month_num'
     ];
 
     $grouping = [];
@@ -150,7 +150,7 @@ class Chkl
 
     $tasks_set_fields = [
       'day_week_num',
-      // 'day_month_num'
+      'day_month_num'
     ];
 
     foreach ($result as $line)
@@ -239,6 +239,11 @@ class Chkl
         $task['day_week_num'] = implode(',', $task['day_week_num']);
       else
         $task['day_week_num'] = '';
+
+      if (array_key_exists('day_month_num', $task) && is_array($task['day_month_num']))
+        $task['day_month_num'] = implode(',', $task['day_month_num']);
+      else
+        $task['day_month_num'] = '';
 
       if (array_key_exists('id', $task) && $task['id'] !== 'create')
       {

@@ -247,7 +247,16 @@
             var name = entry.name, value = entry.value;
             var field = name.split('-').slice(1, -1)[0];
 
-            data[field] = value;
+            if (/\[\]$/.test(field)) {
+              field = field.substr(0, field.length - 2);
+
+              if (!data[field])
+                data[field] = [];
+
+              data[field].push(value);
+            } else {
+              data[field] = value;
+            }
 
             return data;
           }, {});

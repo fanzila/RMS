@@ -36,9 +36,9 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <div class="box">
       <label for="task-comment-<?= $task_id ?>">Comment:</label>
-      <textarea id="task-comment-<?= $task_id ?>" rows="8" name="task-comment-<?= $task_id ?>" <?= $task_readonly ?>>
-        <?= stripslashes($task->comment) ?>
-      </textarea>
+      <textarea id="task-comment-<?= $task_id ?>" rows="8"
+        name="task-comment-<?= $task_id ?>" <?= $task_readonly ?>
+        ><?= stripslashes($task->comment) ?></textarea>
     </div>
   </div>
 </div>
@@ -49,7 +49,7 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
       <label for="task-day-week-num-<?= $task_id ?>">Week days:</label>
       <select multiple data-native-menu="false" name="task-day_week_num[]-<?= $task_id ?>">
         <?php foreach ($day_week_num as $value => $display) { ?>
-        <option value="<?= $value ?>" <?php if (in_array($value, $task->day_week_num)) echo 'selected'; ?>>
+          <option value="<?= $value ?>" <?php if (in_array($value, $task->day_week_num)) echo 'selected'; ?>>
             <?= $display ?>
           </option>
         <?php } ?>
@@ -58,8 +58,17 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
   </div>
   <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <div class="box">
-      <label for="task-day-month-num-<?= $task_id ?>">Day month num:</label>
-      <input id="task-day-month-num-<?= $task_id ?>" name="task-day_month_num-<?= $task_id ?>" type="text" value="<?= stripslashes($task->day_month_num) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
+      <div class="row">
+        <?php for ($i = 1 ; $i <= 28 ; $i++) { ?>
+          <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+            <input type="checkbox" value="<?= $i ?>"
+              name="task-day_month_num[]-<?= $task_id ?>"
+              id="task-day-month-num[]-<?= $task_id ?>-<?= $i ?>"
+              <?php if (in_array('' . $i, $task->day_month_num)) echo 'checked'; ?>>
+            <label for="task-day-month-num[]-<?= $task_id ?>-<?= $i ?>"><?= $i ?></label>
+          </div>
+        <?php } ?>
+      </div>
     </div>
   </div>
 </div>
