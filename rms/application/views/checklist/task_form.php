@@ -33,27 +33,33 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
 </div>
 
 <div class="row">
-  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-    <div class="box">
-      <label for="task-day-week-num-<?= $task_id ?>">Day week num:</label>
-      <input id="task-day-week-num-<?= $task_id ?>" name="task-day_week_num-<?= $task_id ?>" type="text" value="<?= stripslashes($task->day_week_num) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
-    </div>
-  </div>
-  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-    <div class="box">
-      <label for="task-day-month-num-<?= $task_id ?>">Day month num:</label>
-      <input id="task-day-month-num-<?= $task_id ?>" name="task-day_month_num-<?= $task_id ?>" type="text" value="<?= stripslashes($task->day_month_num) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
-    </div>
-  </div>
-</div>
-
-<div class="row">
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <div class="box">
       <label for="task-comment-<?= $task_id ?>">Comment:</label>
       <textarea id="task-comment-<?= $task_id ?>" rows="8" name="task-comment-<?= $task_id ?>" <?= $task_readonly ?>>
         <?= stripslashes($task->comment) ?>
       </textarea>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="box">
+      <label for="task-day-week-num-<?= $task_id ?>">Week days:</label>
+      <select multiple data-native-menu="false" name="task-day_week_num[]-<?= $task_id ?>">
+        <?php foreach ($day_week_num as $value => $display) { ?>
+        <option value="<?= $value ?>" <?php if (in_array($value, $task->day_week_num)) echo 'selected'; ?>>
+            <?= $display ?>
+          </option>
+        <?php } ?>
+      </select>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="box">
+      <label for="task-day-month-num-<?= $task_id ?>">Day month num:</label>
+      <input id="task-day-month-num-<?= $task_id ?>" name="task-day_month_num-<?= $task_id ?>" type="text" value="<?= stripslashes($task->day_month_num) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
     </div>
   </div>
 </div>

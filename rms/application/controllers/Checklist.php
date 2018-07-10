@@ -311,6 +311,15 @@ class Checklist extends CI_Controller {
         1 => 'normal',
         2 => 'medium',
         3 => 'high'
+      ],
+      'day_week_num' => [
+        0 => 'Monday',
+        1 => 'Tuesday',
+        2 => 'Wednesday',
+        3 => 'Thursday',
+        4 => 'Friday',
+        5 => 'Saturday',
+        6 => 'Sunday'
       ]
     ];
 
@@ -384,6 +393,8 @@ class Checklist extends CI_Controller {
       $task->$field = null;
 
     $task->active = 1;
+    $task->day_week_num = [];
+    $task->day_month_num = [];
 
     return $task;
   }

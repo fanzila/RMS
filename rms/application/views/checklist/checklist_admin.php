@@ -121,10 +121,18 @@
               if (!tasks[id])
                 tasks[id] = {};
 
-              if (field === 'id')
+              if (field === 'id') {
                 tasks[id][field] = id;
-              else
+              } else if (/\[\]$/.test(field)) {
+                field = field.substr(0, field.length - 2);
+
+                if (!tasks[id][field])
+                  tasks[id][field] = [];
+
+                tasks[id][field].push(value);
+              } else {
                 tasks[id][field] = value;
+              }
             }
 
             return data;

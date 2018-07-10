@@ -59,6 +59,11 @@ class Chkl
       'priority'
     ];
 
+    $tasks_set_fields = [
+      'day_week_num',
+      // 'day_month_num'
+    ];
+
     $grouping = [];
 
     foreach ($result as $line)
@@ -89,9 +94,19 @@ class Chkl
           {
             $count = 1; // only variables can be passed as references
             $real_field = str_replace('task_', '', $field, $count);
-            $value = in_array($real_field, $tasks_number_fields, TRUE)
-              ? intval($line->$field)
-              : $line->$field;
+            $value = $line->$field;
+
+            if (in_array($real_field, $tasks_number_fields, TRUE))
+            {
+              $value = intval($value);
+            }
+            else if (in_array($real_field, $tasks_set_fields, TRUE))
+            {
+              $value = explode(',', $value);
+
+              if (count($value) === 1 && $value[0] === '')
+                $value = [];
+            }
 
             $task[$real_field] = $value;
           }
@@ -133,6 +148,11 @@ class Chkl
       'priority'
     ];
 
+    $tasks_set_fields = [
+      'day_week_num',
+      // 'day_month_num'
+    ];
+
     foreach ($result as $line)
     {
       $fields = array_keys((array)$line);
@@ -144,9 +164,19 @@ class Chkl
         {
           $count = 1; // only variables can be passed as references
           $real_field = str_replace('task_', '', $field, $count);
-          $value = in_array($real_field, $tasks_number_fields, TRUE)
-            ? intval($line->$field)
-            : $line->$field;
+          $value = $line->$field;
+
+          if (in_array($real_field, $tasks_number_fields, TRUE))
+          {
+            $value = intval($value);
+          }
+          else if (in_array($real_field, $tasks_set_fields, TRUE))
+          {
+            $value = explode(',', $value);
+
+            if (count($value) === 1 && $value[0] === '')
+              $value = [];
+          }
 
           $task[$real_field] = $value;
         }
@@ -205,6 +235,11 @@ class Chkl
 
     foreach ($tasks as $task)
     {
+      if (array_key_exists('day_week_num', $task) && is_array($task['day_week_num']))
+        $task['day_week_num'] = implode(',', $task['day_week_num']);
+      else
+        $task['day_week_num'] = '';
+
       if (array_key_exists('id', $task) && $task['id'] !== 'create')
       {
         array_push($ids, $task['id']);
