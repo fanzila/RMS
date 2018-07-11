@@ -6,7 +6,6 @@
 			?>
 									<form id="task" name="task" method="post" action="/reminder/adminSave">
 										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-											<tr><td colspan="3" style="background-color: #fbf19e;">Task info</td></tr>
 											<tr>
 												<td>
 													<label for="name" id="label">Name:</label>
@@ -16,6 +15,13 @@
 													<label for="comment" id="label">Comment:</label>
 <textarea id="comment" name="comment" rows="5" cols="20">
 </textarea>
+												</td>
+												<td>
+													<label for="type" id="type">Type:</label>
+													<select id="type" name="type">
+														<option value="service" selected>Service</option>
+														<option value="kitchen">Kitchen</option>
+													</select>
 												</td>
 											</tr>
 
@@ -35,40 +41,27 @@
 														<option value="3">High</option>
 													</select>
 												</td>
-												<td>
-													<label for="type" id="type">Type:</label>
-													<select id="type" name="type">
-														<option value="service" selected>Service</option>
-														<option value="kitchen">Kitchen</option>
-													</select>
-												</td>
+                        <td>
+                          <label for="repeat_interval">Repeat interval (in seconds):</label><br/>
+                          <select required name="repeat_interval">
+                            <option value=""></option>
+                            <option value="86400">1 day</option>
+                            <option value="172800">2 days</option>
+                            <option value="259200">3 days</option>
+                            <option value="345600">4 days</option>
+                            <option value="432000">5 days</option>
+                            <option value="518400">6 days</option>
+                            <option value="604800">1 week</option>
+                            <option value="1209600">2 weeks</option>
+                            <option value="2592000">30 days</option>
+                            <option value="3888000">45 days</option>
+                            <option value="7776000">90 days</option>
+                            <option value="31536000">1 year</option>
+                          </select>
+                        </td>
 											</tr>
 										</table>
 
-										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-
-												<tr><td style="background-color: #fbf19e;">Repeating</td></tr>
-												<tr>
-													<td>
-                            <label for="repeat_interval">Repeat interval (in seconds):</label><br/>
-                            <select required name="repeat_interval">
-                              <option value=""></option>
-                              <option value="86400">1 day</option>
-                              <option value="172800">2 days</option>
-                              <option value="259200">3 days</option>
-                              <option value="345600">4 days</option>
-                              <option value="432000">5 days</option>
-                              <option value="518400">6 days</option>
-                              <option value="604800">1 week</option>
-                              <option value="1209600">2 weeks</option>
-                              <option value="2592000">30 days</option>
-                              <option value="3888000">45 days</option>
-                              <option value="7776000">90 days</option>
-                              <option value="31536000">1 year</option>
-                            </select>
-													</td>
-												</tr>
-											</table>
 											<input type="hidden" name="id" value="create">
 											<input type="submit" id="sub" name="submit" value="Save">
 										</form>
@@ -131,7 +124,6 @@
 								<li>
 									<form id="task<?=$line->tid?>" name="task<?=$line->tid?>" method="post" action="/reminder/adminSave">
 										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-											<tr><td colspan="3" style="background-color: #fbf19e;">Task info</td></tr>
 											<tr>
 												<td>
 													<label for="name-<?=$line->tid?>" id="label-<?=$line->tid?>">Name:</label>
@@ -140,6 +132,13 @@
 												<td>
 													<label for="comment-<?=$line->tid?>" id="label-<?=$line->tid?>">Comment:</label>
 													<textarea id="comment-<?=$line->tid?>" name="comment" rows="5" cols="20"><?=stripslashes($line->tcomment)?></textarea>
+												</td>
+												<td>
+													<label for="type-<?=$line->tid?>" id="label-<?=$line->tid?>">Type:</label>
+													<select id="type-<?=$line->tid?>" name="type">
+														<option value="service" <? if($line->ttype == 'service') echo 'selected'; ?> >Service</option>
+														<option value="kitchen" <? if($line->ttype == 'kitchen') echo 'selected'; ?>>Kitchen</option>
+													</select>
 												</td>
 											</tr>
 											<tr>
@@ -158,18 +157,6 @@
 														<option value="3" <? if($line->tpriority == 3) echo "selected"; ?>>High</option>
 													</select>
 												</td>
-												<td>
-													<label for="type-<?=$line->tid?>" id="label-<?=$line->tid?>">Type:</label>
-													<select id="type-<?=$line->tid?>" name="type">
-														<option value="service" <? if($line->ttype == 'service') echo 'selected'; ?> >Service</option>
-														<option value="kitchen" <? if($line->ttype == 'kitchen') echo 'selected'; ?>>Kitchen</option>
-													</select>
-												</td>
-											</tr>
-										</table>
-                    <table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-                      <tr><td style="background-color: #fbf19e;">Repeating</td></tr>
-                      <tr>
                         <td>
                           <label for="repeat_interval-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat interval (in seconds):</label><br/>
                           <select required name="repeat_interval">
@@ -212,8 +199,8 @@
                               ?>>1 year</option>
                           </select>
                         </td>
-                      </tr>
-                    </table>
+											</tr>
+										</table>
 
                     <input type="hidden" name="id" value="<?=$line->tid?>">
                     <input type="submit" id="sub<?=$line->tid?>" name="submit" value="Save">
