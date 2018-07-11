@@ -311,15 +311,6 @@ class Checklist extends CI_Controller {
         1 => 'normal',
         2 => 'medium',
         3 => 'high'
-      ],
-      'day_week_num' => [
-        0 => 'Monday',
-        1 => 'Tuesday',
-        2 => 'Wednesday',
-        3 => 'Thursday',
-        4 => 'Friday',
-        5 => 'Saturday',
-        6 => 'Sunday'
       ]
     ];
 
