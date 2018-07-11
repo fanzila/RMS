@@ -1,7 +1,7 @@
 			<a href="/reminder/admin/1/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 		</div>
 		<div data-role="content">
-			<? 
+			<?
 			if($create) {
 			?>
 									<form id="task" name="task" method="post" action="/reminder/adminSave">
@@ -46,42 +46,32 @@
 										</table>
 
 										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-											<tr><td colspan="2" style="background-color: #fbf19e;">Notifications</td></tr>
-											<tr>
-												<td>
-													<label for="nstart" id="label">Start (what time should it start, time format HH:MN:SS):</label>
-													<input id="nstart" type="text" name="nstart" value="" data-clear-btn="true" />
-												</td>
-												<td>
-													<label for="nend" id="label">End (what time should it end, time format HH:MN:SS):</label>
-													<input id="nend" type="text" name="nend" value="" data-clear-btn="true" />
-												</td>
-											</tr>
-											
-											<tr>
-												<td>
-													<label for="ninterval" id="label">Notification interval (in seconds):</label>
-													<input id="ninterval" type="text" name="ninterval" value="" data-clear-btn="true" />
-												</td>
-											</tr>
-										
-											<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-												<tr><td colspan="2" style="background-color: #fbf19e;">Repeating</td></tr>
+
+												<tr><td style="background-color: #fbf19e;">Repeating</td></tr>
 												<tr>
 													<td>
-														<label for="mstart" id="label">Start: <br /> (datetime format YYYY-MM-DD HH:MN:SS)</label>
-														<input id="mstart" type="text" name="mstart" value="" data-clear-btn="true" />
-													</td>
-													<td>
-														<label for="repeat_interval" id="label">Repeat interval (in seconds): <br /> 
-															86400=1 day, 1296000 = 15 days, 2592000 = 30 days, 3888000 = 45 days</label>
-														<input id="repeat_interval" type="text" name="repeat_interval" value="" data-clear-btn="true" />
+                            <label for="repeat_interval">Repeat interval (in seconds):</label><br/>
+                            <select required name="repeat_interval">
+                              <option value=""></option>
+                              <option value="86400">1 day</option>
+                              <option value="172800">2 days</option>
+                              <option value="259200">3 days</option>
+                              <option value="345600">4 days</option>
+                              <option value="432000">5 days</option>
+                              <option value="518400">6 days</option>
+                              <option value="604800">1 week</option>
+                              <option value="1209600">2 weeks</option>
+                              <option value="2592000">30 days</option>
+                              <option value="3888000">45 days</option>
+                              <option value="7776000">90 days</option>
+                              <option value="31536000">1 year</option>
+                            </select>
 													</td>
 												</tr>
 											</table>
 											<input type="hidden" name="id" value="create">
 											<input type="submit" id="sub" name="submit" value="Save">
-										</form>			
+										</form>
 
 											<script>
 											$(document).ready(function() {
@@ -123,17 +113,17 @@
 											});
 
 											</script>
-											
-				
+
+
 			<? }
-			
-			
+
+
 		if(!$create) { ?>
 			<div data-role="collapsible-set">
-				<? foreach ($tasks as $line) {	
-					if($line->ttype == 'service') $bgstyle=" style='background-color: #eceeff;';"; 
-					if($line->ttype == 'kitchen') $bgstyle=" style='background-color: #ffe8d1;';"; 
-					if($line->tactive == 0) $bgstyle=" style='background-color: #bbbdbd;';"; 
+				<? foreach ($tasks as $line) {
+					if($line->ttype == 'service') $bgstyle=" style='background-color: #eceeff;';";
+					if($line->ttype == 'kitchen') $bgstyle=" style='background-color: #ffe8d1;';";
+					if($line->tactive == 0) $bgstyle=" style='background-color: #bbbdbd;';";
 					?>
 						<div data-role="collapsible"<?=$bgstyle?>>
 							<h2>ID: <?=$line->tid?> | <?=$line->ttask?> | <small><?=$line->ttype?></small></h2>
@@ -177,46 +167,56 @@
 												</td>
 											</tr>
 										</table>
-										<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-											<tr><td colspan="2" style="background-color: #fbf19e;">Notifications</td></tr>
-											<tr>
-												<td>
-													<label for="nstart-<?=$line->tid?>" id="label-<?=$line->tid?>">Start (what time should it start, time format HH:MN:SS):</label>
-													<input id="nstart-<?=$line->tid?>" type="text" name="nstart" value="<?=$line->nstart?>" data-clear-btn="true" />
-												</td>
-												<td>
-													<label for="nend-<?=$line->tid?>" id="label-<?=$line->tid?>">End (what time should it end, time format HH:MN:SS):</label>
-													<input id="nend-<?=$line->tid?>" type="text" name="nend" value="<?=$line->nend?>" data-clear-btn="true" />
-												</td>
-											</tr>
-											<tr>
-												<td>
-													<label for="ninterval-<?=$line->tid?>" id="label-<?=$line->tid?>">Notification interval (in seconds):</label>
-													<input id="ninterval-<?=$line->tid?>" type="text" name="ninterval" value="<?=$line->ninterval?>" data-clear-btn="true" />
-												</td>
-												<td>
-													<label for="nlast-<?=$line->tid?>" id="label-<?=$line->tid?>">Last notification (datetime format YYYY-MM-DD HH:MN:SS): </label>
-													<input id="nlast-<?=$line->tid?>" type="text" name="nlast" value="<?=$line->nlast?>" data-clear-btn="true" />
-												</td>
-											</tr>
-											<table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
-												<tr><td colspan="2" style="background-color: #fbf19e;">Repeating</td></tr>
-												<tr>
-													<td>
-														<label for="mstart-<?=$line->tid?>" id="label-<?=$line->tid?>">Start: <br /> (datetime format YYYY-MM-DD HH:MN:SS)</label>
-														<input id="mstart-<?=$line->tid?>" type="text" name="mstart" value="<?=$line->mstart?>" data-clear-btn="true" />
-													</td>
-													<td>
-														<label for="repeat_interval-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat interval (in seconds): <br /> 
-															86400=1 day, 1296000 = 15 days, 2592000 = 30 days, 3888000 = 45 days</label>
-														<input id="repeat_interval-<?=$line->tid?>" type="text" name="repeat_interval" value="<?=$line->repeat_interval?>" data-clear-btn="true" />
-													</td>
-												</tr>
-											</table>
-											
-											<input type="hidden" name="id" value="<?=$line->tid?>">
-											<input type="submit" id="sub<?=$line->tid?>" name="submit" value="Save">
-										</table>
+                    <table width="100%" style="border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
+                      <tr><td style="background-color: #fbf19e;">Repeating</td></tr>
+                      <tr>
+                        <td>
+                          <label for="repeat_interval-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat interval (in seconds):</label><br/>
+                          <select required name="repeat_interval">
+                            <option value=""></option>
+                            <option value="86400" <?php
+                              if ($line->repeat_interval == '86400') echo 'selected';
+                              ?>>1 day</option>
+                            <option value="172800" <?php
+                              if ($line->repeat_interval == '172800') echo 'selected';
+                              ?>>2 days</option>
+                            <option value="259200" <?php
+                              if ($line->repeat_interval == '259200') echo 'selected';
+                              ?>>3 days</option>
+                            <option value="345600" <?php
+                              if ($line->repeat_interval == '345600') echo 'selected';
+                              ?>>4 days</option>
+                            <option value="432000" <?php
+                              if ($line->repeat_interval == '432000') echo 'selected';
+                              ?>>5 days</option>
+                            <option value="518400" <?php
+                              if ($line->repeat_interval == '518400') echo 'selected';
+                              ?>>6 days</option>
+                            <option value="604800" <?php
+                              if ($line->repeat_interval == '604800') echo 'selected';
+                              ?>>1 week</option>
+                            <option value="1209600" <?php
+                              if ($line->repeat_interval == '1209600') echo 'selected';
+                              ?>>2 weeks</option>
+                            <option value="2592000" <?php
+                              if ($line->repeat_interval == '2592000') echo 'selected';
+                              ?>>30 days</option>
+                            <option value="3888000" <?php
+                              if ($line->repeat_interval == '3888000') echo 'selected';
+                              ?>>45 days</option>
+                            <option value="7776000" <?php
+                              if ($line->repeat_interval == '7776000') echo 'selected';
+                              ?>>90 days</option>
+                            <option value="31536000" <?php
+                              if ($line->repeat_interval == '31536000') echo 'selected';
+                              ?>>1 year</option>
+                          </select>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <input type="hidden" name="id" value="<?=$line->tid?>">
+                    <input type="submit" id="sub<?=$line->tid?>" name="submit" value="Save">
 									</form>
 									<script>
 									$(document).ready(function() {
@@ -229,7 +229,7 @@
 										});
 
 										$form.on('submit', function() {
-											
+
 											var name = $('#name-<?=$line->tid?>').val();
 
 											if(name == '') {
