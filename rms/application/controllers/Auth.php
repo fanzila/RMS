@@ -85,12 +85,13 @@ class Auth extends CI_Controller {
 	function index()
 	{
 		$this->hmw->changeBu();// GENERIC changement de Bu
+    $id_bu =  $this->session->userdata('bu_id');
 
 		$group_info		= $this->ion_auth_model->get_users_groups()->result();
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 
 		if ($this->hmw->isLoggedIn() == true) {
-			
+
 			if (!$this->ion_auth_acl->has_permission('view_staff')) {
 				die ('You are not allowed to view this page.');
 			}
@@ -103,7 +104,27 @@ class Auth extends CI_Controller {
 			{
 				$this->data['users'][$k]->groups	= $this->ion_auth->get_users_groups($user->id)->result();
 				$this->data['users'][$k]->bus 		= $this->ion_auth->get_users_bus($user->id)->result();
+
+        $this->data['users'][$k]->bus_ids	= array_map(function($bu) {
+          return $bu->id;
+        }, $this->data['users'][$k]->bus);
 			}
+
+      usort($this->data['users'], function($a, $b) use ($id_bu) {
+        if ($a->active != $b->active)
+          return $a->active ? -1 : 1;
+
+        if (in_array($id_bu, $a->bus_ids) && !in_array($id_bu, $b->bus_ids))
+          return -1;
+
+        if (in_array($id_bu, $b->bus_ids) && !in_array($id_bu, $a->bus_ids))
+          return 1;
+
+        return $a->username < $b->username ? -1 : 1;
+      });
+
+      foreach ($this->data['users'] as $k => $user)
+        unset($this->data['users'][$k]->bus_ids);
 
 			$this->data['username']		= $this->session->userdata('identity');
 			$this->data['bu_name']		= $this->session->userdata('bu_name');
