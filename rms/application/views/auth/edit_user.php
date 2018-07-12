@@ -18,7 +18,7 @@ echo form_open(uri_string(), $attributes);
       		<?php echo 'Username';?> <br />
       		<?php echo form_input($username);?>
 	  </p>
-      
+
 	  <p>
             <?php echo lang('edit_user_fname_label', 'first_name');?>
             <?php echo form_input($first_name);?>
@@ -66,66 +66,88 @@ echo form_open(uri_string(), $attributes);
   </div>
   <div class="col-xs-12 col-sm-6 col-md-7">
     <div class="row">
-    <div class="col-xs-6 col-sm-6 col-md-6">
-              <div class="box">
-        <?php if ($this->ion_auth_acl->has_permission('edit_user_group')): ?>
+      <div class="col-xs-4 col-sm-4 col-md-4">
+        <div class="box">
+          <?php if ($this->ion_auth_acl->has_permission('edit_user_group')): ?>
 
-            <h3><?php echo lang('edit_user_groups_heading');?></h3>
-            <?php foreach ($groups as $group):?>
-                <label class="checkbox">
-                <?php
-                    $gID=$group['id'];
-                    $checked = null;
-                    $item = null;
-                    foreach($currentGroups as $grp) {
-                        if ($gID == $grp->id) {
-                            $checked= ' checked="checked"';
-                        break;
-                        }
-                    }
-				if(!$this->ion_auth_acl->has_permission('edit_admin_user_group')) { 
-					echo ""; 
-				} else {
-                ?>
-                <input type="radio" name="groups[]" value="<?php echo $group['id'];?>"<?php echo $checked;?>>
-                <?php echo htmlspecialchars($group['name'],ENT_QUOTES,'UTF-8');?>
-				<? } ?>
-                </label>
-            <?php endforeach?>
-              </div></div>
-<div class="col-xs-6 col-sm-6 col-md-6"><div class="box">
-          <h3><?php echo lang('edit_user_bus_heading');?></h3>
-          <?php foreach ($bus as $bu):?>
-              <label class="checkbox">
+          <h3><?= lang('edit_user_groups_heading') ?></h3>
+          <?php foreach ($groups as $group): ?>
+            <label class="checkbox">
               <?php
-                  $bID=$bu['id'];
-                  $checked = null;
-                  $item = null;
-                  foreach($currentBus as $up) {
-                      if ($bID == $up->id) {
-                          $checked= ' checked="checked"';
-                      break;
-                      }
+                $gID=$group['id'];
+                $checked = null;
+                $item = null;
+                foreach($currentGroups as $grp) {
+                  if ($gID == $grp->id) {
+                    $checked = ' checked="checked"';
+                    break;
                   }
+                }
+
+                if($this->ion_auth_acl->has_permission('edit_admin_user_group')) {
+                  ?>
+                  <input type="radio" name="groups[]" value="<?= $group['id'] ?>"<?= $checked ?>>
+                  <?= htmlspecialchars($group['name'], ENT_QUOTES,'UTF-8') ?>
+                <? } ?>
+            </label>
+          <?php endforeach ?>
+        </div>
+      </div>
+      <div class="col-xs-4 col-sm-4 col-md-4"><div class="box">
+        <h3><?= lang('edit_user_bus_heading') ?></h3>
+        <?php foreach ($bus as $bu): ?>
+          <label class="checkbox">
+            <?php
+              $bID=$bu['id'];
+              $checked = null;
+              $item = null;
+              foreach ($currentBus as $up) {
+                if ($bID == $up->id) {
+                  $checked = ' checked="checked"';
+                  break;
+                }
+              }
+            ?>
+            <input type="checkbox" name="bus[]" value="<?php echo $bu['id'];?>"<?php echo $checked;?>>
+            <?php echo htmlspecialchars($bu['name'],ENT_QUOTES,'UTF-8');?>
+          </label>
+        <?php endforeach?>
+      </div></div>
+
+      <div class="col-xs-4 col-sm-4 col-md-4"><div class="box">
+        <h3><?= lang('edit_user_mails_lists_heading') ?></h3>
+        <?php
+          $ids_users_mails_lists = array_map(function($mail_list) {
+            return $mail_list->id;
+          }, $currentMailsLists);
+
+          foreach ($mails_lists as $mail_list) { ?>
+            <label class="checkbox">
+              <?php
+                $checked = in_array($mail_list['id'], $ids_users_mails_lists)
+                  ? ' checked="checked"'
+                  : '';
               ?>
-              <input type="checkbox" name="bus[]" value="<?php echo $bu['id'];?>"<?php echo $checked;?>>
-              <?php echo htmlspecialchars($bu['name'],ENT_QUOTES,'UTF-8');?>
-              </label>
-          <?php endforeach?>
+              <input type="checkbox" name="mails_lists[]" value="<?= $mail_list['id'] ?>"<?= $checked ?>>
+              <?= htmlspecialchars($mail_list['name'], ENT_QUOTES, 'UTF-8') ?>
+            </label>
+            <?php
+          } ?>
+      </div></div>
 
       <?php endif ?>
 
-      <?php echo form_hidden('id', $user->id);?>
-      <?php echo form_hidden($csrf); ?>
-</div>
-</div>
-<div class="col-xs-12 col-sm-12 col-md-12">
-  <p><?php echo form_submit('submit', lang('edit_user_submit_btn'));?></p>
-</div>
-
+    <?= form_hidden('id', $user->id) ?>
+    <?= form_hidden($csrf)  ?>
   </div>
 </div>
-<?php echo form_close();?>
+<div class="col-xs-12 col-sm-12 col-md-12">
+  <p><?= form_submit('submit', lang('edit_user_submit_btn')) ?></p>
+</div>
+
+</div>
+</div>
+<?= form_close() ?>
 <?if (isset($WpUID)):?>
 	<div class="col-xs-12 col-sm-12 col-md-12">
 			<button href="#" onclick="wpDeleteAccount(<?=$user->id?>); return false;">Delete WP Account</button>

@@ -250,7 +250,6 @@ class Sensors extends CI_Controller {
 
 			foreach ($info as $key => $val) {
 
-				$email	= array();
 				$msg	= '';
 				$date	= $val['date'];
 
@@ -272,22 +271,10 @@ class Sensors extends CI_Controller {
 
 					$this->hmw->sendNotif($msg, $id_bu);
 
-					//get checklist BU, then manager2 + admin email of this BU
-					$this->db->select('users.username, users.email, users.id');
-					$this->db->distinct('users.username');
-					$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-					$this->db->join('users_groups', 'users.id = users_groups.user_id');
-					$this->db->where('users.active', 1);
-					$this->db->where_in('users_groups.group_id', array(1,4));
-					$this->db->where('users_bus.bu_id', $id_bu);
-					$query = $this->db->get("users");
-
-					$email['subject'] 	= $buinfo->name." Sensor '".$is[0]->name."' error!";
-					$email['msg'] 		= $msg;
-					foreach ($query->result() as $row) {
-						$email['to']	= $row->email;
-						$this->mmail->sendEmail($email);
-					}
+          $subject = $buinfo->name . ' Sendor ' . $is[0]->name . ' error!';
+          $this->mmail->prepare($subject, $msg)
+            ->toList('sensors_notifications', $id_bu)
+            ->send();
 					//$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				}
 			}
@@ -312,7 +299,6 @@ class Sensors extends CI_Controller {
 
 			foreach ($info as $key => $val) {
 
-				$email	= array();
 				$msg	= '';
 				$max    = $val['max'];
 				$min    = $val['min'];
@@ -338,35 +324,36 @@ class Sensors extends CI_Controller {
 					// "AND $temp != 85" is a cludge for wrong data collecting by 1-wire which report sometimes, for unknown reason, 85 instead of minus something...
 					if(($temp >= $max OR $temp <= $min) AND ($temp != 85 AND $temp > -100 AND $temp < 100) AND ($this->checkForOngoingDelay($s_id) == false)) {
 						$buinfo = $this->hmw->getBuInfo($id_bu);
-						
+
 						$msg = "$buinfo->name ERROR sensor ".$is[0]->name.": ".$temp."c at ".$is[0]->date."\n
 The temperature should be max: ".$max."c and min: ".$min."c";
 
 						$msg_notif = "Problème de température pour : '".$is[0]->name."'\n
-Température = ".$temp."c\n 
+Température = ".$temp."c\n
 ==> VOUS DEVEZ AGIR <==";
-						
+
 						$curr_date = date('H');
 						if ($curr_date < 22 && $curr_date > 9) {
 							$this->hmw->sendNotif($msg_notif, $id_bu);
 						}
+
+            $groups = [ 1, 4, 6 ];
+
 						//get checklist BU, then manager2 + admin email of this BU
 						$this->db->select('users.username, users.email, users.id, users.phone');
 						$this->db->distinct('users.username');
 						$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 						$this->db->join('users_groups', 'users.id = users_groups.user_id');
 						$this->db->where('users.active', 1);
-						$this->db->where_in('users_groups.group_id', array(1,4,6));
+						$this->db->where_in('users_groups.group_id', $groups);
 						$this->db->where('users_bus.bu_id', $id_bu);
 						$query = $this->db->get("users");
 
-						$email['subject'] 	= $buinfo->name." Sensor '".$is[0]->name."' error!";
-						$email['msg'] 		= $msg;
+            $subject = $buinfo->name . ' Sensor \'' . $is[0]->name . '\' error!';
+            $this->mmail->prepare($subject, $msg)
+              ->toGroup($groups, $id_bu)
+              ->send();
 
-						foreach ($query->result() as $row) {
-							$email['to']	= $row->email;
-							$this->mmail->sendEmail($email);
-						}
 						if (($curr_date >= 22 || $curr_date <= 9) AND $is[0]->sms_alert)
 						{
 							if ($is[0]->sms_count_day < 3) {

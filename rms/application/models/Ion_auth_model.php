@@ -1432,7 +1432,26 @@ class Ion_auth_model extends CI_Model
 		                ->join($this->tables['bus'], $this->tables['users_bus'].'.'.$this->join['bus'].'='.$this->tables['bus'].'.id')
 		                ->get($this->tables['users_bus']);
 	}
-	
+
+  public function get_users_mails_lists($id = FALSE)
+  {
+    $this->trigger_events('get_users_mails_litsts');
+
+    // if no id was passed use the current users id
+    $id || $id = $this->session->userdata('user_id');
+
+    $select = $this->tables['users_mails_lists'] . '.' . $this->join['mails_lists'] . ' AS id, '
+      . $this->tables['mails_lists'] . '.name';
+
+    $join = $this->tables['users_mails_lists'] . '.' . $this->join['mails_lists']
+      . '=' . $this->tables['mails_lists'] . '.id';
+
+    return $this->db->select($select)
+      ->where($this->tables['users_mails_lists'] . '.' . $this->join['users'], $id)
+      ->join($this->tables['mails_lists'], $join)
+      ->get($this->tables['users_mails_lists']);
+  }
+
 	/**
 	 * add_to_group
 	 *
@@ -1630,6 +1649,40 @@ class Ion_auth_model extends CI_Model
 		return $this;
 	}
 
+  public function set_mails_lists($mails_lists_ids, $user_id)
+  {
+    $this->trigger_events('set_mails_lists');
+
+    is_array($mails_lists_ids) OR $mails_lists_ids = [ $mails_lists_ids ];
+
+    if (count($mails_lists_ids) === 0)
+    {
+      $this->db->where('user_id', $user_id);
+      return $this->db->delete('users_mails_lists');
+    }
+
+    $this->db->trans_start();
+
+    // remove entries
+    $this->db->where('user_id', $user_id);
+    $this->db->where_not_in('mail_list_id', $mails_lists_ids);
+    $this->db->delete('users_mails_lists');
+
+    // add entries
+    foreach ($mails_lists_ids as $mail_list_id)
+    {
+      $entry = [
+        'mail_list_id' => $mail_list_id,
+        'user_id'      => $user_id
+      ];
+      $this->db->query($this->db->insert_string('users_mails_lists', $entry) . ' ON DUPLICATE KEY UPDATE user_id = user_id');
+    }
+
+    $this->db->trans_complete();
+
+    return $this->db->trans_status();
+	}
+
 	/**
 	 * bus
 	 *
@@ -1694,6 +1747,45 @@ class Ion_auth_model extends CI_Model
 
 		return $this->groups();
 	}
+
+  public function mails_lists($id = NULL)
+  {
+    $this->trigger_events('mails_lists');
+
+    // run each where that was passed
+    if (isset($this->_ion_where) && !empty($this->_ion_where))
+    {
+      foreach ($this->_ion_where as $where)
+      {
+        $this->db->where($where);
+      }
+      $this->_ion_where = array();
+    }
+
+    if (isset($this->_ion_limit) && isset($this->_ion_offset))
+    {
+      $this->db->limit($this->_ion_limit, $this->_ion_offset);
+
+      $this->_ion_limit  = NULL;
+      $this->_ion_offset = NULL;
+    }
+    else if (isset($this->_ion_limit))
+    {
+      $this->db->limit($this->_ion_limit);
+
+      $this->_ion_limit  = NULL;
+    }
+
+    //set the order
+    if (isset($this->_ion_order_by) && isset($this->_ion_order))
+    {
+      $this->db->order_by($this->_ion_order_by, $this->_ion_order);
+    }
+
+    $this->response = $this->db->get($this->tables['mails_lists']);
+
+    return $this;
+  }
 
 	/**
 	 * update

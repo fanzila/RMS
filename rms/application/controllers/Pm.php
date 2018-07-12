@@ -367,32 +367,32 @@ class Pm extends CI_Controller {
 			{
 				if($this->pm_model->send_message($recipient_ids, $subject, $body))
 				{
-					$server_name = $this->hmw->getParam('server_name'); 
-					
+					$server_name = $this->hmw->getParam('server_name');
+
 					$this->load->library('mmail');
 					$bus = $this->input->post('bus');
-					
+
 					$this->db->select('username, email, id');
 					$this->db->distinct('username');
 					foreach ($recipient_ids as $recipient_id) {
-						$this->db->or_where_in('id', $recipient_id);	
-					}			
-					$query = $this->db->get("users");
-					
-					$results = $query->result();
+						$this->db->or_where_in('id', $recipient_id);
+					}
 
-					//if(count($results) <= 1) exit('No recipient found (found only '.count($results).').');
-					
-					foreach ($results as $row) {
-						$key 	= md5(microtime().rand());
-						$email['from']		= 'noreply@hankrestaurant.com';
-						$email['from_name']	= 'RMS';
-						$email['to']		= $row->email;
-						$email['replyto'] 	= "noreply@hankrestaurant.com";
-						$email['subject']	= 'Hank Report: '.$subject;
-						$email['mailtype']	= 'html';
-						$email['msg'] = $body;
-						$this->mmail->sendEmail($email);
+          // @WARNING last $query is on 'report_subjects' table
+          // the next `foreach` is possibly bugged
+					$query = $this->db->get("users");
+
+          $results = $query->result();
+
+          //if(count($results) <= 1) exit('No recipient found (found only '.count($results).').');
+
+          $subject = 'Hank Report: ' . $subject;
+
+          foreach ($results as $row) {
+            $this->mmail->prepare($subject, $body)
+              ->toEmail($row->email)
+              ->replyTo('noreply@hankrestaurant.com')
+              ->send();
 					}
 					// On success: redirect to list view of messages
 					$this->session->set_flashdata('status', $this->lang->line('msg_sent'));

@@ -251,26 +251,13 @@ class Order extends CI_Controller {
 					$info = $this->hmw->getBuInfo($id_bu);
 					$this->load->library('mmail');
 
-					$msg = "WARNING! ".$info->name." CASHPAD NOT CLOSED!";
+					$msg = "WARNING! " . $info->name . " CASHPAD NOT CLOSED!";
 
-					//get manager2 + admin email of this BU
-					$this->db->select('users.username, users.email, users.id');
-					$this->db->distinct('users.username');
-					$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-					$this->db->join('users_groups', 'users.id = users_groups.user_id');
-					$this->db->where('users.active', 1);
-					$this->db->where_in('users_groups.group_id', array(1,4));
-					$this->db->where('users_bus.bu_id', $id_bu);
-					$query = $this->db->get("users");
+          $this->mmail->prepare($msg, $msg)
+            ->toList('cashier_alerts', $id_bu)
+            ->send();
 
-					$email['subject'] 	= $msg;
-					$email['msg'] 		= $msg;
-
-					foreach ($query->result() as $row) {
-						$email['to']	= $row->email;
-						$this->mmail->sendEmail($email);
-					}
-					$this->hmw->sendNotif($msg, $id_bu);
+          $this->hmw->sendNotif($msg, $id_bu);
 
 				}
 
@@ -777,17 +764,19 @@ class Order extends CI_Controller {
 			$data = array('status' => 'OK', 'key' => $key, 'scomment' => $scomment);
 
 			if($ret[0]['status'] != 'confirmed' OR ($ret[0]['status'] == 'confirmed' AND !empty($scomment) ) ) {
-				$email['from']		= $order_email;
-				$email['from_name']	= 'HANK';
-				$email['to']		= $order_email;
-				$email['subject'] 	= '';
-				if(!empty($scomment)) { $email['subject'] .= "ALERT COMMENT! "; }
-				$email['subject'] 	.= "Confirmation de commande de ".$ret_sup[0]['name'].", order: ".$ret[0]['idorder'];
-				$email['replyto'] 	= $order_email;
-				$email['msg'] 		= "Commande : ".$ret[0]['idorder']." validée par fournisseur ".$ret_sup[0]['name'].".";
-				if(!empty($scomment)) { $email['msg'] .= "\n\nCOMMENTAIRE: ".$scomment."\n"; }
-				$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK\n";
-				$this->mmail->sendEmail($email);
+
+        $subject=  '';
+        if(!empty($scomment))
+          $subject .= "ALERT COMMENT! ";
+        $subject .= 'Confirmation de commande de ' . $ret_sup[0]['name'] . ', order: ' . $ret[0]['idorder'];
+
+        $msg = 'Commande : ' . $ret[0]['idorder'] . ' validée par fournisseur ' . $ret_sup[0]['name'] . '.';
+
+        $this->mmail->prepare($subject, $msg)
+          ->from($order_email, 'HANK')
+          ->toEmail($order_email)
+          ->toList('orders')
+          ->replyTo($order_email);
 			}
 		} else {
 			$data = array('status' => 'NOK');
@@ -811,59 +800,64 @@ class Order extends CI_Controller {
 			$query = $this->db->get('orders');
 			$order = $query->row_array();
 			$order_email 	= $this->hmw->getEmail('order', $id_bu);
-			
+
 			$this->db->where('id', $supplier_id);
 			$query = $this->db->get('suppliers');
 			$supplier = $query->row_array();
 			$supplier_email = $supplier['contact_order_email'];
-			
+
 			if (empty($order))
 				die("Cannot cancel order: Cannot find order in database");
 			if (empty($supplier_email))
 				die("Cannot cancel order: Cannot find supplier email");
-			
+
 				if(!empty($supplier_email)) {
 					$cc = $order_email;
 					if(!empty($order['ccemail'])) $cc .= ','.$order->ccemail;
 				}
-			$email['from'] = $order_email;
-			$email['from_name'] = 'HANK';
-			$email['to'] = $supplier_email;
-			$email['cc'] = $cc;
-			$email['subject'] = 'Annulation Commande ' . $load;
-			$email['attach'] = $order['file'];
-			$email['replyto'] = $order_email;
-			$email['msg'] = "Bonjour ".$supplier['name']."!\n\nNous souhaitons annuler la commande en PJ.\n\n";
-			$email['msg'] .= "\n\nHave A Nice Karma,\n-- \nHANK - ".$user->username."\nEmail : $order_email \nTel : $user->phone";
-			$this->mmail->sendEmail($email);
+
+      $subject = 'Annulation Commande ' . $load;
+      $msg = 'Bonjour ' . $supplier['name']
+        . "!\n\nNous souhaitons annuler la commande en PJ.\n\n"
+        . "\n\nHave A Nice Karma,\n-- \nHANK - " . $user->username
+        . "\nEmail : " . $order_email . "\nTel : $user->phone";
+
+      $this->mmail->prepare($subject, $msg)
+        ->from($order_email, 'HANK')
+        ->toEmail($supplier_email)
+        ->toList('orders')
+        ->cc($cc)
+        ->replyTo($order_email)
+        ->attach($order['file']);
+
 			$this->db->set('status', 'canceled');
 			$this->db->where('idorder', $load);
 			$this->db->update('orders');
-			
+
 			$this->session->set_userdata('keep_filters', 'true');
-			
+
 			redirect('/order/viewOrders/', 'auto');
 		} else {
 			if (empty($load) || empty($supplier_id))
 				die("Cannot cancel order: Missing parameters");
-			
+
 			$this->db->where('idorder', $load);
 			$this->db->where('supplier_id', $supplier_id);
 			$query = $this->db->get('orders');
 			$order = $query->row_array();
-			
+
 			$this->db->where('id', $supplier_id);
 			$query = $this->db->get('suppliers');
 			$supplier = $query->row_array();
-			
+
 			if (empty($order)) {
 				die("Cannot cancel order: Cannot find order in database");
 			}
-			
+
 			if (empty($supplier)) {
 				die("Cannot cancel order: Cannot find supplier in database");
 			}
-			
+
 			$filename = $order['file'];
 			$data['order'] = $order;
 			$fileencode = str_replace("/", "-", $filename);
@@ -909,19 +903,26 @@ class Order extends CI_Controller {
 			$cc = $order_email;
 			if(!empty($order->ccemail)) $cc .= ','.$order->ccemail;
 
-			$email['from']		= $order_email;
-			$email['from_name']	= 'HANK';
-			$email['cc'] 		= $cc;
-			$email['to']		= $supinfo['contact_order_email'];
-			$email['subject'] 	= "Nouvelle commande ".$idorder;
-			$email['attach'] 	= $order->file;
-			$email['replyto'] 	= $order_email;
-			$email['msg'] 		= "Bonjour ".$supinfo['name']."!\n\nVoici une nouvelle commande en PJ.\n\n";
-			if(!empty($order->comment)) $email['msg'] .= $order->comment."\n\n";
-			$email['msg'] 		.= "Merci de bien vouloir valider la prise en compte de cette commande en cliquant sur ce lien : $link";
-			$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK - ".$user->username."\nEmail : $order_email \nTel : $user->phone";
+      $subject = 'Nouvelle commande ' . $idorder;
 
-			$this->mmail->sendEmail($email);
+      $msg     = 'Bonjour ' . $supinfo['name']
+        . "!\n\nVoici une nouvelle commande en PJ.\n\n";
+      if(!empty($order->comment))
+        $msg .= $order->comment."\n\n";
+      $msg .= 'Merci de bien vouloir valider la prise en compte de cette commande'
+       . ' en cliquant sur ce lien : $link';
+      $msg .= "\n\nHave A Nice Karma,\n-- \nHANK - " . $user->username
+        . "\nEmail : " . $order_email . "\nTel : " . $user->phone;
+
+      $this->mmail->prepare($subject, $msg)
+        ->from($order_email, 'HANK')
+        ->toEmail($supinfo['contact_order_email'])
+        ->toList('orders')
+        ->cc($cc)
+        ->replyTo($ordeR_email)
+        ->attach($order->file)
+        ->send();
+
 			if (!empty($supinfo['contact_order_tel']) AND isset($post['SMSSupplier']) AND $post['SMSSupplier'] == "on") {
 				$msg = 'Une commande HANK vient d\'être envoyée, merci de bien vouloir consulter vos emails.';
 				$this->hmw->sendSms($supinfo['contact_order_tel'], $msg);
@@ -1157,18 +1158,28 @@ class Order extends CI_Controller {
 						$link 				= 'http://'.$server_name.'/order/confirm/'.$line->key;
 						$date_y 			= '20'.$line->idorder[0].$line->idorder[1];
 						$date_m 			= $line->idorder[2].$line->idorder[3];
-						$email['from']		= $order_email;
-						$email['from_name']	= 'HANK';
-						$email['cc'] 		= $cc;
-						$email['to']		= $line->contact_order_email;
-						$email['subject'] 	= "Relance de confirmation de commande ".$line->idorder;
-						$email['attach'] 	= 'orders/'.$date_y.'/'.$date_m.'/'.$line->idorder.'_'.$line->name.'.pdf';
-						$email['replyto'] 	= $order_email;
-						$email['msg'] 		= "Bonjour ".$line->name."!\n\nIl y a 1 jour ou plus, nous vous avons envoyé la commande numéro $line->idorder de nouveau en PJ.\n\n";
-						$email['msg'] 		.= "Afin de nous assurer de la bonne prise en compte de celle-ci, merci de bien vouloir la valider en cliquant sur ce lien : $link";
-						$email['msg'] 		.= "\n\nHave A Nice Karma,\n-- \nHANK - ".$user->username."\nEmail : $order_email \nTel : $user->phone";
 
-						$this->mmail->sendEmail($email);
+            $subject = 'Relance de confirmation de commande ' . $line->idorder;
+
+            $msg  = "Bonjour " . $line->name
+              . "!\n\nIl y a 1 jour ou plus, nous vous avons envoyé la commande numéro "
+              . $line->idorder . " de nouveau en PJ.\n\n"
+              . 'Afin de nous assurer de la bonne prise en compte de celle-ci, merci de bien vouloir la valider en cliquant sur ce lien : '
+              . $link . "\n\nHave A Nice Karma,\n-- \nHANK - "
+              . $user->username . "\nEmail : $order_email \nTel : " . $user->phone;
+
+            $attach = 'orders/' . $date_y . '/' . $date_m . '/' . $line->idorder
+              . '_' . $line->name . '.pdf';
+
+            $this->mmail->prepare($subject, $msg)
+              ->from($order_email, 'HANK')
+              ->toEmail($line->contact_order_email)
+              ->toList('orders')
+              ->cc($cc)
+              ->replyTo($order_email)
+              ->attach($attach)
+              ->send();
+
 						$req_conf = "UPDATE orders_confirm SET `date_sent` = NOW(), status ='chased', count_confirm = count_confirm+1 WHERE `idorder` = $line->idorder";
 						$this->db->query($req_conf);
 					}

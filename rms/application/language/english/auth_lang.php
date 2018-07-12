@@ -86,6 +86,7 @@ $lang['edit_user_password_confirm_label']            = 'Confirm Password: (if ch
 $lang['edit_user_level_label']           			 = 'Level';
 $lang['edit_user_groups_heading']                    = 'Groups';
 $lang['edit_user_bus_heading']                    	 = 'Business Units';
+$lang['edit_user_mails_lists_heading']             	 = 'Notifications';
 $lang['edit_user_submit_btn']                        = 'Save User';
 $lang['edit_user_validation_fname_label']            = 'First Name';
 $lang['edit_user_validation_lname_label']            = 'Last Name';

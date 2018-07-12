@@ -3,28 +3,28 @@
 class Hmw {
 
 	public function LogRecord($p, $id_bu=null) {
-		
+
 		$CI = & get_instance();
-		
+
 		if(!isset($id_bu)) $id_bu = $CI->session->userdata('bu_id');
 		if($CI->session->userdata('keylogin') != NULL) $keylogin = $CI->session->userdata('keylogin');
-		
+
 		$user		= $CI->ion_auth->user()->row();
-		
+
 		$CI->db->set('type', $p['type']);
 		$CI->db->set('id_bu', $id_bu);
-		
+
 		if(isset($keylogin)) $CI->db->set('keylogin', $keylogin);
 		if(isset($user->id)) $CI->db->set('user_id', $user->id);
-		
+
 		if(isset($p['val1'])) $CI->db->set('val1', "$p[val1]");
 		if(isset($p['val2'])) $CI->db->set('val2', "$p[val2]");
 		if(isset($p['val3'])) $CI->db->set('val3', "$p[val3]");
 		if(isset($p['val4'])) $CI->db->set('val4', "$p[val4]");
-		
+
 		$CI->db->insert('log');
 	}
-	
+
 
 	public function cleanNumber($num) {
 		$t1 = str_replace ( ',' , '.' , $num);
@@ -32,42 +32,42 @@ class Hmw {
 		//$t3 = preg_replace("/[^0-9,.]/", "", $t2);
 		return $t2;
 	}
-		
-	public function getParam($param) 
+
+	public function getParam($param)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		$CI->db->select('val')->from('params')->where('key', $param)->limit(1);
 		$res_params = $CI->db->get();
-		$r = $res_params->result();	
+		$r = $res_params->result();
 		return $r[0]->val;
 	}
 
-	public function callBox($data) 
+	public function callBox($data)
 	{
-	
+
 		/** DEMO
 		$_GET = array(
 		'key'	=> $key,
-		'order' => 'chacun', 
+		'order' => 'chacun',
 		'module' => 'switch', // or 'dimmer'
 		'value' => 'on', // or '1' to '255'
 		'id' => '2');
 
 		$_GET = array(
 		'key'	=> $key,
-		'order' => 'sound', 
-		'jingle' => '/home/pos/sncf2.mp3', 
+		'order' => 'sound',
+		'jingle' => '/home/pos/sncf2.mp3',
 		'type' => 'audio', //or 'text'
 		'message' => '/home/pos/evening.mp3'); // or text : 'Good morning planet.'
 		**/
-		
-		
-		$CI = & get_instance(); 
+
+
+		$CI = & get_instance();
 		$CI->load->database();
-		
+
 		$jdata = json_encode($data);
-		
+
 		$ch = curl_init();
 		$api_box_url = $this->getParam('api_box_url');
 		$key = $this->getParam('keylogin');
@@ -84,19 +84,19 @@ class Hmw {
 		curl_close ($ch);
 	}
 
-	public function getUser($id) 
+	public function getUser($id)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		$CI->db->select('*')->from('users')->where('id', $id)->limit(1);
 		$res_params = $CI->db->get();
-		$r = $res_params->result();	
+		$r = $res_params->result();
 		return $r[0];
 	}
 
-	public function getBus($id = null, $iduser = null) 
+	public function getBus($id = null, $iduser = null)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		$CI->db->select('bus.id, bus.name, bus.country, bus.zip, bus.description')->from('bus as bus');
 		if($iduser) $CI->db->join('users_bus as ub', 'ub.bu_id = bus.id')->where('ub.user_id', $iduser);
@@ -106,73 +106,73 @@ class Hmw {
 	}
 
 	public function getBuInfo($id_bu) {
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->db->where('bus.id', $id_bu);
 		$query = $CI->db->get("bus");
 		$res = $query->result();
 		return $res[0];
 	}
-		
-	public function updateUserBu($id_bu, $id_user) 
+
+	public function updateUserBu($id_bu, $id_user)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		if($id_user){
 			$CI->db->set('current_bu_id', $id_bu)->where('id', $id_user);
 		 	$CI->db->update('users');
 		}
 	}
-	
-	public function getUsers() 
+
+	public function getUsers()
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
 		$res_params = $CI->db->get('users');
-		return $res_params->result();	
+		return $res_params->result();
 	}
 
 	public function getEmail($type, $id_bu)
 	{
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->database();
-		
+
 		if($type == 'order') {
 			$CI->db->select('email_order')->from('bus')->where('id', $id_bu);
 			$res_params = $CI->db->get();
 			$res = $res_params->result();
 			return $res[0]->email_order;
 		}
-		
+
 	}
-	
+
 	public function sendSms($num, $msg) {
-		
-		$CI = & get_instance(); 
+
+		$CI = & get_instance();
 		$CI->load->library('mmail');
-		
-		$sms_user	= $this->getParam('ovh_sms_user'); 
-		$sms_pass	= $this->getParam('ovh_sms_pass'); 
-		$sms_nic	= $this->getParam('ovh_sms_nic'); 
-		
-		$sms = array();
-		$sms['to']			= "email2sms@ovh.net";
-		$sms['subject'] 	= $sms_nic.":".$sms_user.":".$sms_pass.":HANK:".$num.":::1";
-		$sms['msg'] 		= $msg;
-		$CI->mmail->sendEmail($sms);
+
+		$sms_user	= $this->getParam('ovh_sms_user');
+		$sms_pass	= $this->getParam('ovh_sms_pass');
+		$sms_nic	= $this->getParam('ovh_sms_nic');
+
+		$subject = $sms_nic . ':' . $sms_user . ':' . $sms_pass . ':HANK:' . $num . ':::1';
+
+    $CI->mmail->prepare($subject, $msg)
+      ->toEmail('email2sms@ovh.net')
+      ->send();
 	}
-	
+
 	public function sendNotif($msg, $id_bu, $devParam = null) {
-		
+
 		$address	= $this->getParam('pushover_address');
 		$token		= $this->getParam('pushover_token');
 		$user		= $this->getParam('pushover_user');
 		$buinfo 	= $this->getBuInfo($id_bu);
 		$device 	= $buinfo->pushover_device;
-		
+
 		if ($devParam === 'kitchen') {
 			$device = $buinfo->pushover_device_kitchen;
 		}
-		
+
 		curl_setopt_array(
 			$ch = curl_init(), array(
 				CURLOPT_URL => $address,
@@ -187,11 +187,11 @@ class Hmw {
 		curl_exec($ch);
 		curl_close($ch);
 	}
-	
+
 	public function isLoggedIn() {
 		$CI = & get_instance();
 		$CI->load->library('ion_auth');
-		
+
 		if (!$CI->ion_auth->logged_in()) {
 				$CI->session->set_userdata('pageBeforeLogin', current_url());
 				redirect('auth/login');
@@ -199,27 +199,27 @@ class Hmw {
 			return (true);
 		}
 	}
-	
+
 	public function keyLogin() {
 
-		$CI = & get_instance(); 
+		$CI = & get_instance();
 		$CI->load->library('ion_auth');
 		$CI->load->library('hmw');
-		$CI->load->library('session');	
+		$CI->load->library('session');
 		$CI->load->library('email');
 		$CI->load->library('mmail');
 
 		$getkey	= $CI->input->get('keylogin');
 		$id_bu	= $CI->input->get('id_bu');
 		$type		= $CI->input->get('type');
-		
+
 		if(!empty($getkey)) {
 			$keyl = $this->getParam('keylogin');
 			if($getkey == $keyl) {
-				
+
 				$user = $this->getParam('keylogin_user_'.$id_bu);
 				$pass = $this->getParam('keylogin_pass_'.$id_bu);
-				
+
 				if ($type == 'kitchen') {
 					$CI->session->set_userdata('type', 'kitchen');
 				}
@@ -237,18 +237,20 @@ class Hmw {
 				$CI->session->set_userdata('pageBeforeLogin', current_url());
 				redirect('auth/login');
 			}
-			
+
 		}
-		
+
 		$data['bu_name'] =  $CI->session->userdata('bu_name');
 		$data['username'] = $CI->session->userdata('identity');
-		if(empty($data['username'])) {
-						$email['subject'] 	= "RMS SESSION ERROR";
-						$email['msg'] 		= 'RMS SESSION ERROR';
-						$email['to']		= 'pierre@hankrestaurant.com';
-						$CI->mmail->sendEmail($email);	
-			exit('Erreur d\'un truc, simplement se relogger ou fermer et relancer l\'application RMS, ca va marcher!');
-		}
+
+    if(empty($data['username']))
+    {
+      $this->mmail->prepare('RMS SESSION ERROR', 'RMS SESSION ERROR')
+        ->toEmail('pierre@hankrestaurant.com')
+        ->send();
+
+      exit('Erreur d\'un truc, simplement se relogger ou fermer et relancer l\'application RMS, ca va marcher!');
+    }
 	}
 
 	public function changeBu() {
@@ -257,19 +259,19 @@ class Hmw {
 		if(!empty($change_bu)) {
 			$bu_info = $CI->hmw->getBus($change_bu);
 			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
-			$CI->hmw->updateUserBu($change_bu, $CI->session->userdata('user_id')); 
+			$CI->hmw->updateUserBu($change_bu, $CI->session->userdata('user_id'));
 			$CI->session->set_userdata($session_data);
 		}
 	}
 
 	public function headerVars($index, $indexlocation, $title){
 		$CI = & get_instance();
-		
+
 		if($index!=-1){
 			$user			= $CI->ion_auth->user()->row();
 			$bus_list		= $CI->hmw->getBus(null, $user->id);
 			$user_groups	= $CI->ion_auth->get_users_groups()->result();
-			
+
 			$higher_level = new stdClass();
 			$higher_level->level = -1;
       foreach ($user_groups as $key => $value) {
@@ -283,7 +285,7 @@ class Hmw {
 			$username		= $CI->session->userdata('identity');
 
 			$buinfo 		= $CI->hmw->getBuInfo($bu_id);
-	
+
 			//$CI->db->select('val')->from('bank_balance');
 			//$bal_res = $CI->db->get();
 			//$bal = $bal_res->row_array();
@@ -314,7 +316,7 @@ class Hmw {
 					'user_door'		=> $user->door_open
 					)
 				);
-				
+
 			}else{
 				$headers = array(
 				'header_pre'	=> array(

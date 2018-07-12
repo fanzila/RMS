@@ -169,39 +169,30 @@ class Checklist extends CI_Controller {
 		$checklist_rec_id = $this->input->post('checklist_rec_id');
 		$checklist_name = $this->input->post('checklist_name');
 		$bu_name =  $this->session->userdata('bu_name');
-		
-		$date = date('Y-m-d H:i:s'); 
-		
-		//get checklist BU, then manager2 + admin email of this BU
+
+		$date = date('Y-m-d H:i:s');
+
 		$id_bu =  $this->session->userdata('bu_id');
-		$this->db->select('users.username, users.email, users.id');
-		$this->db->distinct('users.username');
-		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-		$this->db->join('users_groups', 'users.id = users_groups.user_id');
-		$this->db->where('users.active', 1);
-		$this->db->where_in('users_groups.group_id', array(1,4));
-		$this->db->where('users_bus.bu_id', $id_bu);
-		$this->db->order_by('users.username', 'asc');
-		$query = $this->db->get("users");
+    $subject = '';
+    $msg = '';
 
 		if($checklist_rec_id > 0) {
 			$this->db->set('user', $this->input->post('user'));
 			$this->db->set('data', $srl);
 			$this->db->set('date', 'NOW()', FALSE);
 			$req = $this->db->update('checklist_records')->where('id', $checklist_rec_id);
-			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' UPDATED';
+			$subject = 'Checklist ' . $checklist_name . ' ' . $bu_name .' UPDATED';
 
 		} else {
 			$this->db->set('user', $this->input->post('user'));
 			$this->db->set('id_checklist', $this->input->post('id_checklist'));
 			$this->db->set('data', $srl);
 			$this->db->set('date', 'NOW()', FALSE);
-			$req = $this->db->insert('checklist_records');	
-			$email['subject'] = 'Checklist '.$checklist_name.' '. $bu_name .' CREATED';
-		}	
+			$req = $this->db->insert('checklist_records');
+			$subject = 'Checklist ' . $checklist_name . ' ' . $bu_name . ' CREATED';
+		}
 
 		$comment = false;
-		$msg = '';
 
 		$this->db->select('id, first_name, last_name')->from('users')->where('id', $this->input->post('user'));
 		$users_res = $this->db->get() or die($this->mysqli->error);
@@ -219,19 +210,17 @@ class Checklist extends CI_Controller {
 
 				$comment = true;
 				$msg .= "ALERTE! User ". $user[0]->first_name." ".$user[0]->last_name." says: \n".$var." \non task : ".$checklist_tasks[0]->name."\n";
-				$email['subject'] .= " - ALERT COMMENT!";
-			}					
+				$subject .= ' - ALERT COMMENT!';
+			}
 		}
 
 		$msg .= "All good!\nUser: ". $user[0]->first_name." ".$user[0]->last_name;
-		$email['msg'] = $msg;
 
-		foreach ($query->result() as $row) {
-			$email['to']	= $row->email;	
-			$this->mmail->sendEmail($email);
-		}
+    $this->mmail->prepare($subject, $msg)
+      ->toList('checklists_notifications', $id_bu)
+      ->send();
 
-		if(!$req) {
+		if (!$req) {
 			echo $this->db->error;
 			return false;
 		}
@@ -274,19 +263,16 @@ class Checklist extends CI_Controller {
 				$this->db->where('users_bus.bu_id', $id_bu);
 				$query = $this->db->get("users");
 
-				$email['subject'] 	= $msg;
-				$email['msg'] 		= $msg;
+        $this->mmail->prepare($msg, $msg)
+          ->toList('checklists_notifications', $id_bu)
+          ->send();
 
-				foreach ($query->result() as $row) {
-					$email['to']	= $row->email;
-					$this->mmail->sendEmail($email);
-				}
 				$this->hmw->sendNotif($msg, $id_bu);
 			}
 			return;
-		} else { 
+		} else {
 			echo "Access refused.";
-			return; 
+			return;
 		}
 
 

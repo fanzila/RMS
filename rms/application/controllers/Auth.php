@@ -48,14 +48,15 @@ class Auth extends CI_Controller {
 						$sento .= $userinfo->username." by sms at ".$userinfo->phone ."<br/>";
 						$this->hmw->sendSms($userinfo->phone, $txtmessage);
 					}
-					if($line[0] == 'email') {
-						$userinfo = $this->hmw->getUser($line[1]);							
-						$email['to']	= $userinfo->email;
-						$email['subject'] = 'Open shift @Hank!';
-						$email['msg'] = $txtmessage;
-						$sento .= $userinfo->username." by email at ".$userinfo->email." <br/>";
-						$this->mmail->sendEmail($email);
-					}
+          if($line[0] == 'email') {
+            $userinfo = $this->hmw->getUser($line[1]);
+
+            $this->mmail->prepare('Open shift @Hank!', $txtMessage)
+              ->toEmail($userinfo->email)
+              ->send();
+
+            $sento .= $userinfo->username . ' by email at ' . $userinfo->email . ' <br/>';
+          }
 				}
 				$this->data['message']  = '<b>Message sent to:</b> <br />'.$sento;
 			}
@@ -564,13 +565,11 @@ class Auth extends CI_Controller {
 		{
 			$welcome_email = $this->input->post('welcome_email');
 
-			if(!empty($welcome_email)) {						
-				$email 				= array();
-				$email['to']		= strtolower($this->input->post('email'));
-				$email['subject']	= 'Welcome from Hank!';
-				$email['msg'] 		= $this->input->post('txtmessage');
-				$this->mmail->sendEmail($email);
-			}
+      if(!empty($welcome_email)) {
+        $this->mmail->prepare('Welcome from Hank!', $this->input->post('txtmessage'))
+          ->toEmail($this->input->post('email'))
+          ->send();
+      }
 
 			//check to see if we are creating the user
 			//redirect them back to the news page
@@ -665,19 +664,21 @@ class Auth extends CI_Controller {
 		$this->data['title'] = "Edit User";
 		$this->load->library('hmw');
 		$id_bu =  $this->session->userdata('bu_id');
-		
+
 		$this->hmw->isLoggedIn();
-		
+
 		if (!$this->ion_auth_acl->has_permission('edit_user') && !$this->ion_auth->user()->row()->id == $id)
 		{
 			redirect('auth', 'refresh');
 		}
 
-		$user = $this->ion_auth->user($id)->row();
-		$groups=$this->ion_auth->groups()->result_array();
-		$bus=$this->ion_auth->bus()->result_array();
-		$currentGroups = $this->ion_auth->get_users_groups($id)->result();
-		$currentBus = $this->ion_auth->get_users_bus($id)->result();
+    $user              = $this->ion_auth->user($id)->row();
+    $groups            = $this->ion_auth->groups()->result_array();
+    $bus               = $this->ion_auth->bus()->result_array();
+    $mails_lists       = $this->ion_auth->mails_lists()->result_array();
+    $currentGroups     = $this->ion_auth->get_users_groups($id)->result();
+    $currentBus        = $this->ion_auth->get_users_bus($id)->result();
+    $currentMailsLists = $this->ion_auth->get_users_mails_lists($id)->result();
 
 		//validate form input
 		$this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'required|xss_clean');
@@ -733,7 +734,7 @@ class Auth extends CI_Controller {
 						$data_WP['password'] = $this->input->post('password');
 					}
 				}
-				
+
 
 				$this->ion_auth->update($user->id, $data);
 				if (isset($user->WordPress_UID)) {
@@ -746,8 +747,9 @@ class Auth extends CI_Controller {
 				if ($this->ion_auth_acl->has_permission('edit_user_group'))
 				{
 					//Update the groups user belongs to
-					$groupData = $this->input->post('groups');
-					$buData    = $this->input->post('bus');
+					$groupData      = $this->input->post('groups');
+					$buData         = $this->input->post('bus');
+					$mailsListsData = $this->input->post('mails_lists');
 					$first_shift = $this->input->post('sdate');
 					if (isset($user->WordPress_UID)) {
 						$user_WP_role = $this->wp_rms->userWPRole($id);
@@ -779,6 +781,10 @@ class Auth extends CI_Controller {
 						}
 
 					}
+
+          !empty($mailsListsData) OR $mailsListsData = [];
+          $this->ion_auth->set_mails_lists($mailsListsData, $id);
+
 					if (isset($first_shift) && !empty($first_shift)) {
 						$this->db->where('id', $id);
 						$this->db->update('users', array('first_shift' => $first_shift));
@@ -812,8 +818,10 @@ class Auth extends CI_Controller {
 		$this->data['user'] = $user;
 		$this->data['groups'] = $groups;
 		$this->data['bus'] = $bus;
+		$this->data['mails_lists'] = $mails_lists;
 		$this->data['currentGroups'] = $currentGroups;
 		$this->data['currentBus'] = $currentBus;
+		$this->data['currentMailsLists'] = $currentMailsLists;
 
 		$this->data['username2'] = $this->session->userdata('identity');
 		$this->data['bu_name'] =  $this->session->userdata('bu_name');
@@ -1091,39 +1099,32 @@ class Auth extends CI_Controller {
 				// echo "No user need skills validation\n"; 						//uncomment to debug
 				return (false);
 			}
-			$this->db->select('users.email');
-			$this->db->join('users_groups', 'users.id = users_groups.user_id');
-			$this->db->join('users_bus', 'users.id = users_bus.user_id');
-			$this->db->where_in('users_groups.group_id', array(3,4,6,1));
-			$this->db->where('users.active', 1);
-			$this->db->where('users_bus.bu_id', $id_bu);
-			$managers = $this->db->get('users')->result_array();
-			$managers_email = array();
-			foreach ($managers as $manager) {
-				$managers_email[] = $manager['email'];
-			}
-			if (empty($managers_email)) {
-				die ('Could not find any manager for this bu');
-			}
-			$email['to'] = $managers_email;
-			$email['subject'] = '[' . $bu_info->name . '] Users that need skills reporting !';
-			$email['mailtype'] = 'html';
-			$msg = '<p>Hello Managers, here are the users that need skill review as of now :</p><p>* First Report : <br />';
-			foreach($employees_first_rmd as $employee) {
-				$msg .= '- '.$employee . '<br />';
-			}
-			$msg .= '</p><hr><p>* Second Report : <br />';
-			foreach($employees_second_rmd as $employee) {
-				$msg .= '- '.$employee . '<br />';
-			}
-			$msg .= '</p><hr><p>* Quarterly Report : <br />';
-			foreach($employees_rmd as $employee) {
-				$msg .= '- '.$employee . '<br />';
-			}
-			$msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
-			$email['msg'] = $msg;
 
-			$this->mmail->sendEmail($email);
+      $subject = '[' . $bu_info->name . '] Users that need skills reporting !';
+
+      $msg = '<p>Hello Managers, here are the users that need skill review as of now :</p><p>* First Report : <br />';
+      foreach ($employees_first_rmd as $employee)
+      {
+        $msg .= '- '.$employee . '<br />';
+      }
+
+      $msg .= '</p><hr><p>* Second Report : <br />';
+      foreach($employees_second_rmd as $employee)
+      {
+        $msg .= '- '.$employee . '<br />';
+      }
+
+      $msg .= '</p><hr><p>* Quarterly Report : <br />';
+      foreach($employees_rmd as $employee)
+      {
+        $msg .= '- '.$employee . '<br />';
+      }
+
+      $msg .= '</p><br /><b>Please make a report for each one of them. Thank you !</b>';
+      $this->mmail->prepare($subject, $msg)
+        ->toList('staff_meetings_reports', $id_bu)
+        ->send();
+
 			$employees_to_update = array_merge($employees_first_rmd, $employees_second_rmd, $employees_rmd);
 			$this->db->where_in('username', $employees_to_update);
 			$this->db->update('users', array('last_shift_rmd' => $current_date_string));
