@@ -26,6 +26,7 @@ class Checklist extends CI_Controller {
 		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		$this->load->library('mmail');
+		$this->load->library('chkl');
 		$this->load->database();
 	}
 
@@ -278,4 +279,100 @@ class Checklist extends CI_Controller {
 
 	}
 
+  public function admin()
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+    $id_bu = $this->session->userdata('bu_id');
+
+    $data = [
+      'checklists' => $this->chkl->getAllChecklists($id_bu, true),
+      'empty_checklist' => $this->createEmptyChecklist(),
+      'empty_task' => $this->createEmptyTask(),
+      'types' => [
+        'service',
+        'kitchen'
+      ],
+      'priorities' => [
+        1 => 'normal',
+        2 => 'medium',
+        3 => 'high'
+      ]
+    ];
+
+    $headers = $this->hmw->headerVars(1, '/checklist/admin/', 'Checklist admin');
+
+    $this->load->view('jq_header_pre', $headers['header_pre']);
+    $this->load->view('checklist/jq_header_spe');
+    $this->load->view('jq_header_post', $headers['header_post']);
+    $this->load->view('checklist/checklist_admin', $data);
+    $this->load->view('jq_footer');
+  }
+
+  public function save()
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+		$id_bu = $this->session->userdata('bu_id');
+
+		$data = $this->input->post();
+
+    if (array_key_exists('id', $data) && !empty($data['id']))
+      $result = $this->chkl->save($data, $id_bu, $data['id']);
+    else
+      $result = $this->chkl->save($data, $id_bu);
+
+    return print(json_encode($result));
+  }
+
+  public function order()
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+
+    $success = $this->chkl->setOrder($this->input->post()['ids']);
+
+    return print(json_encode([ 'success' => $success ]));
+  }
+
+  public function createTask()
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+		$id_bu = $this->session->userdata('bu_id');
+
+    $this->load->model('task_model');
+    $result = $this->task_model->insert_entry($this->input->post());
+
+    return print(json_encode([ 'success' => $result ]));
+  }
+
+  private function createEmptyChecklist()
+  {
+    $checklist =  new StdClass();
+    $updatable = $this->chkl->getUpdatableFields();
+
+    foreach ($updatable as $field)
+      $checklist->$field = null;
+
+    $checklist->active = 1;
+    $checklist->tasks = [];
+
+    return $checklist;
+  }
+
+  private function createEmptyTask()
+  {
+    $task =  new StdClass();
+    $updatable = $this->chkl->getTasksUpdatableFields();
+
+    foreach ($updatable as $field)
+      $task->$field = null;
+
+    $task->active = 1;
+    $task->day_week_num = [];
+    $task->day_month_num = [];
+
+    return $task;
+  }
 }

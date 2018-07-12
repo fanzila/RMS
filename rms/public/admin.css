@@ -1,0 +1,12 @@
+.sort-icon {
+  float: right;
+  cursor: move;
+}
+
+.saving-sort .sort-icon {
+  color: transparent;
+}
+
+.ui-state-disabled {
+  opacity: 0.8 !important;
+}
