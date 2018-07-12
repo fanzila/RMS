@@ -289,7 +289,7 @@ class Auth extends CI_Controller {
 			$forgotten = $this->ion_auth->forgotten_password($this->input->post('username'));
 
 			if ($forgotten) { //if there were no errors
-				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				$this->session->set_flashdata('message', 'Check your emails to complete password reset');
 				redirect("auth/login", 'refresh'); //we should display a confirmation page here instead of the login page
 			}
 			else {
