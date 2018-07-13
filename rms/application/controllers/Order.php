@@ -922,7 +922,7 @@ class Order extends CI_Controller {
         ->toEmail($supinfo['contact_order_email'])
         ->toList('orders')
         ->cc($cc)
-        ->replyTo($ordeR_email)
+        ->replyTo($order_email)
         ->attach($order->file)
         ->send();
 

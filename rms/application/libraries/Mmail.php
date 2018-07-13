@@ -100,6 +100,13 @@ class RMS_Email
     return $this;
   }
 
+  public function attach($attach)
+  {
+    $this->attach = $attach;
+
+    return $this;
+  }
+
   public function toEmail($email)
   {
     if (is_array($email))
