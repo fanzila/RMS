@@ -7,10 +7,10 @@ class Reminder extends CI_Controller {
 	*
 	* Maps to the following URL
 	* 		http://example.com/index.php/welcome
-	*	- or -  
+	*	- or -
 	* 		http://example.com/index.php/welcome/index
 	*	- or -
-	* Since this controller is set as the default controller in 
+	* Since this controller is set as the default controller in
 	* config/routes.php, it's displayed at http://example.com/
 	*
 	* So any other public methods not prefixed with an underscore will
@@ -28,8 +28,8 @@ class Reminder extends CI_Controller {
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
-		
-		
+
+
 	}
 
 	public function index($task_id = null, $view = null)
@@ -45,7 +45,7 @@ class Reminder extends CI_Controller {
 
 		if(!empty($form)) {
 
-			foreach ($form as $key => $val) {	
+			foreach ($form as $key => $val) {
 
 				$ex = explode('_', $key);
 				if($ex[0] == 'task') {
@@ -78,7 +78,7 @@ class Reminder extends CI_Controller {
 		$users = $query->result();
 
 		$rmd = $this->rmd->getTasks($task_id, $view, $id_bu);
-		
+
 		if ($this->session->userdata('type') == false) {
 			$rmdraw = $rmd;
 			$rmd = array('service' => array(), 'kitchen' => array());
@@ -93,7 +93,7 @@ class Reminder extends CI_Controller {
 			}
 			if (empty($rmd['service']) && empty($rmd['kitchen'])) $rmd = array();
 		}
-		
+
 		$data = array(
 			'tasks'		=> $rmd,
 			'users'		=> $users,
@@ -104,7 +104,7 @@ class Reminder extends CI_Controller {
 
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
-		
+
 		$headers = $this->hmw->headerVars(1, "/reminder/", "Reminder");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('reminder/jq_header_spe');
@@ -112,24 +112,24 @@ class Reminder extends CI_Controller {
 		$this->load->view('reminder/index',$data);
 		$this->load->view('jq_footer');
 	}
-	
+
 	public function log()
 	{
 		$this->hmw->keyLogin();
-		
+
 		$id_bu =  $this->session->userdata('bu_id');
-		
+
 		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` WHERE t.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
-		
+
 		$res 	= $this->db->query($req) or die($this->mysqli->error);
 		$tasks 	= $res->result();
 		$data = array(
 			'tasks'		=> $tasks
 			);
-			
+
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
-		
+
 		$headers = $this->hmw->headerVars(0, "/reminder/", "Reminder Log");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('reminder/jq_header_spe');
@@ -139,56 +139,72 @@ class Reminder extends CI_Controller {
 	}
 
 	public function adminSave()
-	{		
+	{
 		$id_bu =  $this->session->userdata('bu_id');
-		
+
 		$data = $this->input->post();
+
+    $now = date('Y-m-d');
+    $defaults = [
+      'mstart'    => $now,
+      'nstart'    => '10:00:00',
+      'nend'      => '17:00:00',
+      'ninterval' => 20000,
+      'nlast'     => $now
+    ];
+
+    foreach ($defaults as $field => $value)
+    {
+      if (!array_key_exists($field, $data) || empty($data[$field]))
+        $data[$field] = $value;
+    }
+
 		$sqlt = "UPDATE ";
 		$sqle = " WHERE `id` = $data[id]";
 		$sqln = " WHERE id_task = $data[id]";
 		$reponse = 'ok';
-		
-		
+
+
 		if ($data['id'] == 'create') {
 			if (empty($data['mstart']) || $data['mstart'] == '0000-00-00 00:00:00') {
 				$data['mstart'] = date('Y-m-d H:i:s');
 			}
 		}
-						
+
 		if($data['id'] == 'create') {
 			$sqlt = "INSERT INTO ";
 			$sqle = "";
 		}
-		
+
 		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], type = '".$data['type']."', id_bu = $id_bu $sqle ";
 		$this->db->trans_start();
 		if (!$this->db->query($sql_tasks)) {
 			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 		}
-		
-		if($data['id'] == 'create') { 	
+
+		if($data['id'] == 'create') {
 			$data['id'] = $this->db->insert_id();
 			$sqln = " , id_task = $data[id]";
 		}
-		 
-		$sql_notif = "$sqlt rmd_notif SET `start` = '".$data['nstart']."', `end` = '".$data['nend']."', `interval` = '".$data['ninterval']."' $sqln";
-		
-		$sql_meta = "$sqlt rmd_meta SET `start` = '".$data['mstart']."', repeat_interval = '".$data['repeat_interval']."' $sqln";		
+
+		$sql_notif = "$sqlt rmd_notif SET `start` = '".$data['nstart']."', `end` = '".$data['nend']."', `interval` = '".$data['ninterval']."', `last` = '" . $data['nlast'] . "' $sqln";
+
+		$sql_meta = "$sqlt rmd_meta SET `start` = '".$data['mstart']."', repeat_interval = '".$data['repeat_interval']."' $sqln";
 
 		if (!$this->db->query($sql_notif)) {
 			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 		}
-		
+
 		if (!$this->db->query($sql_meta)) {
 			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 		}
 		$this->db->trans_complete();
-		
+
 		echo json_encode(['reponse' => $reponse]);
 	}
-	
+
 	public function admin($create = null)
-	{		
+	{
 		$this->hmw->keyLogin();
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		$id_bu =  $this->session->userdata('bu_id');
@@ -201,10 +217,10 @@ class Reminder extends CI_Controller {
 			'create'	=> $create,
 			'tasks'		=> $rmd
 			);
-		
+
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
-		
+
 		if(!$create){
 			$headers = $this->hmw->headerVars(1, "/reminder/admin", "Reminder admin");
 		}else{
@@ -216,7 +232,7 @@ class Reminder extends CI_Controller {
 		$this->load->view('reminder/reminder_admin',$data);
 		$this->load->view('jq_footer');
 	}
-	
+
 	//cd /var/www/hank/rms/rms && php index.php reminder cliNotify 1
 	public function cliNotify($id_bu)
 	{
@@ -233,31 +249,31 @@ class Reminder extends CI_Controller {
 				$interval		= 0;
 
 				if(isset($notif->id)) {
-					
-					
+
+
 					$notif_start	= strtotime(date('Y-m-d '.$notif->start));
 					$notif_end		= strtotime(date('Y-m-d '.$notif->end));
 					$notif_interval = $notif->interval;
 					$notif_last		= strtotime($notif->last);
 					$interval 		= $notif_last+$notif_interval;
 				}
-				
+
 				if($notif_start <= $now && $notif_end > $now && $interval < $now) {
 					$this->db->set('last', "NOW()", FALSE)->where('id_task', $row->id);
 					if(!$this->db->update('rmd_notif')) {
 						echo $this->db->error;
 						return false;
 					}
-					
+
 				$this->hmw->sendNotif("Reminder: ".$row->task, $id_bu, $row->type);
-				
+
 				}
 			}
 
 			return;
-		} else { 
+		} else {
 			echo "Access refused.";
-			return; 
+			return;
 		}
 
 
