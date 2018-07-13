@@ -913,9 +913,9 @@ class Order extends CI_Controller {
       if(!empty($order->comment))
         $msg .= $order->comment."\n\n";
       $msg .= 'Merci de bien vouloir valider la prise en compte de cette commande'
-       . ' en cliquant sur ce lien : $link';
-      $msg .= "\n\nHave A Nice Karma,\n-- \nHANK - " . $user->username
-        . "\nEmail : " . $order_email . "\nTel : " . $user->phone;
+       . " en cliquant sur ce lien : $link";
+      $msg .= "<br /><br />Have A Nice Karma,<br />-- <br />HANK - " . $user->username
+        . "<br />Email : " . $order_email . "<br />Tel : " . $user->phone;
 
       $this->mmail->prepare($subject, $msg)
         ->from($order_email, 'HANK')
@@ -1167,7 +1167,7 @@ class Order extends CI_Controller {
             $msg  = "Bonjour " . $line->name
               . "!\n\nIl y a 1 jour ou plus, nous vous avons envoyé la commande numéro "
               . $line->idorder . " de nouveau en PJ.\n\n"
-              . 'Afin de nous assurer de la bonne prise en compte de celle-ci, merci de bien vouloir la valider en cliquant sur ce lien : '
+              . "Afin de nous assurer de la bonne prise en compte de celle-ci, merci de bien vouloir la valider en cliquant sur ce lien : "
               . $link . "\n\nHave A Nice Karma,\n-- \nHANK - "
               . $user->username . "\nEmail : $order_email \nTel : " . $user->phone;
 
