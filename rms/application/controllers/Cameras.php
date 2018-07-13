@@ -19,27 +19,28 @@ class Cameras extends CI_Controller {
 	*/
 
 	public function index($onebu = false)
-	{		
+	{
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
 		$this->load->library('hmw');
 		$this->load->library('session');
-		
+		$this->load->library('cashier');
+
 		$this->hmw->changeBu();// GENERIC changement de Bu
-				
+
 		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 		header("Cache-Control: post-check=0, pre-check=0", false);
 		header("Pragma: no-cache");
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 
 		$this->hmw->isLoggedIn();
-	
+
 		if (!$this->ion_auth_acl->has_permission('cameras')) {
 			die('You are not allowed to view this page');
 		}
-		
+
 		$url = array();
-				
+
 		$local			= false;
 		$ip 			= $this->input->ip_address();
 		$ca 			= array();
@@ -72,15 +73,17 @@ class Cameras extends CI_Controller {
 		$data['planning'] 		= $planning;
 		$data['cameras'] 		= $cameras;
 		$session_data['cam'] 	= $url;
-		
+
+    $data['cash_fund'] = $this->cashier->getCashFund($id_bu);
+
 		$this->session->set_userdata($session_data);
 		$this->load->view('camera/cameras', $data);
 	}
-	
+
 	private function getCamerasNamesFromDb($id_bu = null)
 	{
 		$this->load->library('hmw');
-		
+
 		if (!$this->hmw->isLoggedIn())
 			die();
 		$this->db->select('name, id_bu');
