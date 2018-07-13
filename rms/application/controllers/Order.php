@@ -821,9 +821,9 @@ class Order extends CI_Controller {
 
       $subject = 'Annulation Commande ' . $load;
       $msg = 'Bonjour ' . $supplier['name']
-        . "!\n\nNous souhaitons annuler la commande en PJ.\n\n"
-        . "\n\nHave A Nice Karma,\n-- \nHANK - " . $user->username
-        . "\nEmail : " . $order_email . "\nTel : $user->phone";
+        . "!<br /><br />Nous souhaitons annuler la commande en PJ.<br /><br />"
+        . "<br /><br />Have A Nice Karma,<br />-- <br />HANK - " . $user->username
+        . "<br />Email : " . $order_email . "<br />Tel : $user->phone";
 
       $this->mmail->prepare($subject, $msg)
         ->from($order_email, 'HANK')
@@ -909,9 +909,9 @@ class Order extends CI_Controller {
       $subject = 'Nouvelle commande ' . $idorder;
 
       $msg     = 'Bonjour ' . $supinfo['name']
-        . "!\n\nVoici une nouvelle commande en PJ.\n\n";
+        . "!<br /><br />Voici une nouvelle commande en PJ.<br /><br />";
       if(!empty($order->comment))
-        $msg .= $order->comment."\n\n";
+        $msg .= $order->comment."<br /><br />";
       $msg .= 'Merci de bien vouloir valider la prise en compte de cette commande'
        . " en cliquant sur ce lien : $link";
       $msg .= "<br /><br />Have A Nice Karma,<br />-- <br />HANK - " . $user->username
@@ -1165,11 +1165,11 @@ class Order extends CI_Controller {
             $subject = 'Relance de confirmation de commande ' . $line->idorder;
 
             $msg  = "Bonjour " . $line->name
-              . "!\n\nIl y a 1 jour ou plus, nous vous avons envoyé la commande numéro "
-              . $line->idorder . " de nouveau en PJ.\n\n"
+              . "!<br /><br />Il y a 1 jour ou plus, nous vous avons envoyé la commande numéro "
+              . $line->idorder . " de nouveau en PJ.<br /><br />"
               . "Afin de nous assurer de la bonne prise en compte de celle-ci, merci de bien vouloir la valider en cliquant sur ce lien : "
-              . $link . "\n\nHave A Nice Karma,\n-- \nHANK - "
-              . $user->username . "\nEmail : $order_email \nTel : " . $user->phone;
+              . $link . "<br /><br />Have A Nice Karma,<br />-- <br />HANK - "
+              . $user->username . "<br />Email : $order_email <br />Tel : " . $user->phone;
 
             $attach = 'orders/' . $date_y . '/' . $date_m . '/' . $line->idorder
               . '_' . $line->name . '.pdf';
