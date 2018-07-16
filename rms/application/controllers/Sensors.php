@@ -273,7 +273,7 @@ class Sensors extends CI_Controller {
 
           $subject = $buinfo->name . ' Sendor ' . $is[0]->name . ' error!';
           $this->mmail->prepare($subject, $msg)
-            ->toList('sensors_notifications', $id_bu)
+            ->toList('sensors', $id_bu)
             ->send();
 					//$ru = $this->db->update('sensors_alarm') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				}

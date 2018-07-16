@@ -696,10 +696,10 @@ class Auth extends CI_Controller {
     $user              = $this->ion_auth->user($id)->row();
     $groups            = $this->ion_auth->groups()->result_array();
     $bus               = $this->ion_auth->bus()->result_array();
-    $mails_lists       = $this->ion_auth->mails_lists()->result_array();
+    $notifications       = $this->ion_auth->notifications()->result_array();
     $currentGroups     = $this->ion_auth->get_users_groups($id)->result();
     $currentBus        = $this->ion_auth->get_users_bus($id)->result();
-    $currentMailsLists = $this->ion_auth->get_users_mails_lists($id)->result();
+    $currentNotifications = $this->ion_auth->get_users_notifications($id)->result();
 
 		//validate form input
 		$this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'required|xss_clean');
@@ -770,7 +770,7 @@ class Auth extends CI_Controller {
 					//Update the groups user belongs to
 					$groupData      = $this->input->post('groups');
 					$buData         = $this->input->post('bus');
-					$mailsListsData = $this->input->post('mails_lists');
+					$notificationsData = $this->input->post('notifications');
 					$first_shift = $this->input->post('sdate');
 					if (isset($user->WordPress_UID)) {
 						$user_WP_role = $this->wp_rms->userWPRole($id);
@@ -803,8 +803,8 @@ class Auth extends CI_Controller {
 
 					}
 
-          !empty($mailsListsData) OR $mailsListsData = [];
-          $this->ion_auth->set_mails_lists($mailsListsData, $id);
+          !empty($notificationsData) OR $notificationsData = [];
+          $this->ion_auth->set_notifications($notificationsData, $id);
 
 					if (isset($first_shift) && !empty($first_shift)) {
 						$this->db->where('id', $id);
@@ -839,10 +839,10 @@ class Auth extends CI_Controller {
 		$this->data['user'] = $user;
 		$this->data['groups'] = $groups;
 		$this->data['bus'] = $bus;
-		$this->data['mails_lists'] = $mails_lists;
+		$this->data['notifications'] = $notifications;
 		$this->data['currentGroups'] = $currentGroups;
 		$this->data['currentBus'] = $currentBus;
-		$this->data['currentMailsLists'] = $currentMailsLists;
+		$this->data['currentNotifications'] = $currentNotifications;
 
 		$this->data['username2'] = $this->session->userdata('identity');
 		$this->data['bu_name'] =  $this->session->userdata('bu_name');

@@ -1433,23 +1433,23 @@ class Ion_auth_model extends CI_Model
 		                ->get($this->tables['users_bus']);
 	}
 
-  public function get_users_mails_lists($id = FALSE)
+  public function get_users_notifications($id = FALSE)
   {
     $this->trigger_events('get_users_mails_litsts');
 
     // if no id was passed use the current users id
     $id || $id = $this->session->userdata('user_id');
 
-    $select = $this->tables['users_mails_lists'] . '.' . $this->join['mails_lists'] . ' AS id, '
-      . $this->tables['mails_lists'] . '.name';
+    $select = $this->tables['users_notifications'] . '.' . $this->join['notifications'] . ' AS id, '
+      . $this->tables['notifications'] . '.name';
 
-    $join = $this->tables['users_mails_lists'] . '.' . $this->join['mails_lists']
-      . '=' . $this->tables['mails_lists'] . '.id';
+    $join = $this->tables['users_notifications'] . '.' . $this->join['notifications']
+      . '=' . $this->tables['notifications'] . '.id';
 
     return $this->db->select($select)
-      ->where($this->tables['users_mails_lists'] . '.' . $this->join['users'], $id)
-      ->join($this->tables['mails_lists'], $join)
-      ->get($this->tables['users_mails_lists']);
+      ->where($this->tables['users_notifications'] . '.' . $this->join['users'], $id)
+      ->join($this->tables['notifications'], $join)
+      ->get($this->tables['users_notifications']);
   }
 
 	/**
@@ -1649,33 +1649,33 @@ class Ion_auth_model extends CI_Model
 		return $this;
 	}
 
-  public function set_mails_lists($mails_lists_ids, $user_id)
+  public function set_notifications($notifications_ids, $user_id)
   {
-    $this->trigger_events('set_mails_lists');
+    $this->trigger_events('set_notifications');
 
-    is_array($mails_lists_ids) OR $mails_lists_ids = [ $mails_lists_ids ];
+    is_array($notifications_ids) OR $notifications_ids = [ $notifications_ids ];
 
-    if (count($mails_lists_ids) === 0)
+    if (count($notifications_ids) === 0)
     {
       $this->db->where('user_id', $user_id);
-      return $this->db->delete('users_mails_lists');
+      return $this->db->delete('users_notifications');
     }
 
     $this->db->trans_start();
 
     // remove entries
     $this->db->where('user_id', $user_id);
-    $this->db->where_not_in('mail_list_id', $mails_lists_ids);
-    $this->db->delete('users_mails_lists');
+    $this->db->where_not_in('notification_id', $notifications_ids);
+    $this->db->delete('users_notifications');
 
     // add entries
-    foreach ($mails_lists_ids as $mail_list_id)
+    foreach ($notifications_ids as $notification_id)
     {
       $entry = [
-        'mail_list_id' => $mail_list_id,
+        'notification_id' => $notification_id,
         'user_id'      => $user_id
       ];
-      $this->db->query($this->db->insert_string('users_mails_lists', $entry) . ' ON DUPLICATE KEY UPDATE user_id = user_id');
+      $this->db->query($this->db->insert_string('users_notifications', $entry) . ' ON DUPLICATE KEY UPDATE user_id = user_id');
     }
 
     $this->db->trans_complete();
@@ -1748,9 +1748,9 @@ class Ion_auth_model extends CI_Model
 		return $this->groups();
 	}
 
-  public function mails_lists($id = NULL)
+  public function notifications($id = NULL)
   {
-    $this->trigger_events('mails_lists');
+    $this->trigger_events('notifications');
 
     // run each where that was passed
     if (isset($this->_ion_where) && !empty($this->_ion_where))
@@ -1782,7 +1782,7 @@ class Ion_auth_model extends CI_Model
       $this->db->order_by($this->_ion_order_by, $this->_ion_order);
     }
 
-    $this->response = $this->db->get($this->tables['mails_lists']);
+    $this->response = $this->db->get($this->tables['notifications']);
 
     return $this;
   }

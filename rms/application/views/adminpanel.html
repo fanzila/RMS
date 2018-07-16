@@ -122,8 +122,8 @@
 								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_wp_roles')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/wpRmsGroups/"><i class="fa fa-hdd-o" aria-hidden="true"></i> WP Roles Management</a></li>
 								<? } } ?>
-								<?php if ($this->ion_auth_acl->has_permission('admin_panel_crud_mails_lists')) { ?>
-									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/mails_lists/"><i class="fa fa-envelope-o" aria-hidden="true"></i> Mails lists</a></li>
+								<?php if ($this->ion_auth_acl->has_permission('admin_panel_crud_notifications')) { ?>
+									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/notifications/"><i class="fa fa-envelope-o" aria-hidden="true"></i> Mails lists</a></li>
 								<?php } ?>
 								<?if($this->ion_auth_acl->has_permission('access_system_log')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/SystemLog/"><i class="fa fa-hdd-o" aria-hidden="true"></i> System logs</a></li>

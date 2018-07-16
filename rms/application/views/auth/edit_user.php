@@ -115,21 +115,21 @@ echo form_open(uri_string(), $attributes);
       </div></div>
 
       <div class="col-xs-4 col-sm-4 col-md-4"><div class="box">
-        <h3><?= lang('edit_user_mails_lists_heading') ?></h3>
+        <h3><?= lang('edit_user_notifications_heading') ?></h3>
         <?php
-          $ids_users_mails_lists = array_map(function($mail_list) {
-            return $mail_list->id;
-          }, $currentMailsLists);
+          $ids_users_notifications = array_map(function($notification) {
+            return $notification->id;
+          }, $currentNotifications);
 
-          foreach ($mails_lists as $mail_list) { ?>
+          foreach ($notifications as $notification) { ?>
             <label class="checkbox">
               <?php
-                $checked = in_array($mail_list['id'], $ids_users_mails_lists)
+                $checked = in_array($notification['id'], $ids_users_notifications)
                   ? ' checked="checked"'
                   : '';
               ?>
-              <input type="checkbox" name="mails_lists[]" value="<?= $mail_list['id'] ?>"<?= $checked ?>>
-              <?= htmlspecialchars($mail_list['name'], ENT_QUOTES, 'UTF-8') ?>
+              <input type="checkbox" name="notifications[]" value="<?= $notification['id'] ?>"<?= $checked ?>>
+              <?= htmlspecialchars($notification['name'], ENT_QUOTES, 'UTF-8') ?>
             </label>
             <?php
           } ?>

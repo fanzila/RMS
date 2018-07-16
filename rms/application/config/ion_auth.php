@@ -34,8 +34,8 @@ $config['tables']['bus']               = 'bus';
 $config['tables']['users_bus']         = 'users_bus';
 $config['tables']['login_attempts']    = 'login_attempts';
 $config['tables']['users_remember']    = 'users_remember';
-$config['tables']['mails_lists']       = 'mails_lists';
-$config['tables']['users_mails_lists'] = 'users_mails_lists';
+$config['tables']['notifications']       = 'notifications';
+$config['tables']['users_notifications'] = 'users_notifications';
 /*
  | Users table column and Group table column you want to join WITH.
  |
@@ -45,7 +45,7 @@ $config['tables']['users_mails_lists'] = 'users_mails_lists';
 $config['join']['users']       = 'user_id';
 $config['join']['groups']      = 'group_id';
 $config['join']['bus']         = 'bu_id';
-$config['join']['mails_lists'] = 'mail_list_id';
+$config['join']['notifications'] = 'notification_id';
 
 /*
  | -------------------------------------------------------------------------

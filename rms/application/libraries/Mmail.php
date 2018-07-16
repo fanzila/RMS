@@ -179,8 +179,8 @@ class RMS_Email
     $CI->db->select('u.email');
     $CI->db->from('users AS u');
     $CI->db->distinct('u.email');
-    $CI->db->join('users_mails_lists AS lu', 'u.id = lu.user_id');
-    $CI->db->join('mails_lists AS l', 'l.id = lu.mail_list_id');
+    $CI->db->join('users_notifications AS lu', 'u.id = lu.user_id');
+    $CI->db->join('notifications AS l', 'l.id = lu.notification_id');
 
     if (is_array($list_name))
       $CI->db->where_in('l.name', $list_name);
