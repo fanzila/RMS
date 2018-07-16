@@ -155,7 +155,11 @@ class RMS_Email
     if (!empty($id_bu))
     {
       $CI->db->join('users_bus AS b', 'u.id = b.user_id', 'left');
-      $CI->db->where('b.bu_id', $id_bu);
+
+      if (is_array($id_bu))
+        $CI->db->where_in('b.bu_id', $id_bu);
+      else
+        $CI->db->where('b.bu_id', $id_bu);
     }
 
     $CI->db->where('u.active', 1);
@@ -186,7 +190,11 @@ class RMS_Email
     if (!empty($id_bu))
     {
       $CI->db->join('users_bus AS b', 'u.id = b.user_id', 'left');
-      $CI->db->where('b.bu_id', $id_bu);
+
+      if (is_array($id_bu))
+        $CI->db->where_in('b.bu_id', $id_bu);
+      else
+        $CI->db->where('b.bu_id', $id_bu);
     }
 
     $CI->db->where('u.active', 1);
