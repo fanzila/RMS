@@ -42,7 +42,7 @@
 													</select>
 												</td>
                         <td>
-                          <label for="repeat_interval">Repeat interval (in seconds):</label><br/>
+                          <label for="repeat_interval">Repeat interval:</label><br/>
                           <select required name="repeat_interval">
                             <option value=""></option>
                             <option value="86400">1 day</option>
@@ -158,7 +158,7 @@
 													</select>
 												</td>
                         <td>
-                          <label for="repeat_interval-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat interval (in seconds):</label><br/>
+                          <label for="repeat_interval-<?=$line->tid?>" id="label-<?=$line->tid?>">Repeat interval:</label><br/>
                           <select required name="repeat_interval">
                             <option value=""></option>
                             <option value="86400" <?php
