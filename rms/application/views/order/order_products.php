@@ -4,8 +4,8 @@ $today = getdate();
 </div>
 <script>var addtostock = [];</script>
 <div data-role="content">
-	<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">	
-		<? if($load > 0 AND $type == 'reception') { ?><h3>Order: <?=$load?></h3><? } ?>			
+	<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
+		<? if($load > 0 AND $type == 'reception') { ?><h3>Order: <?=$load?></h3><? } ?>
 		<form onload="updateTotal()" id="order" name="order" class="order" method="post" action="/order/detailOrder/"  data-ajax="false" <? if($keylogin) { ?>onsubmit="return validateForm()"<? } ?>>
 			<ul data-filter="true" data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 				<?
@@ -23,17 +23,17 @@ $today = getdate();
 			<div id='hide-<?=$line['id']?>' class="hide-<?=$hide?>" style="border: 1px solid lightgray; padding: 8px; margin-bottom: 10px;">
 				<li>
 					<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper($line['name'])?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
-						<br />Catégorie : <?=strtoupper($line['category_name'])?> 
+						<br />Catégorie : <?=strtoupper($line['category_name'])?>
 						<br />Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ | Colisage: <?=$line['packaging']?>  <br />
 						<? if(!empty($line['supplier_reference'])) { ?>Ref. supplier: <?=$line['supplier_reference']?> | <? } ?> <? if(!empty($line['comment'])) { ?> Comment: <?=$line['comment']?> <? } ?>
 						<? if($line['manage_stock']) { ?>
 						<br />Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <? } ?>
 					</label>
-			
+
 					<table border="0" cellpadding="2">
 						<tr>
 									<td>
-										<? 
+										<?
 										$qtty = null;
 										if($load > 0) {
 											$qtty = 0;
@@ -65,7 +65,7 @@ $today = getdate();
 													$fontcolor = 'red';
 												}
 
-										}											
+										}
 										?>
 										<td><span class="zmdi <?=$icon?>"></span><font color="<?=$fontcolor?>"> | Unité  reçu:</font></td>
 										<td><font color="<?=$fontcolor?>"><?=$added_stock?></font></td>
@@ -78,7 +78,7 @@ $today = getdate();
 										<td>
 											<small>Comment: </small><small style="color: red;"> <? if (isset($unsrl_order['pdt'][$line['id']]['comment'])) echo $unsrl_order['pdt'][$line['id']]['comment'];?></small>
 										</td>
-										<? } ?> 
+										<? } ?>
 										<? if($load > 0 && $type == 'reception') { ?>
 											<td><small>| Reçu : </small></td>
 											<td>
@@ -94,18 +94,18 @@ $today = getdate();
 												<script>
 												addtostock[<?=$line['id']?>] = <?=$qtty?>;
 												</script>
-												<? } ?> 
+												<? } ?>
 												<? } ?>
 											</tr>
 										</table>
-	
+
 									</li>
-									
+
 									<? if($load > 0 && $type == 'reception') { ?>
 										<!-- QTTY for reception check status -->
 										<input type="hidden" id="qtty_check[<?=$line['id']?>]" name="qtty_check[<?=$line['id']?>]" value="<?=$qtty?>">
 									<? } ?>
-									
+
 									<!-- START hidden price: 1 for php, 1 for js -->
 									<input type="hidden" id="price-<?=$line['id']?>" name="price-<?=$line['id']?>" value="<?=$line['price']?>">
 									<input type="hidden" id="price[<?=$line['id']?>]" name="price[<?=$line['id']?>]" value="<?=$line['price']?>">
@@ -115,25 +115,25 @@ $today = getdate();
 								</div>
 								<? $qtty = 0; $added_stock = 0; } ?>
 							</ul>
-							
+
 							<? if($type == 'reception') { ?>
 							<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a"><li><input style="background-color: #49b049;" type="button" id="checkall" name="checkall" value="[CHECK ALL]" onclick="AddStockAll();"></li></ul>
 							<? } ?>
-							
+
 							<? if($type == 'reception') { ?>
 								<p><small>Comment on order:</small> <?=$comment_order?></p>
-									
+
 								<label for="comment_reception" data-mini="true" style="background-color:#ffffff">Comments for reception (Only to notify or if problem)</label>
 								<input type="text" name="comment_reception" id="comment_reception" class="custom"  data-clear-btn="true" />
 								<input type="hidden" name="idorder" value="<?=$load?>">
 								<? } ?>
 								<? if($type == 'viewreception') { ?>
 									<p><small>Comment on order:</small> <?=$comment_order?></p>
-									<p><small>Comment on reception:</small> <?=$comment_recept?></p> 
-								<? } ?>	
+									<p><small>Comment on reception:</small> <?=$comment_recept?></p>
+								<? } ?>
 								<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 									<? if($type == 'reception' AND $keylogin) { ?>
-										<li>													
+										<li>
 											<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 												<option value="">User</option>
 												<? foreach ($users as $user) { ?>
@@ -144,7 +144,7 @@ $today = getdate();
 											<input type="submit" name="save" id="save" value="SAVE">
 										</li>
 									<? } ?>
-									
+
 									<? if(!$keylogin && $type != 'viewreception') { ?>
 										<li><input type="submit" name="save" id="save" value="SAVE"></li>
 									<? } else if (!$keylogin && $type == 'viewreception') { ?>
@@ -159,7 +159,6 @@ $today = getdate();
 									<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 										<li data-role="list-divider" style="list-style-type: none;">
 											<? if($type != 'reception' AND $type != 'viewreception') { ?>TOTAL ORDER: <span id="total">0</span>€ H.T.<hr /><? } ?>
-											From command: <?= $order_id ?> <br />
 											Carriage paid: <?=$supinfo['carriage_paid']?> | Delivery days: <?=$supinfo['delivery_days']?> | Location: <?=$supinfo['location']?> <br />
 											Internal comments: <?=$supinfo['comment_internal']?> <br />
 											Order comment: <?=$supinfo['comment_order']?> <br />
@@ -168,6 +167,7 @@ $today = getdate();
 											Order method: <?=$supinfo['order_method']?> | Payment type: <?=$supinfo['payment_type']?> | Payment delay: <?=$supinfo['payment_delay']?> <br />
 											Contact sale: <?=$supinfo['contact_sale_name']?> | <?=$supinfo['contact_sale_tel']?> |  <?=$supinfo['contact_sale_email']?><br />
 											Contact order: <?=$supinfo['contact_order_name']?> | <?=$supinfo['contact_order_tel']?> |  <?=$supinfo['contact_order_email']?>
+											From command: <?= $order_id ?> <br />
 										</li>
 									</ul>
 									<input type="hidden" name="supplier" value="<?=$supinfo['id']?>">
@@ -188,10 +188,10 @@ $today = getdate();
 						</div><!-- /content -->
 					</div><!-- /page -->
 					<script>
-					
+
 					jQuery(document).ready(function(){
 						jQuery('.hide-1').toggle('hide');
-						jQuery('#hideshow').on('click', function(event) {        
+						jQuery('#hideshow').on('click', function(event) {
 							jQuery('.hide-1').toggle('show');
 						});
 					});
@@ -206,10 +206,10 @@ $today = getdate();
 									$('#stock-' + i).val(sum);
 								}
 							}
-							return false; 
+							return false;
 						});
 					}
-					
+
 					function AddStock(idl) {
 						qtty = $('#qtty-' + idl).val();
 						sum = parseInt(qtty);
@@ -218,7 +218,7 @@ $today = getdate();
 
 					function updateTotal() {
 						var total = 0;
-						
+
 						$(".order input[type='text']").each(function () {
 							if($(this).val() === '') {
 								// empty
@@ -238,18 +238,18 @@ $today = getdate();
 								if(!Number.isInteger(respkg)) {
 									respkg = 'ERREUR';
 									alert('Colisage incorrect, entrez un multiple de ' + pkg + ' pour ' + pdtname + '.');
-								} 
+								}
 								$( '#respkg' + '-' + idpdt).text( respkg );
 								// END PACKAGING MANAGEMENT //
-								
-								if(item == 'qtty' && qtty > 0) { 						
+
+								if(item == 'qtty' && qtty > 0) {
 									//get sub total
 									if(price) var sub = qtty*price;
 									if(price) total = total + sub;
 								}
 							}
 							$( "#total" ).text( (Math.round(total*100)/100)/1000 );
-							
+
 						});
 					}
 
