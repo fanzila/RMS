@@ -167,20 +167,20 @@ class News extends CI_Controller {
           ->replyTo('news@hankrestaurant.com')
           ->toList('news', $bus)
           ->before(function($config) use ($server_name, $news_id) {
-            $this->db->select('id, username');
+            $this->db->select('id');
             $this->db->where('email', $config['email']);
             $result = $this->db->get('users')->result();
 
             if (empty($result))
               return;
 
-            $user = $result[0];
+            $receiver = $result[0];
 
             $key  = md5(microtime().rand());
             $link = 'http://' . $server_name . '/news/confirm/' . $key;
             $confirm = [
               'key'     => $key,
-              'id_user' => $user->id,
+              'id_user' => $receiver->id,
               'id_news' => $news_id,
               'status'  => 'sent'
             ];
