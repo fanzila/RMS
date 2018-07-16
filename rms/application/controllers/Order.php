@@ -778,7 +778,7 @@ class Order extends CI_Controller {
         $this->mmail->prepare($subject, $msg)
           ->from($order_email, 'HANK')
           ->toEmail($order_email)
-          ->toList('orders')
+          ->toList('orders', $ret_sup[0]['id_bu'])
           ->replyTo($order_email);
 			}
 		} else {
@@ -828,7 +828,7 @@ class Order extends CI_Controller {
       $this->mmail->prepare($subject, $msg)
         ->from($order_email, 'HANK')
         ->toEmail($supplier_email)
-        ->toList('orders')
+        ->toList('orders', $id_bu)
         ->cc($cc)
         ->replyTo($order_email)
         ->attach($order['file']);
@@ -920,7 +920,7 @@ class Order extends CI_Controller {
       $this->mmail->prepare($subject, $msg)
         ->from($order_email, 'HANK')
         ->toEmail($supinfo['contact_order_email'])
-        ->toList('orders')
+        ->toList('orders', $id_bu)
         ->cc($cc)
         ->replyTo($order_email)
         ->attach($order->file)
@@ -1177,7 +1177,7 @@ class Order extends CI_Controller {
             $this->mmail->prepare($subject, $msg)
               ->from($order_email, 'HANK')
               ->toEmail($line->contact_order_email)
-              ->toList('orders')
+              ->toList('orders', $id_bu)
               ->cc($cc)
               ->replyTo($order_email)
               ->attach($attach)

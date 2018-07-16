@@ -148,6 +148,9 @@ class News extends CI_Controller {
 
 				$this->load->library('mmail');
 				$bus = $this->input->post('bus');
+        $bus = array_map(function($bu) {
+          return intval($bu);
+        }, $bus);
 
         $subject = 'Hank news! ' . $this->input->post('title');
 
@@ -162,7 +165,7 @@ class News extends CI_Controller {
         $this->mmail->prepare($subject, $msg)
           ->from('news@hankrestaurant.com', 'HANK NEWS')
           ->replyTo('news@hankrestaurant.com')
-          ->toList('news')
+          ->toList('news', $bus)
           ->before(function($config) use ($server_name, $news_id) {
             $this->db->select('id, username');
             $this->db->where('email', $config['email']);

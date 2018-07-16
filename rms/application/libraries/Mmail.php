@@ -295,7 +295,7 @@ class RMS_Email
     $CI->email->to($to);
     $CI->email->subject($subject);
 
-    if (!$this->type === 'html')
+    if ($this->type === 'html')
       $body = nl2br($body);
 
     $CI->email->message($body);
