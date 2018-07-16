@@ -1177,7 +1177,6 @@ class Order extends CI_Controller {
             $this->mmail->prepare($subject, $msg)
               ->from($order_email, 'HANK')
               ->toEmail($line->contact_order_email)
-              ->toList('orders', $id_bu)
               ->cc($cc)
               ->replyTo($order_email)
               ->attach($attach)
