@@ -10,3 +10,8 @@
 .ui-state-disabled {
   opacity: 0.8 !important;
 }
+
+.loading {
+  font-size: 200%;
+  text-align: center;
+}

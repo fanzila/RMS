@@ -51,7 +51,7 @@
       $(document).ready(function() {
         'use strict';
 
-        // set collapsible hash on expand
+        // set collapsible hash on expand and load tasks
         setTimeout(function() {
           if (/#\d+/i.test(window.location.hash)) {
             var id = window.location.hash.split('#').slice(1).join('#');
@@ -63,6 +63,28 @@
 
           collapsibles.on('collapsibleexpand', function() {
             window.location.hash = '#' + this.dataset.id;
+            var triggered = $(this);
+
+            var tasksContainer = triggered.find('#checklist-tasks-' + this.dataset.id);
+
+            // if (tasksContainer.find('.ui-loader').length > 0) {
+            if (tasksContainer.html().trim().length > 0) {
+              var save = triggered.find('input[type="submit"]').closest('.box');
+              var originalHtml = save.html();
+              save.addClass('loading');
+              save.html('<i class="fa fa-spinner fa-spin"></i>');
+
+              $.ajax({
+                url: '/checklist/getTasks/' + this.dataset.id + '/1',
+                type: 'GET'
+              }).done(function(data) {
+                save.removeClass('loading');
+                save.html(originalHtml);
+
+                tasksContainer.html(data);
+                tasksContainer.trigger('create');
+              });
+            }
           });
 
           collapsibles.on('collapsiblecollapse', function() {
