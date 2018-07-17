@@ -52,39 +52,46 @@
         'use strict';
 
         // set collapsible hash on expand and load tasks
+        function loadTasks(elem) {
+          var idChecklist = elem.data('id');
+          var tasksContainer = elem.find('#checklist-tasks-' + idChecklist);
+
+          if (tasksContainer.html().trim().length > 0) {
+            var save = elem.find('input[type="submit"]').closest('.box');
+            var originalHtml = save.html();
+            save.addClass('loading');
+            save.html('<i class="fa fa-spinner fa-spin"></i>');
+
+            $.ajax({
+              url: '/checklist/getTasks/' + idChecklist + '/1',
+              type: 'GET'
+            }).done(function(data) {
+              save.removeClass('loading');
+              save.html(originalHtml);
+
+              tasksContainer.html(data);
+
+              // when triggering "create", the hash is removed so we need to save and restore it
+              var hash = window.location.hash;
+              tasksContainer.trigger('create');
+              window.location.hash = hash;
+            });
+          }
+        }
         setTimeout(function() {
           if (/#\d+/i.test(window.location.hash)) {
             var id = window.location.hash.split('#').slice(1).join('#');
             var elem = $('.collapsible-checklist[data-id="' + id + '"]');
             elem.collapsible({ collapsed: false });
+            loadTasks(elem);
           }
 
           var collapsibles = $('.collapsible-checklist');
 
           collapsibles.on('collapsibleexpand', function() {
+            var idChecklist = this.dataset.id;
+            loadTasks($(this));
             window.location.hash = '#' + this.dataset.id;
-            var triggered = $(this);
-
-            var tasksContainer = triggered.find('#checklist-tasks-' + this.dataset.id);
-
-            // if (tasksContainer.find('.ui-loader').length > 0) {
-            if (tasksContainer.html().trim().length > 0) {
-              var save = triggered.find('input[type="submit"]').closest('.box');
-              var originalHtml = save.html();
-              save.addClass('loading');
-              save.html('<i class="fa fa-spinner fa-spin"></i>');
-
-              $.ajax({
-                url: '/checklist/getTasks/' + this.dataset.id + '/1',
-                type: 'GET'
-              }).done(function(data) {
-                save.removeClass('loading');
-                save.html(originalHtml);
-
-                tasksContainer.html(data);
-                tasksContainer.trigger('create');
-              });
-            }
           });
 
           collapsibles.on('collapsiblecollapse', function() {
@@ -115,9 +122,11 @@
           var elem = $(this);
 
           var inputName = elem.find('input[name="name"]');
-          var name = inputName.val().trim().toUpperCase();
 
-          inputName.val(name);
+          if (inputName && inputName.val()) {
+            var name = inputName.val().trim().toUpperCase();
+            inputName.val(name);
+          }
 
           var idField = elem.find('input[name="id"]');
           var isUpdate = idField && idField.val();
