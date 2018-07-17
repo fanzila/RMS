@@ -56,7 +56,7 @@
           var idChecklist = elem.data('id');
           var tasksContainer = elem.find('#checklist-tasks-' + idChecklist);
 
-          if (tasksContainer.html().trim().length > 0) {
+          if (tasksContainer.html().trim().length === 0) {
             var save = elem.find('input[type="submit"]').closest('.box');
             var originalHtml = save.html();
             save.addClass('loading');
@@ -83,15 +83,17 @@
             var id = window.location.hash.split('#').slice(1).join('#');
             var elem = $('.collapsible-checklist[data-id="' + id + '"]');
             elem.collapsible({ collapsed: false });
-            loadTasks(elem);
+            <?php if ($can_edit_tasks) echo 'loadTasks(elem);'; ?>
           }
 
           var collapsibles = $('.collapsible-checklist');
 
-          collapsibles.on('collapsibleexpand', function() {
-            var idChecklist = this.dataset.id;
-            loadTasks($(this));
-            window.location.hash = '#' + this.dataset.id;
+          collapsibles.on('collapsibleexpand', function(evt) {
+            if (/collapsible-checklist/.test(evt.target.className)) {
+              var idChecklist = this.dataset.id;
+              <?php if ($can_edit_tasks) echo 'loadTasks($(this));'; ?>
+              window.location.hash = '#' + this.dataset.id;
+            }
           });
 
           collapsibles.on('collapsiblecollapse', function() {

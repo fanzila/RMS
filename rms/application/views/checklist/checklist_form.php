@@ -41,9 +41,7 @@ $task_readonly = $can_edit_tasks ? '' : 'readonly disabled';
   <?php if ($can_edit_tasks) { ?>
     <div class="row">
       <div id="tasks-<?= $checklist_id ?>" data-role="collapsible-set" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-      <div class="box tasks-sorting" id="checklist-tasks-<?= $checklist_id ?>" data-id="<?= $checklist_id ?>">
-          <div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div>
-        </div>
+      <div class="box tasks-sorting" id="checklist-tasks-<?= $checklist_id ?>" data-id="<?= $checklist_id ?>"></div>
       </div>
     </div>
   <?php } ?>
