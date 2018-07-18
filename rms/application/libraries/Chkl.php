@@ -142,6 +142,9 @@ class Chkl
 
     $checklist->tasks = [];
 
+    if (count($result) === 1 && $result[0]->task_id === null)
+      return $checklist;
+
     $tasks_number_fields = [
       'active',
       'order',

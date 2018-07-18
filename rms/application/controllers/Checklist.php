@@ -7,10 +7,10 @@ class Checklist extends CI_Controller {
 	*
 	* Maps to the following URL
 	* 		http://example.com/index.php/welcome
-	*	- or -  
+	*	- or -
 	* 		http://example.com/index.php/welcome/index
 	*	- or -
-	* Since this controller is set as the default controller in 
+	* Since this controller is set as the default controller in
 	* config/routes.php, it's displayed at http://example.com/
 	*
 	* So any other public methods not prefixed with an underscore will
@@ -37,7 +37,7 @@ class Checklist extends CI_Controller {
 		$this->hmw->keyLogin();
 		$id_bu = $this->session->userdata('bu_id');
 		$type = $this->session->userdata('type');
-		
+
 		$msg = null;
 		$form = $this->input->post();
 		if(isset($form)) {
@@ -57,14 +57,14 @@ class Checklist extends CI_Controller {
 
 		$data = array(
 			'msg'			=> $msg,
-			'keylogin'		=> $this->session->userdata('keylogin'),	
+			'keylogin'		=> $this->session->userdata('keylogin'),
 			'checklists'	=> $checklists);
 
 		$data['bu_name'] 	=  $this->session->userdata('bu_name');
 		$data['username'] 	= $this->session->userdata('identity');
 		$data['type'] 		= $type;
 		$headers 			= $this->hmw->headerVars(1, "/checklist/", "Checklist");
-		
+
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('checklist/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -74,11 +74,11 @@ class Checklist extends CI_Controller {
 	}
 
 	public function viewCklPreviousTasks()
-	{		
+	{
 
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->userdata('bu_id');
-		
+
 		if (isset($type)) {
 			$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users as u', 'r.user = u.id')->where(array('c.id_bu' => $id_bu, 'c.type' => $type))->order_by('r.date desc')->limit(50);
 		} else {
@@ -104,7 +104,7 @@ class Checklist extends CI_Controller {
 	}
 
 	public function viewCklTasks($id_ckl, $load = null)
-	{		
+	{
 		$this->hmw->keyLogin();
 		$form = null;
 		$checklist_rec_id = null;
@@ -252,7 +252,7 @@ class Checklist extends CI_Controller {
 			$query	= $this->db->get();
 			$res 	= $query->result();
 
-			if(empty($res)) {	
+			if(empty($res)) {
 
 				//get checklist BU, then manager2 + admin email of this BU
 				$this->db->select('users.username, users.email, users.id');
@@ -286,7 +286,7 @@ class Checklist extends CI_Controller {
     $id_bu = $this->session->userdata('bu_id');
 
     $data = [
-      'checklists' => $this->chkl->getAllChecklists($id_bu, true),
+      'checklists' => $this->chkl->getAllChecklists($id_bu),
       'empty_checklist' => $this->createEmptyChecklist(),
       'empty_task' => $this->createEmptyTask(),
       'types' => [
@@ -333,6 +333,29 @@ class Checklist extends CI_Controller {
     $success = $this->chkl->setOrder($this->input->post()['ids']);
 
     return print(json_encode([ 'success' => $success ]));
+  }
+
+  public function getTasks($id_checklist, $html = 0)
+  {
+    $this->hmw->keyLogin();
+    $this->hmw->changeBu();
+		$id_bu = $this->session->userdata('bu_id');
+
+    $checklist = $this->chkl->getOneChecklist($id_checklist, true);
+
+    if (!$html)
+      return print(json_encode($checklist));
+
+    $data = [
+      'checklist' => (object)$checklist,
+      'priorities' => [
+        1 => 'normal',
+        2 => 'medium',
+        3 => 'high'
+      ]
+    ];
+
+    $this->load->view('checklist/tasks_ajax', $data);
   }
 
   public function createTask()

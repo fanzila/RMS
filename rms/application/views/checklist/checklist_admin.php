@@ -51,18 +51,49 @@
       $(document).ready(function() {
         'use strict';
 
-        // set collapsible hash on expand
+        // set collapsible hash on expand and load tasks
+        function loadTasks(elem) {
+          var idChecklist = elem.data('id');
+          var tasksContainer = elem.find('#checklist-tasks-' + idChecklist);
+
+          if (tasksContainer.html().trim().length === 0) {
+            var save = elem.find('input[type="submit"]').closest('.box');
+            var originalHtml = save.html();
+            save.addClass('loading');
+            save.html('<i class="fa fa-spinner fa-spin"></i>');
+
+            $.ajax({
+              url: '/checklist/getTasks/' + idChecklist + '/1',
+              type: 'GET'
+            }).done(function(data) {
+              save.removeClass('loading');
+              save.html(originalHtml);
+
+              tasksContainer.html(data);
+
+              // when triggering "create", the hash is removed so we need to save and restore it
+              var hash = window.location.hash;
+              tasksContainer.trigger('create');
+              window.location.hash = hash;
+            });
+          }
+        }
         setTimeout(function() {
           if (/#\d+/i.test(window.location.hash)) {
             var id = window.location.hash.split('#').slice(1).join('#');
             var elem = $('.collapsible-checklist[data-id="' + id + '"]');
             elem.collapsible({ collapsed: false });
+            <?php if ($can_edit_tasks) echo 'loadTasks(elem);'; ?>
           }
 
           var collapsibles = $('.collapsible-checklist');
 
-          collapsibles.on('collapsibleexpand', function() {
-            window.location.hash = '#' + this.dataset.id;
+          collapsibles.on('collapsibleexpand', function(evt) {
+            if (/collapsible-checklist/.test(evt.target.className)) {
+              var idChecklist = this.dataset.id;
+              <?php if ($can_edit_tasks) echo 'loadTasks($(this));'; ?>
+              window.location.hash = '#' + this.dataset.id;
+            }
           });
 
           collapsibles.on('collapsiblecollapse', function() {
@@ -93,9 +124,11 @@
           var elem = $(this);
 
           var inputName = elem.find('input[name="name"]');
-          var name = inputName.val().trim().toUpperCase();
 
-          inputName.val(name);
+          if (inputName && inputName.val()) {
+            var name = inputName.val().trim().toUpperCase();
+            inputName.val(name);
+          }
 
           var idField = elem.find('input[name="id"]');
           var isUpdate = idField && idField.val();
