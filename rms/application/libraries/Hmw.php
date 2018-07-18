@@ -99,8 +99,17 @@ class Hmw {
 		$CI = & get_instance();
 		$CI->load->database();
 		$CI->db->select('bus.id, bus.name, bus.country, bus.zip, bus.description')->from('bus as bus');
+
 		if($iduser) $CI->db->join('users_bus as ub', 'ub.bu_id = bus.id')->where('ub.user_id', $iduser);
-		if($id) $CI->db->where('id', $id);
+
+		if($id)
+    {
+      if (is_array($id))
+        $CI->db->where_in('id', $id);
+      else
+        $CI->db->where('id', $id);
+    }
+
 		$res = $CI->db->get();
 		return $res->result();
 	}

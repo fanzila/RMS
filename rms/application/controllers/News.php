@@ -147,10 +147,15 @@ class News extends CI_Controller {
 				$server_name = $this->hmw->getParam('server_name');
 
 				$this->load->library('mmail');
-				$bus = $this->input->post('bus');
-        $bus = array_map(function($bu) {
+				$bus_ids = $this->input->post('bus');
+        $bus_ids = array_map(function($bu) {
           return intval($bu);
-        }, $bus);
+        }, $bus_ids);
+
+        $bus = $this->hmw->getBus($bus_ids);
+        $bus_names = implode(' | ', array_map(function($bu) {
+          return $bu->name;
+        }, $bus));
 
         $subject = 'Hank news! ' . $this->input->post('title');
 
@@ -165,8 +170,8 @@ class News extends CI_Controller {
         $this->mmail->prepare($subject, $msg)
           ->from('news@hankrestaurant.com', 'HANK NEWS')
           ->replyTo('news@hankrestaurant.com')
-          ->toList('news', $bus)
-          ->before(function($config) use ($server_name, $news_id, $user) {
+          ->toList('news', $bus_ids)
+          ->before(function($config) use ($server_name, $news_id, $user, $bus_names) {
             $this->db->select('id');
             $this->db->where('email', $config['email']);
             $result = $this->db->get('users')->result();
@@ -191,9 +196,11 @@ class News extends CI_Controller {
 
               if ($config['type'] === 'html')
                 $config['body'] .= '<a href="' . $link . '">' . $link
-                  . "</a>\r\n-- \r\n" . $user->username;
+                  . "</a>\r\n-- \r\n" . $user->username
+                  . "\r\n" . $bus_names;
               else
-                $config['body'] .= $link . "\r\n-- \r\n" . $user->username;
+                $config['body'] .= $link . "\r\n-- \r\n" . $user->username
+                  . "\r\n" . $bus_names;
 
             return $config;
           })
