@@ -37,17 +37,17 @@ class News extends CI_Controller {
 	{
 
 		$this->hmw->keyLogin();
-		
+
 		$bu_test = $this->session->userdata('bu_name');
 		$this->hmw->changeBu();// GENERIC changement de Bu
 		if($bu_test != $this->session->userdata('bu_name') && $login!='welcome'){
 			redirect('news');
 		}
-		
+
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$bus_list = $this->hmw->getBus(null, $user->id);
-				
+
 		$config = array();
 		$config["base_url"] = base_url() . "news/index";
 		$config["total_rows"] = $this->news_model->record_count();
@@ -59,7 +59,7 @@ class News extends CI_Controller {
 		$this->pagination->initialize($config);
 
 		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-		
+
 		$data = array(
 			'username'	=> $user->username,
 			'user_groups'	=> $user_groups[0],
@@ -91,9 +91,9 @@ class News extends CI_Controller {
 		$user = $this->ion_auth->user()->row();
 
 		$bus_list = $this->hmw->getBus(null, $user->id);
-		
+
 		$this->load->helper('form');
-		
+
 		$headers = $this->hmw->headerVars(0, "/news/index/", "Create News");
 		$error = array('error' => "");
 		if (!$this->input->post('title'))
@@ -166,7 +166,7 @@ class News extends CI_Controller {
           ->from('news@hankrestaurant.com', 'HANK NEWS')
           ->replyTo('news@hankrestaurant.com')
           ->toList('news', $bus)
-          ->before(function($config) use ($server_name, $news_id) {
+          ->before(function($config) use ($server_name, $news_id, $user) {
             $this->db->select('id');
             $this->db->where('email', $config['email']);
             $result = $this->db->get('users')->result();
@@ -187,7 +187,7 @@ class News extends CI_Controller {
 
             $this->db->insert('news_confirm', $confirm);
 
-            $config['body'] .= "\r\n\r\n->>>>Merci de confirmer la lecture de ce message en cliquant ici :";
+            $config['body'] .= "\r\n\r\n->>>>Merci de confirmer la lecture de ce message en cliquant ici : ";
 
               if ($config['type'] === 'html')
                 $config['body'] .= '<a href="' . $link . '">' . $link
@@ -213,24 +213,24 @@ class News extends CI_Controller {
 		$this->load->library('mmail');
 
 		$this->db->join('users', 'news_confirm.id_user = users.id');
-		$this->db->limit(1) or die($this->mysqli->error);				
+		$this->db->limit(1) or die($this->mysqli->error);
 		$res = $this->db->get_where('news_confirm', array('key' => $key));
 		$ret = $res->result_array();
 		$ip  = $_SERVER['REMOTE_ADDR'];
-		
+
 		if(isset($ret[0]['id'])) {
 			$res_sup = $this->db->get_where('news', array('id' => $ret[0]['id_news'])) or die($this->mysqli->error);
 			$ret_sup = $res_sup->result_array();
-			
+
 			$this->db->set('date_confirmed', 'NOW()', FALSE)
 			->set('status', 'confirmed')
 			->set('IP', $ip)
 			->where('key', $key);
 			$this->db->update('news_confirm') or die($this->mysqli->error);
-			
+
 			$data = array('status' => 'OK');
 		} else {
-			$data = array('status' => 'NOK');	
+			$data = array('status' => 'NOK');
 		}
 
 		$this->load->view('news/confirm',$data);
