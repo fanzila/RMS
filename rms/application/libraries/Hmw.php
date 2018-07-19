@@ -262,9 +262,11 @@ class Hmw {
     }
 	}
 
-	public function changeBu() {
+	public function changeBu($bu = null) {
 		$CI = & get_instance();
-		$change_bu = $CI->input->post('bus');
+
+		$change_bu = $bu ? $bu : $CI->input->post('bus');
+
 		if(!empty($change_bu)) {
 			$bu_info = $CI->hmw->getBus($change_bu);
 			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);

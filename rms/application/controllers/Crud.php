@@ -220,19 +220,21 @@ class Crud extends CI_Controller {
 
     public function skills()
     {
-		$id_bu = $this->session->userdata('bu_id');
+      $id_bu = $this->session->userdata('bu_id');
 
-		$crud = new grocery_CRUD();
-		$crud->set_theme('bootstrap');
+      $crud = new grocery_CRUD();
+      $crud->set_theme('bootstrap');
 
-        $crud->columns('id', 'name', 'order', 'deleted', 'id_bu');
-        $crud->set_relation('id_bu', 'bus', 'name');
-        $crud->required_fields('id', 'name', 'id_bu');
-		$crud->where('id_bu',$id_bu);
-        $crud->set_table('skills');
-        $output = $crud->render();
+      $crud->columns('id', 'name', 'order', 'deleted', 'id_bu');
+      $crud->set_relation('id_bu', 'bus', 'name');
+      $crud->required_fields('id', 'name', 'id_bu');
+      $crud->where('id_bu',$id_bu);
+      $crud->set_table('skills');
+      $crud->add_action('Duplicate', '', '/skills/duplicate', 'fa-clone');
 
-        $this->_example_output($output);
+      $output = $crud->render();
+
+      $this->_example_output($output);
     }
 
     public function skills_item()
