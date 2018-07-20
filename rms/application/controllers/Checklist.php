@@ -126,7 +126,7 @@ class Checklist extends CI_Controller {
 		$checklist_res = $this->db->get();
 		$checklists = $checklist_res->row();
 
-		$this->db->select('name, id, comment, priority, day_month_num, day_week_num')->from('checklist_tasks')->where('active', 1)->where('id_checklist', $id_ckl)->order_by('order asc');
+		$this->db->select('name, id, comment, priority, day_month_num, day_week_num, color')->from('checklist_tasks')->where('active', 1)->where('id_checklist', $id_ckl)->order_by('order asc');
 		$checklist_task_res = $this->db->get();
 		$checklist_tasks = $checklist_task_res->result_array();
 
