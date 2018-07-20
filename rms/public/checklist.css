@@ -16,3 +16,11 @@
     -moz-border-radius:10px 10px 0 0;
     border-radius:10px 10px 0 0;
 }
+
+.task-color-dot {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  vertical-align: middle;
+}

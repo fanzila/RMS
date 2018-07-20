@@ -9,6 +9,7 @@
 
 </div>
 <script type="text/javascript" src="/public/Sortable.min.js"></script>
+<script type="text/javascript" src="/public/color-picker.js"></script>
 
 <div data-role="content">
   <div id="creation-form" style="display: none;">
@@ -74,6 +75,7 @@
               // when triggering "create", the hash is removed so we need to save and restore it
               var hash = window.location.hash;
               tasksContainer.trigger('create');
+              elem.colorPickers();
               window.location.hash = hash;
             });
           }
