@@ -1,4 +1,4 @@
-</div>	
+</div>
 	<div data-role="content" data-theme="a">
 	<?php $this->load->helper('url'); ?>
 <table width="100%" border="1" style="border-collapse:collapse; border-color:#CCCCCC;" cellpadding="4" cellspacing="4">
@@ -14,6 +14,19 @@
 			<? } ?>
 		<? } ?>
 	</td>
+  <td style="padding:10px;">
+    <form method="GET" action="/pm/messages/<?= $type ? $type : '' ?>/">
+      <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+          <label for="reports-search">Search on subject:</label>
+          <input type="search" name="search" id="reports-search" value="<?= $search ?>" />
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+          <input type="submit" value="Search" />
+        </div>
+      </div>
+    </form>
+  </td>
 	</tr>
 </table>
 <br />

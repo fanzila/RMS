@@ -208,9 +208,12 @@ class Pm extends CI_Controller {
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
 			redirect('pm');
 		}
+    $search = $this->input->get('search');
+
 		// Get & pass to view the messages view type (e.g. MSG_SENT)
 		$data['type'] = $type;
-		$messages = $this->pm_model->get_messages($type);
+		$data['search'] = $search;
+		$messages = $this->pm_model->get_messages($type, $search);
 
 		$user		= $this->ion_auth->user()->row();
 		$bus_list	= $this->hmw->getBus(null, $user->id);
@@ -259,7 +262,7 @@ class Pm extends CI_Controller {
 		$headers = $this->hmw->headerVars(1, "/pm/", "Reports - ".$titre);
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('pm/menu');
+		$this->load->view('pm/menu', $data);
 		$this->load->view('pm/list', $data);
 		$this->load->view('jq_footer');
 	}
