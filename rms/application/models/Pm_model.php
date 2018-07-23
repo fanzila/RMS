@@ -178,10 +178,19 @@ class Pm_model extends CI_Model {
 		$this->db->group_by(TF_PM_ID); // To get only distinct messages
 		$this->db->order_by(TF_PM_DATE, 'desc');
 
-    if ($search)
+    if (isset($search) && is_array($search))
     {
-      $this->db->where('MATCH (privmsgs.privmsg_subject) AGAINST ("*'
-        . $this->db->escape($search) . '*" IN BOOLEAN MODE)', NULL, FALSE);
+      if (array_key_exists('subject', $search) && !empty($search['subject']))
+      {
+        $this->db->where('MATCH (privmsgs.privmsg_subject) AGAINST ("*'
+          . $this->db->escape($search['subject']) . '*" IN BOOLEAN MODE)', NULL, FALSE);
+      }
+
+      if (array_key_exists('from', $search) && !empty($search['from']))
+        $this->db->where('privmsg_author', $search['from']);
+
+      if (array_key_exists('to', $search) && !empty($search['to']))
+        $this->db->where('privmsgs_to.pmto_recipient', $search['to']);
     }
 
 		return $this->table1->get_data();
