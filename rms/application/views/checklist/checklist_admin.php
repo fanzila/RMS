@@ -76,6 +76,11 @@
           '#AAFFC3',
           '#808000'
         ];
+        var colorPickerOptions = {
+          clear_btn: null,
+          position: 'downside',
+          colors: colorsPalette
+        };
 
         // set collapsible hash on expand and load tasks
         function loadTasks(elem) {
@@ -100,10 +105,7 @@
               // when triggering "create", the hash is removed so we need to save and restore it
               var hash = window.location.hash;
               tasksContainer.trigger('create');
-              elem.find('.color-picker').paletteColorPicker({
-                clear_btn: null,
-                colors: colorsPalette
-              });
+              elem.find('.color-picker').paletteColorPicker(colorPickerOptions);
               window.location.hash = hash;
             });
           }
@@ -302,10 +304,7 @@
 
         // create tasks
         var createTaskForm = $('#task-create');
-        createTaskForm.find('.color-picker').paletteColorPicker({
-          clear_btn: null,
-          colors: colorsPalette
-        });
+        createTaskForm.find('.color-picker').paletteColorPicker(colorPickerOptions);
         createTaskForm.on('submit', function(evt) {
           evt.preventDefault();
 
