@@ -395,6 +395,7 @@ class Checklist extends CI_Controller {
     $task->active = 1;
     $task->day_week_num = [];
     $task->day_month_num = [];
+    $task->color ='#FFFFFF';
 
     return $task;
   }

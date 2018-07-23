@@ -24,31 +24,7 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
   <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
     <div class="box">
       <label for="task-color-<?= $task_id ?>">Color:</label>
-      <select id="task-color-<?= $task_id ?>" name="task-color-<?= $task_id ?>" class="color-picker" required>
-        <option value="">Color</option>
-        <option value="#000000" <?php if ($task->color === '#000000') echo 'selected'; ?>></option>
-        <option value="#000080" <?php if ($task->color === '#000080') echo 'selected'; ?>></option>
-        <option value="#FFFFFF" <?php if ($task->color === '#FFFFFF') echo 'selected'; ?>></option>
-        <option value="#E6194B" <?php if ($task->color === '#E6194B') echo 'selected'; ?>></option>
-        <option value="#3CB44B" <?php if ($task->color === '#3CB44B') echo 'selected'; ?>></option>
-        <option value="#FFE119" <?php if ($task->color === '#FFE119') echo 'selected'; ?>></option>
-        <option value="#0082C8" <?php if ($task->color === '#0082C8') echo 'selected'; ?>></option>
-        <option value="#F58231" <?php if ($task->color === '#F58231') echo 'selected'; ?>></option>
-        <option value="#911EB4" <?php if ($task->color === '#911EB4') echo 'selected'; ?>></option>
-        <option value="#46F0F0" <?php if ($task->color === '#46F0F0') echo 'selected'; ?>></option>
-        <option value="#F032E6" <?php if ($task->color === '#F032E6') echo 'selected'; ?>></option>
-        <option value="#D2F53C" <?php if ($task->color === '#D2F53C') echo 'selected'; ?>></option>
-        <option value="#FABEBE" <?php if ($task->color === '#FABEBE') echo 'selected'; ?>></option>
-        <option value="#008080" <?php if ($task->color === '#008080') echo 'selected'; ?>></option>
-        <option value="#E6BEFF" <?php if ($task->color === '#E6BEFF') echo 'selected'; ?>></option>
-        <option value="#AA6E28" <?php if ($task->color === '#AA6E28') echo 'selected'; ?>></option>
-        <option value="#FFFAC8" <?php if ($task->color === '#FFFAC8') echo 'selected'; ?>></option>
-        <option value="#800000" <?php if ($task->color === '#800000') echo 'selected'; ?>></option>
-        <option value="#AAFFC3" <?php if ($task->color === '#AAFFC3') echo 'selected'; ?>></option>
-        <option value="#808000" <?php if ($task->color === '#808000') echo 'selected'; ?>></option>
-        <option value="#FFD8B1" <?php if ($task->color === '#FFD8B1') echo 'selected'; ?>></option>
-        <option value="#808080" <?php if ($task->color === '#808080') echo 'selected'; ?>></option>
-      </select>
+      <input type="hidden" name="task-color-<?= $task_id ?>" class="color-picker" value="<?= $task->color ?>">
     </div>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">

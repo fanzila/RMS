@@ -8,8 +8,9 @@
   <?php } ?>
 
 </div>
+<link rel="stylesheet" href="/public/palette-color-picker.css">
+<script type="text/javascript" src="/public/palette-color-picker.min.js"></script>
 <script type="text/javascript" src="/public/Sortable.min.js"></script>
-<script type="text/javascript" src="/public/color-picker.js"></script>
 
 <div data-role="content">
   <div id="creation-form" style="display: none;">
@@ -52,6 +53,30 @@
       $(document).ready(function() {
         'use strict';
 
+        var colorsPalette = [
+          '#000000',
+          '#808080',
+          '#000080',
+          '#FFFFFF',
+          '#E6194B',
+          '#3CB44B',
+          '#FFE119',
+          '#0082C8',
+          '#F58231',
+          '#911EB4',
+          '#46F0F0',
+          '#F032E6',
+          '#D2F53C',
+          '#FABEBE',
+          '#008080',
+          '#E6BEFF',
+          '#AA6E28',
+          '#FFFAC8',
+          '#800000',
+          '#AAFFC3',
+          '#808000'
+        ];
+
         // set collapsible hash on expand and load tasks
         function loadTasks(elem) {
           var idChecklist = elem.data('id');
@@ -75,7 +100,10 @@
               // when triggering "create", the hash is removed so we need to save and restore it
               var hash = window.location.hash;
               tasksContainer.trigger('create');
-              elem.colorPickers();
+              elem.find('.color-picker').paletteColorPicker({
+                clear_btn: null,
+                colors: colorsPalette
+              });
               window.location.hash = hash;
             });
           }
@@ -273,7 +301,12 @@
         });
 
         // create tasks
-        $('#task-create').on('submit', function(evt) {
+        var createTaskForm = $('#task-create');
+        createTaskForm.find('.color-picker').paletteColorPicker({
+          clear_btn: null,
+          colors: colorsPalette
+        });
+        createTaskForm.on('submit', function(evt) {
           evt.preventDefault();
 
           var elem = $(this);
