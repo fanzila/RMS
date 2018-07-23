@@ -566,8 +566,50 @@ class Skills extends CI_Controller {
 			$reponse = 'ok';
 		}else{
 			$reponse = 'Nothing to change!';
-		}		
-	
+		}
+
 		echo  json_encode(['reponse' => $reponse]);
 	}
+
+  public function duplicate($id)
+  {
+		$this->hmw->isLoggedIn();
+		$current_user = $this->ion_auth->get_user_id();
+
+    $this->load->model('skill_model');
+    $skill = $this->skill_model->getOne($id, true);
+
+    if (!$this->input->post('id_bu'))
+      return $this->duplicateForm($skill, $current_user);
+
+    $new_id_bu = $this->input->post('id_bu');
+
+    if ($this->skill_model->alreadyExists($skill->name, $new_id_bu))
+      return $this->duplicateForm($skill, $current_user, 'A skill with this name already exists in the required BU');
+
+    if (!$this->skill_model->duplicate($id, $new_id_bu))
+      return $this->duplicateForm($skill, $current_user, 'Duplication did not work');
+
+    $this->hmw->changeBu($new_id_bu);
+    redirect('/skills/general');
+  }
+
+  function duplicateForm($skill, $user, $error = null)
+  {
+    $bus = $this->hmw->getBus(null, $user);
+
+    $headers = $this->hmw->headerVars(0, '/crud/skills', 'Duplicate skill ' . $skill->name);
+
+    $data = [
+      'skill' => $skill,
+      'bus'   => $bus,
+      'error' => $error
+    ];
+
+    $this->load->view('jq_header_pre', $headers['header_pre']);
+    $this->load->view('jq_header');
+    $this->load->view('jq_header_post', $headers['header_post']);
+    $this->load->view('skills/duplicate', $data);
+    $this->load->view('jq_footer');
+  }
 }
