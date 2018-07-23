@@ -199,7 +199,8 @@ class webCashier extends CI_Controller {
 		$this->db->where('id', $id_bu);
 		$bu_name = $this->db->get('bus')->row_array()['name'];
 		$subject = "CASHIER $bu_name : New comment on report";
-
+		$tosend = true;
+		
 		$comment_data = array(
 			'content' => $data['comment-'.$data['id']],
 			'date' => $curr_date,
@@ -216,6 +217,7 @@ class webCashier extends CI_Controller {
 		if (isset($data['validate-'.$data['id']])) {
 			$this->db->set('status', 'validated');
 			$subject .= " (Director Validated)";
+			$tosend   = false;
 		} else {
 			if ($data['diff-'.$data['id']] != '0') $this->db->set('status', 'error');
 		}
@@ -245,9 +247,11 @@ class webCashier extends CI_Controller {
 
 		$msg = 'Comment on report for '.$bu_name.' from '.$user.' on ID: '.$data['id'].' | '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']]."<br /><a href='http://".$server_name."/webcashier/report/#".$data['id']."'>http://".$server_name."/webcashier/report/#".$data['id']."</a>";
 
-    $this->mmail->prepare($subject, $msg)
-      ->toList('reports', $id_bu)
-      ->send();
+		if($tosend) {
+    		$this->mmail->prepare($subject, $msg)
+      			->toList('reports', $id_bu)
+      			->send();
+		}
 
 		echo json_encode(['reponse' => $reponse]);
 	}
