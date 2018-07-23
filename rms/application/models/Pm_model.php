@@ -95,10 +95,10 @@ class Pm_model extends CI_Model {
 		$this->table2 = new Table_model(TABLE_PMTO, $dateformat, $enforce_field_types);
 		$this->user_id = $this->user_model->current_id();
 		$this->bu_id = $this->session->userdata('bu_id');
-		
+
 		$user_groups = $this->ion_auth->get_users_groups()->result();
 		$this->user_level = $user_groups[0]->level;
-		
+
 	}
 
 	/**
@@ -132,7 +132,7 @@ class Pm_model extends CI_Model {
 	 * type < 0: get ALL messages, deleted or not, sent to or by this user
 	 * @return array
 	 */
-	public function get_messages($type = MSG_NONDELETED)
+	public function get_messages($type = MSG_NONDELETED, $search = null)
 	{
 		// Lets use abbreviations
 		$t1 = $this->table1->get_name();
@@ -177,6 +177,21 @@ class Pm_model extends CI_Model {
 		$this->db->join($t2, TF_PMTO_MESSAGE.' = '.TF_PM_ID);
 		$this->db->group_by(TF_PM_ID); // To get only distinct messages
 		$this->db->order_by(TF_PM_DATE, 'desc');
+
+    if (isset($search) && is_array($search))
+    {
+      if (array_key_exists('subject', $search) && !empty($search['subject']))
+      {
+        $this->db->where('MATCH (privmsgs.privmsg_subject) AGAINST ("*'
+          . $this->db->escape($search['subject']) . '*" IN BOOLEAN MODE)', NULL, FALSE);
+      }
+
+      if (array_key_exists('from', $search) && !empty($search['from']))
+        $this->db->where('privmsg_author', $search['from']);
+
+      if (array_key_exists('to', $search) && !empty($search['to']))
+        $this->db->where('privmsgs_to.pmto_recipient', $search['to']);
+    }
 
 		return $this->table1->get_data();
 	}

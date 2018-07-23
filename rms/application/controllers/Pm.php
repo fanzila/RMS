@@ -172,12 +172,12 @@ class Pm extends CI_Controller {
 			}
 			$data['message'] = $message;
 		}
-		
+
 		else $data['message'] = array();
 		$headers = $this->hmw->headerVars(0, "/pm/", "Reports");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('pm/menu');
+		$this->load->view('pm/menu', $this->menuData());
 		$this->load->view('pm/details', $data);
 		$this->load->view('jq_footer');
 	}
@@ -202,19 +202,25 @@ class Pm extends CI_Controller {
 	{
 		$this->hmw->isLoggedIn();
 		$this->hmw->changeBu();// GENERIC changement de Bu
+
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1 &&($type==1 || $type==2))
 		{
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
 			redirect('pm');
 		}
+
 		// Get & pass to view the messages view type (e.g. MSG_SENT)
-		$data['type'] = $type;
-		$messages = $this->pm_model->get_messages($type);
+    $messages = $this->pm_model->get_messages($type, [
+      'subject' => $this->input->post('search'),
+      'from'    => $this->input->post('from'),
+      'to'      => $this->input->post('to')
+    ]);
 
 		$user		= $this->ion_auth->user()->row();
 		$bus_list	= $this->hmw->getBus(null, $user->id);
 		$data['username'] = $user->username;
+		$data['type'] = $type;
 		if($messages)
 		{
 			// Get recipients & get usernames instead of user ids
@@ -259,7 +265,7 @@ class Pm extends CI_Controller {
 		$headers = $this->hmw->headerVars(1, "/pm/", "Reports - ".$titre);
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('pm/menu');
+		$this->load->view('pm/menu', $this->menuData([ 'type' => $type ]));
 		$this->load->view('pm/list', $data);
 		$this->load->view('jq_footer');
 	}
@@ -504,6 +510,18 @@ class Pm extends CI_Controller {
 		$message_body = nl2br($message_body);
 		return $message_body;
 	}
+
+  private function menuData($data = [])
+  {
+		$id_bu = $this->session->userdata('bu_id');
+
+    return array_merge([
+      'from'   => $this->input->post('from'),
+      'to'     => $this->input->post('to'),
+      'search' => $this->input->post('search'),
+      'users'  => $this->ion_auth_model->users_names_ids($id_bu, true)
+    ], $data);
+  }
 }
 
 /* End of file Pm.php */

@@ -2470,6 +2470,30 @@ class Ion_auth_model extends CI_Model
 		}
 	}
 
+  public function users_names_ids($id_bu = null, $active = null)
+  {
+    $this->db->select('users.id, users.username');
+    $this->db->from('users');
+
+    if ($id_bu)
+    {
+      $this->db->join('users_bus', 'users_bus.user_id = users.id');
+      $this->db->where('users_bus.bu_id', $id_bu);
+    }
+
+    if ($active !== null)
+      $this->db->where('users.active', intval($active));
+
+    $result = $this->db->get()->result();
+
+    $users = [];
+
+    foreach ($result as $user)
+      $users[intval($user->id)] = $user->username;
+
+    return $users;
+  }
+
 	protected function _filter_data($table, $data)
 	{
 		$filtered_data = array();
