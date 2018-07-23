@@ -519,7 +519,7 @@ class Pm extends CI_Controller {
       'from'   => $this->input->post('from'),
       'to'     => $this->input->post('to'),
       'search' => $this->input->post('search'),
-      'users'  => $this->ion_auth_model->users_names_ids($id_bu)
+      'users'  => $this->ion_auth_model->users_names_ids($id_bu, true)
     ], $data);
   }
 }
