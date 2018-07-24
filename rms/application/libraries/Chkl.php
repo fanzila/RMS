@@ -2,14 +2,6 @@
 
 class Chkl
 {
-  public function __construct()
-  {
-    $CI = &get_instance();
-    $CI->load->database();
-    $CI->load->library('ion_auth');
-    $CI->load->library('hmw');
-  }
-
   const UPDATABLE_CHECKLIST_FIELDS = [
     'name',
     'active',
@@ -24,8 +16,17 @@ class Chkl
     'active',
     'order',
     'day_week_num',
-    'day_month_num'
+    'day_month_num',
+    'color'
   ];
+
+  public function __construct()
+  {
+    $CI = &get_instance();
+    $CI->load->database();
+    $CI->load->library('ion_auth');
+    $CI->load->library('hmw');
+  }
 
   public function getUpdatableFields()
   {
@@ -325,7 +326,8 @@ class Chkl
         'active',
         'order',
         'day_week_num',
-        'day_month_num'
+        'day_month_num',
+        'color'
       ]);
 
       $select = array_merge($select, $task_fields);

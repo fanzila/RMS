@@ -19,7 +19,8 @@ class Task_model extends CI_Model
     'active',
     'order',
     'day_week_num',
-    'day_month_num'
+    'day_month_num',
+    'color'
   ];
 
   public function insert_entry($data)

@@ -3,13 +3,13 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
 ?>
 
 <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+  <div class="col-xs-6 col-sm-12 col-md-4 col-lg-4">
     <div class="box">
       <label for="task-name-<?= $task_id ?>">Name:</label>
       <input id="task-name-<?= $task_id ?>" name="task-name-<?= $task_id ?>" type="text" value="<?= stripslashes($task->name) ?>" data-clear-btn="true" <?= $task_readonly ?>/>
     </div>
   </div>
-  <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+  <div class="col-xs-6 col-sm-5 col-md-4 col-lg-4">
     <div class="box">
       <label for="task-priority-<?= $task_id ?>">Priority:</label>
       <select id="task-priority-<?= $task_id ?>" name="task-priority-<?= $task_id ?>" <?= $task_readonly ?>>
@@ -21,7 +21,13 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
       </select>
     </div>
   </div>
-  <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+  <div class="col-xs-1 col-sm-2 col-md-1 col-lg-1">
+    <div class="box">
+      <label for="task-color-<?= $task_id ?>">Color:</label>
+      <input type="hidden" name="task-color-<?= $task_id ?>" class="color-picker" value="<?= $task->color ?>">
+    </div>
+  </div>
+  <div class="col-xs-11 col-sm-5 col-md-3 col-lg-3">
     <div class="box">
       <label for="task-active-<?= $task_id ?>">Active: (on or off)</label>
       <select id="task-active-<?= $task_id ?>" name="task-active-<?= $task_id ?>" <?= $task_readonly ?>>
@@ -316,7 +322,7 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
       <div class="box">
-      <select name="task-id_checklist-<?= $checklist_id ?>" required>
+        <select name="task-id_checklist-<?= $checklist_id ?>" required>
           <option value="">Checklist</option>
           <?php foreach ($checklists as $checklist) { ?>
             <option value="<?= $checklist->id ?>"><?= $checklist->id ?>: <?= $checklist->name ?></option>
@@ -324,7 +330,7 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
         </select>
       </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
       <div class="box">
         <input type="submit" value="Save"/>
       </div>

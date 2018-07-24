@@ -1,7 +1,7 @@
 		</div>
 <?
 $today = getdate();
-$service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minutes] - $checklists_name"; 
+$service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minutes] - $checklists_name";
 ?>
 <style>
 	ul {
@@ -11,16 +11,16 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 }
 </style>
 		<div data-role="content">
-			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">			
+			<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
 				<? if($load <= 0) { ?>Service: <?=$service?> <? } ?>
 				<form id="tasks" name="tasks" method="post" action="/checklist/">
 
 					<ul data-role="">
 							<?
 							foreach ($checklists as $line) {
-								
+
 								$continue = false;
-								
+
 								if(!empty($line['day_week_num']) AND $load == null) {
 									$dw = explode(',',$line['day_week_num']);
 									if(!in_array(trim($today['wday']), $dw)) {
@@ -28,7 +28,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 										$continue = true;
 									}
 								}
-								
+
 								if(!empty($line['day_month_num']) AND $load == null) {
 									$dm = explode(',',$line['day_month_num']);
 									if(in_array(trim($today['mday']), $dm)) {
@@ -36,9 +36,9 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 										$continue = false;
 									}
 								}
-								
+
 								if($continue) continue;
-								
+
 								$bkg_color = '';
 								$comment = 'comment-'.$line['id'];
 									if($load == null OR ($load > 0 || $line['id'] > 0)) {
@@ -46,10 +46,10 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 								if($line['priority'] == 2) $bkg_color = "#ffdfa6";
 								if($line['priority'] == 1) $bkg_color = "#e0e0e0";
 								?>
-								
+
 								<li>
-									<input type="checkbox" name="<?=$line['id']?>" id="task-<?=$line['id']?>" class="custom" <?if(isset($form[$line['id']])) { ?>checked<? } ?> />
-									<label style="background-color: <?=$bkg_color?>" for="task-<?=$line['id']?>" id="label-<?=$line['id']?>"><?=nl2br($line['name'])?> <br /> <i><span style="font-size:smaller"><?=nl2br($line['comment'])?></span></i></label>
+									<input type="checkbox" name="<?=$line['id']?>" id="task-<?=$line['id']?>" <?if(isset($form[$line['id']])) { ?>checked<? } ?> data-color="<?= $line['color'] ?>" />
+                  <label style="background-color: <?=$bkg_color?>; border-left: solid 1.5em <?= $line['color'] ?>;" for="task-<?=$line['id']?>" id="label-<?=$line['id']?>"><?=nl2br($line['name'])?> <br /> <i><span style="font-size:smaller"><?=nl2br($line['comment'])?></span></i></label>
 
 									<div data-role="fieldcontain">
 										<label style="font-size:smaller" for="comment-<?=$line['id']?>">Comments</label>
@@ -64,7 +64,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 										foreach ($users as $user) {
 											?>
 											<option value="<?=$user->id?>" <? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?></option>
-											<? 
+											<?
 										}
 										?>
 									</select><font size="14" color='red'><b><div class="error_cont"></div></b></font>
