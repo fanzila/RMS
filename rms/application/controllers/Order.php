@@ -424,13 +424,11 @@ class Order extends CI_Controller {
 		$attributs		= $this->product->getAttributs();
 		$comment_order 	= '';
 		$comment_recept	= '';
-    $order_id = '';
 
 		if($load > 0) {
 			$this->db->from('orders as r')->where('r.idorder', $load)->where('id_bu', $id_bu);
 			$order_rec_res	= $this->db->get() or die($this->mysqli->error);
 			$order_rec		= $order_rec_res->row();
-      $order_id = $order_rec->idorder;
 			$comment_order 	= $order_rec->comment;
 			$comment_recept	= $order_rec->comment_reception;
 			$order_prev		= unserialize($order_rec->data);
@@ -470,22 +468,21 @@ class Order extends CI_Controller {
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
-
+		
 		if ($type != 'reception' && ($load == null || $load == 0)) $products = $this->sortArray($products);
-
+		
 		$data = array(
-			'products'       => $products,
-			'stock'          => $stock,
-			'attributs'      => $attributs,
-			'comment_order'  => $comment_order,
-      'order_id'       => $order_id,
-			'comment_recept' => $comment_recept,
-			'users'          => $users,
-			'supinfo'        => $supinfo[$supplier_id],
-			'load'           => $load,
-			'type'           => $type,
+			'products'			=> $products,
+			'stock'				=> $stock,
+			'attributs'			=> $attributs,
+			'comment_order'		=> $comment_order,
+			'comment_recept'	=> $comment_recept,
+			'users'				=> $users,
+			'supinfo'			=> $supinfo[$supplier_id],
+			'load' 				=> $load,
+			'type'				=> $type,
 			);
-
+		
 		if (isset($order_recev)) $data['unsrl_order'] = $order_recev;
 		$title 				= "Order ".$supinfo[$supplier_id]['name'];
 		$data['bu_name']	= $this->session->userdata('bu_name');

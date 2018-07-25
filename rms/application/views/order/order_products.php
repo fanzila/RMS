@@ -161,15 +161,15 @@ $today = getdate();
 											<? if($type != 'reception' AND $type != 'viewreception') { ?>TOTAL ORDER: <span id="total">0</span>€ H.T.<hr /><? } ?>
 											Carriage paid: <?=$supinfo['carriage_paid']?> | Delivery days: <?=$supinfo['delivery_days']?> | Location: <?=$supinfo['location']?> <br />
 											Internal comments: <?=$supinfo['comment_internal']?> <br />
-											Order comment: <?=$supinfo['comment_order']?> <br />
-											Delivery comment: <?=$supinfo['comment_delivery']?> <br />
+											Order comment: <?=$supinfo['comment_order']?> <br /> 
+											Delivery comment: <?=$supinfo['comment_delivery']?> <br /> 
 											Delivery schedule: <?=$supinfo['comment_delivery_info']?> <br />
 											Order method: <?=$supinfo['order_method']?> | Payment type: <?=$supinfo['payment_type']?> | Payment delay: <?=$supinfo['payment_delay']?> <br />
 											Contact sale: <?=$supinfo['contact_sale_name']?> | <?=$supinfo['contact_sale_tel']?> |  <?=$supinfo['contact_sale_email']?><br />
 											Contact order: <?=$supinfo['contact_order_name']?> | <?=$supinfo['contact_order_tel']?> |  <?=$supinfo['contact_order_email']?>
 											From command: <?= $order_id ?> <br />
 										</li>
-									</ul>
+									</ul>				
 									<input type="hidden" name="supplier" value="<?=$supinfo['id']?>">
 									<input type="hidden" name="action" value="save_order">
 									<input type="hidden" name="type" value="<?=$type?>">
