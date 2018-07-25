@@ -166,7 +166,7 @@ $today = getdate();
 											Delivery schedule: <?=$supinfo['comment_delivery_info']?> <br />
 											Order method: <?=$supinfo['order_method']?> | Payment type: <?=$supinfo['payment_type']?> | Payment delay: <?=$supinfo['payment_delay']?> <br />
 											Contact sale: <?=$supinfo['contact_sale_name']?> | <?=$supinfo['contact_sale_tel']?> |  <?=$supinfo['contact_sale_email']?><br />
-											Contact order: <?=$supinfo['contact_order_name']?> | <?=$supinfo['contact_order_tel']?> |  <?=$supinfo['contact_order_email']?>
+											Contact order: <?=$supinfo['contact_order_name']?> | <?=$supinfo['contact_order_tel']?> |  <?=$supinfo['contact_order_email']?><br />
 											From command: <?= $order_id ?> <br />
 										</li>
 									</ul>
