@@ -97,8 +97,9 @@ class Cameras extends CI_Controller {
 		return ($cameras);
 	}
 	
- 	function getStream($camera_name) 
+	function getStream($camera_name) 
 	{
+		
 		$this->load->database();
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
@@ -107,9 +108,9 @@ class Cameras extends CI_Controller {
 
 		if (!$this->hmw->isLoggedIn())
 			die();
-		
+
 		session_write_close();
-		
+
 		$this->db->where('id_bu', $this->session->userdata('bu_id'));
 		$this->db->where('name', $camera_name);
 		$query = $this->db->get('cameras');
@@ -117,32 +118,52 @@ class Cameras extends CI_Controller {
 
 		if (empty($camera))
 			die('Camera not found in DB');
-		
-		// Register the wrapper
-		stream_wrapper_register("stream", "camera_proxy")
-		    or die("Failed to register protocol");
-				
-		// Open the "file"
-		$fp = fopen("stream://CameraCGIStreamContent", "r+")
-				or die;
-		# On envoie les memes headers que la Camera Axis
-		header('Content-Type: multipart/x-mixed-replace; boundary=myboundary');
 
-		$ch = curl_init($camera['address']);
-		curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_FILE, $fp);
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-		curl_exec($ch);
+		if($camera['type'] == 'image') {
+						
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $camera['address']);
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
+			curl_setopt($ch, CURLOPT_HTTPAUTH);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
+			$picture = curl_exec($ch);
+			curl_close($ch);
 
-		if (curl_error($ch))
-		{
-		  echo curl_error($ch);
-		  exit;
+			//Display the image in the browser
+			header('Content-type: image/jpeg');
+			echo $picture;
+			exit;
+
+		} else { 
+
+			// Register the wrapper
+			stream_wrapper_register("stream", "camera_proxy")
+				or die("Failed to register protocol");
+
+			// Open the "file"
+			$fp = fopen("stream://CameraCGIStreamContent", "r+")
+			or die;
+			# On envoie les memes headers que la Camera Axis
+			header('Content-Type: multipart/x-mixed-replace; boundary=myboundary');
+
+			$ch = curl_init($camera['address']);
+			curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt($ch, CURLOPT_FILE, $fp);
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+			curl_exec($ch);
+
+			if (curl_error($ch))
+			{
+				echo curl_error($ch);
+				exit;
+			}
+
+			curl_close($ch);
+			fclose($fp);
 		}
-
-		curl_close($ch);
-		fclose($fp);
 	}
 	
 	private function planning() 
