@@ -125,7 +125,7 @@ class Cameras extends CI_Controller {
 			curl_setopt($ch, CURLOPT_URL, $camera['address']);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
-			curl_setopt($ch, CURLOPT_HTTPAUTH);
+			//curl_setopt($ch, CURLOPT_HTTPAUTH);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
 			$picture = curl_exec($ch);
