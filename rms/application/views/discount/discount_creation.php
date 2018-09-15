@@ -34,7 +34,12 @@
 								<select style="background-color:#a1ff7c" name="persistent" id="persistent" data-inline="true" data-theme="a" required>
 									<option value="0">No</option>
 									<option value="1">Yes</option>
-									</select>		
+									</select>	
+									<label for="allrest" id="label">Valid in all restaurants:</label>
+									<select style="background-color:#a1ff7c" name="allrest" id="allrest" data-inline="true" data-theme="a" required>
+										<option value="0">No</option>
+										<option value="999999">Yes</option>
+										</select>	
 							</td>
 						</tr>
 					</table>

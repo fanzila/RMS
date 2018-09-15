@@ -58,10 +58,11 @@ class Discount extends CI_Controller {
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.persistent as tpersistent')->from('discount as T');
+		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.id_bu as tidbu, T.persistent as tpersistent')->from('discount as T');
 			$this->db->where('T.deleted', 0);
 			$this->db->where('T.used', 0);
-			$this->db->where('T.id_bu', $id_bu);
+			$this->db->where('(T.id_bu', $id_bu);
+			$this->db->or_where("T.id_bu = 999999)", NULL, FALSE);
 			$this->db->order_by('T.date', 'desc');
 			$this->db->limit(30);
 			if(isset($q)) $this->db->like('T.client', "$q", 'both'); 
@@ -125,8 +126,12 @@ class Discount extends CI_Controller {
 		$this->db->set('reason', $data['reason']);
 		$this->db->set('persistent', $data['persistent']);
 		$this->db->set('id_user', $data['user']);
-		$this->db->set('date', date('Y-m-d H:i:s'));
-		$this->db->set('id_bu', $id_bu);
+		$this->db->set('date', date('Y-m-d H:i:s'));	
+		if($data['allrest'] == 999999) { 
+			$this->db->set('id_bu', 999999); 
+		} else { 
+			$this->db->set('id_bu', $id_bu); 
+		}
 
 		$this->db->trans_start();
 			if($data['id'] == 'create') {
