@@ -41,7 +41,7 @@
 											<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>" data-clear-btn="true">
 
 <? if($line->tpersistent) { ?><p>WARNING! This discount is persistent because it can be used multiple times. Even if you save it with used = yes, IT WILL NOT BE SAVED AS USED (unless you are logged as manager). <br />If you think that discount should be set at used, please advise your manager.</p><? } ?>
-<p><small><? if($line->tidbu == 999999) { ?>This discount is valid in all restaurants.<? } else { ?>This discount is only valid in <?=$bu_name?> restaurant.
+<p><small><? if($line->tallbu) { ?>This discount is valid in all restaurants.<? } else { ?>This discount is only valid in <?=$bu_name?> restaurant.
 <? } ?></small></p>
 											<select style="background-color:#a1ff7c" id="used-<?=$line->tid?>" name="used" data-inline="true" data-theme="a" required>
 												<option value="0">Utiliser : NON</option>
@@ -57,6 +57,7 @@
 											</select>
 											<input type="hidden" name="id" value="<?=$line->tid?>">
 											<input type="hidden" name="persistent" value="<?=$line->tpersistent?>">
+											<input type="hidden" name="allbu" value="<?=$line->tallbu?>">
 											<?$attributes = array('id' => "sub=".$line->tid, 'name' => "submit");
 											echo form_submit($attributes, 'Save');?>
 										</form>
