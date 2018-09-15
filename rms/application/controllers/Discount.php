@@ -139,7 +139,7 @@ class Discount extends CI_Controller {
 			} else {
 				
 				$this->db->set('used', $data['used']);
-				if($data['persistent'] == 1 AND $this->ion_auth_acl->has_permission('validate_persistent_discount')) $this->db->set('used', false);
+				if($data['persistent'] == 1 AND !$this->ion_auth_acl->has_permission('validate_persistent_discount')) $this->db->set('used', false);
 				
 				$this->db->where('id', $data['id']);
 				if (!$this->db->update('discount')) {
