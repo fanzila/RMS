@@ -109,11 +109,19 @@ class RMS_Email
 
   public function toEmail($email)
   {
-    if (is_array($email))
+    
+	if (strpos($email, ',')) {
+		$list = explode(',', $email);
+		$this->to = array_merge($this->to, $list);
+		return $this;
+	}
+	
+	if (is_array($email)) {
       $this->to = array_merge($this->to, $email);
-    else
+    } else {
       array_push($this->to, $email);
-
+	}
+	
     return $this;
   }
 
