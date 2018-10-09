@@ -791,7 +791,8 @@ class Cashier {
 		$dir	= $this->getPosArchivesDir($id_bu);
 		$path	= $dir."/".$file;
 		$db = new SQLite3($path);
-		$sql = "select SUM(AMOUNT) AS SUM, METHOD from ARCHIVEDRECEIPTPAYMENT AS rp GROUP BY rp.METHOD";
+		//$sql = "select SUM(AMOUNT) AS SUM, METHOD from ARCHIVEDRECEIPTPAYMENT AS rp GROUP BY rp.METHOD"; //old request do not take account about canceled receipt
+		$sql = "select SUM(AMOUNT) AS SUM, METHOD from ARCHIVEDRECEIPTPAYMENT AS rp JOIN ARCHIVEDRECEIPT AS r ON rp.ARCHIVEDRECEIPT = r.ID WHERE r.CANCELLED == 0 GROUP BY rp.METHOD";
 		$result = $db->query($sql);
 		$row = array();
 		$i = 0;
