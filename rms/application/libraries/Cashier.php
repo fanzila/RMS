@@ -570,7 +570,7 @@ class Cashier {
 			$sql1 	= "SELECT SUM(AMOUNT) AS FLOAT1 FROM ARCHIVEDCASHMOVEMENT WHERE METHOD='".$id_pos_cash_method."'";
 			$result1 = $db->query($sql1);
 			$res1	= $result1->fetchArray(SQLITE3_ASSOC);
-			$sql2 	= "SELECT SUM(AMOUNT) AS FLOAT2 FROM ARCHIVEDRECEIPTPAYMENT WHERE METHOD='".$id_pos_cash_method."'";
+			$sql2 	= "SELECT SUM(AMOUNT) AS FLOAT2 FROM ARCHIVEDRECEIPTPAYMENT AS rp JOIN ARCHIVEDRECEIPT AS r ON rp.ARCHIVEDRECEIPT = r.ID WHERE r.CANCELLED == 0 AND rp.METHOD='".$id_pos_cash_method."'";
 			$result2 = $db->query($sql2);
 			$res2	= $result2->fetchArray(SQLITE3_ASSOC);
 			$sql3 	= "SELECT SUM(CASH_FLOAT_IN) AS FLOAT3 FROM ARCHIVEDCASHFLOAT";
