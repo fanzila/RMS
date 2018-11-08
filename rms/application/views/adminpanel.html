@@ -17,7 +17,7 @@
 						<ul data-role="listview" data-inset="false" data-icon="false"><li>TO: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€</li></ul>
 						<h3>Main</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
-						<? if(($keylogin || $this->ion_auth_acl->has_permission('cameras')) AND ($this->session->userdata('type') != 'kitchen')) { ?>
+						<? if((!$keylogin || $this->ion_auth_acl->has_permission('cameras')) AND ($this->session->userdata('type') != 'kitchen')) { ?>
 							<li><a href="/cameras/" data-ajax="false"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
 						<? } ?>		
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
