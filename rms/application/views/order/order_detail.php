@@ -21,7 +21,7 @@
 								
 								?>
 								<li data-inset="true" data-split-theme="a">
-									<?=strtoupper($value['name'])?> | QTTE: <?=$value['qtty']?>  | Prix: <?=$value['subtotal']/1000?>€ (pour <?=$value['qtty']?> <?=$pdtinfo[$key]['unit_name']?>)</span>
+									<?=strtoupper(stripslashes($value['name']))?> | QTTE: <?=$value['qtty']?>  | Prix: <?=$value['subtotal']/1000?>€ (pour <?=$value['qtty']?> <?=$pdtinfo[$key]['unit_name']?>)</span>
 								</li>
 								<? $totalprice += $value['subtotal']; } ?>				 
 								<? } ?>

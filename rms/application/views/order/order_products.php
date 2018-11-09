@@ -22,10 +22,10 @@ $today = getdate();
 			?>
 			<div id='hide-<?=$line['id']?>' class="hide-<?=$hide?>" style="border: 1px solid lightgray; padding: 8px; margin-bottom: 10px;">
 				<li>
-					<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper($line['name'])?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
+					<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper(stripslashes($line['name']))?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
 						<br />Catégorie : <?=strtoupper($line['category_name'])?>
 						<br />Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ | Colisage: <?=$line['packaging']?>  <br />
-						<? if(!empty($line['supplier_reference'])) { ?>Ref. supplier: <?=$line['supplier_reference']?> | <? } ?> <? if(!empty($line['comment'])) { ?> Comment: <?=$line['comment']?> <? } ?>
+						<? if(!empty($line['supplier_reference'])) { ?>Ref. supplier: <?=stripslashes($line['supplier_reference'])?> | <? } ?> <? if(!empty($line['comment'])) { ?> Comment: <?=stripslashes($line['comment'])?> <? } ?>
 						<? if($line['manage_stock']) { ?>
 						<br />Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <? } ?>
 					</label>

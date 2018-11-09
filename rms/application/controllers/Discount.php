@@ -58,7 +58,8 @@ class Discount extends CI_Controller {
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-		$this->db->select('T.id as tid, T.nature as tnature, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.allbu as tallbu, T.persistent as tpersistent')->from('discount as T');
+		$this->db->select('T.id as tid, T.nature as tnature, users.username as creator, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.allbu as tallbu, T.persistent as tpersistent')->from('discount as T');
+			$this->db->join('users', 'users.id = T.id_user', 'left');
 			$this->db->where('T.deleted', 0);
 			$this->db->where('T.used', 0);
 			$this->db->where('(T.id_bu', $id_bu);

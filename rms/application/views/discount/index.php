@@ -39,7 +39,7 @@
 
 											<label for="nature-<?=$line->tid?>" id="label">Nature:</label>
 											<input id="nature-<?=$line->tid?>" type="text" name="nature" value="<?=stripslashes($line->tnature)?>" data-clear-btn="true">
-
+<label for="creator-<?=$line->tid?>" id="label">Discount creator: <?=stripslashes($line->creator)?></label>
 <? if($line->tpersistent) { ?><p>WARNING! This discount is persistent because it can be used multiple times. Even if you save it with used = yes, IT WILL NOT BE SAVED AS USED (unless you are logged as manager). <br />If you think that discount should be set at used, please advise your manager.</p><? } ?>
 <p><small><? if($line->tallbu) { ?>This discount is valid in all restaurants.<? } else { ?>This discount is only valid in <?=$bu_name?> restaurant.
 <? } ?></small></p>

@@ -44,7 +44,6 @@
                         <td>
                           <label for="repeat_interval">Repeat interval:</label><br/>
                           <select required name="repeat_interval">
-                            <option value=""></option>
                             <option value="86400">1 day</option>
                             <option value="172800">2 days</option>
                             <option value="259200">3 days</option>
@@ -53,7 +52,7 @@
                             <option value="518400">6 days</option>
                             <option value="604800">1 week</option>
                             <option value="1209600">2 weeks</option>
-                            <option value="2592000">30 days</option>
+                            <option value="2592000" selected>30 days</option>
                             <option value="3888000">45 days</option>
                             <option value="7776000">90 days</option>
                             <option value="31536000">1 year</option>

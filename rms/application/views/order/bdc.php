@@ -65,7 +65,7 @@ body {
 </tr>
 <? foreach ($order['pdt'] as $key => $var) { ?>
 <tr>
-	<td class="table_bdc"><?=$var['name']?></td>
+	<td class="table_bdc"><?=stripslashes($var['name'])?></td>
 	<td class="table_bdc" align="center"><?=$info['pdtinfo'][$key]['supplier_reference']?></td>
 	<?if(!$info['supplier']['simple_order_form']) { ?><td class="table_bdc" align="center"><font color="#7c7c7c"><?=$info['pdtinfo'][$key]['packaging']?></font></td><? } ?>
 	<td class="table_bdc" align="center"><?=$info['pdtinfo'][$key]['unit_name']?></td>
