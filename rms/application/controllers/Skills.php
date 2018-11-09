@@ -103,6 +103,7 @@ class Skills extends CI_Controller {
 		$skills_categories = $res->result();
 
 		$this->db->select('id, name')
+			->where('id_bu', $id_bu)
 			->from('skills_sub_category')
 			->order_by('order asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
