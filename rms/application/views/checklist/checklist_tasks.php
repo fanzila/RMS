@@ -19,6 +19,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 							<?
 							foreach ($checklists as $line) {
 
+/** FIXMEE
 								$continue = false;
 
 								if(!empty($line['day_week_num']) AND $load == null) {
@@ -38,7 +39,7 @@ $service = "$today[weekday] $today[mday] $today[month] $today[hours]:$today[minu
 								}
 
 								if($continue) continue;
-
+**/
 								$bkg_color = '';
 								$comment = 'comment-'.$line['id'];
 									if($load == null OR ($load > 0 || $line['id'] > 0)) {

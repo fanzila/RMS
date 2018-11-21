@@ -48,7 +48,7 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
     </div>
   </div>
 </div>
-
+<!-- FIX MEE
 <div class="row">
   <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
     <div class="box">
@@ -108,6 +108,7 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
       </div>
     </div>
   </div>
+
   <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
     <div class="box">
       <div class="row">
@@ -313,8 +314,9 @@ $task_id = property_exists($task, 'id') ? $task->id : 'create';
       </div>
     </div>
   </div>
-</div>
 
+</div>
+-->
 <?php if ($task_id !== 'create') { ?>
   <input type="hidden" name="task-order-<?= $task_id ?>" value="<?= $task->order ?>" class="task-order">
   <input type="hidden" name="task-id-<?= $task_id ?>" value="<?= $task_id ?>">

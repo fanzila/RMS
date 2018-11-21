@@ -31,7 +31,10 @@
 							if ($value['id'] == 1) $value['pos'] = $form_values['cashpad_amount']-$form_values['prelevement']; 
 							?>
 						<tr>
-							<td><?=$value['name']?></td>
+							<td>
+							<? if($value['name'] == 'CB') $value['name'] = 'CB + cartes TR'; ?>	
+							<?=$value['name']?>
+							</td>
 							<? if ($value['id'] == 9) { ?>
 								<td><?=number_format($value['man'], 2)?></td>
 								<td> - </td>
@@ -88,10 +91,15 @@
 							<? if($mode->id == 1) { ?>
 								<input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" <?if (isset($form_values['cash2'])) echo 'value="'.$form_values['cash2'] .'"';?>/>
 							<? } elseif($mode->id == 2) { ?>
-									<table border="0" cellpadding="2" width="100%"><tr>
-										<td>CB EMV: <input maxlength="10" type="text" name="cbemv" id="basic" data-clear-btn="true" <?if (isset($form_values['cbemv'])) { echo 'value="'.$form_values['cbemv'] .'"'; }?>/></td>
-										<td>CB CLESS: <input maxlength="10" type="text" name="cbcless" id="basic" data-clear-btn="true" <?if (isset($form_values['cbcless'])) { echo 'value="'.$form_values['cbcless'] .'"'; }?>/></td>
-									</tr></table>
+								<table border="0" cellpadding="2" width="100%"><tr>
+								<td>CB EMV: <input maxlength="10" type="text" name="cbemv" id="basic" data-clear-btn="true" <?if (isset($form_values['cbemv'])) { echo 'value="'.$form_values['cbemv'] .'"'; }?>/></td>
+								<td>CB CLESS: <input maxlength="10" type="text" name="cbcless" id="basic" data-clear-btn="true" <?if (isset($form_values['cbcless'])) { echo 'value="'.$form_values['cbcless'] .'"'; }?>/></td>
+								</tr></table>
+							<? } elseif($mode->id == 3) { ?>
+								<table border="0" cellpadding="2" width="100%"><tr>
+								<td>PAPIERS: <input maxlength="10" type="text" name="man_3" id="basic" data-clear-btn="true" <?if (isset($form_values['man_3'])) { echo 'value="'.$form_values['man_3'] .'"'; }?>/></td>
+								<td>CARTES: <input maxlength="10" type="text" name="titre_card" id="basic" data-clear-btn="true" <?if (isset($form_values['titre_card'])) { echo 'value="'.$form_values['titre_card'] .'"'; }?>/></td>
+								</tr></table>
 							<? } else { ?>
 								<input maxlength="10" type="text" name="man_<?=$mode->id?>" id="basic" data-clear-btn="true" <?if (isset($form_values['man_'.$mode->id])) { echo 'value="'.$form_values['man_'.$mode->id] .'"'; }?>/>
 							<? } ?>

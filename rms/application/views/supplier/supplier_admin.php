@@ -48,8 +48,8 @@
           var inputName = elem.find('input[name="name"]');
           var name = inputName.val().trim().toUpperCase();
 
-          if (!name.length || !/^[A-Z0-9]+$/.test(name))
-            return alert('Missing or invalid name (no space nor special characters)');
+          if (!name.length || !/^[A-Z0-9_-]+$/.test(name))
+            return alert('WARNING! ERROR at saving : missing or invalid name (no space nor special characters)');
 
           inputName.val(name);
 
@@ -63,7 +63,7 @@
             dataType: 'json'
           }).done(function(data) {
             if (!data.success)
-              return alert(data.message || 'An unknown error occured, not saved');
+              return alert(data.message || 'ERROR! An unknown error occurred, not saved');
 
             alert('Data has been saved');
 

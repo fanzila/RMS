@@ -852,7 +852,7 @@ class webCashier extends CI_Controller {
 			if($this->input->post('mov') != 'safe_in' AND $this->input->post('mov') != 'safe_out') {
 				
 				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'));
-				$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cbemv'))+$this->cashier->clean_number($this->input->post('cbcless'));
+				$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cbemv'))+$this->cashier->clean_number($this->input->post('cbcless'))+$this->cashier->clean_number($this->input->post('titre_card'));
 			}
 
 			foreach ($pay as $idp => $val2) {

@@ -885,7 +885,7 @@ class Cashier {
 		$req = "SELECT `name`,`id` FROM pos_payments_type WHERE pos_id= '".$id."' AND id_bu = $id_bu LIMIT 1";
 		$res = $CI->db->query($req) or die($this->mysqli->error);
 		$ret = $res->result_array();
-		if(empty($ret[0])) exit("No payment method found for BU ID: $id_bu");
+		if(empty($ret[0])) exit("No payment method found in pos_payments_type for payment ID : $id in BU ID: $id_bu. Please add this payment method in table pos_payments_type");
 		return $ret[0];
 	}
 	public function clean_number($num) {
