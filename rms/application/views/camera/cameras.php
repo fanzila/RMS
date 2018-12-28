@@ -84,45 +84,49 @@ foreach ($conca_ca as $line) {
 <tr><td colspan="3">TOTAL: <?=number_format($total_ca/1000, 0, ',', ' ')?>€</td></tr>
 </table>
 <?
-	$avatars_url = 'https://s3.amazonaws.com/uf.shiftplanning.com/';
-	$p = $planning['data'];
+	$p = $planning;
 	$i=false;
-	if($p) {
-		?>
-		<div class="row">
-			<div class="col-md" style="margin: 3px;">
-				<div class="box">
-					<h4>Who's on now @<?=$info_bu->name?>?</h4>
-				</div>
+if($p) {
+	?>
+	<div class="row">
+		<div class="col-md" style="margin: 3px;">
+			<div class="box">
+				<h4>Who's on today @<?=$info_bu->name?>?</h4>
 			</div>
 		</div>
-		<?
-	foreach($p AS $r) {
-		if(!empty($r['employee_avatar_url'])) {
-			$av_json_decode = json_decode($r['employee_avatar_url']);
-			$avatar = $av_json_decode->small;
-		}
+	</div>
+<table border='1' cellspacing='0' cellpadding='10'><tr bgcolor='#ffc300'>
+	<td>Type</td>
+	<td>People</td>
+	<td>Hours (real)</td>
+	</tr>
+	<?
+	foreach($p AS $key => $val) {
 
-		$pos = in_array ($r['schedule_id'], $bu_postion_id);
-		if($pos) {
-			$i=true;
-			?>
+		if($info_bu->name == $key) {
 
-			<div class="row" style="background-color: #FFF; border: 1px solid silver; margin: 5px;">
-				<div class="col-md" style="margin: 3px;">
-					<div class="box">
-						<? if(!empty($r['employee_avatar_url'])) { ?><img src="<?=$avatars_url?><?=$avatar?>"><? } ?> <?=$r['employee_name'];?> <small>(<?=$r['schedule_name'];?>)</small> | <?=$r['shift_start']['time'];?> - <?=$r['shift_end']['time'];?>
-					</div>
-				</div>
-			</div>
-			<?
+			foreach($val AS $key2) {
+				$date_start_ts	= new DateTime($key2['real_starts_at']);
+				$shift_start_ts = $date_start_ts->getTimestamp();
+				$date_end_ts	= new DateTime($key2['real_ends_at']);
+				$shift_end_ts 	= $date_end_ts->getTimestamp();
+				$ts		 		= time();
+				$bgshift 		= "#d0d8d0";
+				if(($ts < $shift_start_ts) OR ($ts > $shift_end_ts)) $bgshift = "";
+				?>
+				<tr bgcolor="<?=$bgshift?>">
+				<td><?=$key2['label_name']?></td>
+				<td><?=$key2['firstname']?> <?=$key2['lastname']?></td>
+				<td><?=date_format(date_create($key2['starts_at']), 'H:i')?> - <?=date_format(date_create($key2['ends_at']), 'H:i')?> (<?=date_format(date_create($key2['real_starts_at']), 'H:i')?> - <?=date_format(date_create($key2['real_ends_at']), 'H:i')?>)</td>
+				</tr>
+				<?
+			}
 		}
 	}
-	if(!$i) {
-		?><p>No one.</p><?
-		}
-	}
-?>
+	?>
+	</table>
+<? } ?>
+
 </font>
 </body>
 </html>
