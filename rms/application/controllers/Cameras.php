@@ -169,8 +169,6 @@ class Cameras extends CI_Controller {
 		private function Snapplanning() 
 		{
 
-			include('tmp_snapcurl.php');
-
 			$this->load->library('hmw');
 			$snapshift_token	= $this->hmw->getParam('snapshift_token'); 
 			$snapshift_url 		= $this->hmw->getParam('snapshift_url'); 
