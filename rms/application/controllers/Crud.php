@@ -205,14 +205,37 @@ class Crud extends CI_Controller {
         $this->_example_output($output);
     }
 
-    public function report()
+    public function pos_payments_type()
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 
-        $crud->columns('id', 'name', 'text');
+        $crud->required_fields('id', 'id_bu');
+        $crud->set_table('pos_payments_type');
+        $output = $crud->render();
+
+        $this->_example_output($output);
+    }
+
+    public function report()
+    {
+		$crud = new grocery_CRUD();
+		$crud->set_theme('bootstrap');
         $crud->required_fields('id', 'name', 'text', 'bu_id');
         $crud->set_table('report_subjects');
+        $output = $crud->render();
+
+        $this->_example_output($output);
+    }
+
+
+    public function bus()
+    {
+		$crud = new grocery_CRUD();
+		$crud->set_theme('bootstrap');
+
+        $crud->required_fields('id', 'name', 'bu_id');
+        $crud->set_table('bus');
         $output = $crud->render();
 
         $this->_example_output($output);
