@@ -190,8 +190,8 @@ class Cameras extends CI_Controller {
 				$ch = curl_init($snapshift_url.$snapshift_path);
 				curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); 
-				curl_setopt($ch, CURLOPT_TIMEOUT, 10); //timeout in seconds
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 16); 
+				curl_setopt($ch, CURLOPT_TIMEOUT, 16); //timeout in seconds
 				$out = curl_exec($ch);
 
 				if (curl_error($ch))
