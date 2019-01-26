@@ -184,6 +184,7 @@ class Cameras extends CI_Controller {
 			$db_ts		= $snap_ts->getTimestamp();
 			$out 		= $snap['data'];
 			$cache 		= $db_ts+(60*10);
+			$curl_error = 0;
 						
 			if($cache < time()) {
 
@@ -196,17 +197,17 @@ class Cameras extends CI_Controller {
 
 				if (curl_error($ch))
 				{
-					echo curl_error($ch);
-					exit;
-				}
-
-				curl_close($ch);
-				
-				$this->db->set('data', $out);
-				if (!$this->db->update('snapshift')) {
-					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-				}
-				
+					$errno = curl_errno($ch);
+					$errtx = curl_error($ch);
+					$curl_error = "CURL error : $errno -  $errtx";
+					curl_close($ch);
+				} else { 
+					curl_close($ch);
+					$this->db->set('data', $out);
+					if (!$this->db->update('snapshift')) {
+						$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
+					}
+				}	
 			}
 
 			$planning = json_decode($out, true);
@@ -231,6 +232,7 @@ class Cameras extends CI_Controller {
 				if($key['location_id'] == '9dd29ab8-4ccd-48e0-9170-7e5580442a1c') $sorted2['FR69OPERA'][]	= $key;
 			}
 
+			
 			return $sorted2;
 		}
 
