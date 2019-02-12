@@ -182,7 +182,7 @@ class Cameras extends CI_Controller {
 
 			$snap_ts	= new DateTime($snap['ts']);
 			$db_ts		= $snap_ts->getTimestamp();
-			$out 		= $snap['data'];
+			$out_db		= $snap['data'];
 			$cache 		= $db_ts+(60*10);
 			$curl_error = 0;
 						
@@ -210,6 +210,11 @@ class Cameras extends CI_Controller {
 				}	
 			}
 
+			$this->db->select('data, ts');
+			$query = $this->db->get('snapshift');
+			$snap = $query->row_array();
+			$out = $snap['data'];
+			
 			$planning = json_decode($out, true);
 			$sorted1 = array();
 
