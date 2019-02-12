@@ -209,6 +209,7 @@ class webCashier extends CI_Controller {
 		);
 
 		if(!empty($data['comment-'.$data['id']])) {
+			$updatedb = false;
 			if(!$this->db->insert('pos_comment_report', $comment_data)) {
 				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
