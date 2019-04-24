@@ -162,7 +162,9 @@ class Auth extends CI_Controller {
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				
 				$p = array(
-						'type'		=>  'user_login'
+						'type'		=>  'user_login',
+						'val1'		=> $_SERVER['HTTP_USER_AGENT'],
+						'val2' 		=> $_SERVER['REMOTE_ADDR']
 						);
 				$this->hmw->LogRecord($p, $id_bu);
 				
