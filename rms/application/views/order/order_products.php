@@ -72,7 +72,7 @@ $today = getdate();
 										<td><span>&nbsp;&nbsp;&nbsp;</span></td>
 										<td>
 											<small>Modifier reception: </small>
-											<input type="text" style="width:120px" name="editQtty[<?=$line['id']?>]" id="editQtty-<?=$line['id']?>" class="custom" data-mini="true" data-clear-btn="true"> </td><td><small>unité(s)</small>
+											<input type="text" style="width:120px" name="newqtty[<?=$line['id']?>]" id="newqtty-<?=$line['id']?>" class="custom" data-mini="true" data-clear-btn="true" value="<?=$added_stock?>"> </td><td><small>unité(s)</small>
 										</td>
 										<td><span>&nbsp;&nbsp;&nbsp;</span></td>
 										<td>
@@ -82,10 +82,10 @@ $today = getdate();
 										<? if($load > 0 && $type == 'reception') { ?>
 											<td><small>| Reçu : </small></td>
 											<td>
-												<input type="text" name="stock[<?=$line['id']?>]" id="stock-<?=$line['id']?>" class="custom" value="0" style="width:120px" data-clear-btn="true" /> </td><td><small>unité(s)</small>
+												<input type="text" name="newqtty[<?=$line['id']?>]" id="newqtty-<?=$line['id']?>" class="custom" value="<?=$qtty?>" style="width:120px" data-clear-btn="true" /> </td><td><small>unité(s)</small>
 											</td>
 											<? if($load > 0 && $qtty > 0 && $type == 'reception') { ?>
-												<td><input type="button" id="add<?=$line['id']?>" name="add[<?=$line['id']?>]" class="add" value="OK" data-mini="true" onclick="AddStock(<?=$line['id']?>);" />
+												<td>
 												</td>
 												<td>
 													<small>Commentaire produit:</small>
@@ -158,7 +158,7 @@ $today = getdate();
 
 									<ul data-role="listview" data-inset="true" data-split-theme="a" data-divider-theme="a">
 										<li data-role="list-divider" style="list-style-type: none;">
-											<? if($type != 'reception' AND $type != 'viewreception') { ?>TOTAL ORDER: <span id="total">0</span>€ H.T.<hr /><? } ?>
+											TOTAL ORDER: <span id="total">0</span>€ H.T.<hr />
 											Carriage paid: <?=$supinfo['carriage_paid']?> | Delivery days: <?=$supinfo['delivery_days']?> | Location: <?=$supinfo['location']?> <br />
 											Internal comments: <?=$supinfo['comment_internal']?> <br />
 											Order comment: <?=$supinfo['comment_order']?> <br />
@@ -203,17 +203,12 @@ $today = getdate();
 								if(addtostock[i]) {
 									qtty = addtostock[i];
 									sum = parseInt(qtty);
-									$('#stock-' + i).val(sum);
+									$('#newqtty-' + i).val(sum);
 								}
 							}
 							return false;
 						});
-					}
-
-					function AddStock(idl) {
-						qtty = $('#qtty-' + idl).val();
-						sum = parseInt(qtty);
-						$('#stock-' + idl).val(sum);
+						updateTotal()
 					}
 
 					function updateTotal() {
@@ -230,6 +225,12 @@ $today = getdate();
 								var item	= elid1[0];
 								var price	= $('#price' + '-' + idpdt).val();
 								var qtty	= $('#qtty' + '-' + idpdt).val();
+								
+								<? if($load > 0 && ($type == 'reception' OR $type == 'viewreception')) { ?>
+									var qtty	= $('#newqtty' + '-' + idpdt).val();
+									var item 	= 'qtty';
+								<? } ?>		
+													
 								var pdtname	= $('#pdt_name' + '-' + idpdt).val();
 
 								// START PACKAGING MANAGEMENT //
@@ -268,5 +269,4 @@ $today = getdate();
 					        return false;
 					    }
 					}
-
 					</script>

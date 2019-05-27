@@ -329,6 +329,12 @@ class Order extends CI_Controller {
 						$results[$key]['totalht'] = 'Unable to get total for this order';
 					}
 				}
+				
+				$usrlr = unserialize($rec['data_reception']);
+				if (isset($usrlr['pricetotal']) && is_numeric($usrlr['pricetotal'])) {
+					$results[$key]['totalht'] = ($usrlr['pricetotal'] / 1000);
+				}
+				
 				$this->db->where('idorder', $rec['idorder']);
 				$query = $this->db->get('orders_comments');
 				$results[$key]['countComments'] = $query->num_rows();
@@ -552,8 +558,8 @@ class Order extends CI_Controller {
 	public function editReception($post) {
 		
 		$unsrl_order = unserialize($post['srl_order_post']);
-		$editQtty = $post['editQtty'];
-		foreach ($editQtty as $key => $val) {
+		$newqtty = $post['newqtty'];
+		foreach ($newqtty as $key => $val) {
 			if (!empty($val)) {
 				$diff = $unsrl_order['pdt'][$key]['stock'] - $val;
 				$this->db->select('qtty');
@@ -566,6 +572,39 @@ class Order extends CI_Controller {
 				$unsrl_order['pdt'][$key]['stock'] = $val;
 			}
 		}
+
+
+		foreach ($post as $key => $var) {
+			$id_pdt = 0;
+			$value = 0;
+			if($key == 'newqtty') {
+				$order = array();
+				$order['id'] = date('ymd').rand(1000, 9000);
+				$order['supplier'] = $post['supplier'];
+
+				$pricetotal = 0;
+				foreach ($var as $id_pdt => $value) {
+					if($value > 0) {
+						$order['pdt'][$id_pdt] = array(
+							'newqtty' => trim($value),
+							'name' => trim($post['pdt_name'][$id_pdt]),
+							'price' => trim($post['price'][$id_pdt]),
+							'subtotal' => $post['price'][$id_pdt]*$value
+							);
+					}
+					if(!empty($value) AND !is_numeric($value)) exit('Qtty has to be numeric, invalid: '.$value);
+					if(!empty($value) AND is_numeric($value)) $do_something	= true;
+					if($post['pkg'][$id_pdt] <= 0) exit('Colisage incorrect, doit être supérieur à 0 pour '.$post['pdt_name'][$id_pdt].'.');
+					$packaging_check = trim($value/$post['pkg'][$id_pdt]);
+					if(is_float($packaging_check)) exit('Colisage incorrect: '.$packaging_check.', entrez un multiple de '.$post['pkg'][$id_pdt].' pour '.$post['pdt_name'][$id_pdt].'.');
+
+					$pricetotal += $post['price'][$id_pdt]*$value;
+				}
+				$unsrl_order['pricetotal'] = $pricetotal;
+
+			}
+		}
+
 		$srl = serialize($unsrl_order);
 		$array_order = array('data_reception' => $srl);
 		$this->db->where('idorder', $post['id_order']);
@@ -629,8 +668,8 @@ class Order extends CI_Controller {
 					$order = array();
 					$order['id'] = date('ymd').rand(1000, 9000);
 					$order['supplier'] = $post['supplier'];
-					$pricetotal = 0;
 
+					$pricetotal = 0;
 					foreach ($var as $id_pdt => $value) {
 						if($value > 0) {
 							$order['pdt'][$id_pdt] = array(
@@ -664,12 +703,13 @@ class Order extends CI_Controller {
 			} else {
 				$do_something = true;
 				$user_receive = $user->id;
+				$pricetotal = 0;
 				if(isset($post['user'])) {
 					if($post['user']) {
 						$user_receive = $post['user'];
 					}
 				}
-				if($key == 'stock') {
+				if($key == 'newqtty') {
 					$order_reception = array();
 					$status_reception = true;
 					foreach ($var as $id_pdt => $value) {
@@ -678,18 +718,26 @@ class Order extends CI_Controller {
 								'qtty' => $value,
 								'name' => $post['pdt_name'][$id_pdt],
 								'price' => $post['price'][$id_pdt],
-								'stock' => $post['stock'][$id_pdt],
+								'stock' => $post['newqtty'][$id_pdt],
 								'subtotal' => $post['price'][$id_pdt]*$value
 								);
 						}
+						if(!empty($value) AND !is_numeric($value)) exit('Qtty has to be numeric, invalid: '.$value);
+						if(!empty($value) AND is_numeric($value)) $do_something	= true;
+						if($post['pkg'][$id_pdt] <= 0) exit('Colisage incorrect, doit être supérieur à 0 pour '.$post['pdt_name'][$id_pdt].'.');
+						$packaging_check = trim($value/$post['pkg'][$id_pdt]);
+						if(is_float($packaging_check)) exit('Colisage incorrect: '.$packaging_check.', entrez un multiple de '.$post['pkg'][$id_pdt].' pour '.$post['pdt_name'][$id_pdt].'.');
+						
+						$pricetotal += $post['price'][$id_pdt]*$value;
 						
 						if(isset($post['comment'][$id_pdt])) $order_reception['pdt'][$id_pdt]['comment'] = $post['comment'][$id_pdt];
 
-							if($post['qtty_check'][$id_pdt] != $post['stock'][$id_pdt]) {
+							if($post['qtty_check'][$id_pdt] != $post['newqtty'][$id_pdt]) {
 								$status_reception = false;
 							}
 					}
 
+					$order_reception['pricetotal'] = $pricetotal;
 
 					//serialize and insert into db
 					if(isset($post['user'])) $user_receive = $post['user'];
