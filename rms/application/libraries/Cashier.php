@@ -302,7 +302,7 @@ class Cashier {
 		foreach ($res_mapping as $mapping) {
 
 			$pdt_info = $CI->product->getProducts($mapping['id_product'], null, null, null, $id_bu);
-			$previous_qtty = $pdt_info[$mapping['id_product']]['stock_qtty'];
+			if(isset($mapping['id_product'])) $previous_qtty = $pdt_info[$mapping['id_product']]['stock_qtty'];
 			$qtty = $sales*$mapping['coef'];
 
 			$CI->db->query("UPDATE products_stock SET qtty = qtty-($qtty), last_update_pos = NOW() WHERE id_product = $mapping[id_product]") or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
@@ -697,10 +697,9 @@ class Cashier {
 			case 'getUsers':
 			$dir	= $this->getPosArchivesDir($param['id_bu']);
 			$path	= $dir."/".$param['closing_file'];
-
 			$dbar	= new SQLite3($path);
 			$sqlar 	= "SELECT DISTINCT(USER) FROM ARCHIVEDRECEIPTPAYMENT";
-			$result = $dbar->query($sqlar);
+			$result = $dbar->query($sqlar) or die("ERROR, INFO: DB PATH : $path - ".error_log("ERROR DB PATH : $path"));
 			$res 	= array();
 			while($row=$result->fetchArray(SQLITE3_ASSOC)){
 				$q = "SELECT username FROM users AS u

@@ -154,7 +154,7 @@
 			<? if ($this->ion_auth_acl->has_permission('quittance')) { ?>
 				<div class="box">
 					 <input type="checkbox" name="validate-<?=$m['mov']['id']?>" id="validate-<?=$m['mov']['id']?>" class="custom" <?if ($m['mov']['status'] == 'validated') echo 'checked';?> />
-					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance Directeur</label>
+					 <label style="background-color: white;" for="validate-<?=$m['mov']['id']?>" id="label-<?=$m['mov']['id']?>">Quittance controleur</label>
 			 </div>
 			<? } ?>
 		<? } ?>
