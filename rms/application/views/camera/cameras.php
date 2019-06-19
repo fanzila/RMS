@@ -106,16 +106,18 @@ if($p) {
 		if($info_bu->name == $key) {
 
 			foreach($val AS $key2) {
+				$gray = false;
 				$date_start_ts	= new DateTime($key2['real_starts_at']);
 				$shift_start_ts = $date_start_ts->getTimestamp();
 				$date_end_ts	= new DateTime($key2['real_ends_at']);
 				$shift_end_ts 	= $date_end_ts->getTimestamp();
 				$ts		 		= time();
 				$bgshift 		= "#d0d8d0";
+				if(empty($key2['label_name'])) { $bgshift = ""; $gray = true; }
 				if(($ts < $shift_start_ts) OR ($ts > $shift_end_ts)) $bgshift = "";
 				?>
-				<tr bgcolor="<?=$bgshift?>">
-				<td><?=$key2['label_name']?></td>
+				<tr bgcolor="<?=$bgshift?>" <?if($gray) { ?>style ="color:b1b1b1;"<? } ?>>
+				<td><?if($gray) { ?><center>-</center><? } ?><?=$key2['label_name']?></td>
 				<td><?=$key2['firstname']?> <?=$key2['lastname']?></td>
 				<td><?=date_format(date_create($key2['starts_at']), 'H:i')?> - <?=date_format(date_create($key2['ends_at']), 'H:i')?> (<?=date_format(date_create($key2['real_starts_at']), 'H:i')?> - <?=date_format(date_create($key2['real_ends_at']), 'H:i')?>)</td>
 				</tr>
