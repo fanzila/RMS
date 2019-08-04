@@ -39,8 +39,8 @@
 			<ul data-role="listview" data-inset="true" data-filter="false">
 				<li data-role="list-divider">ARTICLES</li>
 				<li>	
-					<ul id="autocomplete_pdt" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..." data-filter-theme="d"></ul>
-				</li>
+					<ul id="autocomplete_pdt" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find a product..."></ul>
+			
 			</ul>
 			<ul data-role="listview" data-inset="true" data-filter="false">
 				<li data-role="list-divider">SUPPLIERS</li>

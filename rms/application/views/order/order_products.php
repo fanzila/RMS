@@ -46,7 +46,7 @@ $today = getdate();
 										$nbcolis = 'x';
 										if($type == 'viewreception') $nbcolis = $qtty/$line['packaging'];
 										if($type != 'reception' AND $type != 'viewreception') { ?>
-										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" data-inline="true" value="<?=$qtty?>" data-clear-btn="true" /> </td><td><small>unité(s)</small>
+										<input type="text" style="width:120px" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" class="custom" data-mini="true" data-inline="true" value="<?=$qtty?>" /> </td><td><small>unité(s)</small>
 										<? } else { ?><input type="hidden" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" value="<?=$qtty?>" />
 										<small>Unité(s) commandée(s) :</small> <?=$qtty?><? } ?> </td><td><input type="hidden" name="pkg[<?=$line['id']?>]" id="pkg-<?=$line['id']?>" value="<?=$line['packaging']?>" /><small style="color: #7e7e7e;">(soit <span id="respkg-<?=$line['id']?>"><?=$nbcolis?></span> colis)</small>
 									</td>
@@ -72,7 +72,7 @@ $today = getdate();
 										<td><span>&nbsp;&nbsp;&nbsp;</span></td>
 										<td>
 											<small>Modifier reception: </small>
-											<input type="text" style="width:120px" name="newqtty[<?=$line['id']?>]" id="newqtty-<?=$line['id']?>" class="custom" data-mini="true" data-clear-btn="true" value="<?=$added_stock?>"> </td><td><small>unité(s)</small>
+											<input type="text" style="width:120px" name="newqtty[<?=$line['id']?>]" id="newqtty-<?=$line['id']?>" class="custom" data-mini="true" value="<?=$added_stock?>"> </td><td><small>unité(s)</small>
 										</td>
 										<td><span>&nbsp;&nbsp;&nbsp;</span></td>
 										<td>
@@ -82,14 +82,14 @@ $today = getdate();
 										<? if($load > 0 && $type == 'reception') { ?>
 											<td><small>| Reçu : </small></td>
 											<td>
-												<input type="text" name="newqtty[<?=$line['id']?>]" id="newqtty-<?=$line['id']?>" class="custom" value="<?=$qtty?>" style="width:120px" data-clear-btn="true" /> </td><td><small>unité(s)</small>
+												<input type="text" name="newqtty[<?=$line['id']?>]" id="newqtty-<?=$line['id']?>" class="custom" value="<?=$qtty?>" style="width:120px" /> </td><td><small>unité(s)</small>
 											</td>
 											<? if($load > 0 && $qtty > 0 && $type == 'reception') { ?>
 												<td>
 												</td>
 												<td>
 													<small>Commentaire produit:</small>
-													<input type="text" id="comment-<?=$line['id']?>" name="comment[<?=$line['id']?>]" class="custom" data-mini="true" data-clear-btn="true" style="width:500px"/>
+													<input type="text" id="comment-<?=$line['id']?>" name="comment[<?=$line['id']?>]" class="custom" data-mini="true" style="width:500px"/>
 												</td>
 												<script>
 												addtostock[<?=$line['id']?>] = <?=$qtty?>;
@@ -124,7 +124,7 @@ $today = getdate();
 								<p><small>Comment on order:</small> <?=$comment_order?></p>
 
 								<label for="comment_reception" data-mini="true" style="background-color:#ffffff">Comments for reception (Only to notify or if problem)</label>
-								<input type="text" name="comment_reception" id="comment_reception" class="custom"  data-clear-btn="true" />
+								<input type="text" name="comment_reception" id="comment_reception" class="custom" />
 								<input type="hidden" name="idorder" value="<?=$load?>">
 								<? } ?>
 								<? if($type == 'viewreception') { ?>
