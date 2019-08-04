@@ -898,7 +898,7 @@ class webCashier extends CI_Controller {
 			$diff = $cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount + $prelevement + $cc_balance;
 			$test_diff = false;
             if($diff <= $alert_amount['cashier_alert_amount_close_min']) $test_diff = true;
-            if($diff >= $alert_amount['cashier_alert_amount_close_max']) $test_diff = true;
+            if($diff >= $alert_amount['cashier_alert_amount_close_max']) $test_diff = false;
 			
             if (($test_diff)) {
 				if (!$this->input->post('blc')) {
@@ -937,8 +937,8 @@ class webCashier extends CI_Controller {
             . $link . '">' . $link . "</a>";
 
           $this->mmail->prepare($subject, $msg)
-            ->toList('cachier_alerts', $id_bu)
-            ->send();
+                  ->toList('cachier_alerts', $id_bu)
+                  ->send();
 				}
 
 				$this->db->trans_commit();
@@ -959,6 +959,12 @@ class webCashier extends CI_Controller {
 			} else {
 								
 				$this->db->trans_commit();
+				
+				if(!$test_diff) {
+					$this->db->set('status', 'error');
+					$this->db->where('id', $pmid);
+					$this->db->update('pos_movements');
+				}
 				
 				//insert into infos_close
 				$this->db->set('cashier_diff', $diff);
