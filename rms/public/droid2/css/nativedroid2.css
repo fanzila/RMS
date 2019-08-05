@@ -897,7 +897,6 @@ textarea.ui-input-text.ui-textinput-autogrow {
 	position: relative;
 	margin: 0px;
 	padding: 12px;
-	line-height: 6px;
 }
 
 .ui-input-text, .ui-input-search,
@@ -936,9 +935,8 @@ textarea.ui-input-text.ui-textinput-autogrow {
 }
 
 .ui-body-a, .ui-page-theme-a .ui-body-inherit, html .ui-bar-a .ui-body-inherit, html .ui-body-a .ui-body-inherit, html body .ui-group-theme-a .ui-body-inherit, html .ui-panel-page-container-a {
-	box-shadow: none;
 	border-radius: 0px;
-	border: 0px solid #ffffff;
+	border: 1px solid #CCCCCC;
 }
 
 
