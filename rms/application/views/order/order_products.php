@@ -20,16 +20,15 @@ $today = getdate();
 				}
 			}
 			?>
-			<div id='hide-<?=$line['id']?>' class="hide-<?=$hide?>" style="border: 1px solid lightgray; padding: 8px; margin-bottom: 10px;">
+			<div id='hide-<?=$line['id']?>' class="hide-<?=$hide?>" style="border: 8px solid <?=$line['category_color']?>; padding: 8px; margin-bottom: 10px;">
 				<li>
 					<label for="pdt-<?=$line['id']?>"> <span style="font-size:large"> <?=strtoupper(stripslashes($line['name']))?></span> - <?=$line['supplier_name']?> - <?=$line['id']?>
-						<br />Catégorie : <?=strtoupper($line['category_name'])?>
+						<br />Catégorie : <?=strtoupper($line['category_name'])?> &nbsp;<div style="width:40px; height: 8px; display: inline-block; background-color: <?=$line['category_color']?>"></div>
 						<br />Unité de vente : <?=$line['unit_name']?> | Prix H.T. /unité : <?=$line['price']/1000?>€ | Colisage: <?=$line['packaging']?>  <br />
 						<? if(!empty($line['supplier_reference'])) { ?>Ref. supplier: <?=stripslashes($line['supplier_reference'])?> | <? } ?> <? if(!empty($line['comment'])) { ?> Comment: <?=stripslashes($line['comment'])?> <? } ?>
 						<? if($line['manage_stock']) { ?>
 						<br />Current stock: <? if(isset($stock[$line['id']]['qtty'])) { echo round($stock[$line['id']]['qtty'], 2); } else { echo "0"; } ?> | stock mini: <?=$line['stock_mini']?> | stock max: <?=$line['stock_max']?> | stock warning: <?=$line['stock_warning']?> <? } ?>
 					</label>
-
 					<table border="0" cellpadding="2">
 						<tr>
 									<td>
@@ -50,7 +49,6 @@ $today = getdate();
 										<? } else { ?><input type="hidden" name="qtty[<?=$line['id']?>]" id="qtty-<?=$line['id']?>" value="<?=$qtty?>" />
 										<small>Unité(s) commandée(s) :</small> <?=$qtty?><? } ?> </td><td><input type="hidden" name="pkg[<?=$line['id']?>]" id="pkg-<?=$line['id']?>" value="<?=$line['packaging']?>" /><small style="color: #7e7e7e;">(soit <span id="respkg-<?=$line['id']?>"><?=$nbcolis?></span> colis)</small>
 									</td>
-
 									<? if($load > 0 && $type == 'viewreception') {
 										(!isset($line['stock'])) ? $line['stock']=0 : $line['stock'];
 
