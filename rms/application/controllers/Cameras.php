@@ -57,7 +57,9 @@ class Cameras extends CI_Controller {
 		$cameras = $this->getCamerasNamesFromDb($id_bu);
 
 		$p = array(
-			'type'		=>  'user_access_cam'
+			'type'		=>  'user_access_cam',
+			'val1'		=> $_SERVER['HTTP_USER_AGENT'],
+			'val2' 		=> $_SERVER['REMOTE_ADDR']
 			);
 			$this->hmw->LogRecord($p, $this->session->userdata('bu_id'));
 
