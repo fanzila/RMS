@@ -869,10 +869,10 @@ class Cashier {
 		$date 		= array();
 		$date['Y']	= substr($ex[0], 0, 4);
 		$date['m']	= substr($ex[0], 4, 2);
-		$date['dd']	= substr($ex[0], 6, 2);
-		$date['hh']	= substr($ex[1], 0, 2);
-		$date['mn']	= substr($ex[1], 2, 2);
-		$date['ss']	= substr($ex[1], 4, 2);
+		@$date['dd']	= substr($ex[0], 6, 2);
+		@$date['hh']	= substr($ex[1], 0, 2);
+		@$date['mn']	= substr($ex[1], 2, 2);
+		@$date['ss']	= substr($ex[1], 4, 2);
 		$date['tt']	= $date['Y']."-".$date['m']."-".$date['dd']." ".$date['hh'].":".$date['mn'].":".$date['ss'];
 		return $date;
 	}
