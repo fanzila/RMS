@@ -39,11 +39,12 @@ class Discount extends CI_Controller {
 		$this->hmw->keyLogin();
 		$id_bu =  $this->session->userdata('bu_id');
 		$q = $this->input->get('q');
+		$discount = array();
 
 		/* SPECIFIC Creation d'un message si fonction create utilisee */
 		$msg = null;
 		if($task_id=="create") {
-				$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
+			$msg = "RECORDED ON: ".date('Y-m-d H:i:s');
 		}
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
@@ -58,37 +59,37 @@ class Discount extends CI_Controller {
 
 		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
-		$this->db->select('T.id as tid, T.nature as tnature, users.username as creator, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.allbu as tallbu, T.persistent as tpersistent')->from('discount as T');
-			$this->db->join('users', 'users.id = T.id_user', 'left');
-			$this->db->where('T.deleted', 0);
-			$this->db->where('T.used', 0);
-			$this->db->where('(T.id_bu', $id_bu);
-			$this->db->or_where("T.allbu = 1)", NULL, FALSE);
-			$this->db->order_by('T.date', 'desc');
-			$this->db->limit(30);
-			if(isset($q)) $this->db->like('T.client', "$q", 'both'); 
-			
-		if($task_id > 0) $this->db->where('id', $task_id);
-		$this->db->order_by('T.date desc');
-		$query	= $this->db->get();
-		$discount = $query->result();
+		if(isset($q)) { 
 
-		$data = array(
-			'discount'	=> $discount,
-			'create'	=> 0,
-			'users'		=> $users,
-			'msg'		=> $msg
-			);
-		$data['bu_name']	= $this->session->userdata('bu_name');
-		$data['username']	= $this->session->userdata('identity');
-		$data['q']		 	= $q;
+			$search = "SELECT T.id as tid, T.nature as tnature, U.username as creator, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.allbu as tallbu, T.persistent as tpersistent FROM discount AS T 
+			LEFT JOIN users AS U ON U.id = T.id_user
+			WHERE MATCH (nature,client,reason) AGAINST ('$q' IN NATURAL LANGUAGE MODE) 
+			AND T.deleted=0
+			AND (T.id_bu = $id_bu OR T.allbu = 1)
+			AND T.used = 0
+			ORDER BY T.date DESC 
+			LIMIT 30
+			";
+	$r_search = $this->db->query($search) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+	$discount = $r_search->result();
+}
 
-		$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
-		$this->load->view('jq_header_pre', $headers['header_pre']);
-		$this->load->view('jq_header_post', $headers['header_post']);
-		$this->load->view('discount/index',$data);
-		$this->load->view('jq_footer');
-	}
+$data = array(
+	'discount'	=> $discount,
+	'create'	=> 0,
+	'users'		=> $users,
+	'msg'		=> $msg
+	);
+$data['bu_name']	= $this->session->userdata('bu_name');
+$data['username']	= $this->session->userdata('identity');
+$data['q']		 	= $q;
+
+$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
+$this->load->view('jq_header_pre', $headers['header_pre']);
+$this->load->view('jq_header_post', $headers['header_post']);
+$this->load->view('discount/index',$data);
+$this->load->view('jq_footer');
+}
 	
 	public function log()
 	{
@@ -130,6 +131,8 @@ class Discount extends CI_Controller {
 		$this->db->set('id_user', $data['user']);
 		$this->db->set('date', date('Y-m-d H:i:s'));
 		$this->db->set('id_bu', $id_bu); 
+		$this->db->set('email', $data['email']);
+		$this->db->set('email_text', $data['email_text']);
 		
 		$this->db->trans_start();
 			if($data['id'] == 'create') {
@@ -168,6 +171,18 @@ class Discount extends CI_Controller {
 				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
 		$this->db->trans_complete();
+		
+		//send email if isset email 
+		if(!empty($data['email'])) {
+			$this->load->library('mmail');
+			
+			$from_email = $this->hmw->getEmail('generic', $id_bu);
+			$this->mmail->prepare('Votre Discount Hank!', $data['email_text'])
+	          ->from($from_email, 'HANK')
+	          ->toEmail($data['email'])
+	          ->replyTo($from_email)
+			  ->send();
+		}
 
 		echo json_encode(['reponse' => $reponse]);
 	}

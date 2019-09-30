@@ -1,7 +1,6 @@
 		<a href="/discount/creation/1/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a>
 		</div>
 			<div data-role="content">
-				<div data-theme="a" data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
 					<?if($msg) { ?>
 						<div style="background-color: #d6f0d6;" class="ui-body ui-body-a">	
 							<?=$msg?> Thanks! Have A Nice Karma!"
@@ -19,10 +18,10 @@
 						</form>
 					<h4>
 					<?if(!empty($q)) { ?>Showing results for <?=$q?><? } ?>
-					<?if(empty($q)) { ?>Showing last 30 discounts<? } ?>
 					</h4>
 					<? if(isset($q) AND empty($discount)) { ?>No result, please check your spelling.<? } ?>
 
+						<? if(isset($q)) { ?>
 						<div data-role="collapsible-set" data-inset="false" data-filter="false" data-filter-placeholder="Filter discounts">
 							<?foreach ($discount as $line) {
 								if($line->tused == false){
@@ -115,8 +114,9 @@
 									</div><!-- /collapsible -->
 								<?}
 							}?>
-						</div><!-- /collapsible-set -->
-				</div><!-- /theme -->
+						</div>
+						<? } ?>
+						<!-- /collapsible-set -->
 				
 				<div class="row">
 					<a href="/discount/log/" rel="external" data-ajax="false" class="ui-btn ui-btn-raised">Log</a>

@@ -151,6 +151,13 @@ class Hmw {
 			$res = $res_params->result();
 			return $res[0]->email_order;
 		}
+		
+		if($type == 'generic') {
+			$CI->db->select('email_generic')->from('bus')->where('id', $id_bu);
+			$res_params = $CI->db->get();
+			$res = $res_params->result();
+			return $res[0]->email_generic;
+		}
 
 	}
 

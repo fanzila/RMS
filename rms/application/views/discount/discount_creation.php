@@ -39,13 +39,21 @@
 									<select style="background-color:#a1ff7c" name="allbu" id="allbu" data-inline="true" data-theme="a" required>
 										<option value="0">No</option>
 										<option value="1">Yes</option>
-										</select>	
+										</select>
+										<? echo form_submit($attributes, 'Save');?>
+										<br />
+										<label for="email" id="label">Contact email: <small>(An email will be sent if filled)</small></label>
+										<input id="email" type="text" name="email" value="" data-clear-btn="true" />
+										<button type="button" style="background-color:#D7D7D7" OnClick="GenText();">Generate contact email text</button>
+										<br />
+										<label for="email_text" id="label">Contact email text:</label>
+<textarea id="email_text" name="email_text"></textarea>	
+<? echo form_submit($attributes, 'Save');?>
 							</td>
 						</tr>
 					</table>
 						<input type="hidden" name="id" value="create">
-						<?$attributes = array('id' => "sub", 'name' => "submit");
-						echo form_submit($attributes, 'Save');?>
+						<?$attributes = array('id' => "sub", 'name' => "submit");?>						
 				</form>
 
 						<script>
@@ -90,8 +98,28 @@
 								}
 								return false;
 							});
-						});
+						});					
+						
+						function GenText() {
+							
+							var client  = '';
+							var nature  = '';
+							var text_bu = 'au restaurant';
+							
+							var client	= $('#client').val();
+							var nature	= $('#nature').val();
+							var allbu	= $('#allbu').val();
+							if(allbu == 1) { text_bu = 'dans tous les restaurants'; }
+							
+							var email_text_init = 'Bonjour ' + client + '!\r\nVoici votre discount ' + nature + ' à utiliser ' + text_bu + ' Hank.\r\n Indiquer ' + client + ' à la caisse en précisant impérativement que vous avez un DISCOUNT.\r\n Nous espérons que vous allez vous régaler avec notre fabuleuse cuisine vegan!\r\n Si vous constater le moindre problème, n\'hésitez pas nous en faire part à l\'adresse contact@hankrestaurant.com\r\n Pensez bien à préciser le restaurant impliqué ainsi que la date et l\'heure de votre venue, nous sommes très soucieux de la qualité de notre service.\r\n-- \r\nL\'équipe Hank (Have A Nice Karma)\r\n' + $("#user option:selected").text();
+							
+							$('#email_text').val(email_text_init);
+						}
 
+						$( document ).ready(function() {
+							GenText();
+						});
+						
 						</script>
 			<? } ?>
 				</div><!-- /content -->
