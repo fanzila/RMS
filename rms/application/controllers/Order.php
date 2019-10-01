@@ -757,7 +757,8 @@ class Order extends CI_Controller {
 
 		$supinfo = $this->product->getSuppliers(null, $post['supplier'], $id_bu);
 		$pdtinfo = $this->product->getProducts(null, $post['supplier'], null, null, $id_bu, null);
-
+		if(empty($order)) $order = '';
+		
 		$data = array(
 			'order'			=> $order,
 			'suppliers'		=> $post['supplier'],
