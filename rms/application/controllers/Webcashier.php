@@ -194,12 +194,15 @@ class webCashier extends CI_Controller {
 		$reponse = 'ok';
 		$data = $this->input->post();
 		$updatedb = true;
-
+		if(empty($data)) exit('No transmission');
+		
 		$this->db->select('name');
 		$this->db->where('id', $id_bu);
 		$bu_name = $this->db->get('bus')->row_array()['name'];
 		$subject = "CASHIER $bu_name : New comment on report";
 		$tosend = true;
+		
+		if(empty($data['comment-'.$data['id']])) $data['comment-'.$data['id']] = " "; 
 		
 		$comment_data = array(
 			'content' => $data['comment-'.$data['id']],
@@ -207,9 +210,8 @@ class webCashier extends CI_Controller {
 			'username' => $user,
 			'mov_id' => $data['id']
 		);
-
+		
 		if(!empty($data['comment-'.$data['id']])) {
-			$updatedb = false;
 			if(!$this->db->insert('pos_comment_report', $comment_data)) {
 				$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 			}
@@ -220,14 +222,13 @@ class webCashier extends CI_Controller {
 			$subject .= " (Director Validated)";
 			$tosend   = false;
 		} else {
-			if ($data['diff-'.$data['id']] != '0') $this->db->set('status', 'error');
+			$this->db->set('status', 'error');
 		}
 
 		if (!empty($data['corrected-'.$data['id']])) {
 			$data['corrected-'.$data['id']] = str_replace(',', '.', $data['corrected-'.$data['id']]);
 			if(!is_numeric($data['corrected-'.$data['id']])) {
 				$reponse = "corrected DIFF must be a number";
-				$updatedb = false;
 			} else {
 				$this->db->set('corrected', $data['corrected-'.$data['id']]);
 			}
@@ -716,14 +717,19 @@ class webCashier extends CI_Controller {
 					$this->cashier->posInfo('updateUsers', $param_pos_info);
 					$this->cashier->InsertTerminals($id_bu);
 				} else {
-					header("Refresh:20");
-					echo "<h2>Impossible de trouver une cloture.<br />
-					As tu bien cloture la caisse ? <br />
-					Si oui attends quelques minutes, la page de cloture va bientot s'afficher. <br />
-					Ou alors, tu as deja entre tes donnees.</h2>
-					Derniere cloture faite pour : $archive_date
-					<h2><a href='/webcashier/'>Retour</a></h2>
-					<p><small><a href='/webcashier/movement/close?force=1'>Voir l'interface</a></small></p>";
+					header("Refresh:10");
+					echo "<font face='arial'><h2>Impossible de trouver une cloture.<br />
+					As tu bien cloture la caisse ? <br /><br />
+					Si oui attends quelques minutes, la page de cloture va bientot s'afficher.</h2>
+					<br />
+					Cause d'erreurs possibles : 
+					<ul>
+					<li>Les donnees ont deja ete entrees - <i>derniere cloture faite pour : $archive_date</i>,</li>
+					<li>la caisse est éteinte ou sans réseau,</li>
+					<li>la dernière cloture est supérieur à 2 jours.</li>
+					</ul>
+					<h2><a href='/webcashier/'>> Retour</a></h2>
+					<p><small><a href='/webcashier/movement/close?force=1'>> Voir l'interface</a></small></p></font>";
 					exit();
 				}
 			}
@@ -853,7 +859,7 @@ class webCashier extends CI_Controller {
 			if($this->input->post('mov') != 'safe_in' AND $this->input->post('mov') != 'safe_out') {
 				
 				$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'));
-				$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cbemv'))+$this->cashier->clean_number($this->input->post('cbcless'))+$this->cashier->clean_number($this->input->post('titre_card'));
+				$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cb'));
 			}
 
 			foreach ($pay as $idp => $val2) {
@@ -886,16 +892,14 @@ class webCashier extends CI_Controller {
 			$this->db->from('bus');
 			$this->db->where('id', $id_bu);
 			$alert_amount = $this->db->get()->row_array() or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
-			
+					
 			$cashpad_amount = $this->cashier->posInfo('cashfloatArchive', $param_pos_info);
 			$cash_user = floatval($pay_values[1]['man']);
-			$cb_balance = $pay_values[2]['man'] - $pay_values[2]['pos'];
-		 	$tr_balance = $pay_values[3]['man'] - $pay_values[3]['pos'];
-			$chq_balance = $pay_values[4]['man'] - $pay_values[4]['pos'];
-			$cc_balance = $pay_values[11]['man'] - $pay_values[11]['pos'];
 			$prelevement = floatval($this->input->post('prelevement'));
-            
-			$diff = $cash_user + $cb_balance + $tr_balance + $chq_balance - $cashpad_amount + $prelevement + $cc_balance;
+			@$amount_pos  = $cashpad_amount+$pay_values[2]['pos']+$pay_values[3]['pos']+$pay_values[4]['pos']+$pay_values[5]['pos']+$pay_values[12]['pos']+$pay_values[13]['pos']+$pay_values[14]['pos']+$pay_values[11]['pos'];
+			@$amount_user = $pay_values[1]['man']+$pay_values[2]['man']+$pay_values[3]['man']+$pay_values[4]['man']+$pay_values[13]['man']+$pay_values[5]['pos']+$pay_values[12]['pos']+$pay_values[14]['pos']+$pay_values[11]['pos']+$prelevement; 
+			
+			$diff = $amount_user - $amount_pos ;
 			$test_diff = false;
             if($diff <= $alert_amount['cashier_alert_amount_close_min']) $test_diff = true;
             if($diff >= $alert_amount['cashier_alert_amount_close_max']) $test_diff = false;
@@ -924,21 +928,18 @@ class webCashier extends CI_Controller {
 					$this->db->select('name');
 					$this->db->where('id', $id_bu);
 					$bu_name = $this->db->get('bus')->row_array()['name'];
-					$operand = $this->addOperand($num);
+					$operand = $this->addOperand($diff);
 
           // send email
-
           $subject = 'RMS CASHIER WARNING ' . $bu_name . ': Erreur de caisse';
-
           $link = 'http://' . $server_name . '/webcashier/report/#' . $pmid;
-
           $msg = 'BU: ' . $bu_name . ' | ID: ' . $pmid . '<br />Difference de '
             . $operand . number_format($diff , 2) . '€ <br /><a href="'
             . $link . '">' . $link . "</a>";
 
-          $this->mmail->prepare($subject, $msg)
-                  ->toList('cachier_alerts', $id_bu)
-                  ->send();
+        $this->mmail->prepare($subject, $msg)
+                    ->toList('cachier_alerts', $id_bu)
+             		->send();
 				}
 
 				$this->db->trans_commit();
@@ -954,13 +955,13 @@ class webCashier extends CI_Controller {
 				$this->db->set('id_user_cashier', $userid);
 				$this->db->set('to', $total_to);
 				$this->db->set('status', 'error');
-				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			    $this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 				
 			} else {
 								
 				$this->db->trans_commit();
 				
-				if(!$test_diff) {
+				if($test_diff) {
 					$this->db->set('status', 'error');
 					$this->db->where('id', $pmid);
 					$this->db->update('pos_movements');
@@ -989,7 +990,6 @@ class webCashier extends CI_Controller {
 		}
 
 		$data['idtrans'] = $payid;
-
 		$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);

@@ -21,46 +21,53 @@
 						
 					</tr>
 					<tr>
-						<td>Prélèvement billets</td>
-						<td><?=$form_values['prelevement']?></td>
+						<td>Prélèvement billets </td>
+						<td><? if(empty($form_values['prelevement'])) echo "0"; ?><?=$form_values['prelevement']?> €</td>
 						<td> - </td>
 						<td> - </td>
 					</tr>
 						<? foreach ($pay_values as $key => $value) { 
+							$noreport = false; 
 							$value['man'] = str_replace(',', '.', $value['man']);
-							if ($value['id'] == 1) $value['pos'] = $form_values['cashpad_amount']-$form_values['prelevement']; 
+							if ($value['id'] == 1) $value['pos'] = $form_values['cashpad_amount']-$form_values['prelevement'];
+							
+							if (($value['id'] == 12) OR ($value['id'] == 14) OR ($value['id'] == 10) OR ($value['id'] == 5) OR ($value['id'] == 11) OR ($value['id'] == 7)) { $noreport = true; } 
 							?>
 						<tr>
 							<td>
-							<? if($value['name'] == 'CB') $value['name'] = 'CB + cartes TR'; ?>	
+							<? if ($noreport) { ?><font color="#9B9B9B"><? } ?>
 							<?=$value['name']?>
+							<? if ($noreport) { ?></font><? } ?>
 							</td>
 							<? if ($value['id'] == 9) { ?>
-								<td><?=number_format($value['man'], 2)?></td>
+								<td><? if ($noreport) { ?><font color="#9B9B9B"><? } ?><?=number_format($value['man'], 2)?> €<? if ($noreport) { ?></font><? } ?></td>
 								<td> - </td>
 								
-							<? } elseif ($value['id'] == 12) { ?>
-								<td> - </td>
-								<td><?=number_format($value['pos'], 2)?></td>
+							<? } elseif ($noreport) { ?>
+								<td><font color="#9B9B9B"> - </font></td>
+								<td><font color="#9B9B9B"><?=number_format($value['pos'], 2)?> € </font></td>
 								
 							<? } else { ?>
-							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['man']) AND !empty($value['man'])) { echo number_format($value['man'], 2); } else { echo "0"; }?></td>
-	
-							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>><? if (isset($value['pos']) AND !empty($value['pos'])) { echo number_format($value['pos'], 2); } else { echo "0"; }?></td>
+
+								<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>>
+								<? if (isset($value['man']) AND !empty($value['man'])) { echo number_format($value['man'], 2); } else { echo "0"; }?> € </td>
+							
+							<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>>
+							<? if (isset($value['pos']) AND !empty($value['pos'])) { echo number_format($value['pos'], 2); } else { echo "0"; }?> €</td>
 							<? } ?>
-							<? if ($value['id'] == 9) { ?>
-								<td> - </td>
+							<? if ($noreport) { ?>
+								<td><font color="#9B9B9B"> - </font></td>
 							<? } else { ?>
-								<td>
+								<td <?if (($value['man'] - $value['pos']) != 0) echo "style='color:red;'"?>>
 								<?
 								$calcdiff = $value['man']-$value['pos'];
 								echo number_format($calcdiff, 2) 
-								?></td>
+								?> €</td>
 							<? } ?>
 						</tr>
 					<? }?>
-					<tr style="background-color: #ff7c76; margin-top:10px">
-						<td colspan="4">Ecart = <b><?=number_format($form_values['diff'], 2)?></b> </td>
+					<tr style="background-color: #ff7c76; margin-top:0px">
+						<td colspan="4"><h4> Ecart = <b><?=number_format($form_values['diff'], 2)?> €</b></h4></td>
 					</tr>
 				</table>
 		<? } ?> 
@@ -81,7 +88,7 @@
 				</tr>
 				<?php foreach ($payment as $mode): ?>
 					<?php 
-					$amount_user	= '0.00';
+					$amount_user = '0.00';
 					if($mov == 'close') $com = $mode->comment_close;
 					if($mode->report == 'no') continue;
 					?>
@@ -92,13 +99,11 @@
 								<input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" <?if (isset($form_values['cash2'])) echo 'value="'.$form_values['cash2'] .'"';?>/>
 							<? } elseif($mode->id == 2) { ?>
 								<table border="0" cellpadding="2" width="100%"><tr>
-								<td>CB EMV: <input maxlength="10" type="text" name="cbemv" id="basic" data-clear-btn="true" <?if (isset($form_values['cbemv'])) { echo 'value="'.$form_values['cbemv'] .'"'; }?>/></td>
-								<td>CB CLESS: <input maxlength="10" type="text" name="cbcless" id="basic" data-clear-btn="true" <?if (isset($form_values['cbcless'])) { echo 'value="'.$form_values['cbcless'] .'"'; }?>/></td>
+								<td><input maxlength="10" type="text" name="cb" id="basic" data-clear-btn="true" <?if (isset($form_values['cb'])) { echo 'value="'.$form_values['cb'] .'"'; }?>/></td>
 								</tr></table>
 							<? } elseif($mode->id == 3) { ?>
 								<table border="0" cellpadding="2" width="100%"><tr>
-								<td>PAPIERS: <input maxlength="10" type="text" name="man_3" id="basic" data-clear-btn="true" <?if (isset($form_values['man_3'])) { echo 'value="'.$form_values['man_3'] .'"'; }?>/></td>
-								<td>CARTES: <input maxlength="10" type="text" name="titre_card" id="basic" data-clear-btn="true" <?if (isset($form_values['titre_card'])) { echo 'value="'.$form_values['titre_card'] .'"'; }?>/></td>
+								<td><input maxlength="10" type="text" name="man_3" id="basic" data-clear-btn="true" <?if (isset($form_values['man_3'])) { echo 'value="'.$form_values['man_3'] .'"'; }?>/></td>
 								</tr></table>
 							<? } else { ?>
 								<input maxlength="10" type="text" name="man_<?=$mode->id?>" id="basic" data-clear-btn="true" <?if (isset($form_values['man_'.$mode->id])) { echo 'value="'.$form_values['man_'.$mode->id] .'"'; }?>/>

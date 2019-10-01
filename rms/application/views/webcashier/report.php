@@ -19,6 +19,7 @@
 							<option value="open" <?if ($filter['type'] == 'open') echo "selected";?>>OPEN</option>
 							<option value="close" <?if ($filter['type'] == 'close') echo "selected";?>>CLOSE</option>
 							<option value="safe_in" <?if ($filter['type'] == 'safe_in') echo "selected";?>>SAFE IN</option> 
+							<option value="safe_out" <?if ($filter['type'] == 'safe_out') echo "selected";?>>SAFE OUT</option> 
 						</select>
 					</div>
 				</div>
@@ -92,20 +93,23 @@
 							</tr>
 							<?php $total = 0; $diff = (-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']); foreach ($m['pay'] as $m2): ?>
 								<? 
+								$noreport = false;
+								if(($m2['id'] == 7 OR $m2['id'] == 10 OR $m2['id'] == 12 OR $m2['id'] == 5 OR $m2['id'] == 14 OR $m2['id'] == 11)) { $noreport = true; }
 								$total += $m2['amount_pos'];
 								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
-								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4 OR $m2['id'] == 5 OR $m2['id'] == 11) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
+								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4 OR $m2['id'] == 13) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
 								?>
 								<? if($m2['id'] == 1) $cash_amount = number_format($m2['amount_user'],2); ?>
 								<tr style="border: 1px solid #dedcd7;">
-									<td><?=$m2['name']?></td>
-									<td><? if($m2['id'] != 12 AND $m2['id'] != 11 AND $m2['id'] != 5) { echo $m2['amount_user']. "€"; } else { echo "-"; } ?></td>
+									<td><? if ($noreport) { ?><font color="#9B9B9B"><? } ?><?=$m2['name']?><? if ($noreport) { ?></font><? } ?></td>
+									<td><? if(!$noreport) { echo $m2['amount_user']. "€"; } else { ?><font color="#9B9B9B">-</font><? } ?></td>
 									<?if($mov != 'safe') { ?>
-										<td>
+										<td><? if ($noreport) { ?><font color="#9B9B9B"><? } ?>
 										<? $ca_display = "-"; 
 										if($m2['id'] != 9) $ca_display = number_format($m2['amount_pos'],2)."€"; ?>
 										<? if($m2['id'] == 1) { $fdc = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount']; $ca_display = "FDC: ".$fdc."€ <br /> <small>(CA : ".number_format($m2['amount_pos'],2)."€)</small>"; } ?>										
 										<?=$ca_display?>
+										<? if ($noreport) { ?></font><? } ?>
 										</td>
 									<? } ?>
 									<?if($mov != 'safe') { ?>
@@ -113,7 +117,7 @@
 										<? 
 										if($m2['id'] == 1) $m2['amount_pos'] = $m['mov']['pos_cash_amount']-$m['mov']['prelevement_amount'];
 										$bal_display =  number_format(($m2['amount_user']-$m2['amount_pos']), 2) ."€"; 
-										if($m2['id'] == 12) $bal_display = "-"; 
+										if($noreport) $bal_display = "<font color='#9B9B9B'>-</font>"; 
 										?>
 										<?=$bal_display?>
 										</td>
@@ -126,7 +130,7 @@
 							<? 
 							$operand = ""; if($diff > 0) $operand = "+";
 							if (number_format($diff, 3) != 0) { ?>
-								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=$operand?><?=number_format($diff, 2)?>€ <br /><small style="color: black;">(Espece FDC (user) + balance CB + TR  + cheque + montant prelevement - (FDC pre-prelevement=<?=$m['mov']['pos_cash_amount']?>€) - balance compte client</small><br>
+								<p style="color : red; font: 16px Arial, Verdana, sans-serif;"><b>ALERT DIFF:</b> <?=$operand?><?=number_format($diff, 2)?>€ <br />
 								<? if(!empty($m['mov']['corrected'])) { ?> <span style="color : black; font: 16px Arial, Verdana, sans-serif;">Corrected DIFF: <b><?=$m['mov']['corrected']?>€</b></span></p> <? } ?>
 								
 						<? 	
@@ -145,7 +149,7 @@
 		$attributes = array('id' => $id_form, 'name' => $id_form);
 		echo form_open("webcashier/save_report_comment", $attributes);?>
 			<input maxlength="255" type="text" name="comment-<?=$m['mov']['id']?>" id="comment-<?=$m['mov']['id']?>" data-clear-btn="true" data-inline="true" data-theme="a" />
-			 <? if (number_format($diff, 3) != 0 && $mov == 'close') { ?>
+			 <? if ( $mov == 'close') { ?>
 			<? if ($this->ion_auth_acl->has_permission('set_corrected_diff')) { ?>
 				<div class="box">
 						 <p><small>CORRECTED DIFF:</small> <input data-role="none" data-enhance="false" type="text" name="corrected-<?=$m['mov']['id']?>" id="corrected-<?=$m['mov']['id']?>" style="width: 100px;" value="<?=$m['mov']['corrected']?>" />€ </p>
