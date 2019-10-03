@@ -131,8 +131,8 @@ $this->load->view('jq_footer');
 		$this->db->set('id_user', $data['user']);
 		$this->db->set('date', date('Y-m-d H:i:s'));
 		$this->db->set('id_bu', $id_bu); 
-		$this->db->set('email', $data['email']);
-		$this->db->set('email_text', $data['email_text']);
+		@$this->db->set('email', $data['email']);
+		@$this->db->set('email_text', $data['email_text']);
 		
 		$this->db->trans_start();
 			if($data['id'] == 'create') {
