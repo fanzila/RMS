@@ -186,7 +186,7 @@ class Product_admin extends CI_Controller {
 			}
 			$id_product = $data['id'];
 			$pdt_info = $this->product->getProducts($id_product, null, null, null, $id_bu);
-			$previous_stock = $pdt_info[$id_product]['stock_qtty'];
+			@$previous_stock = $pdt_info[$id_product]['stock_qtty'];
 			
 			$this->db->set('warning', $data['stock_warning']);
 			$this->db->set('mini', $data['stock_mini']);
