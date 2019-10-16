@@ -111,7 +111,7 @@
 							var allbu	= $('#allbu').val();
 							if(allbu == 1) { text_bu = 'dans tous les restaurants'; }
 							
-							var email_text_init = 'Bonjour ' + client + '!\r\nVoici votre discount ' + nature + ' à utiliser ' + text_bu + ' Hank.\r\n Indiquer ' + client + ' à la caisse en précisant impérativement que vous avez un DISCOUNT.\r\n Nous espérons que vous allez vous régaler avec notre fabuleuse cuisine vegan!\r\n Si vous constater le moindre problème, n\'hésitez pas nous en faire part à l\'adresse contact@hankrestaurant.com\r\n Pensez bien à préciser le restaurant impliqué ainsi que la date et l\'heure de votre venue, nous sommes très soucieux de la qualité de notre service.\r\n-- \r\nL\'équipe Hank (Have A Nice Karma)\r\n' + $("#user option:selected").text();
+							var email_text_init = 'Bonjour ' + client + '!\r\nVoici votre discount ' + nature + ' à utiliser ' + text_bu + ' Hank.\r\n Indiquer ' + client + ' à la caisse en précisant impérativement que vous avez un DISCOUNT.\r\n Nous espérons que vous allez vous régaler avec notre fabuleuse cuisine vegan!\r\n Et n\'hésitez pas à nous faire un retour sur votre expérience, les points sympas et surtout les points à améliorer (à l\'adresse contact@hankrestaurant.com) en nous précisant bien le restaurant (ville, arrondissement) ainsi que la date et l\'heure de votre venue car nous sommes très soucieux de la qualité de notre service.\r\n-- \r\nL\'équipe Hank (Have A Nice Karma)\r\n' + $("#user option:selected").text();
 							
 							$('#email_text').val(email_text_init);
 						}

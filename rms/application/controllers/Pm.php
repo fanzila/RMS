@@ -302,7 +302,7 @@ class Pm extends CI_Controller {
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
-
+		
 		/* SPECIFIC Recuperation depuis la base de donnees des informations subjects */
 		$this->db->select('report_subjects.name, report_subjects.id, report_subjects.text');
 		$this->db->where('report_subjects.bu_id', $id_bu);
@@ -334,9 +334,9 @@ class Pm extends CI_Controller {
 			$recipients = explode(";", $this->input->post(PM_RECIPIENTS, TRUE));
 			$subject = $this->input->post(TF_PM_SUBJECT, TRUE);
 			$body = $this->input->post(TF_PM_BODY, TRUE);
-			
+
 			if (isset($current_user['username'])) {
-				$from = 'FROM : ' . $current_user['username'];
+				$from = 'BU: '.$_SESSION['bu_name'].'<br>FROM: ' . $current_user['username'];
 				$to = 'TO : ';
 				foreach ($recipients as $recipient) {
 					$to .= $recipient . ', ';
@@ -386,7 +386,7 @@ class Pm extends CI_Controller {
 
           //if(count($results) <= 1) exit('No recipient found (found only '.count($results).').');
 
-          $subject = 'Hank Report: ' . $subject;
+          $subject = 'HANK '.$_SESSION['bu_name'].' Report: ' . $subject;
 
           foreach ($results as $row) {
             $this->mmail->prepare($subject, $body)
