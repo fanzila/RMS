@@ -59,6 +59,12 @@
 											<input type="hidden" name="allbu" value="<?=$line->tallbu?>">
 											<?$attributes = array('id' => "sub=".$line->tid, 'name' => "submit");
 											echo form_submit($attributes, 'Save');?>
+											<? if(!empty($line->temail)) { ?>
+												<h4>Email sent to <?=$line->temail?> : </h4>
+												<p>
+													<? echo nl2br($line->temail_text) ?>
+												</p>
+											<? } ?>
 										</form>
 										<script>
 											$(document).ready(function() {

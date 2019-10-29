@@ -61,7 +61,7 @@ class Discount extends CI_Controller {
 		date_default_timezone_set('Europe/Paris');
 		if(isset($q)) { 
 
-			$search = "SELECT T.id as tid, T.nature as tnature, U.username as creator, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.allbu as tallbu, T.persistent as tpersistent FROM discount AS T 
+			$search = "SELECT T.id as tid, T.nature as tnature, U.username as creator, T.client as tclient, T.reason as treason, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.allbu as tallbu, T.persistent as tpersistent, T.email as temail, T.email_text as temail_text FROM discount AS T 
 			LEFT JOIN users AS U ON U.id = T.id_user
 			WHERE MATCH (nature,client,reason) AGAINST ('$q' IN NATURAL LANGUAGE MODE) 
 			AND T.deleted=0
