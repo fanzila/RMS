@@ -73,7 +73,6 @@ class Skills extends CI_Controller {
 		}
 		$id_bu =  $this->session->userdata('bu_id');
 
-		/* SPECIFIC Recuperation depuis la base de donnees des informations discounts */
 		date_default_timezone_set('Europe/Paris');
 		$this->db->select('R.id, RI.date, R.id_user, RI.checked, RI.comment, I.name as i_name, I.id as i_id, skills.name as s_name, cat.name as c_name, subcat.name as sub_name, skills.id as s_id, cat.id as c_id, I.link as i_link, subcat.id as sub_id')
 			->from('skills_record as R')
@@ -230,7 +229,6 @@ class Skills extends CI_Controller {
 			->join('users as u', 'u.id = id_user', 'left')
 			->join('users_bus as ub', 'ub.user_id = u.id', 'left')
 			->where('u.active', 1)
-			->where('us.active', 1)
 			->where('id_bu', $id_bu)
 			->order_by('sponsorname asc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
