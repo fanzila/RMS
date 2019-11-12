@@ -225,6 +225,12 @@
 								</div>
 								<div class="col-md">
 									<div class="box">
+										<small>Conso unité journalière</small><br/>
+										<input type="text" id="daily_unit_conso-<?=$line['id']?>" name="daily_unit_conso" value="<?=$line['daily_unit_conso']?>" <?if ($managed_only == "on") {echo "disabled";}?>  data-mini="true" data-clear-btn="true" />
+									</div>
+								</div>
+								<div class="col-md">
+									<div class="box">
 										<small>Stock last up user</small><br/>
 										<small><?=$line['last_update_user']?> <br /><?=$line['last_update_user_name']?></small>
 									</div>

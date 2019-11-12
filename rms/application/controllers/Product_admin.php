@@ -55,6 +55,7 @@ class Product_admin extends CI_Controller {
 		$postpdt_name = $this->input->post('pdt_name');
 		$postpdt_active = $this->input->post('pdt_active');
 		$poststock_manage = $this->input->post('stock_manage');
+		$postdaily_unit_conso = $this->input->post('daily_unit_conso');
 		$postpdt_unit = $this->input->post('pdt_unit');
 		$postmanage_only = $this->input->post('managed_only');
 		
@@ -65,6 +66,7 @@ class Product_admin extends CI_Controller {
 		if ($command == 'filter' && isset($postcat_id)) $filters['p.id_category'] = $this->input->post('pdt_cat_id');
 		if ($command == 'filter' && isset($postinput_ref)) $filters['p.supplier_reference'] = $this->input->post('supplier_reference');
 		if ($command == 'filter' && isset($postpdt_name)) $filters['p.name'] = $this->input->post('pdt_name');
+		if ($command == 'filter' && isset($postdaily_unit_conso)) $filters['p.daily_unit_conso'] = $this->input->post('daily_unit_conso');
 		if ($command == 'filter' && isset($poststock_manage)) $filters['p.manage_stock'] = $this->input->post('stock_manage');
 		if ($command == 'filter' && isset($postpdt_active)) $filters['p.active'] = $this->input->post('pdt_active');
 		if ($command == 'filter' && isset($postpdt_unit)) $filters['p.id_unit'] = $this->input->post('pdt_unit');
@@ -97,6 +99,7 @@ class Product_admin extends CI_Controller {
 			'pdt_active' => $postpdt_active,
 			'stock_manage' => $poststock_manage,
 			'pdt_unit' => $postpdt_unit,
+			'daily_unit_conso' => $postdaily_unit_conso,
 			'managed_only' => $postmanage_only,
 			'current_page' => $page,
 			'total_products' => $total_products
@@ -147,6 +150,7 @@ class Product_admin extends CI_Controller {
 		$this->db->set('id_category', $data['id_category']);
 		$this->db->set('active', $data['active']);
 		$this->db->set('freq_inventory', $data['freq_inventory']);
+		$this->db->set('daily_unit_conso', $data['daily_unit_conso']);
 		$this->db->set('supplier_reference', $data['supplier_reference']);
 		$this->db->set('comment', addslashes($data['comment']));
 		$this->db->set('manage_stock', $data['manage_stock']);
