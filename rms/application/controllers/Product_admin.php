@@ -141,7 +141,7 @@ class Product_admin extends CI_Controller {
 		$this->db->where('id_supplier', $data['id_supplier']);
 		$res = $this->db->get() or die($this->mysqli->error);
 		$test = $res->result();
-
+		
 		$this->db->set('name', addslashes($data['name']));
 		$this->db->set('id_supplier', $data['id_supplier']);
 		$this->db->set('price', $price);
