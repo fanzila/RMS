@@ -902,7 +902,7 @@ class webCashier extends CI_Controller {
 			$diff = $amount_user - $amount_pos ;
 			$test_diff = false;
             if($diff <= $alert_amount['cashier_alert_amount_close_min']) $test_diff = true;
-            if($diff >= $alert_amount['cashier_alert_amount_close_max']) $test_diff = false;
+            if($diff >= $alert_amount['cashier_alert_amount_close_max']) $test_diff = true;
 			
             if (($test_diff)) {
 				if (!$this->input->post('blc')) {
