@@ -1,10 +1,10 @@
-		<?php if($this->ion_auth_acl->has_permission('create_news')) { ?><a href="/news/create/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a><? } ?>
+		<?php if($this->ion_auth_acl->has_permission('create_news')) { ?><a href="/news/create/" class="ui-btn ui-btn-right" rel="external" data-ajax="false" data-icon="plus"><i class="zmdi zmdi-plus zmd-2x"></i></a><?php } ?>
 	</div>
 	<div data-role="content" data-theme="a">
 		<ul data-role="listview" data-inset="true" data-filter="true">	
-		<? if(!empty($results)) { ?>
-		<? foreach ($results as $news_item): ?>
-			<?  
+		<?php if(!empty($results)) { ?>
+		<?php foreach ($results as $news_item) { ?>
+			<?php  
 			$this->db->select('u.username, nc.status, nc.date_confirmed, ne.id')->from('news_confirm as nc')->join('users as u', 'nc.id_user = u.id')->join('news as ne', 'nc.id_news = ne.id')->where('nc.id_news', $news_item->news_id);
 			$res = $this->db->get() or die($this->mysqli->error);
 			$ret = $res->result_array();
@@ -14,23 +14,23 @@
 			<div data-role="popup" id="popupBasic_<?=$news_item->news_id?>" style="padding:7px">
 				<table style="padding:6px">
 					<?php foreach ($ret as $conf): ?> 
-						<tr style="padding:4px"><td style="padding:4px"><?=$conf['username']?></td><td style="padding:4px"><? $color="red"; if($conf['status'] == 'confirmed') { $color = "green"; } ?> <b><font color="<?=$color?>"><?=$conf['status']?></font></b></td><td style="padding:4px"><?=$conf['date_confirmed']?></td></tr>
+						<tr style="padding:4px"><td style="padding:4px"><?=$conf['username']?></td><td style="padding:4px"><?php $color="red"; if($conf['status'] == 'confirmed') { $color = "green"; } ?> <b><font color="<?=$color?>"><?=$conf['status']?></font></b></td><td style="padding:4px"><?=$conf['date_confirmed']?></td></tr>
 					<?php endforeach; ?>
 				</table>
 			</div>
 		</li>
 		<li data-filtertext="<?=$news_item->title?> <?=$news_item->date?>"><img class="ui-li-icon"/>
-			<?if($news_item->picture){?>
-				<? $image_properties = array(
+			<?php if($news_item->picture){?>
+				<?php $image_properties = array(
 						'src'   => 'public/pictures/'.$news_item->picture,
 						'class' => 'img-responsive',
 						'style' => "max-height: 300px; max-width: 300px;"
 				);?>
-				<?echo img($image_properties);?>
-			<?}?>	
+				<?php echo img($image_properties);?>
+			<?php } ?>	
 		<p><font color="#000"><?php echo nl2br($news_item->text); ?></font></p></li>
-		<?php endforeach; ?>
-		<? } ?>
+		<?php } ?>
+		<?php } ?>
 </ul>
 
 <p><?php echo $links; ?></p>
@@ -79,10 +79,10 @@
 }
 </style>
 
-<?if($login=='welcome'){?>
+<?php if($login=='welcome'){?>
 <script type="text/javascript">
 		$(document).on('pagebeforeshow', '', function(){
 			$( "#adminpanel" ).panel( "open");
 		});
 	</script>
-<?}?>
+<?php } ?>

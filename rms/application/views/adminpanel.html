@@ -1,12 +1,12 @@
 			<!-- panel left -->
 			<div data-role="panel" id="adminpanel" data-display="overlay" data-position-fixed="true" >
 				<div data-role="header" data-position="fixed" class="wow fadeIn">
-					<? if(!$keylogin) { ?><a href="/auth/logout/" class="ui-btn ui-btn-right" rel="external" data-ajax="false"><i class="zmdi zmdi-power-off zmd-2x"></i></a><?}?>
+					<?php if(!$keylogin) { ?><a href="/auth/logout/" class="ui-btn ui-btn-right" rel="external" data-ajax="false"><i class="zmdi zmdi-power-off zmd-2x"></i></a><?php } ?>
 						<form action="#" method="POST">
 							<select name="bus" class="ui-btn" onchange="this.form.submit()">
-							<? foreach ($bus_list as $bu) { ?>
-				  				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
-							<? } ?>
+							<?php foreach ($bus_list as $bu) { ?>
+				  				<option value="<?=$bu->id?>" <?php if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
+							<?php } ?>
 							</select>
 						</form>
 				</div>
@@ -17,96 +17,96 @@
 						<ul data-role="listview" data-inset="false" data-icon="false"><li>TO: <?=number_format($ca['amount']/1000, 0, ',', ' ')?>€</li></ul>
 						<h3>Main</h3>
 						<ul data-role="listview" data-inset="false" data-icon="false">
-						<? if((!$keylogin || $this->ion_auth_acl->has_permission('cameras')) AND ($this->session->userdata('type') != 'kitchen')) { ?>
+						<?php if((!$keylogin || $this->ion_auth_acl->has_permission('cameras')) AND ($this->session->userdata('type') != 'kitchen')) { ?>
 							<li><a href="/cameras/" data-ajax="false"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
-						<? } ?>		
+						<?php  } ?>		
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
-						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> My skills</a></li>
+						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> My skills</a></li>
 						<li><a rel="external" data-ajax="false" href="https://app.snapshift.co/plannings" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-calendar zmd-fw"></i> Planning</a></li>
-						<? } ?>
-						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li><? } ?>
+						<?php  } ?>
+						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li><?php  } ?>
 						<li><a rel="external" data-ajax="false" href="/book/"><i class="zmdi zmdi-book zmd-fw"></i> Play Book</a></li>
-						<? if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li><? } ?>
-						<? if(($keylogin || $this->ion_auth_acl->has_permission('webcashier')) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?}?>
-						<? if($keylogin || $this->ion_auth_acl->has_permission('checklists')) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?}?>
-						<? if(($keylogin || $this->ion_auth_acl->has_permission('discounts')) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?}?>
-						<? if($keylogin || $this->ion_auth_acl->has_permission('orders')) { ?><li><a rel="external" data-ajax="false" href="<? if($keylogin) { ?>/order/viewOrders/<? } else { ?>/order/<? } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?}?>
-						<? if($keylogin || $this->ion_auth_acl->has_permission('reminders')) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?}?>
+						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li><?php  } ?>
+						<?php if(($keylogin || $this->ion_auth_acl->has_permission('webcashier')) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?php } ?>
+						<?php if($keylogin || $this->ion_auth_acl->has_permission('checklists')) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?php } ?>
+						<?php if(($keylogin || $this->ion_auth_acl->has_permission('discounts')) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?php } ?>
+						<?php if($keylogin || $this->ion_auth_acl->has_permission('orders')) { ?><li><a rel="external" data-ajax="false" href="<?php if($keylogin) { ?>/order/viewOrders/<?php  } else { ?>/order/<?php  } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?php } ?>
+						<?php if($keylogin || $this->ion_auth_acl->has_permission('reminders')) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?php } ?>
 						<li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li>
 						<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff</a></li>
-						<? if($this->ion_auth_acl->has_permission('extras')) {?>
+						<?php if($this->ion_auth_acl->has_permission('extras')) {?>
 							<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
-						<? } if ($this->ion_auth_acl->has_permission('skills_admin')) {?>
+						<?php  } if ($this->ion_auth_acl->has_permission('skills_admin')) {?>
 							<li><a rel="external" data-ajax="false" href="/skills/admin/"><i class="zmdi zmdi-star zmd-fw"></i> Skills management</a></li>	
-						<? } ?>
-						<? if($this->ion_auth_acl->has_permission('posmessage')) { ?>								
+						<?php  } ?>
+						<?php if($this->ion_auth_acl->has_permission('posmessage')) { ?>								
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
-						<? } ?>
-						<? if($this->config->item('wordpress_connection')) { ?>
-						<?if($this->ion_auth_acl->has_permission('wp_access')) { ?>
+						<?php  } ?>
+						<?php if($this->config->item('wordpress_connection')) { ?>
+						<?php if($this->ion_auth_acl->has_permission('wp_access')) { ?>
 						<li><a rel="external" data-ajax="false" href="/wp_access/" onclick="window.open(this.href);return false;"><i class="fa fa-wordpress"></i> Worflow</a></li>
-						<? } } ?>
+						<?php  } } ?>
 						</ul>
 					</div>
-					<? if($this->ion_auth_acl->has_permission('tools_panel')) { ?>
+					<?php if($this->ion_auth_acl->has_permission('tools_panel')) { ?>
 						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 							<h3>Tools</h3>
 							<ul data-role="listview" data-icon="false">
 								<li><a rel="external" data-ajax="false" href="http://drive.google.com/" onclick="window.open(this.href);return false;"><i class="fa fa-google"></i> Google Drive</a></li>
 								<li><a rel="external" data-ajax="false" href="http://redmine.hankrestaurant.com/" onclick="window.open(this.href);return false;"><i class="fa fa-trello"></i> Redmine</a></li>
-								<?if($this->ion_auth_acl->has_permission('additional_tools_panel')){?>
+								<?php if($this->ion_auth_acl->has_permission('additional_tools_panel')){?>
 									<li><a rel="external" data-ajax="false" href="http://mail.hankrestaurant.com" onclick="window.open(this.href);return false;"><i class="fa fa-envelope"></i> Webmail Hank</a></li>
 								<li><a rel="external" data-ajax="false" href="http://dropbox.com/home" onclick="window.open(this.href);return false;"><i class="fa fa-dropbox"></i> Dropbox</a></li>
 									<li><a rel="external" data-ajax="false" href="https://hank.recruiterbox.com/app/#candidates/overview" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-open-in-new zmd-fw"></i>Recruiter Box (RB)</a></li>
 									<li><a rel="external" data-ajax="false" href="https://www.cashpad.net" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-money zmd-fw"></i>Reporting Cashpad</a></li>
 									<li><a rel="external" data-ajax="false" href="https://secure.tiime.fr" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-open-in-new zmd-fw"></i>Tiime (compta)</a></li>
-								<?}?>
+								<?php } ?>
 							</ul>
 						</div>
-					<?}?>
-					<?if($this->ion_auth_acl->has_permission('admin_panel_sidebar')){?>
+					<?php } ?>
+					<?php if($this->ion_auth_acl->has_permission('admin_panel_sidebar')){?>
 						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 							<h3>Admin</h3>
 							<ul data-role="listview" data-icon="false">
               <li><a rel="external" data-ajax="false" href="/dashboard/"><i class="fa fa-user" aria-hidden="true"></i> ACL Admin </a></li>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_rmd_task_management')){?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_rmd_task_management')){?>
 									<li><a rel="external" data-ajax="false" href="/reminder/admin"><i class="fa fa-tasks"></i> Reminder tasks management</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_suppliers')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_suppliers')){?>
 									<li><a rel="external" data-ajax="false" href="/supplier/"><i class="fa fa-tasks" aria-hidden="true"></i> Suppliers</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_wifi_customers_management')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_wifi_customers_management')){?>
 									<li><a rel="external" data-ajax="false" href="/customers/" onclick="window.open(this.href);return false;"><i class="fa fa-database" aria-hidden="true"></i> Wifi Customers</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_checklist') || $this->ion_auth_acl->has_permission('admin_panel_checklist_task')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_checklist') || $this->ion_auth_acl->has_permission('admin_panel_checklist_task')){?>
 									<li><a rel="external" data-ajax="false" href="/checklist/admin"><i class="fa fa-list-ol" aria-hidden="true"></i> Checklists management</a></li>
-								<?}?>
+								<?php } ?>
 								<hr />
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_discount')){?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_discount')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/discount/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Discounts</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_suppliers_category')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_suppliers_category')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/suppliersCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Suppliers Category</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_products')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_products')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/products/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_products_unit')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_products_unit')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsUnit/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsUnit</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_products_stock')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_products_stock')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsStock/"><i class="fa fa-hdd-o" aria-hidden="true"></i> ProductsStock</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_products_category')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_products_category')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/productsCategory/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Products Category</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_report')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_report')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/report/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Report</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_rmd_task')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_rmd_task')){?>
 								<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdMeta/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder task management</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_rmd_notif_management')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_rmd_notif_management')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdNotif/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder notification management</a></li>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/rmdTasks/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Reminder management</a></li>
 
@@ -114,28 +114,28 @@
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/report/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Report management</a</li>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/bus/"><i class="fa fa-hdd-o" aria-hidden="true"></i> BUs management</a></li>
 									
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
-								<?}?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors_alarm')){?>
+								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors_alarm')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensorsAlarm/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors alarm management</a></li>
-								<?}?>
-								<? if($this->config->item('wordpress_connection')) { ?>
-								<?if($this->ion_auth_acl->has_permission('admin_panel_crud_wp_roles')){?>
+								<?php } ?>
+								<?php if($this->config->item('wordpress_connection')) { ?>
+								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_wp_roles')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/wpRmsGroups/"><i class="fa fa-hdd-o" aria-hidden="true"></i> WP Roles Management</a></li>
-								<? } } ?>
+								<?php  } } ?>
 								<?php if ($this->ion_auth_acl->has_permission('admin_panel_crud_notifications')) { ?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/notifications/"><i class="fa fa-envelope-o" aria-hidden="true"></i> Mails lists</a></li>
 								<?php } ?>
-								<?if($this->ion_auth_acl->has_permission('access_system_log')){?>
+								<?php if($this->ion_auth_acl->has_permission('access_system_log')){?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/SystemLog/"><i class="fa fa-hdd-o" aria-hidden="true"></i> System logs</a></li>
-								<?}?>
+								<?php } ?>
 							</ul>
 						</div>
-					<?}?>
+					<?php } ?>
 				</div>
-				<? /**
+				<?php /**
 				<div data-role="collapsible" data-collapsed="false" data-inset="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 					<h3>Nice to Know</h3>
 					<div>
