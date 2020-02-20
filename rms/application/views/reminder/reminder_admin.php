@@ -16,7 +16,7 @@
 <textarea id="comment" name="comment" rows="5" cols="20">
 </textarea>
 												</td>
-												<td>
+												<td colspan="2">
 													<label for="type" id="type">Type:</label>
 													<select id="type" name="type">
 														<option value="service" selected>Service</option>
@@ -42,7 +42,7 @@
 													</select>
 												</td>
                         <td>
-                          <label for="repeat_interval">Repeat interval:</label><br/>
+                          <label for="repeat_interval" id="label">Repeat interval:</label><br/>
                           <select required name="repeat_interval">
                             <option value="86400">1 day</option>
                             <option value="172800">2 days</option>
@@ -58,6 +58,13 @@
                             <option value="31536000">1 year</option>
                           </select>
                         </td>
+						<td>
+							<label for="notify_tablet" id="label">Notify on tablet</label>
+							<select id="notify_tablet" name="notify_tablet">
+								<option value="0">No</option>
+								<option value="1">Yes</option>
+							</select>
+						</td>
 											</tr>
 										</table>
 
@@ -132,7 +139,7 @@
 													<label for="comment-<?=$line->tid?>" id="label-<?=$line->tid?>">Comment:</label>
 													<textarea id="comment-<?=$line->tid?>" name="comment" rows="5" cols="20"><?=stripslashes($line->tcomment)?></textarea>
 												</td>
-												<td>
+												<td colspan="2">
 													<label for="type-<?=$line->tid?>" id="label-<?=$line->tid?>">Type:</label>
 													<select id="type-<?=$line->tid?>" name="type">
 														<option value="service" <? if($line->ttype == 'service') echo 'selected'; ?> >Service</option>
@@ -198,6 +205,14 @@
                               ?>>1 year</option>
                           </select>
                         </td>
+						<td>
+							
+							<label for="notify_tablet-<?=$line->tid?>" id="label-<?=$line->tid?>">Notify on tablet</label>
+							<select id="notify_tablet-<?=$line->tid?>" name="notify_tablet">
+								<option value="1" <? if($line->tnotify_tablet == 1) echo "selected"; ?> >Yes</option>
+								<option value="0" <? if($line->tnotify_tablet == 0) echo "selected"; ?> >No</option>
+							</select>
+						</td>
 											</tr>
 										</table>
 

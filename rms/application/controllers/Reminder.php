@@ -176,7 +176,7 @@ class Reminder extends CI_Controller {
 			$sqle = "";
 		}
 
-		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], type = '".$data['type']."', id_bu = $id_bu $sqle ";
+		$sql_tasks = "$sqlt rmd_tasks SET `task` = '".addslashes($data['task'])."', comment = '".addslashes($data['comment'])."', active = $data[active], priority = $data[priority], notify_tablet = $data[notify_tablet], type = '".$data['type']."', id_bu = $id_bu $sqle ";
 		$this->db->trans_start();
 		if (!$this->db->query($sql_tasks)) {
 			$response = "Can't place the insert sql request, error message: ".$this->db->_error_message();
@@ -247,7 +247,7 @@ class Reminder extends CI_Controller {
 				$notif_start	= 0;
 				$notif_end		= 999999999999;
 				$interval		= 0;
-
+				
 				if(isset($notif->id)) {
 
 
@@ -258,7 +258,7 @@ class Reminder extends CI_Controller {
 					$interval 		= $notif_last+$notif_interval;
 				}
 
-				if($notif_start <= $now && $notif_end > $now && $interval < $now) {
+				if($notif_start <= $now && $notif_end > $now && $interval < $now && $row->notify_tablet) {
 					$this->db->set('last', "NOW()", FALSE)->where('id_task', $row->id);
 					if(!$this->db->update('rmd_notif')) {
 						echo $this->db->error;
