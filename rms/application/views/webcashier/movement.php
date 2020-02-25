@@ -2,7 +2,7 @@
 	<div style="background-color: #fffde8;" data-role="content" data-theme="a">
 		<?if($mov == 'close') { ?><h2>CLOSE</h2><small>Closing date: <?=$archive_date?></small><? } ?>
 		<?$form_values = $this->session->flashdata('form_values'); $pay_values = $this->session->flashdata('pay_values');?>
-		<?if ($pay_values) { ?>
+    	<?if ($pay_values) { ?>
 			<p><b>Erreur dans le(s) montant(s) indiqué(s).</b></p>
 			<p>Consultez les erreurs dans le tableau ci-dessous et corrigé éventuellement les montants que vous avez indiqués.<br />
 			<b>Si vos comptages sont justes, cocher la case "Ignorer les erreurs et continuer" et ajouter un commentaire.<br />
@@ -96,17 +96,17 @@
 						<td width="10%"><b><?=$mode->name?></b></td>
 						<td width="40%">
 							<? if($mode->id == 1) { ?>
-								<input maxlength="10" type="text" name="cash2" id="basic" data-clear-btn="true" <?if (isset($form_values['cash2'])) echo 'value="'.$form_values['cash2'] .'"';?>/>
+								<input maxlength="10" type="text" name="cash2" id="cash2" data-clear-btn="true" <?if (isset($form_values['cash2'])) echo 'value="'.$form_values['cash2'] .'"';?>/>
 							<? } elseif($mode->id == 2) { ?>
 								<table border="0" cellpadding="2" width="100%"><tr>
-								<td><input maxlength="10" type="text" name="cb" id="basic" data-clear-btn="true" <?if (isset($form_values['cb'])) { echo 'value="'.$form_values['cb'] .'"'; }?>/></td>
+								<td><input maxlength="10" type="text" name="cb" id="cb" data-clear-btn="true" <?if (isset($form_values['cb'])) { echo 'value="'.$form_values['cb'] .'"'; }?>/></td>
 								</tr></table>
 							<? } elseif($mode->id == 3) { ?>
 								<table border="0" cellpadding="2" width="100%"><tr>
-								<td><input maxlength="10" type="text" name="man_3" id="basic" data-clear-btn="true" <?if (isset($form_values['man_3'])) { echo 'value="'.$form_values['man_3'] .'"'; }?>/></td>
+								<td><input maxlength="10" type="text" name="man_3" id="man_3" data-clear-btn="true" <?if (isset($form_values['man_3'])) { echo 'value="'.$form_values['man_3'] .'"'; }?>/></td>
 								</tr></table>
 							<? } else { ?>
-								<input maxlength="10" type="text" name="man_<?=$mode->id?>" id="basic" data-clear-btn="true" <?if (isset($form_values['man_'.$mode->id])) { echo 'value="'.$form_values['man_'.$mode->id] .'"'; }?>/>
+								<input maxlength="10" type="text" name="man_<?=$mode->id?>" id="man_<?=$mode->id?>" data-clear-btn="true" <?if (isset($form_values['man_'.$mode->id])) { echo 'value="'.$form_values['man_'.$mode->id] .'"'; }?>/>
 							<? } ?>
 								</td>
 						<td width="40%"><?=nl2br($com)?></td>

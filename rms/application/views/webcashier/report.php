@@ -71,7 +71,7 @@
 			<div id="<?=$m['mov']['id']?>" data-role="collapsible" style="background-color: <? if ($mov == 'close') { ?> 
 				<?if ($m['mov']['status'] == 'ok') {echo "lightgreen";} else if ($m['mov']['status'] == 'error') { echo "#ec7470";} 
 				else if ($m['mov']['status'] == 'validated') { echo "#d5ecd2";}} else { echo "rgb(220, 220, 220)";}?>" >
-				<h2><a id="<?=$m['mov']['id']?>"></a>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'Y-m-d'); echo " [".$m['mov']['id']."]";    ?> - <?=strtoupper($m['mov']['movement'])?><?if ($mov == 'close') { ?> -  <?=$m['mov']['username']?><? } ?> <?if ($mov == 'close' && (count($m['cancelledReceipts']) > 1)) { echo " - <strong>" . count($m['cancelledReceipts']) ." receipts cancelled</strong>";}?></h2>
+				<h2><a id="<?=$m['mov']['id']?>"></a>ID: <? $dateid = new DateTime($m['mov']['date']); echo date_format($dateid, 'Y-m-d'); echo " [".$m['mov']['id']."]";    ?> - <?=strtoupper($m['mov']['movement'])?><?if ($mov == 'close') { ?> -  <?=$m['mov']['username']?><? } ?> <?if ($mov == 'close' && (count($m['cancelledReceipts']) > 0)) { echo " - <strong>" . count($m['cancelledReceipts']) ." receipts cancelled</strong>";}?></h2>
 				<ul data-role="listview" data-theme="d" data-divider-theme="d">
 					<li>
 						<h3>Date: <?=$m['mov']['date']?></h3>
