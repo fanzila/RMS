@@ -298,7 +298,7 @@ class webCashier extends CI_Controller {
 				$this->db->select('id, name');
 				$query = $this->db->get('bus');
 				$txt = "<html><body><font face='arial'><table rules='all' style='border-color: #667;' border='1' cellspacing='0' cellpadding='5'>
-				<tr><td colspan='10'><b>RMS CLOSE REPORT ". date('d/m/Y'). "</b></td></tr>
+				<tr><td colspan='11'><b>RMS CLOSE REPORT ". date('d/m/Y'). "</b></td></tr>
 				<tr bgcolor='#ffc300'>
 				<td>BU</td>
 				<td>TO</td>
@@ -306,6 +306,7 @@ class webCashier extends CI_Controller {
 				<td>Status</td>
 				<td>Date cashier</td>
 				<td>Diff</td>
+				<td>Ticket cancel</td>
 				<td>Comment close</td>
 				<td>Checklist</td>
 				<td>Checklist user</td>
@@ -387,6 +388,15 @@ class webCashier extends CI_Controller {
 					if(isset($res_ic[4])) $txt .= "<br />$operand4". number_format($res_ic[4]['cashier_diff'], 2)."€";
 					$txt .= "</td>";
 			
+					$txt .= "<td>";
+					if(!isset($res_ic[0]['cancel_ticket'])) $res_ic[0]['cancel_ticket'] = '';
+					if(isset($res_ic[0])) $txt .= $res_ic[0]['cancel_ticket'];
+					if(isset($res_ic[1])) $txt .= "<br />".$res_ic[1]['cancel_ticket'];
+					if(isset($res_ic[2])) $txt .= "<br />".$res_ic[2]['cancel_ticket'];
+					if(isset($res_ic[3])) $txt .= "<br />".$res_ic[3]['cancel_ticket'];
+					if(isset($res_ic[4])) $txt .= "<br />".$res_ic[4]['cancel_ticket'];
+					$txt .= "</td>";
+					
 					$txt .= "<td>";
 					if(!isset($res_ic[0]['comment_cashier'])) $res_ic[0]['comment_cashier'] = '';
 					if(isset($res_ic[0])) $txt .= $res_ic[0]['comment_cashier'];
@@ -920,7 +930,7 @@ class webCashier extends CI_Controller {
 					$this->session->set_flashdata('pay_values', $pay_values);
 
 					$varslog = "Closing fail, rollback, redirecting to movement - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min]";
-					error_log($varslog);
+					//error_log($varslog);
 					
 					redirect('/webcashier/movement/close', 'location');
 					
@@ -955,16 +965,6 @@ class webCashier extends CI_Controller {
 				}
 
 				$this->db->trans_commit();
-				
-				//insert into infos_close
-				$this->db->set('cashier_diff', $diff);
-				$this->db->set('bu_id', $id_bu);
-				$this->db->set('id_pos_movements', $pmid);
-				$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
-				$this->db->set('id_user_cashier', $userid);
-				$this->db->set('to', $total_to);
-				
-				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 
 				if($test_diff_control) {
 					$this->db->set('status', 'error');
@@ -979,13 +979,27 @@ class webCashier extends CI_Controller {
 			}
 		
 			//set error status if cancelled receipts
+			$cancel_ticket = false;
 			$cancelledReceipts = $this->cashier->getArchivedCancelledReceipts($id_bu, $this->input->post('archive'));
 			if (count($cancelledReceipts) > 0) {
 				$this->db->set('status', 'error');
 				$seterror_status = 'RCPT';
 				$this->db->where('id', $pmid);
 				$this->db->update('pos_movements');
+				$cancel_ticket = count($cancelledReceipts);
 			}
+			
+			//insert into infos_close
+			$this->db->set('cashier_diff', $diff);
+			$this->db->set('bu_id', $id_bu);
+			$this->db->set('id_pos_movements', $pmid);
+			$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
+			$this->db->set('id_user_cashier', $userid);
+			$this->db->set('to', $total_to);
+			if($seterror_status)	$this->db->set('status', 'error');
+			if($cancel_ticket)		$this->db->set('cancel_ticket', $cancel_ticket);
+			$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			
 		
 			$varslog = "Closing processed - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min] - seterror_status = $seterror_status";
 			error_log($varslog);
