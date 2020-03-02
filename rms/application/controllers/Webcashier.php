@@ -797,20 +797,20 @@ class webCashier extends CI_Controller {
 	
 			$data = array();
 			$this->hmw->keyLogin();
-			$user					= $this->ion_auth->user()->row();
-			$user_groups 			= $this->ion_auth->get_users_groups()->result();
-			$data['username']		= $user->username;
-			$data['user_groups']	= $user_groups[0];
-			$data["keylogin"]		= $this->session->userdata('keylogin');
-			$data['title']			= 'Cashier';
-			$data['bu_name'] 		= $this->session->userdata('bu_name');
-			$data['mov']			= $this->input->post('mov');
-			$userpost 				= $this->input->post('user');
-			$id_bu			 		= $this->session->userdata('bu_id');
-			$param_pos_info 		= array();
-			$param_pos_info['id_bu'] = $id_bu;
-			$param_pos_info['archive'] = $this->input->post('archive');
-		
+			$user						= $this->ion_auth->user()->row();
+			$user_groups 				= $this->ion_auth->get_users_groups()->result();
+			$data['username']			= $user->username;
+			$data['user_groups']		= $user_groups[0];
+			$data["keylogin"]			= $this->session->userdata('keylogin');
+			$data['title']				= 'Cashier';
+			$data['bu_name'] 			= $this->session->userdata('bu_name');
+			$data['mov']				= $this->input->post('mov');
+			$userpost 					= $this->input->post('user');
+			$id_bu			 			= $this->session->userdata('bu_id');
+			$param_pos_info 			= array();
+			$param_pos_info['id_bu'] 	= $id_bu;
+			$param_pos_info['archive'] 	= $this->input->post('archive');
+			
 			/* removing humanity 
 			if($this->input->post('mov') == 'close') $planning = $this->planning();
 		
@@ -974,36 +974,37 @@ class webCashier extends CI_Controller {
 				}
 				
 				$this->closing($this->input->post('archive'), $pmid);
+				
+				//set error status if cancelled receipts
+				$cancel_ticket = false;
+				$cancelledReceipts = $this->cashier->getArchivedCancelledReceipts($id_bu, $this->input->post('archive'));
+				if (count($cancelledReceipts) > 0) {
+					$this->db->set('status', 'error');
+					$seterror_status = 'RCPT';
+					$this->db->where('id', $pmid);
+					$this->db->update('pos_movements');
+					$cancel_ticket = count($cancelledReceipts);
+				}
+			
+				//insert into infos_close
+				$this->db->set('cashier_diff', $diff);
+				$this->db->set('bu_id', $id_bu);
+				$this->db->set('id_pos_movements', $pmid);
+				$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
+				$this->db->set('id_user_cashier', $userid);
+				$this->db->set('to', $total_to);
+				if($seterror_status)	$this->db->set('status', 'error');
+				if($cancel_ticket)		$this->db->set('cancel_ticket', $cancel_ticket);
+				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			
+		
+				$varslog = "Closing processed - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min] - seterror_status = $seterror_status";
+				error_log($varslog);				
+				
 			} else {
 				$this->db->trans_commit();
 			}
-		
-			//set error status if cancelled receipts
-			$cancel_ticket = false;
-			$cancelledReceipts = $this->cashier->getArchivedCancelledReceipts($id_bu, $this->input->post('archive'));
-			if (count($cancelledReceipts) > 0) {
-				$this->db->set('status', 'error');
-				$seterror_status = 'RCPT';
-				$this->db->where('id', $pmid);
-				$this->db->update('pos_movements');
-				$cancel_ticket = count($cancelledReceipts);
-			}
-			
-			//insert into infos_close
-			$this->db->set('cashier_diff', $diff);
-			$this->db->set('bu_id', $id_bu);
-			$this->db->set('id_pos_movements', $pmid);
-			$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
-			$this->db->set('id_user_cashier', $userid);
-			$this->db->set('to', $total_to);
-			if($seterror_status)	$this->db->set('status', 'error');
-			if($cancel_ticket)		$this->db->set('cancel_ticket', $cancel_ticket);
-			$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-			
-		
-			$varslog = "Closing processed - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min] - seterror_status = $seterror_status";
-			error_log($varslog);
-				
+	
 			$data['idtrans'] = $payid;
 			$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
