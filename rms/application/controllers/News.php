@@ -165,7 +165,8 @@ class News extends CI_Controller {
           $msg = '<img src="http://' . $server_name . '/public/pictures/' . $picName
             . '" class="img-responsive" style="max-height: 300px; max-width: 300px;" alt="" /><br/><br/>';
 
-        $msg .= $this->input->post('text');
+		$text_modif = str_replace("%", "&#37;", $this->input->post('text'));		
+        $msg .= $text_modif;
 
         $this->mmail->prepare($subject, $msg)
           ->from('news@hankrestaurant.com', 'HANK NEWS')

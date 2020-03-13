@@ -62,10 +62,12 @@ class News_model extends CI_Model {
 
 		$slug = url_title($this->input->post('title'), '-', TRUE);
 
+		$text_modif = str_replace("%", "&#37;", $this->input->post('text'));		
+				
 		$data = array(
 			'title' => $this->input->post('title'),
 			'slug' => $slug,
-			'text' => $this->input->post('text'),
+			'text' => $text_modif,
 			'id_user' => $id_user
 			);
 		$this->db->insert('news', $data);
