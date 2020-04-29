@@ -94,7 +94,7 @@
 							<?php $total = 0; $diff = (-$m['mov']['pos_cash_amount'] + $m['mov']['prelevement_amount']); foreach ($m['pay'] as $m2): ?>
 								<? 
 								$noreport = false;
-								if(($m2['id'] == 7 OR $m2['id'] == 10 OR $m2['id'] == 12 OR $m2['id'] == 5 OR $m2['id'] == 14 OR $m2['id'] == 11)) { $noreport = true; }
+								if(($m2['id'] == 7 OR $m2['id'] == 10 OR $m2['id'] == 12 OR $m2['id'] == 5 OR $m2['id'] == 14 OR $m2['id'] == 11 OR $m2['id'] == 16)) { $noreport = true; }
 								$total += $m2['amount_pos'];
 								if ($m2['id'] == 1) $diff = $diff + $m2['amount_user'];
 								if ($m2['id'] == 2 OR $m2['id'] == 3 OR $m2['id'] == 4 OR $m2['id'] == 13) $diff = $diff + ($m2['amount_user']-$m2['amount_pos']);
