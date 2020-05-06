@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} \.(mp4|mp3|avi)$ [NC]
+RewriteCond %{HTTP_REFERER} !^https://rms.hankrestaurant.com/.*$ [NC]
+RewriteRule ^.* - [F,L]
