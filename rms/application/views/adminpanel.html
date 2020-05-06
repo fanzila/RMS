@@ -21,11 +21,10 @@
 							<li><a href="/cameras/" data-ajax="false"><i class="zmdi zmdi-videocam zmd-fw"></i> Cams</a></li>
 						<?php  } ?>		
 						<li><a rel="external" data-ajax="false" href="/news/"><i class="zmdi zmdi-info-outline zmd-fw"></i> News</a></li>
-						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> My skills</a></li>
+						<?php if(!$keylogin) { ?>
 						<li><a rel="external" data-ajax="false" href="https://app.snapshift.co/plannings" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-calendar zmd-fw"></i> Planning</a></li>
 						<?php  } ?>
 						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li><?php  } ?>
-						<li><a rel="external" data-ajax="false" href="/book/"><i class="zmdi zmdi-book zmd-fw"></i> Play Book</a></li>
 						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li><?php  } ?>
 						<?php if(($keylogin || $this->ion_auth_acl->has_permission('webcashier')) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?php } ?>
 						<?php if($keylogin || $this->ion_auth_acl->has_permission('checklists')) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?php } ?>
@@ -48,6 +47,18 @@
 						<?php  } } ?>
 						</ul>
 					</div>
+					
+					<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
+						<h3>Training</h3>
+						<ul data-role="listview" data-icon="false">
+							<li><a rel="external" data-ajax="false" href="/book/"><i class="zmdi zmdi-book zmd-fw"></i> Play Book</a></li>
+							<li><a rel="external" data-ajax="false" href="/videos/"><i class="zmdi zmdi-movie zmd-fw"></i> Videos traning</a></li>
+							<?php if(!$keylogin) { ?>
+							<li><a rel="external" data-ajax="false" href="/skills/start/"><i class="zmdi zmdi-star-half zmd-fw"></i> My skills</a></li>
+							<?php } ?>						
+						</ul>
+					</div>
+							
 					<?php if($this->ion_auth_acl->has_permission('tools_panel')) { ?>
 						<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
 							<h3>Tools</h3>
