@@ -24,33 +24,6 @@ class Crud extends CI_Controller {
 
 	}
 
-    public function Sensors()
-    {
-		$crud = new grocery_CRUD();
-		$crud->set_theme('bootstrap');
-
-		$crud->columns('id','name','reference');
-		$crud->required_fields('name','reference');
-        $crud->set_table('sensors');
-        $output = $crud->render();
-
-		$this->_example_output($output);
-    }
-
-    public function SensorsAlarm()
-    {
-		$crud = new grocery_CRUD();
-		$crud->set_theme('bootstrap');
-
-		$crud->columns('id_sensor','max', 'min');
-		$crud->set_relation('id_sensor','sensors','name');
-		$crud->required_fields('id_sensor','max', 'min');
-        $crud->set_table('sensors_alarm');
-        $output = $crud->render();
-
-		$this->_example_output($output);
-    }
-
     public function SystemLog()
     {
 		$crud = new grocery_CRUD();

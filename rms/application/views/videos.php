@@ -27,3 +27,9 @@
 		
 	</div><!-- /content -->
 </div><!-- /page -->
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+		   $('#player').bind('contextmenu',function() { return false; });
+		});
+</script>

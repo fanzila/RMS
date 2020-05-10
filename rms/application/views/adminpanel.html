@@ -31,7 +31,6 @@
 						<?php if(($keylogin || $this->ion_auth_acl->has_permission('discounts')) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?php } ?>
 						<?php if($keylogin || $this->ion_auth_acl->has_permission('orders')) { ?><li><a rel="external" data-ajax="false" href="<?php if($keylogin) { ?>/order/viewOrders/<?php  } else { ?>/order/<?php  } ?>"><i class="zmdi zmdi-shopping-basket zmd-fw"></i> Order</a></li><?php } ?>
 						<?php if($keylogin || $this->ion_auth_acl->has_permission('reminders')) { ?><li><a rel="external" data-ajax="false" href="/reminder/"><i class="zmdi zmdi-alert-triangle zmd-fw"></i> Reminder</a></li><?php } ?>
-						<li><a rel="external" data-ajax="false" href="/sensors/"><i class="zmdi zmdi-tv zmd-fw"></i> Sensors</a></li>
 						<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff</a></li>
 						<?php if($this->ion_auth_acl->has_permission('extras')) {?>
 							<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
@@ -124,13 +123,6 @@
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/pos_payments_type/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Pos_payments_type management</a></li>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/report/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Report management</a</li>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/bus/"><i class="fa fa-hdd-o" aria-hidden="true"></i> BUs management</a></li>
-									
-								<?php } ?>
-								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors')){?>
-									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensors/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors management</a></li>
-								<?php } ?>
-								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_sensors_alarm')){?>
-									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/sensorsAlarm/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Sensors alarm management</a></li>
 								<?php } ?>
 								<?php if($this->config->item('wordpress_connection')) { ?>
 								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_wp_roles')){?>
