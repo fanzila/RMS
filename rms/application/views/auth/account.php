@@ -40,33 +40,3 @@ echo form_open(uri_string(), $attributes);
   </div>
 </div>
   <?php echo form_close();?>
-	<?if (isset($WpUID)):?>
-	<div class="row">
-		<div class="col-xs-12 col-sm-6 col-md-5">
-			<div class="box">
-				<button href="#" onclick="wpDeleteAccount(<?=$user->id?>); return false;">Delete WP Account</button>
-			</div>
-		</div>
-	</div>
-	<script>
-		function wpDeleteAccount(id) {
-			if (confirm('Do you really want to delete your WordPress account ?') === true) {
-				var site_url = '<?= site_url('wp_access/delete/') ?>' + '/' + id;
-				$.ajax({
-					url: site_url,
-					type: 'get',
-					data: null,
-					success: function(data) {
-						if (data.status == 'success') {
-							alert('WordPress Account successfully deleted');
-							location.reload();
-						} else {
-							alert('Unable to delete WP account');
-							return (false);
-						}
-					}
-				});
-			}
-		}
-	</script>
-	<?endif;?>

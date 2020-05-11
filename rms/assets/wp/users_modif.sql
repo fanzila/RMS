@@ -1,1 +1,0 @@
-ALTER TABLE `users` ADD `WordPress_UID2` INT NULL DEFAULT NULL ;

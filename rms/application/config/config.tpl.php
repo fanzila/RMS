@@ -30,15 +30,6 @@ $config['index_page'] = 'index.php';
 
 /*
 |--------------------------------------------------------------------------
-| Using wordpress connection
-|--------------------------------------------------------------------------
-|
-|
-*/
-$config['wordpress_connection'] = FALSE;
-
-/*
-|--------------------------------------------------------------------------
 | URI PROTOCOL
 |--------------------------------------------------------------------------
 |
@@ -394,31 +385,3 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
-
-/*
-|---------------------------------------------------------------------------
-| Application password
-|---------------------------------------------------------------------------
-|
-| Config this variable to use with WP_RMS library
-|
-|
-|
-*/
-$config['app_pass'] = '';
-
-/*
-|---------------------------------------------------------------------------
-| Wordpress Api Url
-|---------------------------------------------------------------------------
-|
-| Config this variable to use with WP_RMS library
-| You should put your WP Api URL here
-|
-|
-*/
-$config['WpApiUrl'] = '';
-
-
-/* End of file config.php */
-/* Location: ./application/config/config.php */

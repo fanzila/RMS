@@ -751,46 +751,6 @@ class webCashier extends CI_Controller {
 				$this->load->view('jq_footer');
 			}
 	
-			private function planning() 
-			{
-	
-				$this->load->library('hmw');
-				$this->load->library('shiftplanning');
-	
-				$sp_key		= $this->hmw->getParam('sp_key'); 
-				$sp_user	= $this->hmw->getParam('sp_user');
-				$sp_pass	= $this->hmw->getParam('sp_pass');
-	
-				/* set the developer key on class initialization */
-				$shiftplanning = new shiftplanning(array('key' => $sp_key));
-
-				$session = $shiftplanning->getSession( );
-				if( !$session ) {
-					// perform a single API call to authenticate a user
-					$response = $shiftplanning->doLogin(
-					array('username' => $sp_user, 'password' => $sp_pass));
-
-					if( $response['status']['code'] == 1 )
-					{// check to make sure that login was successful
-						$session = $shiftplanning->getSession( );	// return the session data after successful login
-					} else {
-						error_log(" CANT GET SESSION".$response['status']['text'] . "--" . $response['status']['error']);
-					}
-				}
-
-				if( $session ) {
-					$response = $shiftplanning->setRequest(
-					array(
-						array('module' => 'dashboard.onnow', 'method' => 'GET'),
-						array('module' => 'location.locations', 'method' => 'GET')
-					)
-				);
-				//print_r($shiftplanning->getResponse(1));
-				$r = $shiftplanning->getResponse(0);
-				return $r;		
-			}
-		}
-
 		//to clean db after test, delete the last record from pos_movements 
 		public function save()
 		{
@@ -810,20 +770,6 @@ class webCashier extends CI_Controller {
 			$param_pos_info 			= array();
 			$param_pos_info['id_bu'] 	= $id_bu;
 			$param_pos_info['archive'] 	= $this->input->post('archive');
-			
-			/* removing humanity 
-			if($this->input->post('mov') == 'close') $planning = $this->planning();
-		
-			$employees_sp = array();
-			$buinfo = $this->hmw->getBuInfo($id_bu);
-			$bu_position_id = explode (',',$buinfo->humanity_positions);
-			if (isset($planning['data'])) {
-			foreach ($planning['data'] as $line) {
-			if (in_array ($line['schedule_id'], $bu_position_id)) 
-			array_push($employees_sp, $line['employee_name']);
-			}
-			}
-			*/
 		
 			if(empty($userpost)) { 
 				$userid = $user->id; 

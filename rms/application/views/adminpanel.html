@@ -40,10 +40,6 @@
 						<?php if($this->ion_auth_acl->has_permission('posmessage')) { ?>								
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 						<?php  } ?>
-						<?php if($this->config->item('wordpress_connection')) { ?>
-						<?php if($this->ion_auth_acl->has_permission('wp_access')) { ?>
-						<li><a rel="external" data-ajax="false" href="/wp_access/" onclick="window.open(this.href);return false;"><i class="fa fa-wordpress"></i> Worflow</a></li>
-						<?php  } } ?>
 						</ul>
 					</div>
 					
@@ -124,10 +120,6 @@
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/report/"><i class="fa fa-hdd-o" aria-hidden="true"></i> Report management</a</li>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/bus/"><i class="fa fa-hdd-o" aria-hidden="true"></i> BUs management</a></li>
 								<?php } ?>
-								<?php if($this->config->item('wordpress_connection')) { ?>
-								<?php if($this->ion_auth_acl->has_permission('admin_panel_crud_wp_roles')){?>
-									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/wpRmsGroups/"><i class="fa fa-hdd-o" aria-hidden="true"></i> WP Roles Management</a></li>
-								<?php  } } ?>
 								<?php if ($this->ion_auth_acl->has_permission('admin_panel_crud_notifications')) { ?>
 									<li><a rel="external" data-ajax="false" onclick="window.open(this.href);return false;" href="/crud/notifications/"><i class="fa fa-envelope-o" aria-hidden="true"></i> Mails lists</a></li>
 								<?php } ?>
