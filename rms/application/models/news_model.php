@@ -26,7 +26,6 @@ class News_model extends CI_Model {
 
 	public function get_list($limit, $start)
 	{
-		
 		$bu_id =  $this->session->userdata('bu_id');
 		
 		$this->db->select('news.id as news_id, users.username, news.title, news.slug, news.text, news.picture, news.date, news.id_user, bus.name, bus.id');

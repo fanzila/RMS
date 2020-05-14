@@ -121,7 +121,7 @@ abstract class CI_DB_driver {
 	 *
 	 * @var	string
 	 */
-	public $dbcollat		= 'utf8_general_ci';
+	public $dbcollat		= 'utf8mb4_unicode_ci';
 
 	/**
 	 * Encryption flag/data
