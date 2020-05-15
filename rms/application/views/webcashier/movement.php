@@ -72,6 +72,9 @@
 				</table>
 		<? } ?> 
 		<br />
+		<?if(!empty($force)) { ?>
+			<h1>Mode formation, validation impossible</h1>
+		<? } ?>
 		<form id="pos" name="pos" method="post" action="/webcashier/save">
 			<table border="0" cellpadding="5" width="100%">
 				<tr style="background-color: #dfdfdf;">
@@ -141,6 +144,9 @@
 			<input type="button" onClick="validateBoth();" name="save" value="SAVE">			
 			<? } ?>
 	</form>
+	<?if(!empty($force)) { ?>
+		<h1>Mode formation, validation impossible</h1>
+	<? } ?>
 </div>
 </div>
 <script>
