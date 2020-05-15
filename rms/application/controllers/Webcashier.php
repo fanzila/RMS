@@ -330,7 +330,7 @@ class webCashier extends CI_Controller {
 					if(isset($res_ic[1]['to'])) { $txt .= "<br />".number_format($res_ic[1]['to'], 2)."€"; $total_ca += $res_ic[1]['to']; }
 					if(isset($res_ic[2]['to'])) { $txt .= "<br />".number_format($res_ic[2]['to'], 2)."€"; $total_ca += $res_ic[2]['to']; }
 					if(isset($res_ic[3]['to'])) { $txt .= "<br />".number_format($res_ic[3]['to'], 2)."€"; $total_ca += $res_ic[3]['to']; }
-					if(isset($res_ic[4]['to'])) { $txt .= "<br />".number_format($res_ic[4]['to'], 2)."€"; $total_ca += $res_ic[4]['to']; }	 
+					if(isset($res_ic[4]['to'])) { $txt .= "<br />".number_format($res_ic[4]['to'], 2)."€"; $total_ca += $res_ic[4]['to'];	}	 
 					$txt .= "</td>";
 			
 					$total_ca = 
@@ -693,7 +693,7 @@ class webCashier extends CI_Controller {
 			
 					//Get last archive
 					$d = $this->cashier->getClosureData(null, null, $id_bu);
-			
+
 					//Get date of this archive
 					$archive_date_ex = $this->cashier->getPosArchivesDatetime($d['file']);
 			
@@ -710,6 +710,7 @@ class webCashier extends CI_Controller {
 					$data['force'] = 0;
 			
 					$param_pos_info['id_bu'] = $id_bu;
+					$data['seqid'] 		  	 = $d['seqid'];
 
 					if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
 						$data['closure_data'] = $d;
@@ -720,37 +721,37 @@ class webCashier extends CI_Controller {
 						$this->cashier->posInfo('updateProductCategory', $param_pos_info);
 					} else {
 						$force = $this->input->get('force');
+						$data['archive_date'] = $archive_date;
+						$data['close_waiting'] = false;
 						if(!empty($force)) { 
-							$data['archive_date'] = $archive_date;
 							$data['force'] = 1;
 							$this->cashier->posInfo('updateUsers', $param_pos_info);
 							$this->cashier->InsertTerminals($id_bu);
 						} else {
-							header("Refresh:10");
-							echo "<font face='arial'><h2>Humm, impossible de trouver une cloture...<br />
-								As tu bien cloturé la caisse ? <br /><br />
-							Si oui attends quelques minutes, la page de cloture va automatiquement et bientôt s'afficher.</h2>
-							<br />
-							Cause d'erreurs possibles : 
-							<ul>
-							<li>Les données ont déjà été entrées (<i>dernière cloture faite pour : $archive_date</i>)</li>
-							<li>la caisse est éteinte ou sans réseau,</li>
-							<li>la dernière cloture est supérieur à 2 jours.</li>
-							</ul>
-							<h2><a href='/webcashier/'>> Retour</a></h2>
-							<p><small><a href='/webcashier/movement/close?force=1'>> Voir l'interface</a></small></p></font>";
-							exit();
+							$data['close_waiting'] = true;
+							$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier");
+							$this->load->view('jq_header', $headers['header_pre']);
+							$this->load->view('jq_header_post', $headers['header_post']);
+							$this->load->view('webcashier/close_waiting',$data);
 						}
 					}
 				}
+				
 				$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
-				$this->load->view('jq_header_pre', $headers['header_pre']);
-				$this->load->view('jq_header_post', $headers['header_post']);
-				$this->load->view('webcashier/movement',$data);
-				$this->load->view('webcashier/jq_footer_spe');
-				$this->load->view('jq_footer');
+				if($data['close_waiting']) {
+					header("Refresh:7");
+					$this->load->view('jq_header');
+					$this->load->view('webcashier/close_waiting',$data);
+					$this->load->view('jq_footer');		
+				} else {
+					$this->load->view('jq_header_pre', $headers['header_pre']);
+					$this->load->view('jq_header_post', $headers['header_post']);
+					$this->load->view('webcashier/movement',$data);
+					$this->load->view('webcashier/jq_footer_spe');
+					$this->load->view('jq_footer');					
+				}
 			}
-	
+
 		//to clean db after test, delete the last record from pos_movements 
 		public function save()
 		{
