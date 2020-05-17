@@ -717,7 +717,8 @@ class webCashier extends CI_Controller {
 			
 					$param_pos_info['id_bu'] = $id_bu;
 					$data['seqid'] 		  	 = $d['seqid'];
-
+					
+					$data['close_waiting'] = false;
 					if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 
 						$data['closure_data'] = $d;
 						$data['archive_file'] = $d['file'];
@@ -728,7 +729,6 @@ class webCashier extends CI_Controller {
 					} else {
 						$force = $this->input->get('force');
 						$data['archive_date'] = $archive_date;
-						$data['close_waiting'] = false;
 						if(!empty($force)) { 
 							$data['force'] = 1;
 							$this->cashier->posInfo('updateUsers', $param_pos_info);
