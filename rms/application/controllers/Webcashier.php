@@ -297,45 +297,65 @@ class webCashier extends CI_Controller {
 
 				$this->db->select('id, name');
 				$query = $this->db->get('bus');
-				$txt = "<html><body><font face='arial'><table rules='all' style='border-color: #667;' border='1' cellspacing='0' cellpadding='5'>
-				<tr><td colspan='11'><b>RMS CLOSE REPORT ". date('d/m/Y'). "</b></td></tr>
+				
+				
+				$txt = "<p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;'><b>RMS CLOSE REPORT ". date('d/m/Y'). "</b></p>
+					<table border='0' cellpadding='3' cellspacing='3' class='btn btn-primary' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;'>
+				<tbody>
 				<tr bgcolor='#ffc300'>
-				<td>BU</td>
-				<td>TO</td>
-				<td>Cashier user</td>
-				<td>Status</td>
-				<td>Date cashier</td>
-				<td>Diff</td>
-				<td>Ticket cancel</td>
-				<td>Comment close</td>
-				<td>Checklist</td>
-				<td>Checklist user</td>
-				<td>Date checklist</td>
-				</tr>		
-				";
+				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
+				BU
+				</td>
+				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
+				Date
+				</td>
+				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
+				User close
+				</td>
+				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
+				Status
+				</td>
+				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
+				TO
+				</td>
+				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
+				Diff [Ticket canceled] Comment close
+				</td>
+				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
+				 User checklist / Date
+				</td>
+				  
+				</tr>";
 		
 				foreach ($query->result() as $row) {
 
-					$txt .= "<tr><td>$row->name</td>";
-			
 					//infos_close
 					$this->db->where('DATE_FORMAT( infos_close.date,  \'%Y-%m-%d\' ) = CURDATE()');
 					$this->db->where('bu_id', $row->id);
 					$query_ic = $this->db->get("infos_close");
 					$res_ic = $query_ic->result_array();
 					$total_ca = 0;
-		
-					if(!isset($res_ic[0]['to'])) $res_ic[0]['to'] = 0;
-					$txt .= "<td>".number_format($res_ic[0]['to'], 2)."€";
-					if(isset($res_ic[1]['to'])) { $txt .= "<br />".number_format($res_ic[1]['to'], 2)."€"; $total_ca += $res_ic[1]['to']; }
-					if(isset($res_ic[2]['to'])) { $txt .= "<br />".number_format($res_ic[2]['to'], 2)."€"; $total_ca += $res_ic[2]['to']; }
-					if(isset($res_ic[3]['to'])) { $txt .= "<br />".number_format($res_ic[3]['to'], 2)."€"; $total_ca += $res_ic[3]['to']; }
-					if(isset($res_ic[4]['to'])) { $txt .= "<br />".number_format($res_ic[4]['to'], 2)."€"; $total_ca += $res_ic[4]['to'];	}	 
-					$txt .= "</td>";
-			
-					$total_ca = 
-			
-						$info_user_cashier = '-';
+					
+					$bgcolor = '#ECECEC';
+					if(!isset($res_ic[0]['status'])) $res_ic[0]['status'] = '';
+					if($res_ic[0]['status'] == 'error') $bgcolor = '#ff6400';
+					if(isset($res_ic[1]['status'])) if($res_ic[1]['status'] == 'error') $bgcolor = '#ff6400';
+					if(isset($res_ic[2]['status'])) if($res_ic[2]['status'] == 'error') $bgcolor = '#ff6400';
+					if(isset($res_ic[3]['status'])) if($res_ic[3]['status'] == 'error') $bgcolor = '#ff6400';
+					if(isset($res_ic[4]['status'])) if($res_ic[4]['status'] == 'error') $bgcolor = '#ff6400';
+					
+					$txt .= "<tr bgcolor='#ECECEC'>";
+					$txt .= "<td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;'>$row->name</td>";
+					$txt .= "<td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;'>";
+					if(!isset($res_ic[0]['date'])) $res_ic[0]['date'] = '';
+					$txt .= $res_ic[0]['date'];
+					if(isset($res_ic[1]['date'])) $txt .= "<hr />".$res_ic[1]['date'];
+					if(isset($res_ic[2]['date'])) $txt .= "<hr />".$res_ic[2]['date'];
+					if(isset($res_ic[3]['date'])) $txt .= "<hr />".$res_ic[3]['date'];
+					if(isset($res_ic[4]['date'])) $txt .= "<hr />".$res_ic[4]['date'];
+					$txt .= " </td>";
+					$txt .= "<td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;'>";			
+					$info_user_cashier = '-';
 					if(isset($res_ic[0]['id_user_cashier'])) $info_user_cashier = $this->hmw->getUser($res_ic[0]['id_user_cashier'])->username;
 					$info_user_cashier1 = '-';
 					if(isset($res_ic[1]['id_user_cashier'])) $info_user_cashier1 = $this->hmw->getUser($res_ic[1]['id_user_cashier'])->username;
@@ -345,67 +365,59 @@ class webCashier extends CI_Controller {
 					if(isset($res_ic[3]['id_user_cashier'])) $info_user_cashier3 = $this->hmw->getUser($res_ic[3]['id_user_cashier'])->username;
 					$info_user_cashier4 = '-';
 					if(isset($res_ic[4]['id_user_cashier'])) $info_user_cashier4 = $this->hmw->getUser($res_ic[4]['id_user_cashier'])->username;
-					$txt .= "<td>".$info_user_cashier;
-					if(isset($res_ic[1]['id_user_cashier'])) $txt .= "<br />".$info_user_cashier1;
-					if(isset($res_ic[2]['id_user_cashier'])) $txt .= "<br />".$info_user_cashier2;
-					if(isset($res_ic[3]['id_user_cashier'])) $txt .= "<br />".$info_user_cashier3;
-					if(isset($res_ic[4]['id_user_cashier'])) $txt .= "<br />".$info_user_cashier4;
-					$txt .= "</td>";
-
-					$bgcolor = '#fff';
-					if(!isset($res_ic[0]['status'])) $res_ic[0]['status'] = '';
-					if($res_ic[0]['status'] == 'error') $bgcolor = '#ff6400';
-					if(isset($res_ic[1]['status'])) if($res_ic[1]['status'] == 'error') $bgcolor = '#ff6400';
-					if(isset($res_ic[2]['status'])) if($res_ic[2]['status'] == 'error') $bgcolor = '#ff6400';
-					if(isset($res_ic[3]['status'])) if($res_ic[3]['status'] == 'error') $bgcolor = '#ff6400';
-					if(isset($res_ic[4]['status'])) if($res_ic[4]['status'] == 'error') $bgcolor = '#ff6400';
-					$txt .= "<td align='center' bgcolor='$bgcolor'>".$res_ic[0]['status'];
-					if(isset($res_ic[1]['status'])) $txt .= "<br />".$res_ic[1]['status'];
-					if(isset($res_ic[2]['status'])) $txt .= "<br />".$res_ic[2]['status'];
-					if(isset($res_ic[3]['status'])) $txt .= "<br />".$res_ic[3]['status'];
-					if(isset($res_ic[4]['status'])) $txt .= "<br />".$res_ic[4]['status'];
-					$txt .= "</td>";
-				
-					if(!isset($res_ic[0]['date'])) $res_ic[0]['date'] = '';
-					$txt .= "<td>".$res_ic[0]['date'];
-					if(isset($res_ic[1]['date'])) $txt .= "<br />".$res_ic[1]['date'];
-					if(isset($res_ic[2]['date'])) $txt .= "<br />".$res_ic[2]['date'];
-					if(isset($res_ic[3]['date'])) $txt .= "<br />".$res_ic[3]['date'];
-					if(isset($res_ic[4]['date'])) $txt .= "<br />".$res_ic[4]['date'];
-					$txt .= "</td>";
-			
+					$txt .= $info_user_cashier;
+					if(isset($res_ic[1]['id_user_cashier'])) $txt .= "<hr />".$info_user_cashier1;
+					if(isset($res_ic[2]['id_user_cashier'])) $txt .= "<hr />".$info_user_cashier2;
+					if(isset($res_ic[3]['id_user_cashier'])) $txt .= "<hr />".$info_user_cashier3;
+					if(isset($res_ic[4]['id_user_cashier'])) $txt .= "<hr />".$info_user_cashier4;
+					$txt .= " </td>";
+					$txt .= "<td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;' bgcolor='$bgcolor'>";	
+					$txt .=	$res_ic[0]['status'];
+					if(isset($res_ic[1]['status'])) $txt .= "<hr />".$res_ic[1]['status'];
+					if(isset($res_ic[2]['status'])) $txt .= "<hr />".$res_ic[2]['status'];
+					if(isset($res_ic[3]['status'])) $txt .= "<hr />".$res_ic[3]['status'];
+					if(isset($res_ic[4]['status'])) $txt .= "<hr />".$res_ic[4]['status'];
+					$txt .= "</td>
+					<td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;'>
+					";
+					if(!isset($res_ic[0]['to'])) $res_ic[0]['to'] = 0;
+					$txt .= number_format($res_ic[0]['to'], 2)."€";
+					if(isset($res_ic[1]['to'])) { $txt .= "<hr />".number_format($res_ic[1]['to'], 2)."€"; $total_ca += $res_ic[1]['to']; }
+					if(isset($res_ic[2]['to'])) { $txt .= "<hr />".number_format($res_ic[2]['to'], 2)."€"; $total_ca += $res_ic[2]['to']; }
+					if(isset($res_ic[3]['to'])) { $txt .= "<hr />".number_format($res_ic[3]['to'], 2)."€"; $total_ca += $res_ic[3]['to']; }
+					if(isset($res_ic[4]['to'])) { $txt .= "<hr />".number_format($res_ic[4]['to'], 2)."€"; $total_ca += $res_ic[4]['to']; }	 
+					$txt .= " </td><td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;'>
+					";
 					if(!isset($res_ic[0]['cashier_diff'])) $res_ic[0]['cashier_diff'] = 0;
 					if(isset($res_ic[0])) $operand = $this->addOperand($res_ic[0]['cashier_diff']);
 					if(isset($res_ic[1])) $operand1 = $this->addOperand($res_ic[1]['cashier_diff']);
 					if(isset($res_ic[2])) $operand2 = $this->addOperand($res_ic[2]['cashier_diff']);
 					if(isset($res_ic[3])) $operand3 = $this->addOperand($res_ic[3]['cashier_diff']);
 					if(isset($res_ic[4])) $operand4 = $this->addOperand($res_ic[4]['cashier_diff']);			
-					$txt .= "<td>";
 					if(isset($res_ic[0])) $txt .= "$operand". number_format($res_ic[0]['cashier_diff'], 2)."€";
-					if(isset($res_ic[1])) $txt .= "<br />$operand1". number_format($res_ic[1]['cashier_diff'], 2)."€";
-					if(isset($res_ic[2])) $txt .= "<br />$operand2". number_format($res_ic[2]['cashier_diff'], 2)."€";
-					if(isset($res_ic[3])) $txt .= "<br />$operand3". number_format($res_ic[3]['cashier_diff'], 2)."€";
-					if(isset($res_ic[4])) $txt .= "<br />$operand4". number_format($res_ic[4]['cashier_diff'], 2)."€";
-					$txt .= "</td>";
-			
-					$txt .= "<td>";
+					if(isset($res_ic[1])) $txt .= "<hr />$operand1". number_format($res_ic[1]['cashier_diff'], 2)."€";
+					if(isset($res_ic[2])) $txt .= "<hr />$operand2". number_format($res_ic[2]['cashier_diff'], 2)."€";
+					if(isset($res_ic[3])) $txt .= "<hr />$operand3". number_format($res_ic[3]['cashier_diff'], 2)."€";
+					if(isset($res_ic[4])) $txt .= "<hr />$operand4". number_format($res_ic[4]['cashier_diff'], 2)."€";
+					$txt .= "<br />";
 					if(!isset($res_ic[0]['cancel_ticket'])) $res_ic[0]['cancel_ticket'] = '';
-					if(isset($res_ic[0])) $txt .= $res_ic[0]['cancel_ticket'];
-					if(isset($res_ic[1])) $txt .= "<br />".$res_ic[1]['cancel_ticket'];
-					if(isset($res_ic[2])) $txt .= "<br />".$res_ic[2]['cancel_ticket'];
-					if(isset($res_ic[3])) $txt .= "<br />".$res_ic[3]['cancel_ticket'];
-					if(isset($res_ic[4])) $txt .= "<br />".$res_ic[4]['cancel_ticket'];
-					$txt .= "</td>";
-					
-					$txt .= "<td>";
+					if(isset($res_ic[0])) $txt .= "[".$res_ic[0]['cancel_ticket']."]";
+					if(isset($res_ic[1])) $txt .= "<hr />[".$res_ic[1]['cancel_ticket']."]";
+					if(isset($res_ic[2])) $txt .= "<hr />[".$res_ic[2]['cancel_ticket']."]";
+					if(isset($res_ic[3])) $txt .= "<hr />[".$res_ic[3]['cancel_ticket']."]";
+					if(isset($res_ic[4])) $txt .= "<hr />[".$res_ic[4]['cancel_ticket']."]";
+					$txt .= "<br />";
 					if(!isset($res_ic[0]['comment_cashier'])) $res_ic[0]['comment_cashier'] = '';
 					if(isset($res_ic[0])) $txt .= $res_ic[0]['comment_cashier'];
-					if(isset($res_ic[1])) $txt .= "<br />".$res_ic[1]['comment_cashier'];
-					if(isset($res_ic[2])) $txt .= "<br />".$res_ic[2]['comment_cashier'];
-					if(isset($res_ic[3])) $txt .= "<br />".$res_ic[3]['comment_cashier'];
-					if(isset($res_ic[4])) $txt .= "<br />".$res_ic[4]['comment_cashier'];
-					$txt .= "</td>";
-			
+					if(isset($res_ic[1])) $txt .= "<hr />".$res_ic[1]['comment_cashier'];
+					if(isset($res_ic[2])) $txt .= "<hr />".$res_ic[2]['comment_cashier'];
+					if(isset($res_ic[3])) $txt .= "<hr />".$res_ic[3]['comment_cashier'];
+					if(isset($res_ic[4])) $txt .= "<hr />".$res_ic[4]['comment_cashier'];
+					$txt .= "
+					</td>
+
+					<td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;'>
+					";
 					//checklist
 					$this->db->where('DATE_FORMAT( checklist_records.date,  \'%Y-%m-%d\' ) = CURDATE()');
 					$this->db->where('checklists.id_bu', $row->id);
@@ -424,40 +436,34 @@ class webCashier extends CI_Controller {
 					if(isset($res_cl[2]['user'])) $info_user_cl2 = $this->hmw->getUser($res_cl[2]['user'])->username;
 					if(isset($res_cl[3]['user'])) $info_user_cl3 = $this->hmw->getUser($res_cl[3]['user'])->username;
 					if(isset($res_cl[4]['user'])) $info_user_cl4 = $this->hmw->getUser($res_cl[4]['user'])->username;
-			
-					$txt .= "<td align='center'>";
-					if(isset($res_cl[0])) $txt .=  "X";
-					if(isset($res_cl[1])) $txt .=  "<br />X";
-					if(isset($res_cl[2])) $txt .=  "<br />X";
-					if(isset($res_cl[3])) $txt .=  "<br />X";
-					if(isset($res_cl[4])) $txt .=  "<br />X";			
-					$txt .= "</td>";
-			
-					$txt .= "<td>";
 					if(isset($res_cl[0])) $txt .=  $info_user_cl;
-					if(isset($res_cl[1])) $txt .=  "<br />".$info_user_cl1;
-					if(isset($res_cl[2])) $txt .=  "<br />".$info_user_cl2;
-					if(isset($res_cl[3])) $txt .=  "<br />".$info_user_cl3;
-					if(isset($res_cl[4])) $txt .=  "<br />".$info_user_cl4;
+					if(isset($res_cl[1])) $txt .=  "<hr />".$info_user_cl1;
+					if(isset($res_cl[2])) $txt .=  "<hr />".$info_user_cl2;
+					if(isset($res_cl[3])) $txt .=  "<hr />".$info_user_cl3;
+					if(isset($res_cl[4])) $txt .=  "<hr />".$info_user_cl4;
 						
-					$txt .= "</td>";
-					$txt .= "<td>";
+					$txt .= "<br />";
 					if(isset($res_cl[0])) $txt .=  $res_cl[0]['date'];
-					if(isset($res_cl[1])) $txt .=  "<br>".$res_cl[1]['date'];
-					if(isset($res_cl[2])) $txt .=  "<br>".$res_cl[2]['date'];
-					if(isset($res_cl[3])) $txt .=  "<br>".$res_cl[3]['date'];
-					if(isset($res_cl[4])) $txt .=  "<br>".$res_cl[4]['date'];
-					$txt .= "</td>";
-
-					$txt .= "</tr>";
+					if(isset($res_cl[1])) $txt .=  "<hr>".$res_cl[1]['date'];
+					if(isset($res_cl[2])) $txt .=  "<hr>".$res_cl[2]['date'];
+					if(isset($res_cl[3])) $txt .=  "<hr>".$res_cl[3]['date'];
+					if(isset($res_cl[4])) $txt .=  "<hr>".$res_cl[4]['date'];
+					
+					$txt .= "
+						</td>
+					</tr>
+					";
 
 				}
-				$txt .= "</table></font></body></html>";
-				//echo $txt;
-
-				$this->mmail->prepare('RMS CLOSE REPORT', $txt)
-					->toList('close_reports')
-						->send();
+				
+				$txt .= "
+				</tbody>
+				</table>
+				";	
+				
+				$final_txt = $this->mmail->templateEmail($txt);
+				//echo $final_txt;
+				$this->mmail->prepare('RMS CLOSE REPORT', $final_txt)->toList('close_reports')->send();
 
 			}
 
@@ -752,283 +758,283 @@ class webCashier extends CI_Controller {
 				}
 			}
 
-		//to clean db after test, delete the last record from pos_movements 
-		public function save()
-		{
+			//to clean db after test, delete the last record from pos_movements 
+			public function save()
+			{
 	
-			$data = array();
-			$this->hmw->keyLogin();
-			$user						= $this->ion_auth->user()->row();
-			$user_groups 				= $this->ion_auth->get_users_groups()->result();
-			$data['username']			= $user->username;
-			$data['user_groups']		= $user_groups[0];
-			$data["keylogin"]			= $this->session->userdata('keylogin');
-			$data['title']				= 'Cashier';
-			$data['bu_name'] 			= $this->session->userdata('bu_name');
-			$data['mov']				= $this->input->post('mov');
-			$userpost 					= $this->input->post('user');
-			$id_bu			 			= $this->session->userdata('bu_id');
-			$param_pos_info 			= array();
-			$param_pos_info['id_bu'] 	= $id_bu;
-			$param_pos_info['archive'] 	= $this->input->post('archive');
+				$data = array();
+				$this->hmw->keyLogin();
+				$user						= $this->ion_auth->user()->row();
+				$user_groups 				= $this->ion_auth->get_users_groups()->result();
+				$data['username']			= $user->username;
+				$data['user_groups']		= $user_groups[0];
+				$data["keylogin"]			= $this->session->userdata('keylogin');
+				$data['title']				= 'Cashier';
+				$data['bu_name'] 			= $this->session->userdata('bu_name');
+				$data['mov']				= $this->input->post('mov');
+				$userpost 					= $this->input->post('user');
+				$id_bu			 			= $this->session->userdata('bu_id');
+				$param_pos_info 			= array();
+				$param_pos_info['id_bu'] 	= $id_bu;
+				$param_pos_info['archive'] 	= $this->input->post('archive');
 		
-			if(empty($userpost)) { 
-				$userid = $user->id; 
-			} else {
-				$userid = $this->input->post('user');
-			}
+				if(empty($userpost)) { 
+					$userid = $user->id; 
+				} else {
+					$userid = $this->input->post('user');
+				}
 		
-			$postmov = $this->input->post('mov');
-			if(empty($postmov)) exit('Error, empty movement, please try again.');
+				$postmov = $this->input->post('mov');
+				if(empty($postmov)) exit('Error, empty movement, please try again.');
 		
-			$this->db->trans_begin();
-			$keys = "(movement, id_user, comment, prelevement_amount, safe_cash_amount, safe_tr_amount, id_bu";
+				$this->db->trans_begin();
+				$keys = "(movement, id_user, comment, prelevement_amount, safe_cash_amount, safe_tr_amount, id_bu";
 		
 		
-			$values = "('" . $postmov . "', " . $userid . ", '" . addslashes($this->input->post('comment')) . "', '" . $this->input->post('prelevement') . "', '" 
-				. $this->cashier->calc('safe_current_cash_amount', $id_bu) . "', '" . $this->cashier->calc('safe_current_tr_num', $id_bu) . "', '"
-					. $id_bu . "'"; 
+				$values = "('" . $postmov . "', " . $userid . ", '" . addslashes($this->input->post('comment')) . "', '" . $this->input->post('prelevement') . "', '" 
+					. $this->cashier->calc('safe_current_cash_amount', $id_bu) . "', '" . $this->cashier->calc('safe_current_tr_num', $id_bu) . "', '"
+						. $id_bu . "'"; 
 
-			$comment_report = $this->input->post('comment_report');
-			if(!empty($comment_report)){
-				$keys .= ", comment_report";
-				$values	.= ", '" . addslashes($this->input->post('comment_report')) . "'";
-			} 
+				$comment_report = $this->input->post('comment_report');
+				if(!empty($comment_report)){
+					$keys .= ", comment_report";
+					$values	.= ", '" . addslashes($this->input->post('comment_report')) . "'";
+				} 
 		
-			if($this->input->post('mov') == 'close') {
-				$keys .= ", pos_cash_amount";
-				$values .= ", '" . $this->cashier->posInfo('cashfloatArchive', $param_pos_info) . "'";
-			}
-			$keys .= ")";
-			$values .= ")";
-			$queryStringPm = "INSERT INTO `pos_movements` " . $keys . "VALUES" . $values . ";";
-			$this->db->query($queryStringPm);
-			$pmid = $this->db->insert_id();
+				if($this->input->post('mov') == 'close') {
+					$keys .= ", pos_cash_amount";
+					$values .= ", '" . $this->cashier->posInfo('cashfloatArchive', $param_pos_info) . "'";
+				}
+				$keys .= ")";
+				$values .= ")";
+				$queryStringPm = "INSERT INTO `pos_movements` " . $keys . "VALUES" . $values . ";";
+				$this->db->query($queryStringPm);
+				$pmid = $this->db->insert_id();
 
-			$payid = $pmid;
-			$pay = array();
-			$total_to = 0;
+				$payid = $pmid;
+				$pay = array();
+				$total_to = 0;
 		
-			if($this->input->post('mov')) { 
-				foreach ($this->input->post() as $key => $val) {	
-					$ex = @explode('_',$key);
-					if($ex[0] == 'man' OR $ex[0] == 'pos') {
-						$pay[$ex[1]][$ex[0]] = $val;
+				if($this->input->post('mov')) { 
+					foreach ($this->input->post() as $key => $val) {	
+						$ex = @explode('_',$key);
+						if($ex[0] == 'man' OR $ex[0] == 'pos') {
+							$pay[$ex[1]][$ex[0]] = $val;
+						}
+					}
+			
+					if($this->input->post('mov') != 'safe_in' AND $this->input->post('mov') != 'safe_out') {
+				
+						$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'));
+						$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cb'));
+					}
+
+					foreach ($pay as $idp => $val2) {
+						if(!isset($val2['man']) OR empty($val2['man']) ) $val2['man'] = 0;
+						if(!isset($val2['pos']) OR empty($val2['pos']) ) $val2['pos'] = 0;
+						$val2man = $this->cashier->clean_number($val2['man']);
+						if($this->input->post('mov') == 'safe_out') $val2man = -1 * abs($val2man);
+						$queryStringPp = "INSERT INTO `pos_payments` (id_payment, id_movement, amount_pos, amount_user) VALUES ('" . $idp . "', '" . $pmid . "', '" . $this->cashier->clean_number($val2['pos']) . "', '" . $val2man . "');";  
+						$this->db->query($queryStringPp);
+						$total_to += $this->cashier->clean_number($val2['pos']); 
 					}
 				}
-			
-				if($this->input->post('mov') != 'safe_in' AND $this->input->post('mov') != 'safe_out') {
-				
-					$pay[1]['man'] = $this->cashier->clean_number($this->input->post('cash2'));
-					$pay[2]['man'] = $this->cashier->clean_number($this->input->post('cb'));
+		
+				$pay_values = $pay;
+				foreach ($pay as $key => $value) {
+					$this->db->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
+					$r = $this->db->get('pos_payments_type') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+					$payment = $r->row_array();
+					$pay_values[$key]['id'] = $payment['id'];
+					$pay_values[$key]['name'] = $payment['name'];
+					if(!isset($value['man']) OR empty($value['man']) ) $pay_values[$key]['man'] = 0;
+					if(!isset($value['pos']) OR empty($value['pos']) ) $pay_values[$key]['pos'] = 0;
 				}
-
-				foreach ($pay as $idp => $val2) {
-					if(!isset($val2['man']) OR empty($val2['man']) ) $val2['man'] = 0;
-					if(!isset($val2['pos']) OR empty($val2['pos']) ) $val2['pos'] = 0;
-					$val2man = $this->cashier->clean_number($val2['man']);
-					if($this->input->post('mov') == 'safe_out') $val2man = -1 * abs($val2man);
-					$queryStringPp = "INSERT INTO `pos_payments` (id_payment, id_movement, amount_pos, amount_user) VALUES ('" . $idp . "', '" . $pmid . "', '" . $this->cashier->clean_number($val2['pos']) . "', '" . $val2man . "');";  
-					$this->db->query($queryStringPp);
-					$total_to += $this->cashier->clean_number($val2['pos']); 
-				}
-			}
 		
-			$pay_values = $pay;
-			foreach ($pay as $key => $value) {
-				$this->db->where('active',1)->where('id_bu', $id_bu)->where('id', $key);
-				$r = $this->db->get('pos_payments_type') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-				$payment = $r->row_array();
-				$pay_values[$key]['id'] = $payment['id'];
-				$pay_values[$key]['name'] = $payment['name'];
-				if(!isset($value['man']) OR empty($value['man']) ) $pay_values[$key]['man'] = 0;
-				if(!isset($value['pos']) OR empty($value['pos']) ) $pay_values[$key]['pos'] = 0;
-			}
+				uasort($pay_values, array("webcashier", "cmp"));
 		
-			uasort($pay_values, array("webcashier", "cmp"));
-		
-			if($this->input->post('mov') == 'close') {
+				if($this->input->post('mov') == 'close') {
 			
-				$this->db->select('cashier_alert_amount_close_min,cashier_alert_amount_close_max');
-				$this->db->from('bus');
-				$this->db->where('id', $id_bu);
-				$alert_amount = $this->db->get()->row_array() or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
-					
-				$cashpad_amount = $this->cashier->posInfo('cashfloatArchive', $param_pos_info);
-				$cash_user = floatval($pay_values[1]['man']);
-				$prelevement = floatval($this->input->post('prelevement'));
-				@$amount_pos  = $cashpad_amount+$pay_values[2]['pos']+$pay_values[3]['pos']+$pay_values[4]['pos']+$pay_values[5]['pos']+$pay_values[12]['pos']+$pay_values[13]['pos']+$pay_values[14]['pos']+$pay_values[11]['pos'];
-				@$amount_user = $pay_values[1]['man']+$pay_values[2]['man']+$pay_values[3]['man']+$pay_values[4]['man']+$pay_values[13]['man']+$pay_values[5]['pos']+$pay_values[12]['pos']+$pay_values[14]['pos']+$pay_values[11]['pos']+$prelevement; 
-			
-				$diff 				= $amount_user - $amount_pos ;
-				$test_diff 			= false;
-				$test_diff_control 	= false;
-			
-				if($diff <= $alert_amount['cashier_alert_amount_close_min']) { $test_diff = true;  $test_diff_control = true; }
-				if($diff >= $alert_amount['cashier_alert_amount_close_max']) { $test_diff = false; $test_diff_control = true; }
-				
-				if (!$this->input->post('blc') AND $test_diff) {
-					$this->db->trans_rollback();
-					$form_values = $this->input->post();
-					
-					$form_values['cashpad_amount'] = $cashpad_amount;
-					$form_values['diff'] = $diff;
-					$this->session->set_flashdata('form_values', $form_values);
-					$this->session->set_flashdata('pay_values', $pay_values);
-
-					$varslog = "Closing fail, rollback, redirecting to movement - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min]";
-					//error_log($varslog);
-					
-					redirect('/webcashier/movement/close', 'location');
-					
-				} else {
-					
-					$this->db->select('users.username, users.email, users.id');
-					$this->db->distinct('users.username');
-					$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
-					$this->db->join('users_groups', 'users.id = users_groups.user_id');
-					$this->db->where('users.active', 1);
-					$this->db->where_in('users_groups.group_id', array(1,4));
-					$this->db->where('users_bus.bu_id', $id_bu);
-					$query = $this->db->get("users");
-					$seterror_status = false; 
-
-					$server_name = $this->hmw->getParam('server_name');
-					$this->db->select('name');
+					$this->db->select('cashier_alert_amount_close_min,cashier_alert_amount_close_max');
+					$this->db->from('bus');
 					$this->db->where('id', $id_bu);
-					$bu_name = $this->db->get('bus')->row_array()['name'];
-					$operand = $this->addOperand($diff);
-
-					// send email
-					$subject = 'RMS CASHIER WARNING ' . $bu_name . ': Erreur de caisse';
-					$link = 'http://' . $server_name . '/webcashier/report/#' . $pmid;
-					$msg = 'BU: ' . $bu_name . ' | ID: ' . $pmid . '<br />Difference de '
-						. $operand . number_format($diff , 2) . '€ <br /><a href="'
-							. $link . '">' . $link . "</a>";
-
-					$this->mmail->prepare($subject, $msg)
-						->toList('cachier_alerts', $id_bu)
-							->send();
-				}
-
-				$this->db->trans_commit();
-
-				if($test_diff_control) {
-					$this->db->set('status', 'error');
-					$seterror_status = 'DIFF';
-					$this->db->where('id', $pmid);
-					$this->db->update('pos_movements');
-				}
-				
-				$this->closing($this->input->post('archive'), $pmid);
-				
-				//set error status if cancelled receipts
-				$cancel_ticket = false;
-				$cancelledReceipts = $this->cashier->getArchivedCancelledReceipts($id_bu, $this->input->post('archive'));
-				if (count($cancelledReceipts) > 0) {
-					$this->db->set('status', 'error');
-					$seterror_status = 'RCPT';
-					$this->db->where('id', $pmid);
-					$this->db->update('pos_movements');
-					$cancel_ticket = count($cancelledReceipts);
-				}
+					$alert_amount = $this->db->get()->row_array() or die('ERROR: (probably missing value in database) '.$this->db->_error_message.error_log('ERROR '.$this->db->_error_message()));
+					
+					$cashpad_amount = $this->cashier->posInfo('cashfloatArchive', $param_pos_info);
+					$cash_user = floatval($pay_values[1]['man']);
+					$prelevement = floatval($this->input->post('prelevement'));
+					@$amount_pos  = $cashpad_amount+$pay_values[2]['pos']+$pay_values[3]['pos']+$pay_values[4]['pos']+$pay_values[5]['pos']+$pay_values[12]['pos']+$pay_values[13]['pos']+$pay_values[14]['pos']+$pay_values[11]['pos'];
+					@$amount_user = $pay_values[1]['man']+$pay_values[2]['man']+$pay_values[3]['man']+$pay_values[4]['man']+$pay_values[13]['man']+$pay_values[5]['pos']+$pay_values[12]['pos']+$pay_values[14]['pos']+$pay_values[11]['pos']+$prelevement; 
 			
-				//insert into infos_close
-				$this->db->set('cashier_diff', $diff);
-				$this->db->set('bu_id', $id_bu);
-				$this->db->set('id_pos_movements', $pmid);
-				$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
-				$this->db->set('id_user_cashier', $userid);
-				$this->db->set('to', $total_to);
-				if($seterror_status)	$this->db->set('status', 'error');
-				if($cancel_ticket)		$this->db->set('cancel_ticket', $cancel_ticket);
-				$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+					$diff 				= $amount_user - $amount_pos ;
+					$test_diff 			= false;
+					$test_diff_control 	= false;
+			
+					if($diff <= $alert_amount['cashier_alert_amount_close_min']) { $test_diff = true;  $test_diff_control = true; }
+					if($diff >= $alert_amount['cashier_alert_amount_close_max']) { $test_diff = false; $test_diff_control = true; }
+				
+					if (!$this->input->post('blc') AND $test_diff) {
+						$this->db->trans_rollback();
+						$form_values = $this->input->post();
+					
+						$form_values['cashpad_amount'] = $cashpad_amount;
+						$form_values['diff'] = $diff;
+						$this->session->set_flashdata('form_values', $form_values);
+						$this->session->set_flashdata('pay_values', $pay_values);
+
+						$varslog = "Closing fail, rollback, redirecting to movement - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min]";
+						//error_log($varslog);
+					
+						redirect('/webcashier/movement/close', 'location');
+					
+					} else {
+					
+						$this->db->select('users.username, users.email, users.id');
+						$this->db->distinct('users.username');
+						$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
+						$this->db->join('users_groups', 'users.id = users_groups.user_id');
+						$this->db->where('users.active', 1);
+						$this->db->where_in('users_groups.group_id', array(1,4));
+						$this->db->where('users_bus.bu_id', $id_bu);
+						$query = $this->db->get("users");
+						$seterror_status = false; 
+
+						$server_name = $this->hmw->getParam('server_name');
+						$this->db->select('name');
+						$this->db->where('id', $id_bu);
+						$bu_name = $this->db->get('bus')->row_array()['name'];
+						$operand = $this->addOperand($diff);
+
+						// send email
+						$subject = 'RMS CASHIER WARNING ' . $bu_name . ': Erreur de caisse';
+						$link = 'http://' . $server_name . '/webcashier/report/#' . $pmid;
+						$msg = 'BU: ' . $bu_name . ' | ID: ' . $pmid . '<br />Difference de '
+							. $operand . number_format($diff , 2) . '€ <br /><a href="'
+								. $link . '">' . $link . "</a>";
+
+						$this->mmail->prepare($subject, $msg)
+							->toList('cachier_alerts', $id_bu)
+								->send();
+					}
+
+					$this->db->trans_commit();
+
+					if($test_diff_control) {
+						$this->db->set('status', 'error');
+						$seterror_status = 'DIFF';
+						$this->db->where('id', $pmid);
+						$this->db->update('pos_movements');
+					}
+				
+					$this->closing($this->input->post('archive'), $pmid);
+				
+					//set error status if cancelled receipts
+					$cancel_ticket = false;
+					$cancelledReceipts = $this->cashier->getArchivedCancelledReceipts($id_bu, $this->input->post('archive'));
+					if (count($cancelledReceipts) > 0) {
+						$this->db->set('status', 'error');
+						$seterror_status = 'RCPT';
+						$this->db->where('id', $pmid);
+						$this->db->update('pos_movements');
+						$cancel_ticket = count($cancelledReceipts);
+					}
+			
+					//insert into infos_close
+					$this->db->set('cashier_diff', $diff);
+					$this->db->set('bu_id', $id_bu);
+					$this->db->set('id_pos_movements', $pmid);
+					$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
+					$this->db->set('id_user_cashier', $userid);
+					$this->db->set('to', $total_to);
+					if($seterror_status)	$this->db->set('status', 'error');
+					if($cancel_ticket)		$this->db->set('cancel_ticket', $cancel_ticket);
+					$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			
 		
-				$varslog = "Closing processed - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min] - seterror_status = $seterror_status";
-				error_log($varslog);				
+					$varslog = "Closing processed - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min] - seterror_status = $seterror_status";
+					error_log($varslog);				
 				
-			} else {
-				$this->db->trans_commit();
+				} else {
+					$this->db->trans_commit();
+				}
+	
+				$data['idtrans'] = $payid;
+				$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
+				$this->load->view('jq_header_pre', $headers['header_pre']);
+				$this->load->view('jq_header_post', $headers['header_post']);
+				$this->load->view('webcashier/save', $data);
+				$this->load->view('jq_footer');
 			}
 	
-			$data['idtrans'] = $payid;
-			$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
-			$this->load->view('jq_header_pre', $headers['header_pre']);
-			$this->load->view('jq_header_post', $headers['header_post']);
-			$this->load->view('webcashier/save', $data);
-			$this->load->view('jq_footer');
-		}
-	
-		private function cmp($a, $b) {
-			$ret = ($a['id'] > $b['id'] ? true : false);
-			return ($ret);
-		}
-
-		private function closing($file, $pmid)
-		{
-			$id_bu =  $this->session->userdata('bu_id');
-		
-			if(empty($file)) exit('Error: empty archive file');
-			if(empty($pmid)) exit('Error: empty movement id');
-		 
-			//Get archive info
-			$d = $this->cashier->getClosureData(null, $file, $id_bu);
-		
-
-			//fill pos_payments with closing data, update or create
-			foreach ($d['ca'] as $key => $val) {
-
-				$this->db->set('amount_pos', $val['SUM'])->where('id_movement', $pmid)->where('id_payment', $val['IDMETHOD']);
-				$this->db->update('pos_payments');
-				$af  = $this->db->affected_rows();
-
-				$this->db->select('amount_pos')->where('id_movement', $pmid)->where('amount_pos != 0');
-				$pos_payments = $this->db->get('pos_payments');
-			
-				if(empty($af) && empty($pos_payments)) {
-					$this->db->set('amount_pos', $val['SUM'])->set('id_movement', $pmid)->set('id_payment', $val['IDMETHOD']);
-					$this->db->insert('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-				}
+			private function cmp($a, $b) {
+				$ret = ($a['id'] > $b['id'] ? true : false);
+				return ($ret);
 			}
 
-			$this->db->set('closing_file', $file)->set('closing_id', $d['seqid'])->where('id', $pmid)->where('id_bu', $id_bu);
-			$this->db->update('pos_movements') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-		}
-
-		private function addOperand($num) {
-			if($num > 0) return "+";
-			return "";
-		}
-
-		// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckCashFund 1
-		public function cliCheckCashFund($id_bu)
-		{
-			if (!is_cli()) return 1;
-
-			$cashFund = $this->cashier->getCashFund($id_bu);
-
-			if ($cashFund > 0)
-				return 0;
-
-			$bu_name = $this->hmw->getBuInfo(intval($id_bu))->name;
-			$users   = $this->hmw->getBuUsers($id_bu, [ 1, 3, 4, 6 ]);
-
-			$email = [
-				'subject' => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse!',
-				'msg'     => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse! Insérer le fond de caisse.'
-			];
-
-			$this->hmw->sendNotif($email['msg'], $id_bu);
-
-			foreach ($users as $user)
+			private function closing($file, $pmid)
 			{
-				$email['to'] = $user->email;
-				$this->mmail->sendEmail($email);
+				$id_bu =  $this->session->userdata('bu_id');
+		
+				if(empty($file)) exit('Error: empty archive file');
+				if(empty($pmid)) exit('Error: empty movement id');
+		 
+				//Get archive info
+				$d = $this->cashier->getClosureData(null, $file, $id_bu);
+		
+
+				//fill pos_payments with closing data, update or create
+				foreach ($d['ca'] as $key => $val) {
+
+					$this->db->set('amount_pos', $val['SUM'])->where('id_movement', $pmid)->where('id_payment', $val['IDMETHOD']);
+					$this->db->update('pos_payments');
+					$af  = $this->db->affected_rows();
+
+					$this->db->select('amount_pos')->where('id_movement', $pmid)->where('amount_pos != 0');
+					$pos_payments = $this->db->get('pos_payments');
+			
+					if(empty($af) && empty($pos_payments)) {
+						$this->db->set('amount_pos', $val['SUM'])->set('id_movement', $pmid)->set('id_payment', $val['IDMETHOD']);
+						$this->db->insert('pos_payments') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+					}
+				}
+
+				$this->db->set('closing_file', $file)->set('closing_id', $d['seqid'])->where('id', $pmid)->where('id_bu', $id_bu);
+				$this->db->update('pos_movements') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			}
 
-			//add notif
-			$this->hmw->sendNotif($email['msg'], $id_bu);
+			private function addOperand($num) {
+				if($num > 0) return "+";
+				return "";
+			}
+
+			// cd /var/www/hank/rms/rms && php index.php webcashier cliCheckCashFund 1
+			public function cliCheckCashFund($id_bu)
+			{
+				if (!is_cli()) return 1;
+
+				$cashFund = $this->cashier->getCashFund($id_bu);
+
+				if ($cashFund > 0)
+					return 0;
+
+				$bu_name = $this->hmw->getBuInfo(intval($id_bu))->name;
+				$users   = $this->hmw->getBuUsers($id_bu, [ 1, 3, 4, 6 ]);
+
+				$email = [
+					'subject' => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse!',
+					'msg'     => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse! Insérer le fond de caisse.'
+				];
+
+				$this->hmw->sendNotif($email['msg'], $id_bu);
+
+				foreach ($users as $user)
+				{
+					$email['to'] = $user->email;
+					$this->mmail->sendEmail($email);
+				}
+
+				//add notif
+				$this->hmw->sendNotif($email['msg'], $id_bu);
+			}
 		}
-	}
-	?>
+		?>
