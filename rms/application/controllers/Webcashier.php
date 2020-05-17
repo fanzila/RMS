@@ -746,9 +746,11 @@ class webCashier extends CI_Controller {
 				$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
 				if($data['close_waiting']) {
 					header("Refresh:7");
-					$this->load->view('jq_header');
+					$this->load->view('jq_header_pre', $headers['header_pre']);
+					$this->load->view('jq_header_post', $headers['header_post']);
 					$this->load->view('webcashier/close_waiting',$data);
-					$this->load->view('jq_footer');		
+					$this->load->view('webcashier/jq_footer_spe');
+					$this->load->view('jq_footer');
 				} else {
 					$this->load->view('jq_header_pre', $headers['header_pre']);
 					$this->load->view('jq_header_post', $headers['header_post']);
