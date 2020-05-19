@@ -381,6 +381,7 @@ class webCashier extends CI_Controller {
 					";
 					if(!isset($res_ic[0]['to'])) $res_ic[0]['to'] = 0;
 					$txt .= number_format($res_ic[0]['to'], 2)."€";
+					$total_ca += $res_ic[0]['to'];
 					if(isset($res_ic[1]['to'])) { $txt .= "<hr />".number_format($res_ic[1]['to'], 2)."€"; $total_ca += $res_ic[1]['to']; }
 					if(isset($res_ic[2]['to'])) { $txt .= "<hr />".number_format($res_ic[2]['to'], 2)."€"; $total_ca += $res_ic[2]['to']; }
 					if(isset($res_ic[3]['to'])) { $txt .= "<hr />".number_format($res_ic[3]['to'], 2)."€"; $total_ca += $res_ic[3]['to']; }
