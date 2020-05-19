@@ -319,10 +319,10 @@ class webCashier extends CI_Controller {
 				TO
 				</td>
 				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
-				Diff [Ticket canceled] Comment close
+				Diff <br />(canceled)<br />Comment close
 				</td>
 				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
-				 User checklist / Date
+				 User checklist<br />Date
 				</td>
 				  
 				</tr>";
@@ -401,11 +401,11 @@ class webCashier extends CI_Controller {
 					if(isset($res_ic[4])) $txt .= "<hr />$operand4". number_format($res_ic[4]['cashier_diff'], 2)."€";
 					$txt .= "<br />";
 					if(!isset($res_ic[0]['cancel_ticket'])) $res_ic[0]['cancel_ticket'] = '';
-					if(isset($res_ic[0])) $txt .= "[".$res_ic[0]['cancel_ticket']."]";
-					if(isset($res_ic[1])) $txt .= "<hr />[".$res_ic[1]['cancel_ticket']."]";
-					if(isset($res_ic[2])) $txt .= "<hr />[".$res_ic[2]['cancel_ticket']."]";
-					if(isset($res_ic[3])) $txt .= "<hr />[".$res_ic[3]['cancel_ticket']."]";
-					if(isset($res_ic[4])) $txt .= "<hr />[".$res_ic[4]['cancel_ticket']."]";
+					if(isset($res_ic[0])) $txt .= "(".$res_ic[0]['cancel_ticket'].")";
+					if(isset($res_ic[1])) $txt .= "<hr />(".$res_ic[1]['cancel_ticket'].")";
+					if(isset($res_ic[2])) $txt .= "<hr />(".$res_ic[2]['cancel_ticket'].")";
+					if(isset($res_ic[3])) $txt .= "<hr />(".$res_ic[3]['cancel_ticket'].")";
+					if(isset($res_ic[4])) $txt .= "<hr />(".$res_ic[4]['cancel_ticket'].")";
 					$txt .= "<br />";
 					if(!isset($res_ic[0]['comment_cashier'])) $res_ic[0]['comment_cashier'] = '';
 					if(isset($res_ic[0])) $txt .= $res_ic[0]['comment_cashier'];
@@ -459,11 +459,12 @@ class webCashier extends CI_Controller {
 				$txt .= "
 				</tbody>
 				</table>
+				<small>Total CA = $total_ca €</small>
 				";	
 				
 				$final_txt = $this->mmail->templateEmail($txt);
-				//echo $final_txt;
-				$this->mmail->prepare('RMS CLOSE REPORT', $final_txt)->toList('close_reports')->send();
+				echo $final_txt;
+				//$this->mmail->prepare('RMS CLOSE REPORT', $final_txt)->toList('close_reports')->send();
 
 			}
 

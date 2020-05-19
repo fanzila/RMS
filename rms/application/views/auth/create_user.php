@@ -5,7 +5,7 @@
 <p><?php echo lang('create_user_subheading');?></p>
 
 <div id="infoMessage"><?php echo $message;?></div>
-<h1 style="color:red">RAPPEL: FAIRE LA DPAE!</h1>
+<div style="padding: 10px; background-color: #FF3B30; border: 3px solid #888; border-radius: 6px;"><h2>RAPPEL: FAIRE LA DPAE</h2></div>
 <?php 
 $attributes = array('rel' => 'external', 'data-ajax' => 'false');
 echo form_open("auth/create_user", $attributes);
@@ -34,20 +34,8 @@ echo form_open("auth/create_user", $attributes);
             Comments: <br />
             <?php echo form_input($comment);?>
       </p>
-
-	<? /**
-      <p>
-            <?php echo lang('create_user_password_label', 'password');?> <br />
-            <?php echo form_input($password);?>
-      </p>
-
-      <p>
-            <?php echo lang('create_user_password_confirm_label', 'password_confirm');?> <br />
-            <?php echo form_input($password_confirm);?>
-      </p>
-	**/ ?>
 	<td><label for="sdate" id="label">First Shift Date :</label></td>
-	<td><input type="text" data-role="date" id="sdate" name="sdate" data-clear-btn="true" /></td>
+	<td><input type="text" data-role="date" id="sdate" name="sdate" data-clear-btn="true" value="<? if(isset($first_shift)) echo "$first_shift"; ?>"></td>
     </div>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-7">
@@ -70,7 +58,7 @@ echo form_open("auth/create_user", $attributes);
     		<h3><?php echo lang('edit_user_bus_heading');?></h3>
             <?php foreach ($bus as $bu):?>
                 <label class="checkbox">
-                <input type="checkbox" name="bus[]" value="<?php echo $bu['id'];?>">
+                <input type="checkbox" name="bus[]" value="<?php echo $bu['id'];?>" <? if($bu_name == $bu['name']) echo "checked"; ?>>
                 <?php echo htmlspecialchars($bu['name'],ENT_QUOTES,'UTF-8');?>
                 </label>
             <?php endforeach?>
@@ -88,12 +76,11 @@ echo form_open("auth/create_user", $attributes);
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="box"> 
-          <textarea name="txtmessage"><?=$welcome_email?></textarea>
+          <textarea name="txtmessage"><?php if(isset($txtmessage)) { echo $txtmessage; } else { echo $welcome_email; } ?></textarea>
         </div>
     </div>
   </div>
 </div>
-          <h1 style="color:red">RAPPEL: FAIRE LA DPAE!</h1>
           <p><?php echo form_submit('submit', lang('create_user_submit_btn'));?></p>
 <?php echo form_close();?>
 	</div><!-- /content -->
