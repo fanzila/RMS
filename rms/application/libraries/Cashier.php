@@ -902,15 +902,13 @@ class Cashier {
 		return floatval($db->querySingle('SELECT SUM(CASH_FLOAT_IN) FROM CASHFLOAT;')) / 1000;
   }
   
-  public function getLastPosMovements($id_bu) {
+  public function getLastClose($id_bu) {
 	  $CI = & get_instance();
 	  $CI->load->database();
-	  $q = "SELECT id FROM pos_movements WHERE id_bu = $id_bu ORDER BY id DESC LIMIT 1";
+	  $q = "SELECT `id`,`date` FROM pos_movements WHERE id_bu = $id_bu ORDER BY id DESC LIMIT 1";
 	  $r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
-	  $o = $r->result_object();
-	  $ret = $o[0]->id;
-	  if(empty($ret)) $ret = 0;
-	  return $ret;
+	  $o = $r->result_array();
+	  return $o[0];
   }		
 }
 ?>

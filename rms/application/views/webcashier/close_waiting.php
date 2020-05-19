@@ -1,21 +1,21 @@
-	</div>
-	<div data-role="content" data-theme="a">
+</div>
+<div data-role="content" data-theme="a">
 
 
 
 <h4>Humm, impossible de trouver une cloture...</h4>
-Dernière cloture faite pour : <?=$archive_date?>, numéro : <?=$lastid?>
+Dernière cloture faite pour : <?=$lastCloseDate?>, numéro : <?=$lastCloseId?>
 
 
 
-							<h4>As tu bien cloturé la caisse ? </h4>
-							Si oui attends quelques minutes, la page de cloture va automatiquement et bientôt s'afficher ici.</h2>
-							<br />
-							Cause d'erreurs possibles : 
-							<ul>
-							<li>la caisse est éteinte ou sans réseau,</li>
-							<li>la dernière cloture est supérieur à 2 jours.</li>
-							</ul>
+<h4>As tu bien cloturé la caisse ? </h4>
+Si oui attends quelques minutes, la page de cloture va automatiquement et bientôt s'afficher ici.</h2>
+<br />
+Cause d'erreurs possibles : 
+<ul>
+	<li>la caisse est éteinte ou sans réseau,</li>
+	<li>la dernière cloture est supérieur à 2 jours.</li>
+</ul>
 
 							
 <div data-role="controlgroup" data-type="horizontal">
