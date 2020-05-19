@@ -297,7 +297,7 @@ class webCashier extends CI_Controller {
 
 				$this->db->select('id, name');
 				$query = $this->db->get('bus');
-				
+				$total_ca = 0;
 				
 				$txt = "<p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;'><b>RMS CLOSE REPORT ". date('d/m/Y'). "</b></p>
 					<table border='0' cellpadding='3' cellspacing='3' class='btn btn-primary' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;'>
@@ -334,7 +334,6 @@ class webCashier extends CI_Controller {
 					$this->db->where('bu_id', $row->id);
 					$query_ic = $this->db->get("infos_close");
 					$res_ic = $query_ic->result_array();
-					$total_ca = 0;
 					
 					$bgcolor = '#ECECEC';
 					if(!isset($res_ic[0]['status'])) $res_ic[0]['status'] = '';
@@ -463,8 +462,8 @@ class webCashier extends CI_Controller {
 				";	
 				
 				$final_txt = $this->mmail->templateEmail($txt);
-				echo $final_txt;
-				//$this->mmail->prepare('RMS CLOSE REPORT', $final_txt)->toList('close_reports')->send();
+				//echo $final_txt;
+				$this->mmail->prepare('RMS CLOSE REPORT', $final_txt)->toList('close_reports')->send();
 
 			}
 
