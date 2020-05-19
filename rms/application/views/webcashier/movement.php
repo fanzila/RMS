@@ -31,7 +31,7 @@
 							$value['man'] = str_replace(',', '.', $value['man']);
 							if ($value['id'] == 1) $value['pos'] = $form_values['cashpad_amount']-$form_values['prelevement'];
 							
-							if ($value['report'] == 'no') { $noreport = true; } 
+							if (($value['id'] == 12) OR ($value['id'] == 14) OR ($value['id'] == 10) OR ($value['id'] == 5) OR ($value['id'] == 11) OR ($value['id'] == 7) OR ($value['id'] == 15) OR ($value['id'] == 16)) { $noreport = true; } 
 							?>
 						<tr>
 							<td>
