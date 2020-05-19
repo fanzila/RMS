@@ -717,6 +717,7 @@ class webCashier extends CI_Controller {
 			
 					$param_pos_info['id_bu'] = $id_bu;
 					$data['seqid'] 		  	 = $d['seqid'];
+					$data['lastid']			 = $this->cashier->getLastPosMovements($id_bu);
 					
 					$data['close_waiting'] = false;
 					if(($archive_date == $today_date OR $archive_date == $yesterday_date) AND empty($osid)) { 

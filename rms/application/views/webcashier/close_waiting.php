@@ -4,7 +4,7 @@
 
 
 <h4>Humm, impossible de trouver une cloture...</h4>
-Dernière cloture faite pour : <?=$archive_date?>, numéro : <?=$seqid?>
+Dernière cloture faite pour : <?=$archive_date?>, numéro : <?=$lastid?>
 
 
 
