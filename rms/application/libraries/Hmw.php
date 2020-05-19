@@ -301,12 +301,7 @@ class Hmw {
 			$keylogin 		= $CI->session->userdata('keylogin');
 			$bu_name		= $CI->session->userdata('bu_name');
 			$username		= $CI->session->userdata('identity');
-
 			$buinfo 		= $CI->hmw->getBuInfo($bu_id);
-
-			//$CI->db->select('val')->from('bank_balance');
-			//$bal_res = $CI->db->get();
-			//$bal = $bal_res->row_array();
 
 			$CI->db->from('turnover')->order_by('date desc')->where('id_bu',$bu_id)->limit(1);
 		 	$bal_ca = $CI->db->get();
@@ -318,7 +313,6 @@ class Hmw {
 					'bu_id'	=> $bu_id
 					),
 				'header_post'	=> array(
-					//'bank_balance'	=> $bal['val'],
 					'bu_id'			=> $bu_id,
 					'bu_name'		=> $bu_name,
 					'bus_list'		=> $bus_list,

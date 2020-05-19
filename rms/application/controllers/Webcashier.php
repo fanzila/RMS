@@ -738,11 +738,7 @@ class webCashier extends CI_Controller {
 							$this->cashier->posInfo('updateUsers', $param_pos_info);
 							$this->cashier->InsertTerminals($id_bu);
 						} else {
-							$data['close_waiting'] = true;
-							$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier");
-							$this->load->view('jq_header', $headers['header_pre']);
-							$this->load->view('jq_header_post', $headers['header_post']);
-							$this->load->view('webcashier/close_waiting',$data);
+							$data['close_waiting'] = true;						
 						}
 					}
 				}
