@@ -18,9 +18,6 @@ Cause d'erreurs possibles :
 </ul>
 
 							
-<div data-role="controlgroup" data-type="horizontal">
-	<a href="/webcashier/" data-role="button" data-icon="arrow-l" data-theme="b" data-ajax="false">Retour</a><br />
-	<a href="/webcashier/movement/close?force=1" data-role="button" data-icon="arrow-r" data-theme="b" data-ajax="false" >Voir l'interface <br />(pour formation)</a>
-</div>	
+	<a href="/webcashier/movement/close?force=1" data-role="button" data-icon="arrow-r" data-theme="a" data-ajax="false" >Voir l'interface (formation)</a>
 
 </div>
