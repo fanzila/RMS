@@ -39,7 +39,7 @@ if($message) { ?>
 
 	<div class='column'>
 		<?php if($this->ion_auth_acl->has_permission('edit_user')) { ?>
-			<a data-ajax="false" href="auth/edit_user/<?=$user->id?>">
+			<a data-ajax="false" href="edit_user/<?=$user->id?>">
 		<? } ?>
 		
 		<?php echo htmlspecialchars($user->username,ENT_QUOTES,'UTF-8');?>
