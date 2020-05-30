@@ -581,7 +581,7 @@ class webCashier extends CI_Controller {
 				$lines					= array();
 		
 				$config_pages['base_url'] = base_url() . 'webcashier/report/';
-				$config_pages['per_page'] = 50;
+				$config_pages['per_page'] = 15;
 				$config_pages['use_page_numbers'] = TRUE;
 		
 				$this->db->select('pm.date, pm.id, u.username, pm.comment, pm.movement, pm.prelevement_amount, pm.pos_cash_amount, pm.safe_cash_amount, pm.safe_tr_amount, pm.closing_file, pm.corrected, pm.comment_report, pm.status, pm.employees_sp')
@@ -886,7 +886,7 @@ class webCashier extends CI_Controller {
 						$this->session->set_flashdata('pay_values', $pay_values);
 
 						$varslog = "Closing fail, rollback, redirecting to movement - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min]";
-						//error_log($varslog);
+						error_log($varslog);
 					
 						redirect('/webcashier/movement/close', 'location');
 					
@@ -927,6 +927,7 @@ class webCashier extends CI_Controller {
 						$seterror_status = 'DIFF';
 						$this->db->where('id', $pmid);
 						$this->db->update('pos_movements');
+						error_log('test_diff_control : '.$test_diff_control);
 					}
 				
 					$this->closing($this->input->post('archive'), $pmid);
@@ -940,6 +941,7 @@ class webCashier extends CI_Controller {
 						$this->db->where('id', $pmid);
 						$this->db->update('pos_movements');
 						$cancel_ticket = count($cancelledReceipts);
+						error_log('set status error cancel_ticket : '.$cancel_ticket);	
 					}
 			
 					//insert into infos_close
@@ -949,7 +951,10 @@ class webCashier extends CI_Controller {
 					$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
 					$this->db->set('id_user_cashier', $userid);
 					$this->db->set('to', $total_to);
-					if($seterror_status)	$this->db->set('status', 'error');
+					if($seterror_status) {	
+						//$this->db->set('status', 'error');
+						error_log('set status error : '.$seterror_status);
+					}
 					if($cancel_ticket)		$this->db->set('cancel_ticket', $cancel_ticket);
 					$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			

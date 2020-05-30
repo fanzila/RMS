@@ -25,7 +25,7 @@
 						<li><a rel="external" data-ajax="false" href="https://app.snapshift.co/plannings" onclick="window.open(this.href);return false;"><i class="zmdi zmdi-calendar zmd-fw"></i> Planning</a></li>
 						<?php  } ?>
 						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/auth/edit_oneself/<?=$user_id?>"><i class="zmdi zmdi-account-box-o zmd-fw"></i> My account</a></li><?php  } ?>
-						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Reports</a></li><?php  } ?>
+						<?php if(!$keylogin) { ?><li><a rel="external" data-ajax="false" href="/pm/"><i class="zmdi zmdi-email zmd-fw"></i> Meeting reports</a></li><?php  } ?>
 						<?php if(($keylogin || $this->ion_auth_acl->has_permission('webcashier')) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/webcashier/"><i class="zmdi zmdi-money zmd-fw"></i> Cashier</a></li><?php } ?>
 						<?php if($keylogin || $this->ion_auth_acl->has_permission('checklists')) { ?><li><a rel="external" data-ajax="false" href="/checklist/"><i class="zmdi zmdi-assignment-check zmd-fw"></i> Checklist</a></li><?php } ?>
 						<?php if(($keylogin || $this->ion_auth_acl->has_permission('discounts')) AND ($this->session->userdata('type') != 'kitchen')) { ?><li><a rel="external" data-ajax="false" href="/discount/"><i class="zmdi zmdi-money-off zmd-fw"></i> Discount</a></li><?php } ?>
@@ -34,9 +34,7 @@
 						<li><a rel="external" data-ajax="false" href="/auth/"><i class="zmdi zmdi-accounts zmd-fw"></i> Staff</a></li>
 						<?php if($this->ion_auth_acl->has_permission('extras')) {?>
 							<li><a rel="external" data-ajax="false" href="/auth/extra"><i class="zmdi zmdi-face zmd-fw"></i> Extra finder</a></li>
-						<?php  } if ($this->ion_auth_acl->has_permission('skills_admin')) {?>
-							<li><a rel="external" data-ajax="false" href="/skills/admin/"><i class="zmdi zmdi-star zmd-fw"></i> Skills management</a></li>	
-						<?php  } ?>
+						<?php  } ?> 
 						<?php if($this->ion_auth_acl->has_permission('posmessage')) { ?>								
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 						<?php  } ?>
@@ -78,6 +76,9 @@
 								<?php if($this->ion_auth_acl->has_permission('admin_panel_rmd_task_management')){?>
 									<li><a rel="external" data-ajax="false" href="/reminder/admin"><i class="fa fa-tasks"></i> Reminder tasks management</a></li>
 								<?php } ?>
+								<?php if($this->ion_auth_acl->has_permission('skills_admin')) {?>
+									<li><a rel="external" data-ajax="false" href="/skills/admin/"><i class="zmdi zmdi-star zmd-fw"></i> Skills management</a></li>	
+								<?php  } ?>
 								<?php if($this->ion_auth_acl->has_permission('admin_panel_suppliers')){?>
 									<li><a rel="external" data-ajax="false" href="/supplier/"><i class="fa fa-tasks" aria-hidden="true"></i> Suppliers</a></li>
 								<?php } ?>

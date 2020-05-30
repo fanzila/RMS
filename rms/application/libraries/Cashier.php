@@ -908,7 +908,8 @@ class Cashier {
 	  $q = "SELECT `id`,`date` FROM pos_movements WHERE id_bu = $id_bu ORDER BY id DESC LIMIT 1";
 	  $r = $CI->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 	  $o = $r->result_array();
-	  return $o[0];
+	  if(!empty($o[0])) return $o[0];
+	  return false;
   }		
 }
 ?>

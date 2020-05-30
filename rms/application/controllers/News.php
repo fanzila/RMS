@@ -167,8 +167,9 @@ class News extends CI_Controller {
 
 		$text_modif = str_replace("%", "&#37;", $this->input->post('text'));		
         $msg .= $text_modif;
+		$final_msg = nl2br($msg);
 
-        $this->mmail->prepare($subject, $msg)
+        $this->mmail->prepare($subject, $final_msg)
           ->from('news@hankrestaurant.com', 'HANK NEWS')
           ->replyTo('news@hankrestaurant.com')
           ->toList('news', $bus_ids)
