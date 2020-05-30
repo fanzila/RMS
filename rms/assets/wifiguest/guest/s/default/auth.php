@@ -26,7 +26,7 @@ if (isset($post['submitLogIn'])) {
     if (isset($post['InputEmail1']) && filter_var($post['InputEmail1'], FILTER_VALIDATE_EMAIL)) {
       $userEmail = trim($post['InputEmail1']);
       if (isset($post['InputOptOut'])) {
-        $sql = "INSERT INTO " . $table . " VALUES (NULL, '" . $userEmail . "', '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SERVER['HTTP_USER_AGENT'] . "', '" . $clientMac . "', true, '" . $date . "')";
+        $sql = "INSERT INTO " . $table . " VALUES (NULL, '" . $userEmail . "', '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SERVER['HTTP_USER_AGENT'] . "', '" . $clientMac . "', false, '" . $date . "')";
         $query = $dbh->prepare($sql);
         if ($query->execute() === true) {
           $sql = "DELETE FROM " . $table . " WHERE date < DATE_SUB(NOW(), INTERVAL 2 YEAR)";
@@ -34,7 +34,7 @@ if (isset($post['submitLogIn'])) {
           $query->execute();
         }
       } else {
-        $sql = "INSERT INTO " . $table . " VALUES (NULL, '" . $userEmail . "', '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SERVER['HTTP_USER_AGENT'] . "', '" . $clientMac . "', false, '" . $date . "')";
+        $sql = "INSERT INTO " . $table . " VALUES (NULL, '" . $userEmail . "', '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SERVER['HTTP_USER_AGENT'] . "', '" . $clientMac . "', true, '" . $date . "')";
         $query = $dbh->prepare($sql);
         $query->execute();
         if ($query->execute() === true) {

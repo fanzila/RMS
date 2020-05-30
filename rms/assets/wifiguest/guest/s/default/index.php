@@ -50,23 +50,23 @@ $url = $param_url;
 					<label for="InputEmail1">Adresse Email / Email Address</label>
 					<input type="email" class="form-control" id="InputEmail1" name="InputEmail1" aria-describedby="emailHelp" placeholder="Insérer email / Enter email" required>
 					<small id="emailHelp" class="form-text text-muted">Article R.10-13 du CPCE, Décret de 24 mars 2006.</small><br />
-					<small id="emailHelp" class="form-text text-muted">Nous ne partagerons jamais votre adresse email. /</small>
-					<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+					<small id="emailHelp" class="form-text text-muted">Nous ne partagerons ABSOLUMENT JAMAIS votre adresse email avec PERSONNE</small><br />
+					<small id="emailHelp" class="form-text text-muted">We'll NEVER EVER share your email with ANYONE else.</small>
 				</div>
 				<div class="form-group">
 					<input id="InputOptOut" name="InputOptOut" aria-describedby="InputOptOut" type="checkbox" aria-label="..."> 
-					<label id="contactlbl" for="InputOptOut">Je ne veux pas être contacté par Hank / I do not want to be contacted by Hank</label>
+					<label id="contactlbl" for="InputOptOut">Je veux recevoir des réductions ou de belles informations de la part de Hank (environ 5 emails par an!) <br /> I Want to be contacted by Hank about discounts and great news (around 5 emails per year!).</label>
 				</div>
 				<div class="form-group">
 					<label for="InputPass">Mot de Passe / Password</label>
 					<input type="text" class="form-control" id="InputPass" name="InputPass" aria-describedby="passHelp" placeholder="Enter Password" required>
-					<small id="passHelp" class="form-text text-muted">Le mot de passe est écrit sur votre ticket de caisse / The password is written on your recipt</small>
+					<small id="passHelp" class="form-text text-muted">Le mot de passe est écrit sur votre ticket de caisse. <br /> The password is written on your receipt.</small>
 				</div>				
 				<div class="row">
 			    <div class="col-lg-10">
 						<div class="form-group">
 							<input id="InputCond" name="InputCond" aria-describedby="InputCond" type="checkbox" aria-label="..." required> 
-							<label id="cgu" for="InputCond">J'accepte les <a href="/guest/s/default/wificgu.php?id=<?=$id?>&url=<?=$url?>">Conditions Générales d'utilisation</a> / I agree with the <a href="/guest/s/default/wificgu.php?id=<?=$id?>&url=<?=$url?>">Terms Of Use</a></label>
+							<label id="cgu" for="InputCond">J'accepte les <a href="/guest/s/default/wificgu.php?id=<?=$id?>&url=<?=$url?>">Conditions Générales d'utilisation</a> <br /> I agree with the <a href="/guest/s/default/wificgu.php?id=<?=$id?>&url=<?=$url?>">Terms Of Use</a></label>
 					  </div> 
 					</div> 
 			  </div> 
