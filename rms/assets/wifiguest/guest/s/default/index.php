@@ -47,11 +47,10 @@ $url = $param_url;
 			<?php endif;?>
 			<form action="/guest/s/default/auth.php" method="POST">
 				<div class="form-group">
-					<label for="InputEmail1">Adresse Email / Email Address</label>
+					<label for="InputEmail1">Adresse Email / Email Address <br />Nous ne partagerons ABSOLUMENT JAMAIS votre adresse email avec PERSONNE<br />We'll NEVER EVER share your email with ANYONE else.
+					</label>
 					<input type="email" class="form-control" id="InputEmail1" name="InputEmail1" aria-describedby="emailHelp" placeholder="Insérer email / Enter email" required>
-					<small id="emailHelp" class="form-text text-muted">Article R.10-13 du CPCE, Décret de 24 mars 2006.</small><br />
-					<small id="emailHelp" class="form-text text-muted">Nous ne partagerons ABSOLUMENT JAMAIS votre adresse email avec PERSONNE</small><br />
-					<small id="emailHelp" class="form-text text-muted">We'll NEVER EVER share your email with ANYONE else.</small>
+					<small id="emailHelp" class="form-text text-muted">Article R.10-13 du CPCE, Décret de 24 mars 2006.</small>
 				</div>
 				<div class="form-group">
 					<input id="InputOptOut" name="InputOptOut" aria-describedby="InputOptOut" type="checkbox" aria-label="..."> 
