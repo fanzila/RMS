@@ -194,8 +194,8 @@ class News extends CI_Controller {
 
             $this->db->insert('news_confirm', $confirm);
 			$config['body'] .= "<br />";
-            $config['body'] .= ">>> Merci de confirmer la lecture de ce message en cliquant ici : ";
-			$config['body'] .= '<a href="' . $link . '">' . $link . "</a><br /><hr />" . $user->username . "" . $bus_names;
+            $config['body'] .= "> Merci de confirmer la lecture de ce message en cliquant ici : ";
+			$config['body'] .= '<a href="' . $link . '">' . $link . "</a><br /><br /><hr />" . $user->username . " | " . $bus_names;
 			
 			return $config;
 			
