@@ -193,18 +193,12 @@ class News extends CI_Controller {
             ];
 
             $this->db->insert('news_confirm', $confirm);
-
-            $config['body'] .= "\r\n\r\n->>>>Merci de confirmer la lecture de ce message en cliquant ici : ";
-
-              if ($config['type'] === 'html')
-                $config['body'] .= '<a href="' . $link . '">' . $link
-                  . "</a>\r\n-- \r\n" . $user->username
-                  . "\r\n" . $bus_names;
-              else
-                $config['body'] .= $link . "\r\n-- \r\n" . $user->username
-                  . "\r\n" . $bus_names;
-
-            return $config;
+			$config['body'] .= "<br />";
+            $config['body'] .= ">>> Merci de confirmer la lecture de ce message en cliquant ici : ";
+			$config['body'] .= '<a href="' . $link . '">' . $link . "</a><br /><hr />" . $user->username . "" . $bus_names;
+			
+			return $config;
+			
           })
           ->send();
 
