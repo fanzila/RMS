@@ -20,7 +20,7 @@
 					<form id="skills" name="skills" method="post" action="/skills/saveSkills/">
 					<? if($skills_items!=null){ ?>
 						<div data-inset="false">
-							<?foreach ($skills as $skill) {?><!--Affichage des skills générales-->
+							<?foreach ($skills as $skill) { ?><!--Affichage des skills générales-->
 								<?$check=0;foreach($skills_items as $skills_item){
 									if($skills_item->s_name == $skill->name){
 										$check+=1;

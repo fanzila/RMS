@@ -117,6 +117,8 @@ class Skills extends CI_Controller {
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
 		
+		//SELECT u.username, si.name, sri.checked FROM users AS u JOIN skills_record AS sr ON sr.id_user = u.id JOIN skills_record_item AS sri ON sri.id_skills_record = sr.id JOIN skills_item AS si ON sri.id_skills_item = si.id;
+		
 		if($id != $current_user){
 			$data['userlevel'] = 1;
 			if($bypass_sponsor!=1 || $back==1){
@@ -165,10 +167,11 @@ class Skills extends CI_Controller {
 		$id_bu =  $this->session->userdata('bu_id');
 		$users_group_id = array(1,2,3,4,6);
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
-		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
+		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id, sr.id_sponsor');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->join('users_groups', 'users.id = users_groups.user_id', 'left');
+		$this->db->join('skills_record AS sr', 'users.id = sr.id_user', 'left');
 		$this->db->where('users.active', 1);
 		$this->db->where_in('users_groups.group_id', $users_group_id);
 		$this->db->where('users_bus.bu_id', $id_bu);
@@ -176,7 +179,7 @@ class Skills extends CI_Controller {
 		$query = $this->db->get("users");
 		$users = $query->result();
 
-/* SPECIFIC used for consulting a staff's qualifications*/
+		/* SPECIFIC used for consulting a staff's qualifications*/
 		date_default_timezone_set('Europe/Paris');
 		$this->db->select('R.id, R.id_user, RI.checked, RI.comment, I.name as i_name, skills.name as s_name, cat.name as c_name, subcat.name as sub_name')
 			->from('skills_record as R')
@@ -189,7 +192,7 @@ class Skills extends CI_Controller {
 			->order_by('I.name desc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_staff = $res->result();
-
+		
 		/* SPECIFIC used for creating new sponsorship link */
 		date_default_timezone_set('Europe/Paris');
 		$this->db->select('R.id, R.id_user, RI.checked, RI.comment, I.name as i_name, skills.name as s_name, cat.name as c_name, subcat.name as sub_name')
@@ -203,7 +206,57 @@ class Skills extends CI_Controller {
 			->order_by('I.name desc');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_items = $res->result();
-
+		
+		/** ************************* SKILLS MAP START ************************** **/
+	
+		$checked_subcat_byuser = array();
+		
+		date_default_timezone_set('Europe/Paris');
+		$this->db->select('DISTINCT(subcat.id) as ssc_id, cat.name as c_name, subcat.name as sub_name, skills.name as s_name')
+			->from('skills_record as R')
+			->join('skills_record_item as RI', 'R.id = RI.id_skills_record')
+			->join('skills_item as I', 'I.id = RI.id_skills_item')
+			->join('skills', 'skills.id = I.id_skills')
+			->join('skills_category as cat', 'I.id_cat = cat.id')
+			->join('skills_sub_category as subcat', 'I.id_sub_cat = subcat.id')
+			->where('skills.id_bu', $id_bu)
+			->where('R.id_bu', $id_bu)	
+			->group_by('subcat.id')	
+			->order_by('skills.order, cat.order, subcat.order, I.order ASC');
+		$res 	= $this->db->get() or die($this->mysqli->error);
+		$skills_items_map = $res->result();
+		
+		
+		foreach ($this->hmw->getUsers() as $user) {
+			
+			$this->db->select('id')
+				->from('skills_sub_category');
+			$res 	= $this->db->get() or die($this->mysqli->error);
+			$subcat = $res->result();
+			
+			foreach ($subcat as $subcatlist) {
+					
+				$q = $this->db->select("ssc.id AS ssc_id, sri.checked AS sri_checked")
+					->from('skills_record_item AS sri')
+					->join('skills_record AS sr','sr.id = sri.id_skills_record')
+					->join('skills_item AS si','si.id = sri.id_skills_item')
+					->join('skills_sub_category AS ssc','ssc.id=si.id_sub_cat')
+					->join('skills AS s','s.id = si.id_skills')
+					->where("s.id_bu = $id_bu")
+					->where("sr.id_user = $user->id")
+					->where("ssc.id = $subcatlist->id")
+					->order_by('sri.checked ASC')
+					->limit('1');
+				$res = $this->db->get() or die($this->mysqli->error);
+				$sum = $res->result_array();
+				if(isset($sum[0])) {
+					$checked_subcat_byuser[$user->id][$sum[0]['ssc_id']] = $sum[0]['sri_checked'];
+				}	
+			}
+		}
+						
+		/** ************************* SKILLS MAP END ************************** **/
+		
 		$this->db->select('id, name')
 			->from('skills')
 			->where('id_bu', $id_bu)
@@ -258,6 +311,8 @@ class Skills extends CI_Controller {
 			'skills_staff' => $skills_staff,
 			'skills_records' => $skills_records,
 			'skills_logs' => $skills_logs,
+			'skills_items_map' => $skills_items_map,
+			'checked_subcat_byuser' => $checked_subcat_byuser,
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
@@ -470,7 +525,7 @@ class Skills extends CI_Controller {
 		echo json_encode(['reponse' => $reponse]);
 	}
 
-	public function saveSkills()//FIXME!!!!
+	public function saveSkills()
 	{
 		$reponse = 'ok';
 		$i = 0;

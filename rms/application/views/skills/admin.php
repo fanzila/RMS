@@ -1,9 +1,78 @@
 		</div>
 		<div data-role="content">
+			<?php $id_bu =  $this->session->userdata('bu_id'); ?>
 			<div data-role="collapsible-set" data-inset="true">
+			<style type="text/css">	
+				td { 
+					text-align: left;
+					vertical-align: middle;
+					}
+					
+				tr:hover {background-color: #f5f5f5;}
+				tr:nth-child(even) {background-color: #f2f2f2;}
+				
+				th {
+				  background-color: #4CAF50;
+				  color: white;
+				}
+				</style>
+				<table border="0" style="background-color: #ffffff; border: 2px solid #dedcd7; margin-top:10px" cellpadding="3" cellspacing="3">
+					
+					<tr>
+						<td><b>Skills</b></td>
+						<?
+						foreach($users as $user){ 
+							$sponsor_fill = false; ?>
+							<td style="text-align: center;"><a data-ajax="false" href="/skills/index/<?=$user->id?>/1"><?=$user->username?></a>
+								<br />
+								<small>
+							<?foreach ($skills_records as $skills_record) {
+								if($user->id == $skills_record->id_user && $skills_record->bu_id == $id_bu) {
+									$sponsor_fill = true;
+									?>
+									Sponsor : <?=$skills_record->sponsorname?>
+									<?
+								}
+							} 
+							if($sponsor_fill == false) echo "No sponsor"; ?></small>
+						</td>
+						<? } ?>
+					</tr>
+					
+
+						<?foreach($skills_items_map as $skills_item) { ?>
+					<tr>
+						<td>
+								<?=$skills_item->s_name?> ->
+								<?=$skills_item->c_name?> -> 
+								<?=$skills_item->sub_name?>
+								
+	
+						</td>
+					
+						<?foreach($users as $user){ ?>
+							<td style="text-align: center;">
+								<?
+								$checked = false;
+								if(isset($checked_subcat_byuser[$user->id])) {
+									if($checked_subcat_byuser[$user->id][$skills_item->ssc_id] == true) {
+									$checked = true;
+										echo "<font size='5'>✅</font>";
+									}
+								}
+								if(!$checked) echo "<font size='5'>❌</font>";
+								?>		
+							</td>
+						<? } ?>
+							
+					</tr>	
+					<? } ?>
+				</table>
+				<br />
 				<div data-role="collapsible" style="background-color : #f8f8f9">
 					<h1>Create a sponsoring link</h1>
-					<?$attributes = array('id' => "sponsorship", 'name' => "sponsorship");
+					<?
+					$attributes = array('id' => "sponsorship", 'name' => "sponsorship");
 					echo form_open("skills/save", $attributes);?>
 						<table width="100%" style="background-color: #ffffff; border: 1px solid #dedcd7; margin-top:10px" cellpadding="8">
 							<tr>
@@ -55,104 +124,7 @@
 						</table>
 					</form>
 				</div><!--/collapsible-->
-				<div data-role="collapsible" style="background-color : #f8f8f9">
-					<h1>Sponsors map</h1>
-					<table style="background-color : #f0f0f0" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter...">
-						<thead>
-							<tr>
-								<th>Sponsor</th>
-								<th>Trainee</th>
-							</tr>
-						</thead>
-						<?$id_bu =  $this->session->userdata('bu_id');?>
-						<tbody>
-							<?foreach ($skills_records as $skills_record) {
-									if($skills_record->bu_id == $id_bu){?>
-										<tr>
-											<td><?=$skills_record->sponsorname?></td>
-											<td><?=$skills_record->username?></td>
-										</tr>
-									<?}?>
-								<?//if($skills_record->id_user == $user->bu_id){?>
-							<?}?>
-						</tbody>
-					</table>
-				</div>
-				<div data-role="collapsible" style="background-color : #f8f8f9">
-					<h1>Skills map</h1>
-					<table style="background-color : #fff" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter...">
-						<thead>
-							<tr>
-								<th>Skill</th>
-								<th>Staff</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?foreach ($skills as $skill) {?><!--Affichage des skills générales-->
-							<?$check=0;foreach($skills_items as $skills_item){
-								if($skills_item->s_name == $skill->name){
-									$check+=1;
-									break;
-								}
-							}?>
-							<?if($check==1){?>
-							
-										<?foreach ($skills_categories as $category) {?><!--Affichage des Catégories-->
-											<?$check=0;foreach($skills_items as $skills_item){
-												if($skills_item->c_name == $category->name && $skills_item->s_name == $skill->name){
-													$check+=1;
-													break;
-												}
-											}?>
-											<?if($check==1){?>
-														<?foreach($users as $user){
-															$validated=0;
-															foreach ($skills_items as $skills_item) {
-																if($skills_item->c_name == $category->name && $skills_item->id_user == $user->id){
-																	if($skills_item->checked == true){
-																		$validated=1;
-																	}else{
-																		$validated=0;
-																		break;
-																	}
-																}
-															}
-															if($validated == 1){
-																?>
-																<tr>
-																	<td><?=$skill->name?> - <?=$category->name?></td>
-																	<td><?=$user->username?></td>
-																</tr>
-																<?
-															}
-														}?>
-											<?}?>
-										<?}?>
-							<?}?>
-						<?}?>
-						</tbody>
-					</table>
-				</div>
-				<div data-role="collapsible" style="background-color : #f8f8f9">
-					<h1>Skills by person</h1>					
-					<ul data-role="listview" data-inset="true" data-filter="true" style="background-color : #f8f8f9">
-						<?$ok=0;?>
-						<?foreach ($users as $user) {?>
-							<?$ok=0;?>
-							<?if($user->id!=$current_user){?>
-								<?foreach ($skills_records as $skills_record) {?>
-									<?if($user->username == $skills_record->username){
-										$ok=1;
-										break;
-									}?>
-								<?}?>
-								<?if($ok==1){?>
-									<li><a data-ajax="false" href="/skills/index/<?=$user->id?>/1"><?=$user->first_name?> <?=$user->last_name?></font></a></li>
-								<?}?>
-							<?}?>
-						<?}?>
-					</ul>
-				</div>
+					
 				<div data-role="collapsible" style="background-color : #f8f8f9">
 					<h1>Log</h1>
 					<table style="background-color : #f0f0f0" data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter logs">
