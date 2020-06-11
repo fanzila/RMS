@@ -239,7 +239,7 @@ class Skills extends CI_Controller {
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_items_map = $res->result();
 		
-		foreach ($this->hmw->getUsers() as $user) {
+		foreach ($userswithsponsor as $user) { 
 			
 			$this->db->select('id')
 				->from('skills_sub_category');

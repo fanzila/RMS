@@ -336,7 +336,6 @@ class Hmw {
 					'bu_id'	=> null
 					),
 				'header_post'	=> array(
-					'bank_balance'	=> null,
 					'bu_id'			=> null,
 					'bu_name'		=> null,
 					'bus_list'		=> null,
