@@ -196,6 +196,9 @@ class Hmw {
 					"token" => $token,
 					"user" => $user,
 					"device" => $device,
+					"priority" => 2,
+					"retry" => 120,
+					"expire" => 3600,
 					"message" => $msg
 					)
 				)
