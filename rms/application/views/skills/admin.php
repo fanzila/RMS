@@ -16,12 +16,12 @@
 				  color: white;
 				}
 				</style>
-				<table border="0" style="background-color: #ffffff; border: 2px solid #dedcd7; margin-top:10px" cellpadding="3" cellspacing="3">
+				<table border="0" style="background-color: #ffffff; border: 2px solid #dedcd7; margin-top:10px" cellpadding="2" cellspacing="1">
 					
 					<tr>
 						<td><b>Skills</b></td>
 						<?
-						foreach($users as $user){ 
+						foreach($userswithsponsor as $user){ 
 							$sponsor_fill = false; ?>
 							<td style="text-align: center;"><a data-ajax="false" href="/skills/index/<?=$user->id?>/1"><?=$user->username?></a>
 								<br />
@@ -50,17 +50,17 @@
 	
 						</td>
 					
-						<?foreach($users as $user){ ?>
+						<?foreach($userswithsponsor as $user){ ?>
 							<td style="text-align: center;">
 								<?
 								$checked = false;
 								if(isset($checked_subcat_byuser[$user->id])) {
 									if($checked_subcat_byuser[$user->id][$skills_item->ssc_id] == true) {
 									$checked = true;
-										echo "<font size='5'>✅</font>";
+										echo "✅";
 									}
 								}
-								if(!$checked) echo "<font size='5'>❌</font>";
+								if(!$checked) echo "❌";
 								?>		
 							</td>
 						<? } ?>

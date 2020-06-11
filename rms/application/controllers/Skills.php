@@ -209,6 +209,19 @@ class Skills extends CI_Controller {
 		
 		/** ************************* SKILLS MAP START ************************** **/
 	
+	
+		$this->db->select('DISTINCT(u.id), u.username, u.last_name, u.first_name, sr.id_sponsor');
+		$this->db->from('skills_record AS sr');
+		$this->db->join('users AS u', 'u.id = sr.id_user', 'left');
+		$this->db->join('users_bus', 'u.id = users_bus.user_id', 'left');
+		$this->db->join('users_groups', 'u.id = users_groups.user_id', 'left');
+		$this->db->where('u.active', 1);
+		$this->db->where_in('users_groups.group_id', $users_group_id);
+		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->order_by('u.username', 'asc');
+		$query = $this->db->get("users");
+		$userswithsponsor = $query->result();
+		
 		$checked_subcat_byuser = array();
 		
 		date_default_timezone_set('Europe/Paris');
@@ -225,7 +238,6 @@ class Skills extends CI_Controller {
 			->order_by('skills.order, cat.order, subcat.order, I.order ASC');
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_items_map = $res->result();
-		
 		
 		foreach ($this->hmw->getUsers() as $user) {
 			
@@ -313,6 +325,7 @@ class Skills extends CI_Controller {
 			'skills_logs' => $skills_logs,
 			'skills_items_map' => $skills_items_map,
 			'checked_subcat_byuser' => $checked_subcat_byuser,
+			'userswithsponsor' => $userswithsponsor,
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
