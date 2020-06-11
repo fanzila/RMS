@@ -16,7 +16,7 @@
 				  color: white;
 				}
 				</style>
-				<table border="0" style="background-color: #ffffff; border: 2px solid #dedcd7; margin-top:10px" cellpadding="2" cellspacing="1">
+				<table border="0" style="background-color: #ffffff; border: 2px solid #dedcd7; margin-top:10px" cellpadding="1" cellspacing="1">
 					
 					<tr>
 						<td><b>Skills</b></td>

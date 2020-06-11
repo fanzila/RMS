@@ -218,6 +218,7 @@ class Skills extends CI_Controller {
 		$this->db->where('u.active', 1);
 		$this->db->where_in('users_groups.group_id', $users_group_id);
 		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('sr.id_bu', $id_bu);
 		$this->db->order_by('u.username', 'asc');
 		$query = $this->db->get("users");
 		$userswithsponsor = $query->result();
