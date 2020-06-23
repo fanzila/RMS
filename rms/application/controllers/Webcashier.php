@@ -316,7 +316,7 @@ class webCashier extends CI_Controller {
 				Status
 				</td>
 				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
-				TO
+				CA <br />Caisse
 				</td>
 				<td align='center' style='font-family: sans-serif; font-size: 12px; vertical-align: top; padding-bottom: 15px;'>
 				Diff <br />(canceled)<br />Comment close
@@ -459,7 +459,7 @@ class webCashier extends CI_Controller {
 				$txt .= "
 				</tbody>
 				</table>
-				<small>Total CA = $total_ca €</small>
+				<small>Total CA caisse = $total_ca €</small>
 				";	
 				
 				$final_txt = $this->mmail->templateEmail($txt);
@@ -927,7 +927,7 @@ class webCashier extends CI_Controller {
 						$seterror_status = 'DIFF';
 						$this->db->where('id', $pmid);
 						$this->db->update('pos_movements');
-						error_log('test_diff_control : '.$test_diff_control);
+						error_log('test_diff_control : '.$test_diff_control. ' '. $pmid);
 					}
 				
 					$this->closing($this->input->post('archive'), $pmid);
@@ -941,7 +941,7 @@ class webCashier extends CI_Controller {
 						$this->db->where('id', $pmid);
 						$this->db->update('pos_movements');
 						$cancel_ticket = count($cancelledReceipts);
-						error_log('set status error cancel_ticket : '.$cancel_ticket);	
+						error_log('set status error cancel_ticket : '.$cancel_ticket. ' '. $pmid);	
 					}
 			
 					//insert into infos_close
@@ -952,14 +952,14 @@ class webCashier extends CI_Controller {
 					$this->db->set('id_user_cashier', $userid);
 					$this->db->set('to', $total_to);
 					if($seterror_status) {	
-						//$this->db->set('status', 'error');
-						error_log('set status error : '.$seterror_status);
+						$this->db->set('status', 'error');
+						error_log('set status error : '.$seterror_status. ' '. $pmid);
 					}
 					if($cancel_ticket)		$this->db->set('cancel_ticket', $cancel_ticket);
 					$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
 			
 		
-					$varslog = "Closing processed - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min] - seterror_status = $seterror_status";
+					$varslog = "Closing processed - test_diff = $test_diff - test_diff_control = $test_diff_control - diff = $diff - alert_amount['cashier_alert_amount_close_max'] = $alert_amount[cashier_alert_amount_close_min] - alert_amount['cashier_alert_amount_close_min'] = $alert_amount[cashier_alert_amount_close_min] - seterror_status = $seterror_status - pmid = $pmid";
 					error_log($varslog);				
 				
 				} else {
