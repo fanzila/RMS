@@ -99,7 +99,7 @@
 		<img class="camera" src="/cameras/getStream/<?=$camera['name']?>" alt="<?=$camera['name']?>" />
 	<? } } ?>
 
-<p><h4>TO BY BUS</h4></p>
+<p><h4>TO by BUs</h4></p>
 <table border='0' cellspacing='0' cellpadding='10' style="border:1px solid #AAAAAA;"><tr bgcolor='#ffc300'>
 <td>BU</td>
 <td>TO</td>
