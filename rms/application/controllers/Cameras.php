@@ -50,9 +50,16 @@ class Cameras extends CI_Controller {
 		$camera			= array();
 		$id_bu 			= $this->session->userdata('bu_id');
 		$buinfo 		= $this->hmw->getBuInfo($id_bu);
-
+		$date 			= new DateTime("now");
+		$curr_date 		= $date->format('Y-m-d ');
+		 
 		$bal_ca = $this->db->get('turnover');
 		$ca = $bal_ca->result_array();
+
+		$this->db->select('date, bu_id, to, id');
+		$this->db->where('DATE(date)',$curr_date);
+		$query = $this->db->get('infos_close');
+		$data['infos_close'] = $query->result_array();
 
 		$cameras = $this->getCamerasNamesFromDb($id_bu);
 

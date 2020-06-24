@@ -41,12 +41,14 @@
 	</head>
 	<body>
 		<font face="arial">
-		<?
+		<?php
 	$bgcolor = '#FFF';
 	$ca_amount = "0";
 	$ca_last = "-";
 	$total_ca = 0;
 	$buname = array();
+	$closes = array();
+	$closes_bu = array();
 	foreach ($all_bus as $bu) { $buname[$bu->id] = $bu->name; }
 
 	foreach ($ca as $caline) {
@@ -55,7 +57,16 @@
 			$ca_last = $caline['last'];
 		}
 
-		$conca_ca[] = "<tr><td>".$buname[$caline['id_bu']]."</td><td>". number_format($caline['amount']/1000, 0, ',', ' ')."€</td><td> ".$caline['last']."</td></tr>";
+		$closes_bu[$caline['id_bu']] = '';
+		
+		foreach ($infos_close as $ic) {	
+			if(isset($ic['bu_id']))
+			if($ic['bu_id'] == $caline['id_bu']) {
+				$closes_bu[$caline['id_bu']] .= number_format($ic['to'], 0, ',', ' ').'€ - '.$ic['date'].'<br />';
+				$total_ca += $ic['to']*1000;
+			}
+		}
+		$conca_ca[] = "<tr><td style='border:1px solid #AAAAAA;'>".$buname[$caline['id_bu']]."</td><td style='border:1px solid #AAAAAA;'>". number_format($caline['amount']/1000, 0, ',', ' ')."€</td><td style='border:1px solid #AAAAAA;'> ".$caline['last']."</td><td style='border:1px solid #AAAAAA;'>".$closes_bu[$caline['id_bu']]."</td></tr>";
 		$total_ca += $caline['amount'];
 	}
 ?>
@@ -89,17 +100,18 @@
 	<? } } ?>
 
 <p><h4>TO BY BUS</h4></p>
-<table border='1' cellspacing='0' cellpadding='10'><tr bgcolor='#ffc300'>
+<table border='0' cellspacing='0' cellpadding='10' style="border:1px solid #AAAAAA;"><tr bgcolor='#ffc300'>
 <td>BU</td>
 <td>TO</td>
 <td>Last ticket</td>
+<td>Closes</td>
 </tr>
 <?
 foreach ($conca_ca as $line) {
 	echo $line;
 	}
 ?>
-<tr><td colspan="3">TOTAL: <?=number_format($total_ca/1000, 0, ',', ' ')?>€</td></tr>
+<tr><td colspan="4" style='border:1px solid #AAAAAA;'>TOTAL DAY : <?=number_format($total_ca/1000, 0, ',', ' ')?>€</td></tr>
 </table>
 <?
 	$p = $planning;
@@ -113,10 +125,10 @@ if($p) {
 			</div>
 		</div>
 	</div>
-<table border='1' cellspacing='0' cellpadding='10'><tr bgcolor='#ffc300'>
-	<td>Type</td>
-	<td>People</td>
-	<td>Hours (real)</td>
+<table border='0' cellspacing='0' cellpadding='10'><tr bgcolor='#ffc300'>
+	<td style='border:1px solid #AAAAAA;'>Type</td>
+	<td style='border:1px solid #AAAAAA;'>People</td>
+	<td style='border:1px solid #AAAAAA;'>Hours (real)</td>
 	</tr>
 	<?
 	foreach($p AS $key => $val) {
@@ -135,9 +147,9 @@ if($p) {
 				if(($ts < $shift_start_ts) OR ($ts > $shift_end_ts)) $bgshift = "";
 				?>
 				<tr bgcolor="<?=$bgshift?>" <?if($gray) { ?>style ="color:b1b1b1;"<? } ?>>
-				<td><?if($gray) { ?><center>-</center><? } ?><?=$key2['label_name']?></td>
-				<td><?=$key2['firstname']?> <?=$key2['lastname']?></td>
-				<td><?=date_format(date_create($key2['starts_at']), 'H:i')?> - <?=date_format(date_create($key2['ends_at']), 'H:i')?> (<?=date_format(date_create($key2['real_starts_at']), 'H:i')?> - <?=date_format(date_create($key2['real_ends_at']), 'H:i')?>)</td>
+				<td style='border:1px solid #AAAAAA;'><?if($gray) { ?><center>-</center><? } ?><?=$key2['label_name']?></td>
+				<td style='border:1px solid #AAAAAA;'><?=$key2['firstname']?> <?=$key2['lastname']?></td>
+				<td style='border:1px solid #AAAAAA;'><?=date_format(date_create($key2['starts_at']), 'H:i')?> - <?=date_format(date_create($key2['ends_at']), 'H:i')?> (<?=date_format(date_create($key2['real_starts_at']), 'H:i')?> - <?=date_format(date_create($key2['real_ends_at']), 'H:i')?>)</td>
 				</tr>
 				<?
 			}
