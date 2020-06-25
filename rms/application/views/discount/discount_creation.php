@@ -23,7 +23,7 @@
 								<select style="background-color:#a1ff7c" name="user" id="user" data-inline="true" data-theme="a" required>
 									<option value="0">User</option>
 									<?foreach ($users as $user) {?>
-										<option value="<?=$user->id?>"<? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } elseif(isset($discount[0]->id_user)) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?></option>
+										<option value="<?=$user->id?>"<? if(isset($form['user']) AND $form['user']==$user->id) { ?> selected <? } elseif(isset($discount[0]->id_user) AND $discount[0]->id_user == $user->id) { ?> selected <? } ?>><?=$user->first_name?> <?=$user->last_name?></option>
 									<? } ?>
 								</select>
 								
