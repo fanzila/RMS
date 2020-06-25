@@ -106,10 +106,10 @@ $this->load->view('jq_footer');
 		$data = array(
 			'discounts'	=> $discounts,
 			'bu_name' 	=> $this->session->userdata('bu_name'),
-			'username' 	=> $this->session->userdata('identity')
+			'username' 	=> $this->session->userdata('identity'),
+			'auth_edit' => $this->ion_auth_acl->has_permission('validate_persistent_discount')
 			);
-
-		
+			
 	 	$headers = $this->hmw->headerVars(0, "/discount/", "Discount Log");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -141,7 +141,6 @@ $this->load->view('jq_footer');
 				}
 				$data['id'] = $this->db->insert_id();
 			} else {
-				
 				$this->db->set('used', $data['used']);
 				if($data['persistent'] == 1 AND !$this->ion_auth_acl->has_permission('validate_persistent_discount')) $this->db->set('used', false);
 				
@@ -149,7 +148,8 @@ $this->load->view('jq_footer');
 				if (!$this->db->update('discount')) {
 					$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
 				}
-					$this->db->set('used', $data['used']);
+				
+				$this->db->set('used', $data['used']);
 				$this->db->where('id_bu', $id_bu);
 				$this->db->where('id_discount', $data['id']);
 				if(!$this->db->update('discount_log')) {
@@ -187,10 +187,16 @@ $this->load->view('jq_footer');
 		echo json_encode(['reponse' => $reponse]);
 	}
 	
-	public function creation($create = null)
+	public function creation($create = null, $editId = null)
 	{		
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->hmw->changeBu();// GENERIC changement de Bu
 
+		$this->hmw->keyLogin();
+		
+		$id_bu =  $this->session->userdata('bu_id');
+		
+		$discount = false;
+		
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
@@ -199,15 +205,16 @@ $this->load->view('jq_footer');
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
-
-		$this->db->select('T.id as tid, T.nature as tnature, T.id_user as tuser, T.date as tdate, T.deleted as tdel, T.used as tused, T.persistent as tpersistent, T.allbu as tallbu')
-			->from('discount as T')
-			->where('T.id_bu', $id_bu)
-			->where('T.deleted', 0)
-			->order_by('T.date desc');
-		$query	= $this->db->get();
-		$discount = $query->result();
 		
+		if(isset($editId)) {
+			$this->db->select('id, nature, client, reason, id_user, date, deleted, used, persistent, email, email_text, allbu')
+				->from('discount')
+				->where('id', $editId)
+				->limit('1');
+			$query	= $this->db->get();
+			$discount = $query->result();
+		}
+	
 		$data = array(
 			'create'	=> $create,
 			'users'		=> $users,
@@ -216,8 +223,9 @@ $this->load->view('jq_footer');
 		
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
-		
-		$headers = $this->hmw->headerVars(0, "/discount/", "Discount create");
+		$type = 'create';
+		if($discount) $type = 'edit';
+		$headers = $this->hmw->headerVars(0, "/discount/", "Discount $type");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/discount_creation',$data);

@@ -690,7 +690,6 @@ $this->form_validation->set_rules('username', $this->lang->line('edit_user_valid
 $this->form_validation->set_rules('email', $this->lang->line('edit_user_validation_email_label'), 'required|valid_email|xss_clean');
 $this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'exact_length[12]|numeric|xss_clean');
 $this->form_validation->set_rules('comment', 'Enter a valid comment', 'xss_clean');
-$this->form_validation->set_rules('iban', 'Enter a valid IBAN', 'xss_clean');
 
 if (isset($_POST) && !empty($_POST))
 {
@@ -718,8 +717,7 @@ if ($this->form_validation->run() === TRUE)
 		'username'   => $this->input->post('username'),
 		'email'		 => $this->input->post('email'),
 		'phone'      => $this->input->post('phone'),
-		'comment'    => $this->input->post('comment'),
-		'iban'       => $this->input->post('iban'),
+		'comment'    => $this->input->post('comment')
 	);
 	
 	//update the password if it was posted
@@ -842,13 +840,6 @@ $this->data['phone'] = array(
 'type'  => 'text',
 'data-clear-btn' => "true",
 'value' => $this->form_validation->set_value('phone', $user->phone),
-);
-$this->data['iban'] = array(
-'name'  => 'iban',
-'id'    => 'iban',
-'type'  => 'text',
-'data-clear-btn' => "true",
-'value' => $this->form_validation->set_value('iban', $user->iban),
 );
 $this->data['comment'] = array(
 'name'  => 'comment',

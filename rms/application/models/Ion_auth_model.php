@@ -2085,7 +2085,7 @@ class Ion_auth_model extends CI_Model
 
 		//get the user
 		$this->trigger_events('extra_where');
-		$query = $this->db->select($this->identity_column.', users.id, username, email, last_login, door_open, current_bu_id')
+		$query = $this->db->select($this->identity_column.', users.id, username, email, last_login, current_bu_id')
 											->join('users_remember', 'users.id = users_remember.user_id')
 		                  ->where($this->identity_column, get_cookie($this->config->item('identity_cookie_name', 'ion_auth')))
 		                  ->where('users_remember.remember_code', get_cookie($this->config->item('remember_cookie_name', 'ion_auth')))

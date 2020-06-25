@@ -261,15 +261,6 @@ class Hmw {
 
 		$data['bu_name'] =  $CI->session->userdata('bu_name');
 		$data['username'] = $CI->session->userdata('identity');
-
-    if(empty($data['username']))
-    {
-      $this->mmail->prepare('RMS SESSION ERROR', 'RMS SESSION ERROR')
-        ->toEmail('pierre@hankrestaurant.com')
-        ->send();
-
-      exit('Erreur d\'un truc, simplement se relogger ou fermer et relancer l\'application RMS, ca va marcher!');
-    }
 	}
 
 	public function changeBu($bu = null) {
@@ -327,8 +318,7 @@ class Hmw {
 					'groupname' 	=> $higher_level->name,
 					'userlevel' 	=> $higher_level->level,
 					'username'		=> $username,
-					'user_id'		=> $user->id,
-					'user_door'		=> $user->door_open
+					'user_id'		=> $user->id
 					)
 				);
 

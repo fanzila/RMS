@@ -6,7 +6,7 @@
 				<? }else{ ?>	
 					<table data-role="table" id="table-custom-2" data-mode="reflow" data-filter="true" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-popup-theme="a" data-filter-placeholder="Filter discounts">
 						<thead>
-							<th></th>
+							<? if($auth_edit) { ?><th>Edit</th><? } ?>
 							<th>Event</th>
 							<th>date</th>
 							<th>User</th>
@@ -20,7 +20,7 @@
 							<?php foreach ($discounts as $line):?>
 							<? $bgcolor = ""; if($line->used == true) $bgcolor = "#eeeeee"; ?>
 							<tr style="background-color: <?=$bgcolor?>">
-								<td>ID <?=$line->id_discount?></td>
+								<? if($auth_edit) { ?><td><a href="/discount/creation/1/<?=$line->id_discount?>" class="ui-btn ui-shadow" rel="external" data-ajax="false">ID <?=$line->id_discount?></a></td><? } ?>
 								<td><?=$line->event_type?></td>
 								<td><?=$line->date?></td>
 								<td><?=$line->username?></td>
