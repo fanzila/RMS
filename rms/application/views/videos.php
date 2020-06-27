@@ -8,14 +8,14 @@
 		<script>
 		    const player = new Plyr('#player');
 		</script>
-		<div style="width:480px;height:270px;background:#000">
+		<div style="width:100%;height:100%;background:#000">
 		<div class="plyr">
 			<video src="/public/videos/HankTV_PART1.mp4" id="player" controls controlsList="nodownload" playsinline poster="/public/plyr/cover.png" data-plyr-config='{ "title": "Partie 1" }' />
 		</div>
 		</div>
 		<h3>Partie 2</h3>
 
-		<div style="width:480px;height:270px;background:#000">
+		<div style="width:100%;height:100%;background:#000">
 		<div class="plyr">
 			<video src="/public/videos/HankTV_PART2.mp4" id="player" controls controlsList="nodownload" playsinline poster="/public/plyr/cover.png" data-plyr-config='{ "title": "Partie 1" }' />
 		</div>
