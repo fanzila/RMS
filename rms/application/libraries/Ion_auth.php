@@ -139,8 +139,11 @@ class Ion_auth
 	{
 		if ( $this->ion_auth_model->forgotten_password($identity) )   //changed
 		{
-			// Get user information
-			$user = $this->where($this->config->item('identity', 'ion_auth'), $identity)->where('active', 1)->users()->row();  //changed to get_user_by_identity from email
+			$q = "SELECT * FROM users 
+			WHERE active = 1 AND username = '$identity' OR email = '$identity ' LIMIT 1";
+			$req = $this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+			$res = $req->result();
+			$user = $res[0];
 
 			if ($user)
 			{

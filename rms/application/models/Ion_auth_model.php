@@ -786,24 +786,20 @@ class Ion_auth_model extends CI_Model
 		}
 
 		$this->forgotten_password_code = $key;
+		//$this->trigger_events('extra_where');
 
-		$this->trigger_events('extra_where');
+		$q = "UPDATE users SET forgotten_password_code = '$key', forgotten_password_time = '".time()."' 
+			WHERE username = '$identity' OR email = '$identity'";
+		$this->db->query($q) or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
+		$return = $this->db->affected_rows() >= 1;
 
-		$update = array(
-		    'forgotten_password_code' => $key,
-		    'forgotten_password_time' => time()
-		);
-
-		$this->db->update($this->tables['users'], $update, array($this->identity_column => $identity));
-
-		$return = $this->db->affected_rows() == 1;
-
-		if ($return)
+		if ($return) 
 			$this->trigger_events(array('post_forgotten_password', 'post_forgotten_password_successful'));
-		else
+		else 
 			$this->trigger_events(array('post_forgotten_password', 'post_forgotten_password_unsuccessful'));
-
+		
 		return $return;
+		
 	}
 
 	/**

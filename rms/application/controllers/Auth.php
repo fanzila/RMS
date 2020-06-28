@@ -292,33 +292,33 @@ else
 
 function forgot_password()
 {
-$this->form_validation->set_rules('username', 'Username', 'required');
-if ($this->form_validation->run() == false) {
-	//setup the input
-	$this->data['username'] = array('name'    => 'username',
-	'id'      => 'username',
-);
-//set any errors and display the form
-$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+	$this->form_validation->set_rules('seek', 'Username or email', 'required');
+	if ($this->form_validation->run() == false) {
+		//setup the input
+		$this->data['seek'] = array('name'    => 'seek',
+		'id'      => 'seek',
+	);
+	//set any errors and display the form
+	$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
-$headers = $this->hmw->headerVars(-1, "/", "Forgot your password?");
-$this->load->view('jq_header_pre', $headers['header_pre']);
-$this->load->view('jq_header_post', $headers['header_post']);
-$this->_render_page('auth/forgot_password', $this->data);
-$this->load->view('jq_footer');
+	$headers = $this->hmw->headerVars(-1, "/", "Forgot your password?");
+	$this->load->view('jq_header_pre', $headers['header_pre']);
+	$this->load->view('jq_header_post', $headers['header_post']);
+	$this->_render_page('auth/forgot_password', $this->data);
+	$this->load->view('jq_footer');
 }
 else {
-//run the forgotten password method to email an activation code to the user
-$forgotten = $this->ion_auth->forgotten_password($this->input->post('username'));
+	//run the forgotten password method to email an activation code to the user
+	$forgotten = $this->ion_auth->forgotten_password($this->input->post('seek'));
 
-if ($forgotten) { //if there were no errors
-	$this->session->set_flashdata('message', 'Check your emails to complete password reset');
-	redirect("auth/login", 'refresh'); //we should display a confirmation page here instead of the login page
-}
-else {
-	$this->session->set_flashdata('message', $this->ion_auth->errors());
-	redirect("auth/forgot_password", 'refresh');
-}
+	if ($forgotten) { //if there were no errors
+		$this->session->set_flashdata('message', 'Check your emails to complete password reset');
+		redirect("auth/login", 'refresh'); //we should display a confirmation page here instead of the login page
+	}
+	else {
+		$this->session->set_flashdata('message', $this->ion_auth->errors());
+		redirect("auth/forgot_password", 'refresh');
+	}
 }
 }
 

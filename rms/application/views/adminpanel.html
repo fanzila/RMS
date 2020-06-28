@@ -38,12 +38,6 @@
 						<?php if($this->ion_auth_acl->has_permission('posmessage')) { ?>								
 							<li><a rel="external" data-ajax="false" href="/posmessage/"><i class="zmdi zmdi-mail-send zmd-fw"></i> Message caisse</a></li>
 						<?php  } ?>
-						</ul>
-					</div>
-					
-					<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-d" data-iconpos="right">
-						<h3>Training</h3>
-						<ul data-role="listview" data-icon="false">
 							<li><a rel="external" data-ajax="false" href="/book/"><i class="zmdi zmdi-book zmd-fw"></i> Play Book</a></li>
 							<li><a rel="external" data-ajax="false" href="/videos/"><i class="zmdi zmdi-movie zmd-fw"></i> Videos traning</a></li>
 							<?php if(!$keylogin) { ?>
