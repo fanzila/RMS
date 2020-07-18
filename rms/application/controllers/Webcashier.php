@@ -943,6 +943,13 @@ class webCashier extends CI_Controller {
 						$cancel_ticket = count($cancelledReceipts);
 						error_log('set status error cancel_ticket : '.$cancel_ticket. ' '. $pmid);	
 					}
+
+					if (empty($seterror_status)) {
+						$this->db->set('status', 'ok');
+						$this->db->where('id', $pmid);
+						$this->db->update('pos_movements');
+						error_log('set status to ok : '.$seterror_status. ' '. $pmid);	
+					}
 			
 					//insert into infos_close
 					$this->db->set('cashier_diff', $diff);
@@ -953,7 +960,7 @@ class webCashier extends CI_Controller {
 					$this->db->set('to', $total_to);
 					if($seterror_status) {	
 						$this->db->set('status', 'error');
-						error_log('set status error : '.$seterror_status. ' '. $pmid);
+						error_log('set infos_close status error : '.$seterror_status. ' '. $pmid);
 					}
 					if($cancel_ticket)		$this->db->set('cancel_ticket', $cancel_ticket);
 					$this->db->insert('infos_close') or die('ERROR '.$this->db->_error_message().error_log('ERROR '.$this->db->_error_message()));
