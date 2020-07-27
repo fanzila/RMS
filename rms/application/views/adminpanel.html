@@ -5,7 +5,7 @@
 						<form action="#" method="POST">
 							<select name="bus" class="ui-btn" onchange="this.form.submit()">
 							<?php foreach ($bus_list as $bu) { ?>
-				  				<option value="<?=$bu->id?>" <?php if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
+				  				<option value="<?=$bu->id?>" <?php if($id_bu == $bu->id) echo "selected"; ?>><?=$bu->name?></option>
 							<?php } ?>
 							</select>
 						</form>

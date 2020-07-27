@@ -35,7 +35,7 @@
 		<label for="bu">BU(s)</label>
         <?php foreach ($bus_list as $bu):?>
             <label class="checkbox" style="background-color: #ffffff">
-            <input data-inline="true" type="checkbox" name="bus[]" value="<?php echo $bu->id;?>" <? if($bu_id == $bu->id) echo "checked"; ?>>
+            <input data-inline="true" type="checkbox" name="bus[]" value="<?php echo $bu->id;?>" <? if($id_bu == $bu->id) echo "checked"; ?>>
             <?php echo htmlspecialchars($bu->name,ENT_QUOTES,'UTF-8');?>
             </label>
         <?php endforeach?>

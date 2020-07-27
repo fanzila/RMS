@@ -22,7 +22,7 @@ class Order extends CI_Controller {
 	{
 
 		parent::__construct();
-		$this->load->library('hmw');
+		$this->load->library('tools');
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
 		$this->load->model('order_model');
@@ -35,9 +35,9 @@ class Order extends CI_Controller {
 
 	public function index()
 	{
-		$this->hmw->changeBu();// GENERIC changement de Bu
-		$this->hmw->keyLogin();
-		$id_bu			=  $this->session->userdata('bu_id');
+		$this->tools->changeBu();// GENERIC changement de Bu
+		$this->tools->keyLogin();
+		$id_bu			=  $this->session->userdata('id_bu');
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 		$suppliers 		= $this->product->getSuppliers(true, null, $id_bu);
 
@@ -57,7 +57,7 @@ class Order extends CI_Controller {
 			$this->session->unset_userdata('keep_filters');
 		}
 
-		$headers = $this->hmw->headerVars(1, "/order/", "Order");
+		$headers = $this->tools->headerVars(1, "/order/", "Order");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/index',$data);
@@ -66,17 +66,17 @@ class Order extends CI_Controller {
 
 	public function loss() {
 
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 		$user = $this->ion_auth->user()->row();
 
-		$id_bu					= $this->session->userdata('bu_id');
+		$id_bu					= $this->session->userdata('id_bu');
 		$post					= $this->input->post();
 
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
@@ -87,7 +87,7 @@ class Order extends CI_Controller {
 		$data['keylogin']	= $this->session->userdata('keylogin');
 		$data['users']		= $users;
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Loss");
+		$headers = $this->tools->headerVars(0, "/order/", "Loss");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/loss',$data);
@@ -96,7 +96,7 @@ class Order extends CI_Controller {
 
 	public function saveLoss()
 	{
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 		$reponse = 'ok';
 		$data = $this->input->post();
 		$user = $this->ion_auth->user()->row();
@@ -109,7 +109,7 @@ class Order extends CI_Controller {
 			}
 		}
 
-		$data['value'] = $this->hmw->cleanNumber($data['value']);
+		$data['value'] = $this->tools->cleanNumber($data['value']);
 		if(empty($data['value'])) $value = '0';
 		if(!empty($data['value']) AND !is_numeric($data['value'])) exit('Stock has to be numeric, invalid: '.$data['value']);
 
@@ -127,7 +127,7 @@ class Order extends CI_Controller {
 				'val2'	=> "$data[value]",
 				'val4'	=> "$previous_qtty"
 			);
-			$this->hmw->LogRecord($p);
+			$this->tools->LogRecord($p);
 
 		} elseif($data['type'] == 'PRODUCT') {
 			$this->cashier->updateProductStock($data['id'], $data['value'], $id_bu, 'stock_loss');
@@ -138,7 +138,7 @@ class Order extends CI_Controller {
 
 	public function autoCompLoss(){
 
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 
 		if (isset($_GET['q'])){
 			$q = strtolower($_GET['q']);
@@ -177,7 +177,7 @@ class Order extends CI_Controller {
 
 	public function autoCompProducts(){
 
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 
 		if (isset($_GET['q'])){
 			$q = strtolower($_GET['q']);
@@ -248,7 +248,7 @@ class Order extends CI_Controller {
 
 				if($archive_day != $today_day) {
 
-					$info = $this->hmw->getBuInfo($id_bu);
+					$info = $this->tools->getBuInfo($id_bu);
 					$this->load->library('mmail');
 
 					$msg = "WARNING! " . $info->name . " CASHPAD NOT CLOSED!";
@@ -257,7 +257,7 @@ class Order extends CI_Controller {
             ->toList('cashier_alerts', $id_bu)
             ->send();
 
-          $this->hmw->sendNotif($msg, $id_bu);
+          $this->tools->sendNotif($msg, $id_bu);
 
 				}
 
@@ -269,17 +269,17 @@ class Order extends CI_Controller {
 
 	public function viewOrders()
 	{
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 		$this->load->library('session');
 		$this->load->library('user_agent');
 		
-		$id_bu 		= $this->session->userdata('bu_id');
+		$id_bu 		= $this->session->userdata('id_bu');
 		$keylogin 	= $this->session->userdata('keylogin');
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('active', 1);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query					= $this->db->get("users");
 		$users					= $query->result();
@@ -380,7 +380,7 @@ class Order extends CI_Controller {
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
 				
-		$headers = $this->hmw->headerVars(0, "/order/", "Orders");
+		$headers = $this->tools->headerVars(0, "/order/", "Orders");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('order/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -419,8 +419,8 @@ class Order extends CI_Controller {
 	public function viewProducts($load = null, $supplier_id = null, $type = null)
 	{
 
-		$this->hmw->keyLogin();
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->keyLogin();
+		$id_bu =  $this->session->userdata('id_bu');
 
 		$order_prev		= null;
 		$supinfo		= null;
@@ -472,7 +472,7 @@ class Order extends CI_Controller {
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
@@ -498,10 +498,10 @@ class Order extends CI_Controller {
 		$data['username']	= $this->session->userdata('identity');
 		$data['keylogin']	= $this->session->userdata('keylogin');
 		if ($type == 'reception' || $type == 'order' || $type == 'viewreception') {
-		$headers = $this->hmw->headerVars(0, "/order/viewOrders/", $title);
+		$headers = $this->tools->headerVars(0, "/order/viewOrders/", $title);
 		$this->session->set_userdata('keep_filters', 'true');
 	} else {
-		$headers = $this->hmw->headerVars(0, "/order/", $title);
+		$headers = $this->tools->headerVars(0, "/order/", $title);
 	}
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -512,7 +512,7 @@ class Order extends CI_Controller {
 	
 	public function saveComment($idorder = null) 
 	{	
-		$this->hmw->isLoggedIn();
+		$this->tools->isLoggedIn();
 		if (empty($idorder)) {
 			die("Error: Missing Parameters");
 		}
@@ -614,11 +614,11 @@ class Order extends CI_Controller {
 
 	public function detailOrder() {
 
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 		$user			= $this->ion_auth->user()->row();
 		$stock_update	= false;
 		$post			= $this->input->post();
-		$id_bu 			= $this->session->userdata('bu_id');
+		$id_bu 			= $this->session->userdata('id_bu');
 		$update_stock	= array();
 		$do_something	= false;
 
@@ -633,7 +633,7 @@ class Order extends CI_Controller {
 			//update stock
 			if($key == 'stock') {
 				foreach ($var as $id_pdt => $value) {
-					$value = $this->hmw->cleanNumber($value);
+					$value = $this->tools->cleanNumber($value);
 					if(empty($value)) $value = '0';
 					if(!empty($value) AND !is_numeric($value)) exit('Stock has to be numeric, invalid: '.$value);
 					$pdt_info = $this->product->getProducts($id_pdt, null, null, null, $id_bu);
@@ -653,7 +653,7 @@ class Order extends CI_Controller {
 							'val3' => "$post[idorder]",
 							'val4' => "$previous_qtty"
 						);
-						$this->hmw->LogRecord($p);
+						$this->tools->LogRecord($p);
 						$stock_update = true;
 						$do_something	= true;
 					}
@@ -775,7 +775,7 @@ class Order extends CI_Controller {
 
 		if(!$do_something) exit('Empty form, go back');
 
-		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Detail");
+		$headers = $this->tools->headerVars(0, "/order/viewOrders", "Order Detail");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_detail',$data);
@@ -798,7 +798,7 @@ class Order extends CI_Controller {
 			$ret_sup = $res_sup->result_array();
 
 			$fcomment = $this->input->post('scomment');
-			$order_email = $this->hmw->getEmail('order', $ret_sup[0]['id_bu']);
+			$order_email = $this->tools->getEmail('order', $ret_sup[0]['id_bu']);
 
 
 			if(!empty($fcomment)) {
@@ -840,18 +840,18 @@ class Order extends CI_Controller {
 	public function cancelOrder($load = null, $supplier_id = null, $confirm = false)
 	{
 		$this->load->library('mmail');
-		$this->hmw->isLoggedIn();
+		$this->tools->isLoggedIn();
 		if ($confirm == true) {
 			if (empty($load) || empty($supplier_id))
 				die("Cannot cancel order: Missing parameters");
 			
-			$id_bu = $this->session->userdata('bu_id');
+			$id_bu = $this->session->userdata('id_bu');
 			$user  = $this->ion_auth->user()->row();
 			$this->db->where('idorder', $load);
 			$this->db->where('supplier_id', $supplier_id);
 			$query = $this->db->get('orders');
 			$order = $query->row_array();
-			$order_email 	= $this->hmw->getEmail('order', $id_bu);
+			$order_email 	= $this->tools->getEmail('order', $id_bu);
 
 			$this->db->where('id', $supplier_id);
 			$query = $this->db->get('suppliers');
@@ -915,7 +915,7 @@ class Order extends CI_Controller {
 			$fileencode = str_replace("/", "-", $filename);
 			$data['filename']	= urlencode($fileencode);
 			$data['supplier'] = $supplier;
-			$headers = $this->hmw->headerVars(0, "/order/ViewOrders", "Cancel Order");
+			$headers = $this->tools->headerVars(0, "/order/ViewOrders", "Cancel Order");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('order/confirmCancelOrder', $data);
@@ -925,12 +925,12 @@ class Order extends CI_Controller {
 
 	public function sendOrder() {
 
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 		$this->load->helper('download');
 		$this->load->library('mmail');
 		$this->load->helper('file');
 
-		$id_bu 			= $this->session->userdata('bu_id');
+		$id_bu 			= $this->session->userdata('id_bu');
 		$user 			= $this->ion_auth->user()->row();
 		$post			= $this->input->post();
 
@@ -940,8 +940,8 @@ class Order extends CI_Controller {
 		$inc 			= 0;
 		$order			= $this->getOrder($idorder, $id_bu) or die('Can\'t get order: ' .$idorder. ' for BU '.$id_bu);
 
-		$server_name	= $this->hmw->getParam('server_name');
-		$order_email 	= $this->hmw->getEmail('order', $id_bu);
+		$server_name	= $this->tools->getParam('server_name');
+		$order_email 	= $this->tools->getEmail('order', $id_bu);
 		$getSupInfo		= $this->product->getSuppliers(null, $order->supplier_id, $id_bu);
 		$supinfo		= $getSupInfo[$order->supplier_id];
 
@@ -977,7 +977,7 @@ class Order extends CI_Controller {
 
 			if (!empty($supinfo['contact_order_tel']) AND isset($post['SMSSupplier']) AND $post['SMSSupplier'] == "on") {
 				$msg = 'Une commande HANK vient d\'être envoyée, merci de bien vouloir consulter vos emails.';
-				$this->hmw->sendSms($supinfo['contact_order_tel'], $msg);
+				$this->tools->sendSms($supinfo['contact_order_tel'], $msg);
 			}
 			$this->db->set('status', 'sent')->set('date', "NOW()", FALSE);
 			$this->db->where('idorder', $idorder)->order_by('date desc')->limit(1);
@@ -993,7 +993,7 @@ class Order extends CI_Controller {
 
 		$this->session->set_userdata('keep_filters', 'true');
 
-		$headers = $this->hmw->headerVars(0, "/order/ViewOrders", "Order Sent");
+		$headers = $this->tools->headerVars(0, "/order/ViewOrders", "Order Sent");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_send', $data);
@@ -1003,10 +1003,10 @@ class Order extends CI_Controller {
 
 	public function confirmOrder() {
 
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 		$user = $this->ion_auth->user()->row();
 		$this->load->helper(array('dompdf', 'file'));
-		$id_bu					= $this->session->userdata('bu_id');
+		$id_bu					= $this->session->userdata('id_bu');
 		$post					= $this->input->post();
 		$order					= $this->getOrderData($post['idorder'], $id_bu);
 		$getSupInfo				= $this->product->getSuppliers(null, $post['supplier'], $id_bu);
@@ -1017,8 +1017,8 @@ class Order extends CI_Controller {
 		$info 					= array();
 		$info['date']			= date('d/m/Y H:i');
 		$info['idorder']		= $post['idorder'];
-		$info['user'] 			= $this->hmw->getUser($user->id);
-		$info['buinfo']			= $this->hmw->getBuInfo($id_bu);
+		$info['user'] 			= $this->tools->getUser($user->id);
+		$info['buinfo']			= $this->tools->getBuInfo($id_bu);
 		$info['supplier']		= $getSupInfo[$post['supplier']];
 		$info['pdtinfo']		= $this->product->getProducts(null, $post['supplier'], null, null, $id_bu, null);
 		$info['valid_number'] = $this->validateSupplierTel($info['supplier']['contact_order_tel']);
@@ -1061,7 +1061,7 @@ class Order extends CI_Controller {
 
 		$this->session->set_userdata('keep_filters', 'true');
 
-		$headers = $this->hmw->headerVars(0, "/order/viewOrders", "Order Confirm");
+		$headers = $this->tools->headerVars(0, "/order/viewOrders", "Order Confirm");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('order/order_confirm', $data);
@@ -1202,9 +1202,9 @@ class Order extends CI_Controller {
 				if ($current_weekday != 'Sat' AND $current_weekday != 'Sun') {
 					if(!empty($line->contact_order_email) AND $ds <= $dc) {
 
-						$server_name		= $this->hmw->getParam('server_name');
-						$order_email		= $this->hmw->getEmail('order', $id_bu);
-						$user 				= $this->hmw->getUser($line->user);
+						$server_name		= $this->tools->getParam('server_name');
+						$order_email		= $this->tools->getEmail('order', $id_bu);
+						$user 				= $this->tools->getUser($line->user);
 						$email 				= array();
 						$cc 				= (!empty($line->ccemail)) ? $order_email.','.$line->ccemail : $order_email;
 						$link 				= 'http://'.$server_name.'/order/confirm/'.$line->key;

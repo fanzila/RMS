@@ -26,10 +26,10 @@ class News_model extends CI_Model {
 
 	public function get_list($limit, $start)
 	{
-		$bu_id =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 		
 		$this->db->select('news.id as news_id, users.username, news.title, news.slug, news.text, news.picture, news.date, news.id_user, bus.name, bus.id');
-		$this->db->where('news_bus.id_bu', $bu_id);
+		$this->db->where('news_bus.id_bu', $id_bu);
 		$this->db->limit($limit, $start);
 		$this->db->order_by("news.id", "desc");
 		$this->db->join('users', 'users.id = news.id_user', 'left');
@@ -48,8 +48,8 @@ class News_model extends CI_Model {
 	}
 
 	public function record_count() {
-		$bu_id =  $this->session->userdata('bu_id');
-		$query = $this->db->where('id_bu', $bu_id)->get('news_bus');
+		$id_bu =  $this->session->userdata('id_bu');
+		$query = $this->db->where('id_bu', $id_bu)->get('news_bus');
 		return $query->num_rows();
 
 	//	return $this->db->count_all('news');

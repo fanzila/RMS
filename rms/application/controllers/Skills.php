@@ -25,15 +25,15 @@ class Skills extends CI_Controller {
 		$this->load->database();
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
 	}
 
 	public function index($id = null, $back=null)
 	{
-		$this->hmw->isLoggedIn();
-		$id_bu = $this->session->userdata('bu_id');
+		$this->tools->isLoggedIn();
+		$id_bu = $this->session->userdata('id_bu');
 
 		//TODO change somewhere here for disabling disabled users in sponsor
 		$current_user = $this->ion_auth->get_user_id();
@@ -57,7 +57,7 @@ class Skills extends CI_Controller {
 				$bypass_sponsor=0;
 			}
 			if($bypass_sponsor==0 && (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id))){
-				$this->hmw->isLoggedIn();
+				$this->tools->isLoggedIn();
 				redirect('skills', 'refresh');
 			}else{
 				$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
@@ -71,7 +71,7 @@ class Skills extends CI_Controller {
 		}else{
 			$id = $current_user;
 		}
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 
 		date_default_timezone_set('Europe/Paris');
 		$this->db->select('R.id, RI.date, R.id_user, RI.checked, RI.comment, I.name as i_name, I.id as i_id, skills.name as s_name, cat.name as c_name, subcat.name as sub_name, skills.id as s_id, cat.id as c_id, I.link as i_link, subcat.id as sub_id')
@@ -126,14 +126,14 @@ class Skills extends CI_Controller {
 			}else{
 				$link = "/skills/start";
 			}
-			$headers = $this->hmw->headerVars(0, $link, "Skills of ".$user[0]->first_name." ".$user[0]->last_name);
+			$headers = $this->tools->headerVars(0, $link, "Skills of ".$user[0]->first_name." ".$user[0]->last_name);
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('skills/index',$data);
 			$this->load->view('jq_footer');
 		}else{
 			$data['userlevel'] = 0;
-			$headers = $this->hmw->headerVars(0, "/skills/start/", "My Skills");
+			$headers = $this->tools->headerVars(0, "/skills/start/", "My Skills");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('skills/index',$data);
@@ -144,13 +144,13 @@ class Skills extends CI_Controller {
 	public function general()
 	{
 		if (!$this->ion_auth_acl->has_permission('skills_manage_crud')) {
-			$this->hmw->isLoggedIn();
+			$this->tools->isLoggedIn();
 			redirect('skills', 'refresh');
 		}
-		$this->hmw->changeBu();
-		$id_bu = $this->session->userdata('bu_id');
+		$this->tools->changeBu();
+		$id_bu = $this->session->userdata('id_bu');
 		
-		$headers = $this->hmw->headerVars(1, "/skills/general", "Manage Skills");
+		$headers = $this->tools->headerVars(1, "/skills/general", "Manage Skills");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('skills/general');
@@ -160,11 +160,11 @@ class Skills extends CI_Controller {
 	public function admin()
 	{
 		if (!$this->ion_auth_acl->has_permission('skills_admin')) {
-			$this->hmw->isLoggedIn();
+			$this->tools->isLoggedIn();
 			redirect('skills', 'refresh');
 		}
-		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->changeBu();// GENERIC changement de Bu
+		$id_bu =  $this->session->userdata('id_bu');
 		$users_group_id = array(1,2,3,4,6);
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id, sr.id_sponsor');
@@ -174,7 +174,7 @@ class Skills extends CI_Controller {
 		$this->db->join('skills_record AS sr', 'users.id = sr.id_user', 'left');
 		$this->db->where('users.active', 1);
 		$this->db->where_in('users_groups.group_id', $users_group_id);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
@@ -217,7 +217,7 @@ class Skills extends CI_Controller {
 		$this->db->join('users_groups', 'u.id = users_groups.user_id', 'left');
 		$this->db->where('u.active', 1);
 		$this->db->where_in('users_groups.group_id', $users_group_id);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->where('sr.id_bu', $id_bu);
 		$this->db->order_by('u.username', 'asc');
 		$query = $this->db->get("users");
@@ -289,7 +289,7 @@ class Skills extends CI_Controller {
 		$res 	= $this->db->get() or die($this->mysqli->error);
 		$skills_sub_categories = $res->result();
 
-		$this->db->select('sr.id, sr.id_user, us.username as sponsorname, u.username, ub.bu_id')
+		$this->db->select('sr.id, sr.id_user, us.username as sponsorname, u.username, ub.id_bu')
 			->from('skills_record as sr')
 			->join('users as us', 'us.id = id_sponsor', 'left')
 			->join('users as u', 'u.id = id_user', 'left')
@@ -333,7 +333,7 @@ class Skills extends CI_Controller {
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 		$data['level']	= $user_groups[0]->level;
 		$data['users'] = $users;
-		$headers = $this->hmw->headerVars(1, "/skills/admin", "Skills Management");
+		$headers = $this->tools->headerVars(1, "/skills/admin", "Skills Management");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('skills/admin', $data);
@@ -342,9 +342,9 @@ class Skills extends CI_Controller {
 
 	public function start()
 	{
-		$this->hmw->isLoggedIn();
-		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->isLoggedIn();
+		$this->tools->changeBu();// GENERIC changement de Bu
+		$id_bu =  $this->session->userdata('id_bu');
 		$bu_name	= $this->session->userdata('bu_name');
 
 		$this->db->select('sr.id, us.id as id_sponsor, u.first_name, u.last_name, u.id as id_user')
@@ -363,7 +363,7 @@ class Skills extends CI_Controller {
 			'current_user' => $this->ion_auth->get_user_id()
 			);
 
-		$headers = $this->hmw->headerVars(1, "/skills/start/", "My space");
+		$headers = $this->tools->headerVars(1, "/skills/start/", "My space");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('skills/start', $data);
@@ -468,7 +468,7 @@ class Skills extends CI_Controller {
 	public function save()//here we create a sponsoring link
 	{		
 		$data = $this->input->post();
-		$id_bu 		= $this->session->userdata('bu_id');
+		$id_bu 		= $this->session->userdata('id_bu');
 		
 		$this->db->select('sr.id_user, us.username as sponsor_name')
 			->from('skills_record as sr')
@@ -517,7 +517,7 @@ class Skills extends CI_Controller {
 				$this->db->set('id_user', $current_user);
 				$this->db->set('date', $date);
 				$this->db->set('id_skills_record', $data['id']);
-				$this->db->set('id_bu', $this->session->userdata('bu_id'));
+				$this->db->set('id_bu', $this->session->userdata('id_bu'));
 				if(!$this->db->insert('skills_log')) {
 					$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
 				}
@@ -597,7 +597,7 @@ class Skills extends CI_Controller {
 							$this->db->set('date', $date);
 							$this->db->set('type', 'edit');
 							$this->db->set('id_skills_record', $data['id_record']);
-							$this->db->set('id_bu', $this->session->userdata('bu_id'));
+							$this->db->set('id_bu', $this->session->userdata('id_bu'));
 							if(!$this->db->insert('skills_log')) {
 								$response = "Can't place the insert sql request in log, error message: ".$this->db->_error_message();
 							}
@@ -642,7 +642,7 @@ class Skills extends CI_Controller {
 
   public function duplicate($id)
   {
-		$this->hmw->isLoggedIn();
+		$this->tools->isLoggedIn();
 		$current_user = $this->ion_auth->get_user_id();
 
     $this->load->model('skill_model');
@@ -659,15 +659,15 @@ class Skills extends CI_Controller {
     if (!$this->skill_model->duplicate($id, $new_id_bu))
       return $this->duplicateForm($skill, $current_user, 'Duplication did not work');
 
-    $this->hmw->changeBu($new_id_bu);
+    $this->tools->changeBu($new_id_bu);
     redirect('/skills/general');
   }
 
   function duplicateForm($skill, $user, $error = null)
   {
-    $bus = $this->hmw->getBus(null, $user);
+    $bus = $this->tools->getBus(null, $user);
 
-    $headers = $this->hmw->headerVars(0, '/crud/skills', 'Duplicate skill ' . $skill->name);
+    $headers = $this->tools->headerVars(0, '/crud/skills', 'Duplicate skill ' . $skill->name);
 
     $data = [
       'skill' => $skill,

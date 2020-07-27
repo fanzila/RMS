@@ -9,7 +9,7 @@ class Order_model extends CI_Model {
 	public function get_list($limit, $start, $keylogin=null)
 	{
 		
-		$bu_id =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 		
 		$this->db->select('r.user, u.username, ur.username as username_reception, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.idorder, r.id, r.date, r.data, r.supplier_id, r.status, r.user_reception, r.date_reception, r.data_reception, r.status_reception, c.status as confirm, s.name as supplier_name');
 		$this->db->from('orders as r');
@@ -17,7 +17,7 @@ class Order_model extends CI_Model {
 		$this->db->join('users as ur', 'r.user_reception = ur.id', 'left');
 		$this->db->join('suppliers as s','s.id = r.supplier_id','left');
 		$this->db->join('orders_confirm as c','r.idorder = c.idorder','left');
-		$this->db->where('r.id_bu', $bu_id);
+		$this->db->where('r.id_bu', $id_bu);
 		$status = array('sent', 'received');
 		$this->db->where_in('r.status', $status);
 		$this->db->limit($limit, $start);
@@ -31,8 +31,8 @@ class Order_model extends CI_Model {
 	}
 
 	public function record_count() {
-		$bu_id =  $this->session->userdata('bu_id');
-		$query = $this->db->where('id_bu', $bu_id)->get('orders');
+		$id_bu =  $this->session->userdata('id_bu');
+		$query = $this->db->where('id_bu', $id_bu)->get('orders');
 		return $query->num_rows();
 
 	//	return $this->db->count_all('orders');

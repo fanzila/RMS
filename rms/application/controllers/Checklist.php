@@ -24,7 +24,7 @@ class Checklist extends CI_Controller {
 		parent::__construct();
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 		$this->load->library('mmail');
 		$this->load->library('chkl');
 		$this->load->database();
@@ -32,10 +32,10 @@ class Checklist extends CI_Controller {
 
 	public function index()
 	{
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu();// GENERIC changement de Bu
 
-		$this->hmw->keyLogin();
-		$id_bu = $this->session->userdata('bu_id');
+		$this->tools->keyLogin();
+		$id_bu = $this->session->userdata('id_bu');
 		$type = $this->session->userdata('type');
 
 		$msg = null;
@@ -63,7 +63,7 @@ class Checklist extends CI_Controller {
 		$data['bu_name'] 	=  $this->session->userdata('bu_name');
 		$data['username'] 	= $this->session->userdata('identity');
 		$data['type'] 		= $type;
-		$headers 			= $this->hmw->headerVars(1, "/checklist/", "Checklist");
+		$headers 			= $this->tools->headerVars(1, "/checklist/", "Checklist");
 
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('checklist/jq_header_spe');
@@ -76,8 +76,8 @@ class Checklist extends CI_Controller {
 	public function viewCklPreviousTasks()
 	{
 
-		$this->hmw->keyLogin();
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->keyLogin();
+		$id_bu =  $this->session->userdata('id_bu');
 
 		if (isset($type)) {
 			$this->db->select('r.user, u.first_name as first_name, u.last_name as last_name, r.id as lid, r.id_checklist, r.date, c.name')->from('checklist_records as r')->join('checklists as c', 'c.id = r.id_checklist')->join('users as u', 'r.user = u.id')->where(array('c.id_bu' => $id_bu, 'c.type' => $type))->order_by('r.date desc')->limit(50);
@@ -94,7 +94,7 @@ class Checklist extends CI_Controller {
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
 
-		$headers = $this->hmw->headerVars(0, "/checklist/", "Checklist View Record");
+		$headers = $this->tools->headerVars(0, "/checklist/", "Checklist View Record");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('checklist/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -105,10 +105,10 @@ class Checklist extends CI_Controller {
 
 	public function viewCklTasks($id_ckl, $load = null)
 	{
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 		$form = null;
 		$checklist_rec_id = null;
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 		$type = $this->session->userdata('type');
 
 		if($load > 0) {
@@ -138,7 +138,7 @@ class Checklist extends CI_Controller {
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
@@ -156,7 +156,7 @@ class Checklist extends CI_Controller {
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
 
-		$headers = $this->hmw->headerVars(0, "/checklist/", "Checklist Record");
+		$headers = $this->tools->headerVars(0, "/checklist/", "Checklist Record");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('checklist/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -173,7 +173,7 @@ class Checklist extends CI_Controller {
 
 		$date = date('Y-m-d H:i:s');
 
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
     $subject = '';
     $msg = '';
 
@@ -261,14 +261,14 @@ class Checklist extends CI_Controller {
 				$this->db->join('users_groups', 'users.id = users_groups.user_id');
 				$this->db->where('users.active', 1);
 				$this->db->where_in('users_groups.group_id', array(1,4));
-				$this->db->where('users_bus.bu_id', $id_bu);
+				$this->db->where('users_bus.id_bu', $id_bu);
 				$query = $this->db->get("users");
 
         $this->mmail->prepare($msg, $msg)
           ->toList('checklists', $id_bu)
           ->send();
 
-				$this->hmw->sendNotif($msg, $id_bu);
+				$this->tools->sendNotif($msg, $id_bu);
 			}
 			return;
 		} else {
@@ -281,9 +281,9 @@ class Checklist extends CI_Controller {
 
   public function admin()
   {
-    $this->hmw->keyLogin();
-    $this->hmw->changeBu();
-    $id_bu = $this->session->userdata('bu_id');
+    $this->tools->keyLogin();
+    $this->tools->changeBu();
+    $id_bu = $this->session->userdata('id_bu');
 
     $data = [
       'checklists' => $this->chkl->getAllChecklists($id_bu),
@@ -300,7 +300,7 @@ class Checklist extends CI_Controller {
       ]
     ];
 
-    $headers = $this->hmw->headerVars(1, '/checklist/admin/', 'Checklist admin');
+    $headers = $this->tools->headerVars(1, '/checklist/admin/', 'Checklist admin');
 
     $this->load->view('jq_header_pre', $headers['header_pre']);
     $this->load->view('checklist/jq_header_spe');
@@ -311,9 +311,9 @@ class Checklist extends CI_Controller {
 
   public function save()
   {
-    $this->hmw->keyLogin();
-    $this->hmw->changeBu();
-		$id_bu = $this->session->userdata('bu_id');
+    $this->tools->keyLogin();
+    $this->tools->changeBu();
+		$id_bu = $this->session->userdata('id_bu');
 
 		$data = $this->input->post();
 
@@ -327,8 +327,8 @@ class Checklist extends CI_Controller {
 
   public function order()
   {
-    $this->hmw->keyLogin();
-    $this->hmw->changeBu();
+    $this->tools->keyLogin();
+    $this->tools->changeBu();
 
     $success = $this->chkl->setOrder($this->input->post()['ids']);
 
@@ -337,9 +337,9 @@ class Checklist extends CI_Controller {
 
   public function getTasks($id_checklist, $html = 0)
   {
-    $this->hmw->keyLogin();
-    $this->hmw->changeBu();
-		$id_bu = $this->session->userdata('bu_id');
+    $this->tools->keyLogin();
+    $this->tools->changeBu();
+		$id_bu = $this->session->userdata('id_bu');
 
     $checklist = $this->chkl->getOneChecklist($id_checklist, true);
 
@@ -360,9 +360,9 @@ class Checklist extends CI_Controller {
 
   public function createTask()
   {
-    $this->hmw->keyLogin();
-    $this->hmw->changeBu();
-		$id_bu = $this->session->userdata('bu_id');
+    $this->tools->keyLogin();
+    $this->tools->changeBu();
+		$id_bu = $this->session->userdata('id_bu');
 
     $this->load->model('task_model');
     $result = $this->task_model->insert_entry($this->input->post());

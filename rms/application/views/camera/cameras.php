@@ -26,7 +26,7 @@
 	<meta name="msapplication-TileImage" content="/public/favicon.ico/ms-icon-144x144.png">
 	<meta name="theme-color" content="#ffffff">
 
-		<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
+		<link rel="stylesheet" href="/public/jqm/themes/tools.min.css" />
 		<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
 		<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
 		<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />
@@ -52,7 +52,7 @@
 	foreach ($all_bus as $bu) { $buname[$bu->id] = $bu->name; }
 
 	foreach ($ca as $caline) {
-		if($caline['id_bu'] == $bu_id) {
+		if($caline['id_bu'] == $id_bu) {
 			$ca_amount = $caline['amount'];
 			$ca_last = $caline['last'];
 		}
@@ -60,8 +60,8 @@
 		$closes_bu[$caline['id_bu']] = '';
 		
 		foreach ($infos_close as $ic) {	
-			if(isset($ic['bu_id']))
-			if($ic['bu_id'] == $caline['id_bu']) {
+			if(isset($ic['id_bu']))
+			if($ic['id_bu'] == $caline['id_bu']) {
 				$closes_bu[$caline['id_bu']] .= number_format($ic['to'], 0, ',', ' ').'€ - '.$ic['date'].'<br />';
 				$total_ca += $ic['to']*1000;
 			}
@@ -78,7 +78,7 @@
           <form action="#" method="POST">
             <select name="bus" class="ui-btn" onchange="this.form.submit()">
               <? foreach ($bus_list as $bu) { ?>
-                <option value="<?= $bu->id ?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?= $bu->name ?></option>
+                <option value="<?= $bu->id ?>" <? if($id_bu == $bu->id) echo "selected"; ?>><?= $bu->name ?></option>
               <? } ?>
             </select>
           </form>

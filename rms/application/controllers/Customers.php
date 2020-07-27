@@ -6,7 +6,7 @@ class customers extends CI_Controller {
     parent::__construct();
     $this->load->library('ion_auth');
     $this->load->library('ion_auth_acl');
-    $this->load->library('hmw');
+    $this->load->library('tools');
     $this->load->library('mmail');
     $this->load->library('customers_lib');
     $this->load->library('UserAgentParser');
@@ -17,11 +17,11 @@ class customers extends CI_Controller {
   
   public function index() 
   {
-    $this->hmw->isLoggedIn();
-    $this->hmw->changeBu();
+    $this->tools->isLoggedIn();
+    $this->tools->changeBu();
     
-    $id_bu = $this->session->userdata('bu_id');
-    $headers = $this->hmw->headerVars(1, "/customers/", "Customers");
+    $id_bu = $this->session->userdata('id_bu');
+    $headers = $this->tools->headerVars(1, "/customers/", "Customers");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('customers/index');
@@ -31,11 +31,11 @@ class customers extends CI_Controller {
   
   public function api() 
   {
-    $this->hmw->isLoggedIn();
-    $this->hmw->changeBu();
+    $this->tools->isLoggedIn();
+    $this->tools->changeBu();
     
     $data = array();
-    $id_bu = $this->session->userdata('bu_id');
+    $id_bu = $this->session->userdata('id_bu');
     $keys = $this->customers_lib->getApiKeys($id_bu);
     
     if (!empty($keys)) {
@@ -44,7 +44,7 @@ class customers extends CI_Controller {
     
     $data['id_bu'] = $id_bu;
     
-    $headers = $this->hmw->headerVars(0, "/customers/", "API");
+    $headers = $this->tools->headerVars(0, "/customers/", "API");
     $this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('customers/api', $data);
@@ -53,12 +53,12 @@ class customers extends CI_Controller {
   
   public function createApikey() 
   {
-    $this->hmw->isLoggedIn();
-    $this->hmw->changeBu();
+    $this->tools->isLoggedIn();
+    $this->tools->changeBu();
     
     $post = $this->input->post();
-    $id_bu = $this->session->userdata('bu_id');
-    $buName = $this->hmw->getBuInfo($id_bu)->name;
+    $id_bu = $this->session->userdata('id_bu');
+    $buName = $this->tools->getBuInfo($id_bu)->name;
     
     if (isset($id_bu)) {
       if (empty($post)) {
@@ -85,7 +85,7 @@ class customers extends CI_Controller {
       $data['error'] = $error;
     }
     
-    $headers = $this->hmw->headerVars(0, "/customers/api/", "Create API Key");
+    $headers = $this->tools->headerVars(0, "/customers/api/", "Create API Key");
     $this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
     $this->load->view('customers/createApiKey', $data);
@@ -94,10 +94,10 @@ class customers extends CI_Controller {
   
   public function deleteApiKey($id) 
   {
-    $this->hmw->isLoggedIn();
-    $this->hmw->changeBu();
+    $this->tools->isLoggedIn();
+    $this->tools->changeBu();
     
-    $id_bu = $this->session->userdata('bu_id');
+    $id_bu = $this->session->userdata('id_bu');
     
     if (!empty($id)) {
       $delete = $this->customers_lib->removeApiKey($id);
@@ -109,10 +109,10 @@ class customers extends CI_Controller {
   
   public function viewCustomers($all = NULL) 
   {
-    $this->hmw->isLoggedIn();
-    $this->hmw->changeBu();
+    $this->tools->isLoggedIn();
+    $this->tools->changeBu();
     
-    $id_bu = $this->session->userdata('bu_id');
+    $id_bu = $this->session->userdata('id_bu');
     if (!empty($id_bu) && empty($all))
       $customers = $this->customers_lib->getCustomers($id_bu);
     else
@@ -142,7 +142,7 @@ class customers extends CI_Controller {
       $data = array();
     }
     
-    $headers = $this->hmw->headerVars(0, "/customers/", "View Customers");
+    $headers = $this->tools->headerVars(0, "/customers/", "View Customers");
     $this->load->view('jq_header_pre', $headers['header_pre']);
     $this->load->view('jq_header_post', $headers['header_post']);
     $this->load->view('customers/viewCustomers', $data);

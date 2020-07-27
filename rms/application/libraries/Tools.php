@@ -1,12 +1,12 @@
 <?php
 
-class Hmw {
+class Tools {
 
 	public function LogRecord($p, $id_bu=null) {
 
 		$CI = & get_instance();
 
-		if(!isset($id_bu)) $id_bu = $CI->session->userdata('bu_id');
+		if(!isset($id_bu)) $id_bu = $CI->session->userdata('id_bu');
 		if($CI->session->userdata('keylogin') != NULL) $keylogin = $CI->session->userdata('keylogin');
 
 		$user		= $CI->ion_auth->user()->row();
@@ -100,7 +100,7 @@ class Hmw {
 		$CI->load->database();
 		$CI->db->select('bus.id, bus.name, bus.country, bus.zip, bus.description')->from('bus as bus');
 
-		if($iduser) $CI->db->join('users_bus as ub', 'ub.bu_id = bus.id')->where('ub.user_id', $iduser);
+		if($iduser) $CI->db->join('users_bus as ub', 'ub.id_bu = bus.id')->where('ub.user_id', $iduser);
 
 		if($id)
     {
@@ -127,7 +127,7 @@ class Hmw {
 		$CI = & get_instance();
 		$CI->load->database();
 		if($id_user){
-			$CI->db->set('current_bu_id', $id_bu)->where('id', $id_user);
+			$CI->db->set('current_id_bu', $id_bu)->where('id', $id_user);
 		 	$CI->db->update('users');
 		}
 	}
@@ -223,7 +223,7 @@ class Hmw {
 
 		$CI = & get_instance();
 		$CI->load->library('ion_auth');
-		$CI->load->library('hmw');
+		$CI->load->library('tools');
 		$CI->load->library('session');
 		$CI->load->library('email');
 		$CI->load->library('mmail');
@@ -269,9 +269,9 @@ class Hmw {
 		$change_bu = $bu ? $bu : $CI->input->post('bus');
 
 		if(!empty($change_bu)) {
-			$bu_info = $CI->hmw->getBus($change_bu);
-			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
-			$CI->hmw->updateUserBu($change_bu, $CI->session->userdata('user_id'));
+			$bu_info = $CI->tools->getBus($change_bu);
+			$session_data = array('id_bu'  => $change_bu, 'bu_name' => $bu_info[0]->name);
+			$CI->tools->updateUserBu($change_bu, $CI->session->userdata('user_id'));
 			$CI->session->set_userdata($session_data);
 		}
 	}
@@ -281,7 +281,7 @@ class Hmw {
 
 		if($index!=-1){
 			$user			= $CI->ion_auth->user()->row();
-			$bus_list		= $CI->hmw->getBus(null, $user->id);
+			$bus_list		= $CI->tools->getBus(null, $user->id);
 			$user_groups	= $CI->ion_auth->get_users_groups()->result();
 
 			$higher_level = new stdClass();
@@ -291,23 +291,23 @@ class Hmw {
           $higher_level = $value;
         }
       }
-			$bu_id			= $CI->session->userdata('bu_id');
+			$id_bu			= $CI->session->userdata('id_bu');
 			$keylogin 		= $CI->session->userdata('keylogin');
 			$bu_name		= $CI->session->userdata('bu_name');
 			$username		= $CI->session->userdata('identity');
-			$buinfo 		= $CI->hmw->getBuInfo($bu_id);
+			$buinfo 		= $CI->tools->getBuInfo($id_bu);
 
-			$CI->db->from('turnover')->order_by('date desc')->where('id_bu',$bu_id)->limit(1);
+			$CI->db->from('turnover')->order_by('date desc')->where('id_bu',$id_bu)->limit(1);
 		 	$bal_ca = $CI->db->get();
 			$ca = $bal_ca->row_array();
 
 			$headers = array(
 				'header_pre'	=> array(
 					'title' => $title,
-					'bu_id'	=> $bu_id
+					'id_bu'	=> $id_bu
 					),
 				'header_post'	=> array(
-					'bu_id'			=> $bu_id,
+					'id_bu'			=> $id_bu,
 					'bu_name'		=> $bu_name,
 					'bus_list'		=> $bus_list,
 					'ca'			=> $ca,
@@ -326,10 +326,10 @@ class Hmw {
 				$headers = array(
 				'header_pre'	=> array(
 					'title' => $title,
-					'bu_id'	=> null
+					'id_bu'	=> null
 					),
 				'header_post'	=> array(
-					'bu_id'			=> null,
+					'id_bu'			=> null,
 					'bu_name'		=> null,
 					'bus_list'		=> null,
 					'ca'			=> null,
@@ -355,7 +355,7 @@ class Hmw {
     $CI->db->distinct('users.username');
     $CI->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
     $CI->db->join('users_groups', 'users.id = users_groups.user_id');
-    $CI->db->where('users_bus.bu_id', $id_bu);
+    $CI->db->where('users_bus.id_bu', $id_bu);
     $CI->db->where_in('users.active', 1);
 
     if (!empty($groups))

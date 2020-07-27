@@ -228,7 +228,7 @@ class Product {
 
 	public function getSuppliers($order = null, $idsup = null, $id_bu) {
 		$CI =& get_instance();
-		$CI->load->library('hmw');
+		$CI->load->library('tools');
 
 		if($order) {
 			$CI->db->select('s.id as id, s.name, s.location, s.carriage_paid, s.payment_type, s.payment_delay, s.contact_order_name, s.contact_order_tel, s.contact_order_email, s.contact_sale_name, s.contact_sale_tel, s.contact_sale_email, s.delivery_days, s.order_method, s.comment_internal, s.comment_order, s.comment_delivery, s.comment_delivery_info, s.simple_order_form')
@@ -267,7 +267,7 @@ class Product {
 				if($dateBdd->diff($now)->days > 0) $ret[$key['id']]['last_order'] = $interval->format('%d day(s) ago');
 				if($dateBdd->diff($now)->m > 0) $ret[$key['id']]['last_order'] = $interval->format('%m month and %d day(s) ago');
 				
-				$ret[$key['id']]['last_order_user'] = $CI->hmw->getUser($rowl[0]['user']);
+				$ret[$key['id']]['last_order_user'] = $CI->tools->getUser($rowl[0]['user']);
 			}
 		}
 		return $ret;

@@ -10,17 +10,17 @@ class Crud extends CI_Controller {
 		$this->load->helper('url');
 
 		$this->load->library('grocery_CRUD');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
 
-		$this->hmw->isLoggedIn();
+		$this->tools->isLoggedIn();
 
 		if (!$this->ion_auth_acl->has_permission('access_cruds')) {
 			die ('You are not allowed to do this');
 		}
 
-		$id_bu = $this->session->userdata('bu_id');
+		$id_bu = $this->session->userdata('id_bu');
 
 	}
 
@@ -194,7 +194,7 @@ class Crud extends CI_Controller {
     {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
-        $crud->required_fields('id', 'name', 'text', 'bu_id');
+        $crud->required_fields('id', 'name', 'text', 'id_bu');
         $crud->set_table('report_subjects');
         $output = $crud->render();
 
@@ -207,7 +207,7 @@ class Crud extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
 
-        $crud->required_fields('id', 'name', 'bu_id');
+        $crud->required_fields('id', 'name', 'id_bu');
         $crud->set_table('bus');
         $output = $crud->render();
 
@@ -216,7 +216,7 @@ class Crud extends CI_Controller {
 
     public function skills()
     {
-      $id_bu = $this->session->userdata('bu_id');
+      $id_bu = $this->session->userdata('id_bu');
 
       $crud = new grocery_CRUD();
       $crud->set_theme('bootstrap');
@@ -235,7 +235,7 @@ class Crud extends CI_Controller {
 
     public function skills_item()
     {
-		$id_bu = $this->session->userdata('bu_id');
+		$id_bu = $this->session->userdata('id_bu');
 
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
@@ -259,7 +259,7 @@ class Crud extends CI_Controller {
 
     public function skills_record()
     {
-		$id_bu = $this->session->userdata('bu_id');
+		$id_bu = $this->session->userdata('id_bu');
 		
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
@@ -287,7 +287,7 @@ class Crud extends CI_Controller {
         $crud->required_fields('id', 'id_skills_record', 'date');
         $crud->set_table('skills_log');
 		$crud->set_relation('id_user', 'users', 'username');
-		$crud->set_relation('bu_id', 'bus', 'name');
+		$crud->set_relation('id_bu', 'bus', 'name');
 		$crud->display_as('id_user', 'username');
 		$crud->unset_add();
   		$crud->unset_edit();
@@ -299,7 +299,7 @@ class Crud extends CI_Controller {
 
     public function skills_category()
     {
-		$id_bu = $this->session->userdata('bu_id');
+		$id_bu = $this->session->userdata('id_bu');
 	
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');
@@ -316,7 +316,7 @@ class Crud extends CI_Controller {
 
     public function skills_sub_category()
     {
-		$id_bu = $this->session->userdata('bu_id');
+		$id_bu = $this->session->userdata('id_bu');
 		
 		$crud = new grocery_CRUD();
 		$crud->set_theme('bootstrap');

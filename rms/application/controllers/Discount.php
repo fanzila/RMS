@@ -27,17 +27,17 @@ class Discount extends CI_Controller {
 		$this->load->database();
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
 	}
 	
 	public function index($task_id = null)
 	{
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu();// GENERIC changement de Bu
 
-		$this->hmw->keyLogin();
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->keyLogin();
+		$id_bu =  $this->session->userdata('id_bu');
 		$q = $this->input->get('q');
 		$discount = array();
 
@@ -52,7 +52,7 @@ class Discount extends CI_Controller {
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
@@ -84,7 +84,7 @@ $data['bu_name']	= $this->session->userdata('bu_name');
 $data['username']	= $this->session->userdata('identity');
 $data['q']		 	= $q;
 
-$headers = $this->hmw->headerVars(1, "/discount/", "Discount");
+$headers = $this->tools->headerVars(1, "/discount/", "Discount");
 $this->load->view('jq_header_pre', $headers['header_pre']);
 $this->load->view('jq_header_post', $headers['header_post']);
 $this->load->view('discount/index',$data);
@@ -93,8 +93,8 @@ $this->load->view('jq_footer');
 	
 	public function log()
 	{
-		$this->hmw->keyLogin();
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->keyLogin();
+		$id_bu =  $this->session->userdata('id_bu');
 		$this->db->select('l.date, l.client, l.reason, l.nature, u.username, l.id_discount, l.event_type, l.used')
 			->from('discount_log as l')
 			->join('users as u', 'u.id = l.id_user')
@@ -110,7 +110,7 @@ $this->load->view('jq_footer');
 			'auth_edit' => $this->ion_auth_acl->has_permission('validate_persistent_discount')
 			);
 			
-	 	$headers = $this->hmw->headerVars(0, "/discount/", "Discount Log");
+	 	$headers = $this->tools->headerVars(0, "/discount/", "Discount Log");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/logs',$data);
@@ -119,7 +119,7 @@ $this->load->view('jq_footer');
 
 	public function save()
 	{
-		$id_bu			= $this->session->userdata('bu_id');		
+		$id_bu			= $this->session->userdata('id_bu');		
 		$data 			= $this->input->post();
 		$reponse 		= 'ok';
 		
@@ -176,7 +176,7 @@ $this->load->view('jq_footer');
 		if(!empty($data['email'])) {
 			$this->load->library('mmail');
 			
-			$from_email = $this->hmw->getEmail('generic', $id_bu);
+			$from_email = $this->tools->getEmail('generic', $id_bu);
 			$this->mmail->prepare('Votre Discount Hank!', $data['email_text'])
 	          ->from($from_email, 'HANK')
 	          ->toEmail($data['email'])
@@ -189,11 +189,11 @@ $this->load->view('jq_footer');
 	
 	public function creation($create = null, $editId = null)
 	{		
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu();// GENERIC changement de Bu
 
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 		
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 		
 		$discount = false;
 		
@@ -201,7 +201,7 @@ $this->load->view('jq_footer');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
@@ -225,7 +225,7 @@ $this->load->view('jq_footer');
 		$data['username'] = $this->session->userdata('identity');
 		$type = 'create';
 		if($discount) $type = 'edit';
-		$headers = $this->hmw->headerVars(0, "/discount/", "Discount $type");
+		$headers = $this->tools->headerVars(0, "/discount/", "Discount $type");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('discount/discount_creation',$data);

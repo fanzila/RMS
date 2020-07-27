@@ -27,7 +27,7 @@ class Reminder extends CI_Controller {
 		$this->load->library('email');
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 
 
 	}
@@ -35,10 +35,10 @@ class Reminder extends CI_Controller {
 	public function index($task_id = null, $view = null)
 	{
 
-		$this->hmw->keyLogin();
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->keyLogin();
+		$this->tools->changeBu();// GENERIC changement de Bu
 		$this->load->library('rmd');
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 
 		$msg = null;
 		$form = $this->input->post();
@@ -72,7 +72,7 @@ class Reminder extends CI_Controller {
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
-		$this->db->where('users_bus.bu_id', $id_bu);
+		$this->db->where('users_bus.id_bu', $id_bu);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
@@ -105,7 +105,7 @@ class Reminder extends CI_Controller {
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
 
-		$headers = $this->hmw->headerVars(1, "/reminder/", "Reminder");
+		$headers = $this->tools->headerVars(1, "/reminder/", "Reminder");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('reminder/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -115,9 +115,9 @@ class Reminder extends CI_Controller {
 
 	public function log()
 	{
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 
 		$req 	= "SELECT l.`date`,t.`task`,u.`username`  FROM rmd_log l JOIN `users` u ON u.id = l.`id_user` JOIN rmd_tasks t ON t.id = l.`id_task` WHERE t.id_bu = $id_bu ORDER BY l.`date` DESC LIMIT 100";
 
@@ -130,7 +130,7 @@ class Reminder extends CI_Controller {
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
 
-		$headers = $this->hmw->headerVars(0, "/reminder/", "Reminder Log");
+		$headers = $this->tools->headerVars(0, "/reminder/", "Reminder Log");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('reminder/jq_header_spe');
 		$this->load->view('jq_header_post', $headers['header_post']);
@@ -140,7 +140,7 @@ class Reminder extends CI_Controller {
 
 	public function adminSave()
 	{
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 
 		$data = $this->input->post();
 
@@ -205,9 +205,9 @@ class Reminder extends CI_Controller {
 
 	public function admin($create = null)
 	{
-		$this->hmw->keyLogin();
-		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->keyLogin();
+		$this->tools->changeBu();// GENERIC changement de Bu
+		$id_bu =  $this->session->userdata('id_bu');
 		$this->load->library('rmd');
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
@@ -222,9 +222,9 @@ class Reminder extends CI_Controller {
 		$data['username'] = $this->session->userdata('identity');
 
 		if(!$create){
-			$headers = $this->hmw->headerVars(1, "/reminder/admin", "Reminder admin");
+			$headers = $this->tools->headerVars(1, "/reminder/admin", "Reminder admin");
 		}else{
-			$headers = $this->hmw->headerVars(0, "/reminder/admin", "Reminder admin");
+			$headers = $this->tools->headerVars(0, "/reminder/admin", "Reminder admin");
 		}
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('reminder/jq_header_spe');
@@ -265,7 +265,7 @@ class Reminder extends CI_Controller {
 						return false;
 					}
 
-				$this->hmw->sendNotif("Reminder: ".$row->task, $id_bu, $row->type);
+				$this->tools->sendNotif("Reminder: ".$row->task, $id_bu, $row->type);
 
 				}
 			}

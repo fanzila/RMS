@@ -6,13 +6,13 @@ class Posmessage extends CI_Controller {
 		parent::__construct();
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
-		$this->load->library("hmw");
+		$this->load->library("tools");
 	}
 
 	public function index()
 	{
-		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->changeBu();// GENERIC changement de Bu
+		$id_bu =  $this->session->userdata('id_bu');
 		$data = array();
 		
 		if ($this->input->post('msg'))
@@ -20,10 +20,10 @@ class Posmessage extends CI_Controller {
 			$this->load->library('mmail');
 			$data['msgsent'] = $this->input->post('msg');
 			if ($this->input->post('service')) {
-				$this->hmw->sendNotif($this->input->post('msg'), $id_bu);
+				$this->tools->sendNotif($this->input->post('msg'), $id_bu);
 			}
 			if ($this->input->post('kitchen')) {
-				$this->hmw->sendNotif($this->input->post('msg'), $id_bu, 'kitchen');
+				$this->tools->sendNotif($this->input->post('msg'), $id_bu, 'kitchen');
 			}
 		}
 		
@@ -33,7 +33,7 @@ class Posmessage extends CI_Controller {
 		$data['username'] = $this->session->userdata('identity');
 		
 		
-	 	$headers = $this->hmw->headerVars(1, "/posmessage/", "Message caisse");
+	 	$headers = $this->tools->headerVars(1, "/posmessage/", "Message caisse");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('posmessage',$data);

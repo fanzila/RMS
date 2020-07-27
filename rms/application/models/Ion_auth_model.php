@@ -991,7 +991,7 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('extra_where');
 
-		$query = $this->db->select($this->identity_column . ', username, email, id, password, active, last_login, current_bu_id')
+		$query = $this->db->select($this->identity_column . ', username, email, id, password, active, last_login, current_id_bu')
 		                  ->where($this->identity_column, $identity)
 		                  ->limit(1)
 		                  ->get($this->tables['users']);
@@ -1485,7 +1485,7 @@ class Ion_auth_model extends CI_Model
 	 * @return bool
 	 * @author Ben Edmunds
 	 **/
-	public function add_to_bu($bu_id, $user_id=false)
+	public function add_to_bu($id_bu, $user_id=false)
 	{
 		$this->trigger_events('add_to_bu');
 
@@ -1493,19 +1493,19 @@ class Ion_auth_model extends CI_Model
 		$user_id || $user_id = $this->session->userdata('user_id');
 
 		//check if unique - num_rows() > 0 means row found
-		if ($this->db->where(array( $this->join['bus'] => (int)$bu_id, $this->join['users'] => (int)$user_id))->get($this->tables['users_bus'])->num_rows()) return false;
+		if ($this->db->where(array( $this->join['bus'] => (int)$id_bu, $this->join['users'] => (int)$user_id))->get($this->tables['users_bus'])->num_rows()) return false;
 
-		if ($return = $this->db->insert($this->tables['users_bus'], array( $this->join['bus'] => (int)$bu_id, $this->join['users'] => (int)$user_id)))
+		if ($return = $this->db->insert($this->tables['users_bus'], array( $this->join['bus'] => (int)$id_bu, $this->join['users'] => (int)$user_id)))
 		{
-			if (isset($this->_cache_bus[$bu_id])) {
-				$bu_name = $this->_cache_bus[$bu_id];
+			if (isset($this->_cache_bus[$id_bu])) {
+				$bu_name = $this->_cache_bus[$id_bu];
 			}
 			else {
-				$bu = $this->group($bu_id)->result();
+				$bu = $this->group($id_bu)->result();
 				$bu_name = $bu[0]->name;
-				$this->_cache_bus[$bu_id] = $bu_name;
+				$this->_cache_bus[$id_bu] = $bu_name;
 			}
-			$this->_cache_user_in_bu[$user_id][$bu_id] = $bu_name;
+			$this->_cache_user_in_bu[$user_id][$id_bu] = $bu_name;
 		}
 		return $return;
 	}
@@ -1561,7 +1561,7 @@ class Ion_auth_model extends CI_Model
 	 * @return bool
 	 * @author Ben Edmunds
 	 **/
-	public function remove_from_bu($bu_ids=false, $user_id=false)
+	public function remove_from_bu($id_bus=false, $user_id=false)
 	{
 		$this->trigger_events('remove_from_bu');
 
@@ -1572,19 +1572,19 @@ class Ion_auth_model extends CI_Model
 		}
 
 		// if group id(s) are passed remove user from the group(s)
-		if( ! empty($bu_ids))
+		if( ! empty($id_bus))
 		{
-			if(!is_array($bu_ids))
+			if(!is_array($id_bus))
 			{
-				$bu_ids = array($bu_ids);
+				$id_bus = array($id_bus);
 			}
 
-			foreach($bu_ids as $bu_id)
+			foreach($id_bus as $id_bu)
 			{
-				$this->db->delete($this->tables['users_bus'], array($this->join['bus'] => (int)$bu_id, $this->join['users'] => (int)$user_id));
-				if (isset($this->_cache_user_in_bu[$user_id]) && isset($this->_cache_user_in_bu[$user_id][$bu_id]))
+				$this->db->delete($this->tables['users_bus'], array($this->join['bus'] => (int)$id_bu, $this->join['users'] => (int)$user_id));
+				if (isset($this->_cache_user_in_bu[$user_id]) && isset($this->_cache_user_in_bu[$user_id][$id_bu]))
 				{
-					unset($this->_cache_user_in_bu[$user_id][$bu_id]);
+					unset($this->_cache_user_in_bu[$user_id][$id_bu]);
 				}
 			}
 
@@ -1946,25 +1946,25 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('pre_set_session');
 
-		//check if user has current_bu_id and has right to login to this bu 
-		$user_bu_id = $this->get_users_bus($user->id)->result();
+		//check if user has current_id_bu and has right to login to this bu 
+		$user_id_bu = $this->get_users_bus($user->id)->result();
 		$currentbulogin = false;
-		foreach ($user_bu_id as $userline)
+		foreach ($user_id_bu as $userline)
 		{
-			if($userline->id == $user->current_bu_id) $currentbulogin = true;
+			if($userline->id == $user->current_id_bu) $currentbulogin = true;
 		}
 
 		//Set BU
-		if(!empty($user->current_bu_id) && $currentbulogin) { 
+		if(!empty($user->current_id_bu) && $currentbulogin) { 
 			$bus = $this->bus()->result();
 			foreach ($bus as $key) {
-				if($key->id == $user->current_bu_id) $bu_name = $key->name;
+				if($key->id == $user->current_id_bu) $bu_name = $key->name;
 			}
-			$id_bu = $user->current_bu_id;
+			$id_bu = $user->current_id_bu;
 		} else {
-			$user_bu_id = $this->get_users_bus($user->id)->result();
-			$id_bu = $user_bu_id[0]->id;
-			$bu_name = $user_bu_id[0]->name;
+			$user_id_bu = $this->get_users_bus($user->id)->result();
+			$id_bu = $user_id_bu[0]->id;
+			$bu_name = $user_id_bu[0]->name;
 		}
 		
 		$session_data = array(
@@ -1973,7 +1973,7 @@ class Ion_auth_model extends CI_Model
 		    'email'                => $user->email,
 		    'user_id'              => $user->id, //everyone likes to overwrite id so we'll use user_id
 		    'old_last_login'       => $user->last_login, 
-			'bu_id'				   => $id_bu,
+			'id_bu'				   => $id_bu,
 			'keylogin'			   => $keylogin,
 			'bu_name'			   => $bu_name
 		);
@@ -2081,7 +2081,7 @@ class Ion_auth_model extends CI_Model
 
 		//get the user
 		$this->trigger_events('extra_where');
-		$query = $this->db->select($this->identity_column.', users.id, username, email, last_login, current_bu_id')
+		$query = $this->db->select($this->identity_column.', users.id, username, email, last_login, current_id_bu')
 											->join('users_remember', 'users.id = users_remember.user_id')
 		                  ->where($this->identity_column, get_cookie($this->config->item('identity_cookie_name', 'ion_auth')))
 		                  ->where('users_remember.remember_code', get_cookie($this->config->item('remember_cookie_name', 'ion_auth')))

@@ -44,7 +44,7 @@ $config['tables']['users_notifications'] = 'users_notifications';
  */
 $config['join']['users']       = 'user_id';
 $config['join']['groups']      = 'group_id';
-$config['join']['bus']         = 'bu_id';
+$config['join']['bus']         = 'id_bu';
 $config['join']['notifications'] = 'notification_id';
 
 /*

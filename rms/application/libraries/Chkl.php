@@ -25,7 +25,7 @@ class Chkl
     $CI = &get_instance();
     $CI->load->database();
     $CI->load->library('ion_auth');
-    $CI->load->library('hmw');
+    $CI->load->library('tools');
   }
 
   public function getUpdatableFields()

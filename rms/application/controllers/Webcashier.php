@@ -6,7 +6,7 @@ class webCashier extends CI_Controller {
 		parent::__construct();
 		@$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
-		$this->load->library("hmw");
+		$this->load->library("tools");
 		$this->load->library("mmail");
 		$this->load->library("cashier");
 		$this->load->helper(array('form', 'url'));
@@ -15,12 +15,12 @@ class webCashier extends CI_Controller {
 
 	public function index()
 	{		
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu();// GENERIC changement de Bu
 
 		$data = array();
 
-		$this->hmw->keyLogin();
-		$id_bu			 		=  $this->session->userdata('bu_id');
+		$this->tools->keyLogin();
+		$id_bu			 		=  $this->session->userdata('id_bu');
 
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
@@ -32,7 +32,7 @@ class webCashier extends CI_Controller {
 		
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 
-		$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier");
+		$headers = $this->tools->headerVars(1, "/webcashier/", "Cashier");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('webcashier/index',$data);
@@ -46,11 +46,11 @@ class webCashier extends CI_Controller {
 		//cd ; rsync -a --progress 62.210.214.17:/home/cashbkp/1/cashpad/archives/c3c9e76c-30e1-47dd-8375-4d5f37ba87ff/201805* Dropbox/www_vm/hank/pos/1/cashpad/archives/c3c9e76c-30e1-47dd-8375-4d5f37ba87ff/
 		//ssh vm ; sudo -s ; cd /var/www/hank/rms/rms && php index.php order cliUpdateSales 1
 		
-		$this->hmw->changeBu();// GENERIC changement de Bu
-		$this->hmw->keyLogin();
+		$this->tools->changeBu();// GENERIC changement de Bu
+		$this->tools->keyLogin();
 		
 		$data = array();
-		$id_bu			 		= $this->session->userdata('bu_id');
+		$id_bu			 		= $this->session->userdata('id_bu');
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
 		$data['username']		= $user->username;
@@ -142,7 +142,7 @@ class webCashier extends CI_Controller {
 			$data['sum_dessert']	= array_sum(array_column($stats, 'dessert'));
 			$data['sum_burger']		= array_sum(array_column($stats, 'burger'));
 
-			$headers = $this->hmw->headerVars(1, "/webcashier/", "Cashier - Sales stats");
+			$headers = $this->tools->headerVars(1, "/webcashier/", "Cashier - Sales stats");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('webcashier/stats',$data);
@@ -188,7 +188,7 @@ class webCashier extends CI_Controller {
 	
 		public function save_report_comment()
 		{
-			$id_bu = $this->session->userdata('bu_id');
+			$id_bu = $this->session->userdata('id_bu');
 			$user = $this->session->userdata('username');
 			$curr_date = date('Y-m-d H:i:s');
 			$reponse = 'ok';
@@ -245,7 +245,7 @@ class webCashier extends CI_Controller {
 			$this->db->where('id', $data['id']);
 			$mov = $this->db->get('pos_movements')->row_array();
 
-			$server_name = $this->hmw->getParam('server_name');
+			$server_name = $this->tools->getParam('server_name');
 
 			$msg = 'Comment on report for '.$bu_name.' from '.$user.' on ID: '.$data['id'].' | '.$mov['date'].' ('.$mov['movement'].') : <br />'. $data['comment-'.$data['id']]."<br /><a href='http://".$server_name."/webcashier/report/#".$data['id']."'>http://".$server_name."/webcashier/report/#".$data['id']."</a>";
 
@@ -331,7 +331,7 @@ class webCashier extends CI_Controller {
 
 					//infos_close
 					$this->db->where('DATE_FORMAT( infos_close.date,  \'%Y-%m-%d\' ) = CURDATE()');
-					$this->db->where('bu_id', $row->id);
+					$this->db->where('id_bu', $row->id);
 					$query_ic = $this->db->get("infos_close");
 					$res_ic = $query_ic->result_array();
 					
@@ -355,15 +355,15 @@ class webCashier extends CI_Controller {
 					$txt .= " </td>";
 					$txt .= "<td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;'>";			
 					$info_user_cashier = '-';
-					if(isset($res_ic[0]['id_user_cashier'])) $info_user_cashier = $this->hmw->getUser($res_ic[0]['id_user_cashier'])->username;
+					if(isset($res_ic[0]['id_user_cashier'])) $info_user_cashier = $this->tools->getUser($res_ic[0]['id_user_cashier'])->username;
 					$info_user_cashier1 = '-';
-					if(isset($res_ic[1]['id_user_cashier'])) $info_user_cashier1 = $this->hmw->getUser($res_ic[1]['id_user_cashier'])->username;
+					if(isset($res_ic[1]['id_user_cashier'])) $info_user_cashier1 = $this->tools->getUser($res_ic[1]['id_user_cashier'])->username;
 					$info_user_cashier2 = '-';
-					if(isset($res_ic[2]['id_user_cashier'])) $info_user_cashier2 = $this->hmw->getUser($res_ic[2]['id_user_cashier'])->username;
+					if(isset($res_ic[2]['id_user_cashier'])) $info_user_cashier2 = $this->tools->getUser($res_ic[2]['id_user_cashier'])->username;
 					$info_user_cashier3 = '-';
-					if(isset($res_ic[3]['id_user_cashier'])) $info_user_cashier3 = $this->hmw->getUser($res_ic[3]['id_user_cashier'])->username;
+					if(isset($res_ic[3]['id_user_cashier'])) $info_user_cashier3 = $this->tools->getUser($res_ic[3]['id_user_cashier'])->username;
 					$info_user_cashier4 = '-';
-					if(isset($res_ic[4]['id_user_cashier'])) $info_user_cashier4 = $this->hmw->getUser($res_ic[4]['id_user_cashier'])->username;
+					if(isset($res_ic[4]['id_user_cashier'])) $info_user_cashier4 = $this->tools->getUser($res_ic[4]['id_user_cashier'])->username;
 					$txt .= $info_user_cashier;
 					if(isset($res_ic[1]['id_user_cashier'])) $txt .= "<hr />".$info_user_cashier1;
 					if(isset($res_ic[2]['id_user_cashier'])) $txt .= "<hr />".$info_user_cashier2;
@@ -431,11 +431,11 @@ class webCashier extends CI_Controller {
 					$info_user_cl2 = '-';
 					$info_user_cl3 = '-';
 					$info_user_cl4 = '-';
-					if(isset($res_cl[0]['user'])) $info_user_cl = $this->hmw->getUser($res_cl[0]['user'])->username;
-					if(isset($res_cl[1]['user'])) $info_user_cl1 = $this->hmw->getUser($res_cl[1]['user'])->username;
-					if(isset($res_cl[2]['user'])) $info_user_cl2 = $this->hmw->getUser($res_cl[2]['user'])->username;
-					if(isset($res_cl[3]['user'])) $info_user_cl3 = $this->hmw->getUser($res_cl[3]['user'])->username;
-					if(isset($res_cl[4]['user'])) $info_user_cl4 = $this->hmw->getUser($res_cl[4]['user'])->username;
+					if(isset($res_cl[0]['user'])) $info_user_cl = $this->tools->getUser($res_cl[0]['user'])->username;
+					if(isset($res_cl[1]['user'])) $info_user_cl1 = $this->tools->getUser($res_cl[1]['user'])->username;
+					if(isset($res_cl[2]['user'])) $info_user_cl2 = $this->tools->getUser($res_cl[2]['user'])->username;
+					if(isset($res_cl[3]['user'])) $info_user_cl3 = $this->tools->getUser($res_cl[3]['user'])->username;
+					if(isset($res_cl[4]['user'])) $info_user_cl4 = $this->tools->getUser($res_cl[4]['user'])->username;
 					if(isset($res_cl[0])) $txt .=  $info_user_cl;
 					if(isset($res_cl[1])) $txt .=  "<hr />".$info_user_cl1;
 					if(isset($res_cl[2])) $txt .=  "<hr />".$info_user_cl2;
@@ -526,7 +526,7 @@ class webCashier extends CI_Controller {
 
 				$data['title']  	= 'Safe';
 
-				$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - SAFE");
+				$headers = $this->tools->headerVars(0, "/webcashier/", "Cashier - SAFE");
 				$this->load->view('jq_header_pre', $headers['header_pre']);
 				$this->load->view('jq_header_post', $headers['header_post']);
 				$this->load->view('webcashier/safe',$data);
@@ -552,7 +552,7 @@ class webCashier extends CI_Controller {
 				if ($this->input->post('status_validated')) { $filters['status_validated'] = true; } else { $filters['status_validated'] = ""; }
 				$data['filter'] = $filters;
 
-				$id_bu			 		=  $this->session->userdata('bu_id');
+				$id_bu			 		=  $this->session->userdata('id_bu');
 				$param_pos_info 		= array();
 				$param_pos_info['id_bu'] = $id_bu;
 		
@@ -560,7 +560,7 @@ class webCashier extends CI_Controller {
 				$this->db->distinct('users.username');
 				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 				$this->db->where('users.active', 1);
-				$this->db->where('users_bus.bu_id', $id_bu);
+				$this->db->where('users_bus.id_bu', $id_bu);
 				$this->db->order_by('users.username', 'asc'); 
 				$query = $this->db->get("users");
 				$data['users'] = $query->result_array();
@@ -653,7 +653,7 @@ class webCashier extends CI_Controller {
 				}
 
 				$data['lines'] = $lines;
-				$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - REPORT");
+				$headers = $this->tools->headerVars(0, "/webcashier/", "Cashier - REPORT");
 				$this->load->view('jq_header_pre', $headers['header_pre']);
 				$this->load->view('jq_header_post', $headers['header_post']);
 				$this->load->view('webcashier/report',$data);
@@ -667,7 +667,7 @@ class webCashier extends CI_Controller {
 
 				//'middle','close','safe_in','safe_out','pos_in','pos_out'
 				$data = array();
-				$this->hmw->keyLogin();
+				$this->tools->keyLogin();
 
 				$user					= $this->ion_auth->user()->row();
 				$user_groups 			= $this->ion_auth->get_users_groups()->result();
@@ -679,7 +679,7 @@ class webCashier extends CI_Controller {
 				$data['bu_name'] 		=  $this->session->userdata('bu_name');
 				$data["keylogin"] 		= $this->session->userdata('keylogin');
 				$data['title'] 			= "Cashier - ".strtoupper($mov);
-				$id_bu			 		=  $this->session->userdata('bu_id');
+				$id_bu			 		=  $this->session->userdata('id_bu');
 				$param_pos_info 		= array();
 
 				$this->db->select('*')->from('pos_payments_type')->where('active',1)->where('id_bu', $id_bu);
@@ -690,7 +690,7 @@ class webCashier extends CI_Controller {
 				$this->db->distinct('users.username');
 				$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 				$this->db->where('users.active', 1);
-				$this->db->where('users_bus.bu_id', $id_bu);
+				$this->db->where('users_bus.id_bu', $id_bu);
 				$this->db->order_by('users.username', 'asc'); 
 				$query = $this->db->get("users");
 				$data['users'] = $query->result();
@@ -744,7 +744,7 @@ class webCashier extends CI_Controller {
 					}
 				}
 				
-				$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
+				$headers = $this->tools->headerVars(0, "/webcashier/", "Cashier - POS");
 				if($data['close_waiting']) {
 					header("Refresh:7");
 					$this->load->view('jq_header_pre', $headers['header_pre']);
@@ -766,7 +766,7 @@ class webCashier extends CI_Controller {
 			{
 	
 				$data = array();
-				$this->hmw->keyLogin();
+				$this->tools->keyLogin();
 				$user						= $this->ion_auth->user()->row();
 				$user_groups 				= $this->ion_auth->get_users_groups()->result();
 				$data['username']			= $user->username;
@@ -776,7 +776,7 @@ class webCashier extends CI_Controller {
 				$data['bu_name'] 			= $this->session->userdata('bu_name');
 				$data['mov']				= $this->input->post('mov');
 				$userpost 					= $this->input->post('user');
-				$id_bu			 			= $this->session->userdata('bu_id');
+				$id_bu			 			= $this->session->userdata('id_bu');
 				$param_pos_info 			= array();
 				$param_pos_info['id_bu'] 	= $id_bu;
 				$param_pos_info['archive'] 	= $this->input->post('archive');
@@ -898,11 +898,11 @@ class webCashier extends CI_Controller {
 						$this->db->join('users_groups', 'users.id = users_groups.user_id');
 						$this->db->where('users.active', 1);
 						$this->db->where_in('users_groups.group_id', array(1,4));
-						$this->db->where('users_bus.bu_id', $id_bu);
+						$this->db->where('users_bus.id_bu', $id_bu);
 						$query = $this->db->get("users");
 						$seterror_status = false; 
 
-						$server_name = $this->hmw->getParam('server_name');
+						$server_name = $this->tools->getParam('server_name');
 						$this->db->select('name');
 						$this->db->where('id', $id_bu);
 						$bu_name = $this->db->get('bus')->row_array()['name'];
@@ -953,7 +953,7 @@ class webCashier extends CI_Controller {
 			
 					//insert into infos_close
 					$this->db->set('cashier_diff', $diff);
-					$this->db->set('bu_id', $id_bu);
+					$this->db->set('id_bu', $id_bu);
 					$this->db->set('id_pos_movements', $pmid);
 					$this->db->set('comment_cashier', addslashes($this->input->post('comment')));
 					$this->db->set('id_user_cashier', $userid);
@@ -974,7 +974,7 @@ class webCashier extends CI_Controller {
 				}
 	
 				$data['idtrans'] = $payid;
-				$headers = $this->hmw->headerVars(0, "/webcashier/", "Cashier - POS");
+				$headers = $this->tools->headerVars(0, "/webcashier/", "Cashier - POS");
 				$this->load->view('jq_header_pre', $headers['header_pre']);
 				$this->load->view('jq_header_post', $headers['header_post']);
 				$this->load->view('webcashier/save', $data);
@@ -988,7 +988,7 @@ class webCashier extends CI_Controller {
 
 			private function closing($file, $pmid)
 			{
-				$id_bu =  $this->session->userdata('bu_id');
+				$id_bu =  $this->session->userdata('id_bu');
 		
 				if(empty($file)) exit('Error: empty archive file');
 				if(empty($pmid)) exit('Error: empty movement id');
@@ -1032,15 +1032,15 @@ class webCashier extends CI_Controller {
 				if ($cashFund > 0)
 					return 0;
 
-				$bu_name = $this->hmw->getBuInfo(intval($id_bu))->name;
-				$users   = $this->hmw->getBuUsers($id_bu, [ 1, 3, 4, 6 ]);
+				$bu_name = $this->tools->getBuInfo(intval($id_bu))->name;
+				$users   = $this->tools->getBuUsers($id_bu, [ 1, 3, 4, 6 ]);
 
 				$email = [
 					'subject' => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse!',
 					'msg'     => 'ALERTE!! ' . $bu_name . ' - pas de fond de caisse! Insérer le fond de caisse.'
 				];
 
-				$this->hmw->sendNotif($email['msg'], $id_bu);
+				$this->tools->sendNotif($email['msg'], $id_bu);
 
 				foreach ($users as $user)
 				{
@@ -1049,7 +1049,7 @@ class webCashier extends CI_Controller {
 				}
 
 				//add notif
-				$this->hmw->sendNotif($email['msg'], $id_bu);
+				$this->tools->sendNotif($email['msg'], $id_bu);
 			}
 		}
 		?>

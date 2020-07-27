@@ -7,15 +7,15 @@
 		}?>
 		<?if($dev) { ?><div style="text-align: center;width:100%;background-color: #c3f59d;height:30px;border:2px solid #ccc;color:red">DEV MODE</div><br><? } ?>
 		<div data-role="header" data-position="fixed" class="wow fadeIn">
-			<?if($bu_id==1){?>
+			<?if($id_bu==1){?>
 				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.amber.css" />
-			<?}else if($bu_id==2){?>
+			<?}else if($id_bu==2){?>
 				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.red.css" />
-			<?}else if($bu_id==3){?>
+			<?}else if($id_bu==3){?>
 				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.orange.css" />
-			<?}else if($bu_id==4){?>
+			<?}else if($id_bu==4){?>
 				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.blue.css" />
-			<?}else if($bu_id==5){?>
+			<?}else if($id_bu==5){?>
 				<link rel="stylesheet" href="/public/droid2/css/nativedroid2.color.lime.css" />
 			<?}?>
 			<?if($index==1){?>
@@ -37,7 +37,7 @@
 				<form action="#" method="POST">
 					<select name="bus" class="ui-btn" onchange="this.form.submit()">
 					<? foreach ($bus_list as $bu) { ?>
-		  				<option value="<?=$bu->id?>" <? if($bu_id == $bu->id) echo "selected"; ?>><?=$bu->name?> | <?=$username?></option>
+		  				<option value="<?=$bu->id?>" <? if($id_bu == $bu->id) echo "selected"; ?>><?=$bu->name?> | <?=$username?></option>
 					<? } ?>
 					</select>
 				</form>

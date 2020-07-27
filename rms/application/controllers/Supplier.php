@@ -10,15 +10,15 @@ class Supplier extends CI_Controller
     $this->load->database();
     $this->load->library('ion_auth');
     $this->load->library('ion_auth_acl');
-    $this->load->library('hmw');
+    $this->load->library('tools');
     $this->load->library('spplr');
   }
 
   public function index()
   {
-    $this->hmw->keyLogin();
-    $this->hmw->changeBu();
-    $id_bu = $this->session->userdata('bu_id');
+    $this->tools->keyLogin();
+    $this->tools->changeBu();
+    $id_bu = $this->session->userdata('id_bu');
 
     $data = [
       'suppliers'      => $this->spplr->getAllSuppliers($id_bu),
@@ -30,7 +30,7 @@ class Supplier extends CI_Controller
       'username'       => $this->session->userdata('identity')
     ];
 
-    $headers = $this->hmw->headerVars(0, '/order/', 'Supplier admin');
+    $headers = $this->tools->headerVars(0, '/order/', 'Supplier admin');
 
     $this->load->view('jq_header_pre', $headers['header_pre']);
     $this->load->view('supplier/jq_header_spe');
@@ -41,9 +41,9 @@ class Supplier extends CI_Controller
 
   public function save()
   {
-    $this->hmw->keyLogin();
-    $this->hmw->changeBu();
-		$id_bu = $this->session->userdata('bu_id');
+    $this->tools->keyLogin();
+    $this->tools->changeBu();
+		$id_bu = $this->session->userdata('id_bu');
 
 		$data = $this->input->post();
 

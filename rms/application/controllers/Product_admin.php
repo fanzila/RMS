@@ -27,13 +27,13 @@ class Product_admin extends CI_Controller {
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
 		$this->load->library('email');
-		$this->load->library('hmw');
-		$this->hmw->keyLogin();
+		$this->load->library('tools');
+		$this->tools->keyLogin();
 	}
 
 	public function index($command = null, $page = 1)
 	{		
-		$id_bu	=  $this->session->userdata('bu_id');
+		$id_bu	=  $this->session->userdata('id_bu');
 		$this->load->library('product');
 		$product_id = null;
 		$msg = null;
@@ -108,13 +108,13 @@ class Product_admin extends CI_Controller {
 		$data['username'] = $this->session->userdata('identity');
 
 		if($command!='create'){
-			$headers = $this->hmw->headerVars(0, "/order/", "Product Admin");
+			$headers = $this->tools->headerVars(0, "/order/", "Product Admin");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('product/admin',$data);
 			$this->load->view('jq_footer');
 		}else{
-			$headers = $this->hmw->headerVars(0, "/product_admin/", "Product Admin");
+			$headers = $this->tools->headerVars(0, "/product_admin/", "Product Admin");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->load->view('product/admin',$data);
@@ -126,7 +126,7 @@ class Product_admin extends CI_Controller {
 	public function save()
 	{
 		$this->load->library('product');
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 		$reponse = 'ok';
 		$data = $this->input->post();
 		if(empty($data['id'])) exit();
@@ -212,7 +212,7 @@ class Product_admin extends CI_Controller {
 			'val2' => "$data[stock_qtty]",
 			'val4' => "$previous_stock"
 			);
-		$this->hmw->LogRecord($p);
+		$this->tools->LogRecord($p);
 		
 		if ($this->product->isManaged($id_product)) {
 			
@@ -271,7 +271,7 @@ class Product_admin extends CI_Controller {
 		$post 			= $this->input->post();
 		$tab 			= array();
 		$reponse 		= 'ok';
-		$id_bu			=  $this->session->userdata('bu_id');
+		$id_bu			=  $this->session->userdata('id_bu');
 
 		foreach ($post as $key => $var) {
 			$ex 		= explode('_',$key);
@@ -303,7 +303,7 @@ class Product_admin extends CI_Controller {
 	public function mapping()
 	{		
 		$this->load->library('product');
-		$id_bu			=  $this->session->userdata('bu_id');
+		$id_bu			=  $this->session->userdata('id_bu');
 		$products_pos	= $this->product->getPosProducts($id_bu);
 		$products 		= $this->product->getManagedProducts(null, null, 'p.name', null, $id_bu, 1);
 		$mapping		= $this->product->getMapping($id_bu);
@@ -315,7 +315,7 @@ class Product_admin extends CI_Controller {
 		$data['bu_name'] =  $this->session->userdata('bu_name');
 		$data['username'] = $this->session->userdata('identity');
 
-		$headers = $this->hmw->headerVars(0, "/order/", "Product Mapping");
+		$headers = $this->tools->headerVars(0, "/order/", "Product Mapping");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('product/mapping',$data);

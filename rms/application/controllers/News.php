@@ -11,7 +11,7 @@ class News extends CI_Controller {
 		$this->load->helper("url");
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
-		$this->load->library("hmw");
+		$this->load->library("tools");
 		$this->load->helper('html');
 	}
 
@@ -36,17 +36,17 @@ class News extends CI_Controller {
 	public function index($login=null)
 	{
 
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 
 		$bu_test = $this->session->userdata('bu_name');
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu();// GENERIC changement de Bu
 		if($bu_test != $this->session->userdata('bu_name') && $login!='welcome'){
 			redirect('news');
 		}
 
 		$user					= $this->ion_auth->user()->row();
 		$user_groups 			= $this->ion_auth->get_users_groups()->result();
-		$bus_list = $this->hmw->getBus(null, $user->id);
+		$bus_list = $this->tools->getBus(null, $user->id);
 
 		$config = array();
 		$config["base_url"] = base_url() . "news/index";
@@ -71,7 +71,7 @@ class News extends CI_Controller {
 			'bu_name'	=> $this->session->userdata('bu_name')
 			);
 
-		$headers = $this->hmw->headerVars(1, "/news/index/", "News");
+		$headers = $this->tools->headerVars(1, "/news/index/", "News");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('news/index',$data);
@@ -82,7 +82,7 @@ class News extends CI_Controller {
 	{
 
 		$error=0;
-		$this->hmw->isLoggedIn();
+		$this->tools->isLoggedIn();
 
 		if (!$this->ion_auth_acl->has_permission('create_news')) {
 			redirect('/news/');
@@ -90,11 +90,11 @@ class News extends CI_Controller {
 
 		$user = $this->ion_auth->user()->row();
 
-		$bus_list = $this->hmw->getBus(null, $user->id);
+		$bus_list = $this->tools->getBus(null, $user->id);
 
 		$this->load->helper('form');
 
-		$headers = $this->hmw->headerVars(0, "/news/index/", "Create News");
+		$headers = $this->tools->headerVars(0, "/news/index/", "Create News");
 		$error = array('error' => "");
 		if (!$this->input->post('title'))
 		{
@@ -144,7 +144,7 @@ class News extends CI_Controller {
 			}
 
 			if($error==0){
-				$server_name = $this->hmw->getParam('server_name');
+				$server_name = $this->tools->getParam('server_name');
 
 				$this->load->library('mmail');
 				$bus_ids = $this->input->post('bus');
@@ -152,7 +152,7 @@ class News extends CI_Controller {
           return intval($bu);
         }, $bus_ids);
 
-        $bus = $this->hmw->getBus($bus_ids);
+        $bus = $this->tools->getBus($bus_ids);
         $bus_names = implode(' | ', array_map(function($bu) {
           return $bu->name;
         }, $bus));

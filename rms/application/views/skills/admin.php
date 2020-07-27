@@ -1,6 +1,6 @@
 		</div>
 		<div data-role="content">
-			<?php $id_bu =  $this->session->userdata('bu_id'); ?>
+			<?php $id_bu =  $this->session->userdata('id_bu'); ?>
 			<div data-role="collapsible-set" data-inset="true">
 			<style type="text/css">	
 				td { 
@@ -27,7 +27,7 @@
 								<br />
 								<small>
 							<?foreach ($skills_records as $skills_record) {
-								if($user->id == $skills_record->id_user && $skills_record->bu_id == $id_bu) {
+								if($user->id == $skills_record->id_user && $skills_record->id_bu == $id_bu) {
 									$sponsor_fill = true;
 									?>
 									Sponsor : <?=$skills_record->sponsorname?>

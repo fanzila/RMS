@@ -24,30 +24,30 @@ class Admin extends CI_Controller {
 		parent::__construct();
 		$this->load->database();
 		$this->load->library('ion_auth');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 	}
 
 	public function index()
 	{		
 		
-		$this->hmw->keyLogin();
+		$this->tools->keyLogin();
 				
 		$change_bu = $this->input->post('bus');
 		if(!empty($change_bu)) { 
-			$bu_info = $this->hmw->getBus($change_bu);
-			$session_data = array('bu_id'  => $change_bu, 'bu_name' => $bu_info[0]->name);
-			$this->hmw->updateUserBu($change_bu, $this->session->userdata('user_id')); 
+			$bu_info = $this->tools->getBus($change_bu);
+			$session_data = array('id_bu'  => $change_bu, 'bu_name' => $bu_info[0]->name);
+			$this->tools->updateUserBu($change_bu, $this->session->userdata('user_id')); 
 			$this->session->set_userdata($session_data); 
 		}
 		$user = $this->ion_auth->user()->row();
 		$user_groups = $this->ion_auth->get_users_groups()->result();
-		$bus_list = $this->hmw->getBus(null, $user->id);
+		$bus_list = $this->tools->getBus(null, $user->id);
 
 		$data = array(
 			'user_groups'		=> $user_groups[0],
 			'bus_list'			=> $bus_list,
 			'bu_name'			=> $this->session->userdata('bu_name'),
-			'bu_id'				=> $this->session->userdata('bu_id'),
+			'id_bu'				=> $this->session->userdata('id_bu'),
 			'ticket'			=> '',
 			'last_ticket'		=> '',
 			'username'			=> $user->username

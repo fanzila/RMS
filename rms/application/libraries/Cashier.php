@@ -291,7 +291,7 @@ class Cashier {
 	public function updateProductStock($idPosPdt, $sales, $id_bu, $source) {
 		$CI = & get_instance();
 		$CI->load->database();
-		$CI->load->library('hmw');
+		$CI->load->library('tools');
 		$CI->load->library('product');
 		$debug = false;
 
@@ -315,7 +315,7 @@ class Cashier {
 				'val2'		=> "$qtty",
 				'val4'		=> "$previous_qtty"
 				);
-			$CI->hmw->LogRecord($p, $id_bu);
+			$CI->tools->LogRecord($p, $id_bu);
 
 		}
 	}
@@ -529,7 +529,7 @@ class Cashier {
 	public function posInfo($action, $param = null) {
 		$CI = & get_instance();
 		$CI->load->database();
-		$CI->load->library("hmw");
+		$CI->load->library("tools");
 		if (isset($param['archive']) && !empty($param['archive'])) {
 			$dir	= $this->getPosArchivesDir($param['id_bu']);
 			$path = $dir . "/" . $param['archive'];
@@ -541,7 +541,7 @@ class Cashier {
 		}
 
 
-		$getBuInfo = $CI->hmw->getBuInfo($param['id_bu']);
+		$getBuInfo = $CI->tools->getBuInfo($param['id_bu']);
 		$id_pos_cash_method = $getBuInfo->id_pos_cash_method;
 
 		switch($action) {
@@ -775,12 +775,12 @@ class Cashier {
 			return $ret;
 		}
 	}
-	//cd /var/www/hank/HMW/hmw && php index.php pos getClosureData
+	//cd /var/www/hank/HMW/tools && php index.php pos getClosureData
 	//datein format YYYYMMDD
 	public function getClosureData($datein = null, $file = null, $id_bu = null)
 	{
 		$CI = & get_instance();
-		$CI->load->library("hmw");
+		$CI->load->library("tools");
 		//$datenow	= @date('Y').@date('m').@date('d').'T000000';
 		if(isset($datein)) $datein = $datein.'T000000';
 		if(!isset($file))  $file = $this->getPosArchivesFileName($datein, $id_bu);
@@ -819,7 +819,7 @@ class Cashier {
 	public function getPosArchivesFileName($datein = null, $id_bu = null)
 	{
 		$CI = & get_instance();
-		$CI->load->library("hmw");
+		$CI->load->library("tools");
 		if(isset($datein)) $dateseek = $this->getPosArchivesDatetime($datein);
 		$dir	= $this->getPosArchivesDir($id_bu);
 

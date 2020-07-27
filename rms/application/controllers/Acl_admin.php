@@ -16,11 +16,11 @@ class Acl_admin extends CI_Controller
     {
         parent::__construct();
         $this->load->library('ion_auth');
-        $this->load->library('hmw');
+        $this->load->library('tools');
         $this->load->library('form_validation');
         $this->load->library('ion_auth_acl');
         
-        if( ! $this->hmw->isLoggedIn() )
+        if( ! $this->tools->isLoggedIn() )
             redirect('/auth/login');
 
         if( ! $this->ion_auth_acl->has_permission('access_admin') )
@@ -34,7 +34,7 @@ class Acl_admin extends CI_Controller
 
     public function manage()
     {
-        $headers = $this->hmw->headerVars(0, "/dashboard", "ACL Admin");
+        $headers = $this->tools->headerVars(0, "/dashboard", "ACL Admin");
         $this->load->view('jq_header_pre', $headers['header_pre']);
         $this->load->view('jq_header_post', $headers['header_post']);
         $this->load->view('acl_admin/manage');
@@ -46,7 +46,7 @@ class Acl_admin extends CI_Controller
         $data['permissions']    =   $this->ion_auth_acl->permissions('full');
         $data['categories']     =   $this->ion_auth_acl->permissions_categories();
         
-        $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "Manage Permissions");
+        $headers = $this->tools->headerVars(0, "/acl_admin/manage", "Manage Permissions");
         $this->load->view('jq_header_pre', $headers['header_pre']);
         $this->load->view('jq_header_post', $headers['header_post']);
         $this->load->view('acl_admin/permissions', $data);
@@ -66,7 +66,7 @@ class Acl_admin extends CI_Controller
       {
           $data['message'] = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
           
-          $headers = $this->hmw->headerVars(0, "/acl_admin/permissions_categories", "Add Category");
+          $headers = $this->tools->headerVars(0, "/acl_admin/permissions_categories", "Add Category");
           $this->load->view('jq_header_pre', $headers['header_pre']);
           $this->load->view('jq_header_post', $headers['header_post']);
           $this->load->view('acl_admin/add_category', $data);
@@ -109,7 +109,7 @@ class Acl_admin extends CI_Controller
         {
             $data['message']    = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
             $data['category'] = $category;
-            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions_categories", "Edit category");
+            $headers = $this->tools->headerVars(0, "/acl_admin/permissions_categories", "Edit category");
             $this->load->view('jq_header_pre', $headers['header_pre']);
             $this->load->view('jq_header_post', $headers['header_post']);
             $this->load->view('acl_admin/edit_category', $data);
@@ -161,7 +161,7 @@ class Acl_admin extends CI_Controller
         {
             $data['message'] = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
             
-            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions_categories", "Delete category");
+            $headers = $this->tools->headerVars(0, "/acl_admin/permissions_categories", "Delete category");
             $this->load->view('jq_header_pre', $headers['header_pre']);
             $this->load->view('jq_header_post', $headers['header_post']);
             $this->load->view('/acl_admin/delete_category', $data);
@@ -173,7 +173,7 @@ class Acl_admin extends CI_Controller
     {
       $data['categories']    =   $this->ion_auth_acl->permissions_categories(true);
       
-      $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "Manage Categories");
+      $headers = $this->tools->headerVars(0, "/acl_admin/manage", "Manage Categories");
       $this->load->view('jq_header_pre', $headers['header_pre']);
       $this->load->view('jq_header_post', $headers['header_post']);
       $this->load->view('acl_admin/categories', $data);
@@ -182,7 +182,7 @@ class Acl_admin extends CI_Controller
     
     public function add_permission_to_category($id_perm, $id_category) 
     {
-      if( ! $this->hmw->isLoggedIn() )
+      if( ! $this->tools->isLoggedIn() )
           redirect('/auth/login');
 
       if( ! $this->ion_auth_acl->has_permission('access_admin') )
@@ -221,7 +221,7 @@ class Acl_admin extends CI_Controller
         {
             $data['message'] = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
             
-            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions", "Add Permission");
+            $headers = $this->tools->headerVars(0, "/acl_admin/permissions", "Add Permission");
             $this->load->view('jq_header_pre', $headers['header_pre']);
             $this->load->view('jq_header_post', $headers['header_post']);
             $this->load->view('acl_admin/add_permission', $data);
@@ -264,7 +264,7 @@ class Acl_admin extends CI_Controller
         {
             $data['message']    = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
             $data['permission'] = $permission;
-            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions", "Edit Permission");
+            $headers = $this->tools->headerVars(0, "/acl_admin/permissions", "Edit Permission");
             $this->load->view('jq_header_pre', $headers['header_pre']);
             $this->load->view('jq_header_post', $headers['header_post']);
             $this->load->view('acl_admin/edit_permission', $data);
@@ -316,7 +316,7 @@ class Acl_admin extends CI_Controller
         {
             $data['message'] = ($this->ion_auth_acl->errors() ? $this->ion_auth_acl->errors() : $this->session->flashdata('message'));
             
-            $headers = $this->hmw->headerVars(0, "/acl_admin/permissions", "Delete Permission");
+            $headers = $this->tools->headerVars(0, "/acl_admin/permissions", "Delete Permission");
             $this->load->view('jq_header_pre', $headers['header_pre']);
             $this->load->view('jq_header_post', $headers['header_post']);
             $this->load->view('/acl_admin/delete_permission', $data);
@@ -328,7 +328,7 @@ class Acl_admin extends CI_Controller
     {
         $data['groups'] = $this->ion_auth->groups()->result();
         
-        $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "Manage Groups");
+        $headers = $this->tools->headerVars(0, "/acl_admin/manage", "Manage Groups");
         $this->load->view('jq_header_pre', $headers['header_pre']);
         $this->load->view('jq_header_post', $headers['header_post']);
         $this->load->view('/acl_admin/groups', $data);
@@ -376,7 +376,7 @@ class Acl_admin extends CI_Controller
         $data['permissions']            =   $this->ion_auth_acl->permissions_categories();
         $data['group_permissions']      =   $this->ion_auth_acl->get_group_permissions($group_id);
           
-        $headers = $this->hmw->headerVars(0, "/acl_admin/groups", "Group Permissions");
+        $headers = $this->tools->headerVars(0, "/acl_admin/groups", "Group Permissions");
         $this->load->view('jq_header_pre', $headers['header_pre']);
         $this->load->view('jq_header_post', $headers['header_post']);  
         $this->load->view('/acl_admin/group_permissions', $data);
@@ -387,7 +387,7 @@ class Acl_admin extends CI_Controller
     {
         $data['users']  =   $this->ion_auth->users()->result();
 
-        $headers = $this->hmw->headerVars(0, "/acl_admin/manage", "ACL Admin");
+        $headers = $this->tools->headerVars(0, "/acl_admin/manage", "ACL Admin");
         $this->load->view('jq_header_pre', $headers['header_pre']);
         $this->load->view('jq_header_post', $headers['header_post']);
         $this->load->view('/acl_admin/users', $data);
@@ -408,7 +408,7 @@ class Acl_admin extends CI_Controller
         $data['user_groups']        =   $this->ion_auth->get_users_groups($user_id)->result();
         $data['user_acl']           =   $this->ion_auth_acl->build_acl($user_id);
 
-        $headers = $this->hmw->headerVars(0, "/dashboard", "ACL Admin");
+        $headers = $this->tools->headerVars(0, "/dashboard", "ACL Admin");
         $this->load->view('jq_header_pre', $headers['header_pre']);
         $this->load->view('jq_header_post', $headers['header_post']);
         $this->load->view('/acl_admin/manage_user', $data);
@@ -454,7 +454,7 @@ class Acl_admin extends CI_Controller
         $data['group_permissions']      =   $this->ion_auth_acl->get_group_permissions($user_groups);
         $data['users_permissions']      =   $this->ion_auth_acl->build_acl($user_id);
 
-        $headers = $this->hmw->headerVars(0, "/dashboard", "ACL Admin");
+        $headers = $this->tools->headerVars(0, "/dashboard", "ACL Admin");
         $this->load->view('jq_header_pre', $headers['header_pre']);
         $this->load->view('jq_header_post', $headers['header_post']);
         $this->load->view('/acl_admin/user_permissions', $data);

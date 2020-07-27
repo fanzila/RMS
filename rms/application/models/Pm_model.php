@@ -56,7 +56,7 @@ class Pm_model extends CI_Model {
 	/**
 	 * @var int: bu id of the logged in user from the db
 	 */
-	private $bu_id = NULL;
+	private $id_bu = NULL;
 	/**
 	 * @var int: user level of the logged in user from the db
 	 */
@@ -94,7 +94,7 @@ class Pm_model extends CI_Model {
 		$this->table1 = new Table_model(TABLE_PM, $dateformat, $enforce_field_types);
 		$this->table2 = new Table_model(TABLE_PMTO, $dateformat, $enforce_field_types);
 		$this->user_id = $this->user_model->current_id();
-		$this->bu_id = $this->session->userdata('bu_id');
+		$this->id_bu = $this->session->userdata('id_bu');
 		
 		$user_groups = $this->ion_auth->get_users_groups()->result();
 		$this->user_level = $user_groups[0]->level;
@@ -172,7 +172,7 @@ class Pm_model extends CI_Model {
 				$this->db->where(TF_PM_AUTHOR, $this->user_id);
 				break;
 		}
-		$this->db->where(TF_PM_BU, $this->session->userdata('bu_id'));
+		$this->db->where(TF_PM_BU, $this->session->userdata('id_bu'));
 		// Get messages by join of table1 & 2
 		$this->db->join($t2, TF_PMTO_MESSAGE.' = '.TF_PM_ID);
 		$this->db->group_by(TF_PM_ID); // To get only distinct messages
@@ -376,7 +376,7 @@ class Pm_model extends CI_Model {
 		$this->db->set(TF_PM_SUBJECT, $subject);
 		$this->db->set(TF_PM_BODY, $body);
 		$this->db->set(TF_PM_NOTIFY, $notify);
-		$this->db->set(TF_PM_BU, $this->session->userdata('bu_id'));
+		$this->db->set(TF_PM_BU, $this->session->userdata('id_bu'));
 		if( ! $this->table1->insert_data())
 			return FALSE;
 		$msg_id = $this->table1->insert_id;

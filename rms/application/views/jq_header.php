@@ -9,7 +9,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 	
-	<link rel="stylesheet" href="/public/jqm/themes/hmw.min.css" />
+	<link rel="stylesheet" href="/public/jqm/themes/tools.min.css" />
 	<link rel="stylesheet" href="/public/jqm/themes/jquery.mobile.icons.min.css" />
 	<link rel="stylesheet" href="/public/jqm/jquery.mobile-1.4.5.min.css" />
 	<link rel="stylesheet" href="/public/jqm/jquery.mobile.structure-1.4.5.min.css" />

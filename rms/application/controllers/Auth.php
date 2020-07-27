@@ -10,7 +10,7 @@ class Auth extends CI_Controller {
 		$this->load->helper('security');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 		$this->load->library('mmail');
 		$this->load->database();
 
@@ -23,12 +23,12 @@ class Auth extends CI_Controller {
 	//redirect if needed, otherwise display the user list
 	function extra()
 	{
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu();// GENERIC changement de Bu
 
-		$this->load->library("hmw");
+		$this->load->library("tools");
 		$this->load->library('mmail');
 
-		if ($this->hmw->isLoggedIn() == true)
+		if ($this->tools->isLoggedIn() == true)
 		{
 			
 			if (!$this->ion_auth_acl->has_permission('extras')) {
@@ -43,12 +43,12 @@ class Auth extends CI_Controller {
 				foreach ($this->input->post() as $key => $var) {
 					$line = explode('-', $key);
 					if($line[0] == 'sms') {
-						$userinfo = $this->hmw->getUser($line[1]);
+						$userinfo = $this->tools->getUser($line[1]);
 						$sento .= $userinfo->username." by sms at ".$userinfo->phone ."<br/>";
-						$this->hmw->sendSms($userinfo->phone, $txtmessage);
+						$this->tools->sendSms($userinfo->phone, $txtmessage);
 					}
 					if($line[0] == 'email') {
-						$userinfo = $this->hmw->getUser($line[1]);
+						$userinfo = $this->tools->getUser($line[1]);
 
 						$this->mmail->prepare('Open shift @Hank!', $txtMessage)
 							->toEmail($userinfo->email)
@@ -73,7 +73,7 @@ class Auth extends CI_Controller {
 
 			$this->data['current_user'] = $this->ion_auth->user()->row();
 
-			$headers = $this->hmw->headerVars(1, "/auth/extra/", "Extra finder");
+			$headers = $this->tools->headerVars(1, "/auth/extra/", "Extra finder");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/extra', $this->data);
@@ -84,13 +84,13 @@ class Auth extends CI_Controller {
 	//redirect if needed, otherwise display the user list
 	function index()
 	{
-		$this->hmw->changeBu();// GENERIC changement de Bu
-		$id_bu =  $this->session->userdata('bu_id');
+		$this->tools->changeBu();// GENERIC changement de Bu
+		$id_bu =  $this->session->userdata('id_bu');
 
 		$group_info		= $this->ion_auth_model->get_users_groups()->result();
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 
-		if ($this->hmw->isLoggedIn() == true) {
+		if ($this->tools->isLoggedIn() == true) {
 
 			if (!$this->ion_auth_acl->has_permission('view_staff')) {
 				die ('You are not allowed to view this page.');
@@ -131,7 +131,7 @@ class Auth extends CI_Controller {
 			$this->data['current_user'] = $this->ion_auth->user()->row();
 			$this->data['user_groups']	= $user_groups[0];
 
-			$headers = $this->hmw->headerVars(1, "/auth/", "Users");
+			$headers = $this->tools->headerVars(1, "/auth/", "Users");
 			$this->load->view('jq_header_pre', $headers['header_pre']);
 			$this->load->view('jq_header_post', $headers['header_post']);
 			$this->_render_page('auth/index', $this->data);
@@ -165,7 +165,7 @@ class Auth extends CI_Controller {
 					'val1'		=> $_SERVER['HTTP_USER_AGENT'],
 					'val2' 		=> $_SERVER['REMOTE_ADDR']
 				);
-				$this->hmw->LogRecord($p, $id_bu);
+				$this->tools->LogRecord($p, $id_bu);
 				
 				//redirect('/', 'refresh');
 				//set BU
@@ -225,7 +225,7 @@ $this->form_validation->set_rules('old', $this->lang->line('change_password_vali
 $this->form_validation->set_rules('new', $this->lang->line('change_password_validation_new_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[new_confirm]');
 $this->form_validation->set_rules('new_confirm', $this->lang->line('change_password_validation_new_password_confirm_label'), 'required');
 
-$this->hmw->isLoggedIn();
+$this->tools->isLoggedIn();
 
 $user = $this->ion_auth->user()->row();
 
@@ -301,7 +301,7 @@ function forgot_password()
 	//set any errors and display the form
 	$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
-	$headers = $this->hmw->headerVars(-1, "/", "Forgot your password?");
+	$headers = $this->tools->headerVars(-1, "/", "Forgot your password?");
 	$this->load->view('jq_header_pre', $headers['header_pre']);
 	$this->load->view('jq_header_post', $headers['header_post']);
 	$this->_render_page('auth/forgot_password', $this->data);
@@ -457,7 +457,7 @@ $this->data['user'] = $this->ion_auth->user($id)->row();
 $this->data['username'] = $this->session->userdata('identity');
 $this->data['bu_name'] =  $this->session->userdata('bu_name');
 
-$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+$headers = $this->tools->headerVars(0, "/auth/", "Users");
 $this->load->view('jq_header_pre', $headers['header_pre']);
 $this->load->view('jq_header_post', $headers['header_post']);
 $this->_render_page('auth/deactivate_user', $this->data);
@@ -505,7 +505,7 @@ $this->data['user'] = $this->ion_auth->user($id)->row();
 $this->data['username'] = $this->session->userdata('identity');
 $this->data['bu_name'] =  $this->session->userdata('bu_name');
 
-$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+$headers = $this->tools->headerVars(0, "/auth/", "Users");
 $this->load->view('jq_header_pre', $headers['header_pre']);
 $this->load->view('jq_header_post', $headers['header_post']);
 $this->_render_page('auth/delete_user', $this->data);
@@ -537,12 +537,12 @@ redirect('auth', 'refresh');
 //create a new user
 function create_user()
 {
-$this->load->library("hmw");
+$this->load->library("tools");
 $this->load->library('mmail');
 
 $this->data['title'] = "Create User";
 		
-$this->hmw->isLoggedIn();
+$this->tools->isLoggedIn();
 		
 if (!$this->ion_auth_acl->has_permission('create_user'))
 {
@@ -564,7 +564,7 @@ if ($this->form_validation->run() == true)
 {
 $username = trim(strtolower($this->input->post('first_name'))) . '.' . strtolower($this->input->post('last_name'));
 $email    = trim(strtolower($this->input->post('email')));
-$password = $this->hmw->getParam('default_password');
+$password = $this->tools->getParam('default_password');
 
 $additional_data = array(
 	'first_name' => trim($this->input->post('first_name')),
@@ -644,14 +644,14 @@ $groupinfo = $this->ion_auth_model->get_users_groups()->result();
 $this->data['current_user'] = $userinfo;
 $this->data['groupinfo'] = $groupinfo;
 
-$id_bu =  $this->session->userdata('bu_id');
-$buinfo = $this->hmw->getBuInfo($id_bu);
+$id_bu =  $this->session->userdata('id_bu');
+$buinfo = $this->tools->getBuInfo($id_bu);
 $this->data['welcome_email'] = $buinfo->welcome_email;
 
 $this->data['username'] = $this->session->userdata('identity');
 $this->data['bu_name'] =  $this->session->userdata('bu_name');
 
-$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+$headers = $this->tools->headerVars(0, "/auth/", "Users");
 $this->load->view('jq_header_pre', $headers['header_pre']);
 $this->load->view('auth/jq_header_spe');
 $this->load->view('jq_header_post', $headers['header_post']);
@@ -665,10 +665,10 @@ function edit_user($id)
 {
 		
 $this->data['title'] = "Edit User";
-$this->load->library('hmw');
-$id_bu =  $this->session->userdata('bu_id');
+$this->load->library('tools');
+$id_bu =  $this->session->userdata('id_bu');
 
-$this->hmw->isLoggedIn();
+$this->tools->isLoggedIn();
 
 if (!$this->ion_auth_acl->has_permission('edit_user') && !$this->ion_auth->user()->row()->id == $id)
 {
@@ -865,9 +865,9 @@ $this->data['first_shift'] = $user->first_shift;
 }
 $this->data['current_user_groups'] = $user_groups = $this->ion_auth->get_users_groups()->result();
 		
-$buinfo = $this->hmw->getBuInfo($id_bu);
+$buinfo = $this->tools->getBuInfo($id_bu);
 		
-$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+$headers = $this->tools->headerVars(0, "/auth/", "Users");
 $this->load->view('jq_header_pre', $headers['header_pre']);
 $this->load->view('auth/jq_header_spe');
 $this->load->view('jq_header_post', $headers['header_post']);
@@ -880,7 +880,7 @@ function create_group()
 {
 $this->data['title'] = $this->lang->line('create_group_title');
 		
-$this->hmw->isLoggedIn();
+$this->tools->isLoggedIn();
 		
 if (!$this->ion_auth_acl->has_permission('create_group'))
 {
@@ -926,7 +926,7 @@ $this->data['description'] = array(
 $this->data['username'] = $this->session->userdata('identity');
 $this->data['bu_name'] =  $this->session->userdata('bu_name');
 
-$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+$headers = $this->tools->headerVars(0, "/auth/", "Users");
 $this->load->view('jq_header_pre', $headers['header_pre']);
 $this->load->view('jq_header_post', $headers['header_post']);
 $this->_render_page('auth/create_group', $this->data);
@@ -945,7 +945,7 @@ redirect('auth', 'refresh');
 
 $this->data['title'] = $this->lang->line('edit_group_title');
 
-$this->hmw->isLoggedIn();
+$this->tools->isLoggedIn();
 		
 if (!$this->ion_auth_acl->has_permission('edit_user_group'))
 {
@@ -1001,7 +1001,7 @@ $this->data['group_description'] = array(
 $this->data['username'] = $this->session->userdata('identity');
 $this->data['bu_name'] =  $this->session->userdata('bu_name');
 
-$headers = $this->hmw->headerVars(0, "/auth/", "Users");
+$headers = $this->tools->headerVars(0, "/auth/", "Users");
 $this->load->view('jq_header_pre', $headers['header_pre']);
 $this->load->view('jq_header_post', $headers['header_post']);
 $this->_render_page('auth/edit_group', $this->data);
@@ -1016,10 +1016,10 @@ if(is_cli()) {
 if ($id_bu == null) {
 	die('pass a bu id in parameters');
 }
-$bu_info = $this->hmw->getBuInfo($id_bu);
+$bu_info = $this->tools->getBuInfo($id_bu);
 $this->db->select('users.id, users.username, users.first_shift, users.last_shift_rmd, bus.name');
 $this->db->join('users_bus', 'users.id = users_bus.user_id');
-$this->db->join('bus', 'users_bus.bu_id = bus.id');
+$this->db->join('bus', 'users_bus.id_bu = bus.id');
 $this->db->where('users.active', 1);
 $this->db->where('bus.id', $id_bu);
 $res = $this->db->get('users')->result();
@@ -1111,7 +1111,7 @@ if (!$this->ion_auth_acl->has_permission('edit_self')) {
 }
 $this->data['title'] = "Edit User";
 
-$this->hmw->isLoggedIn();
+$this->tools->isLoggedIn();
 		
 if (!$this->ion_auth_acl->has_permission('edit_user') && !($this->ion_auth->user()->row()->id == $id))
 {
@@ -1229,7 +1229,7 @@ $this->data['password_confirm'] = array(
 	'data-clear-btn' => "true",
 	'type' => 'password'
 );
-$headers = $this->hmw->headerVars(1, "/auth/", "My account");
+$headers = $this->tools->headerVars(1, "/auth/", "My account");
 $this->load->view('jq_header_pre', $headers['header_pre']);
 $this->load->view('jq_header_post', $headers['header_post']);
 $this->_render_page('auth/account', $this->data);

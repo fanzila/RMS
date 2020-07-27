@@ -22,18 +22,18 @@ class Cameras extends CI_Controller {
 	{
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 		$this->load->library('session');
 		$this->load->library('cashier');
 
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu();// GENERIC changement de Bu
 
 		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 		header("Cache-Control: post-check=0, pre-check=0", false);
 		header("Pragma: no-cache");
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 
-		$this->hmw->isLoggedIn();
+		$this->tools->isLoggedIn();
 
 		if (!$this->ion_auth_acl->has_permission('cameras')) {
 			die('You are not allowed to view this page');
@@ -48,15 +48,15 @@ class Cameras extends CI_Controller {
 		$bu_postion_id	= array();
 		$buname 		= array();
 		$camera			= array();
-		$id_bu 			= $this->session->userdata('bu_id');
-		$buinfo 		= $this->hmw->getBuInfo($id_bu);
+		$id_bu 			= $this->session->userdata('id_bu');
+		$buinfo 		= $this->tools->getBuInfo($id_bu);
 		$date 			= new DateTime("now");
 		$curr_date 		= $date->format('Y-m-d ');
 		 
 		$bal_ca = $this->db->get('turnover');
 		$ca = $bal_ca->result_array();
 
-		$this->db->select('date, bu_id, to, id');
+		$this->db->select('date, id_bu, to, id');
 		$this->db->where('DATE(date)',$curr_date);
 		$query = $this->db->get('infos_close');
 		$data['infos_close'] = $query->result_array();
@@ -68,12 +68,12 @@ class Cameras extends CI_Controller {
 			'val1'		=> $_SERVER['HTTP_USER_AGENT'],
 			'val2' 		=> $_SERVER['REMOTE_ADDR']
 			);
-			$this->hmw->LogRecord($p, $this->session->userdata('bu_id'));
+			$this->tools->LogRecord($p, $this->session->userdata('id_bu'));
 
 			$user					= $this->ion_auth->user()->row();
-			$data['bus_list']		= $this->hmw->getBus(null, $user->id);
-			$data['all_bus']		= $this->hmw->getBus(null, null);
-			$data['bu_id']			= $id_bu;
+			$data['bus_list']		= $this->tools->getBus(null, $user->id);
+			$data['all_bus']		= $this->tools->getBus(null, null);
+			$data['id_bu']			= $id_bu;
 
 			$planning 				= $this->snapplanning();
 			$data['bu_postion_id']	= explode (',',$buinfo->humanity_positions);
@@ -91,9 +91,9 @@ class Cameras extends CI_Controller {
 
 		private function getCamerasNamesFromDb($id_bu = null)
 		{
-			$this->load->library('hmw');
+			$this->load->library('tools');
 
-			if (!$this->hmw->isLoggedIn())
+			if (!$this->tools->isLoggedIn())
 				die();
 			$this->db->select('name, id_bu');
 			if (!empty($id_bu)) $this->db->where('id_bu', $id_bu);
@@ -113,14 +113,14 @@ class Cameras extends CI_Controller {
 			$this->load->library('ion_auth');
 			$this->load->library('ion_auth_acl');
 			$camera_proxy = $this->load->library('camera_proxy');
-			$this->load->library('hmw');
+			$this->load->library('tools');
 
-			if (!$this->hmw->isLoggedIn())
+			if (!$this->tools->isLoggedIn())
 				die();
 
 			session_write_close();
 
-			$this->db->where('id_bu', $this->session->userdata('bu_id'));
+			$this->db->where('id_bu', $this->session->userdata('id_bu'));
 			$this->db->where('name', $camera_name);
 			$query = $this->db->get('cameras');
 			$camera = $query->row_array();
@@ -178,9 +178,9 @@ class Cameras extends CI_Controller {
 		private function Snapplanning() 
 		{
 
-			$this->load->library('hmw');
-			$snapshift_token	= $this->hmw->getParam('snapshift_token'); 
-			$snapshift_url 		= $this->hmw->getParam('snapshift_url'); 
+			$this->load->library('tools');
+			$snapshift_token	= $this->tools->getParam('snapshift_token'); 
+			$snapshift_url 		= $this->tools->getParam('snapshift_url'); 
 
 			$snapshift_path		= "/api/v1/plannings?start_date=".date('Y-m-d');
 			$header 			= ["Authorization: Bearer $snapshift_token"];
@@ -259,7 +259,7 @@ class Cameras extends CI_Controller {
 
 				$this->load->library('ion_auth');
 				$this->load->library('ion_auth_acl');
-				$this->load->library('hmw');
+				$this->load->library('tools');
 				$this->load->library('session');
 
 				if (!$this->ion_auth->logged_in())

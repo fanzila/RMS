@@ -99,7 +99,7 @@ class Pm extends CI_Controller {
 		$this->config->load('pm', TRUE);
 		$this->load->helper('url');
 		$this->load->library('session');
-		$this->load->library('hmw');
+		$this->load->library('tools');
 		$this->load->library('ion_auth');
 		$this->load->library('ion_auth_acl');
 		$this->load->library('form_validation');
@@ -130,7 +130,7 @@ class Pm extends CI_Controller {
 	 */
 	function index()
 	{
-		$this->hmw->isLoggedIn();
+		$this->tools->isLoggedIn();
 		$this->messages();
 	}
 
@@ -146,14 +146,14 @@ class Pm extends CI_Controller {
 	 */
 	function message($msg_id)
 	{
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu();// GENERIC changement de Bu
 
 		if(! $msg_id) return;
 		// Get message and flag it as read
 		$message = $this->pm_model->get_message($msg_id);
 
 		$user		= $this->ion_auth->user()->row();
-		$bus_list	= $this->hmw->getBus(null, $user->id);
+		$bus_list	= $this->tools->getBus(null, $user->id);
 		if($message)
 		{
 			$message = reset($message);
@@ -174,7 +174,7 @@ class Pm extends CI_Controller {
 		}
 		
 		else $data['message'] = array();
-		$headers = $this->hmw->headerVars(0, "/pm/", "Reports");
+		$headers = $this->tools->headerVars(0, "/pm/", "Reports");
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('pm/menu');
@@ -200,8 +200,8 @@ class Pm extends CI_Controller {
 	 */
 	function messages($type = MSG_NONDELETED)
 	{
-		$this->hmw->isLoggedIn();
-		$this->hmw->changeBu();// GENERIC changement de Bu
+		$this->tools->isLoggedIn();
+		$this->tools->changeBu();// GENERIC changement de Bu
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
 		if ($group_info[0]->level < 1 &&($type==1 || $type==2))
 		{
@@ -213,7 +213,7 @@ class Pm extends CI_Controller {
 		$messages = $this->pm_model->get_messages($type);
 
 		$user		= $this->ion_auth->user()->row();
-		$bus_list	= $this->hmw->getBus(null, $user->id);
+		$bus_list	= $this->tools->getBus(null, $user->id);
 		$data['username'] = $user->username;
 		if($messages)
 		{
@@ -256,7 +256,7 @@ class Pm extends CI_Controller {
 				$titre = "ERREUR";
 				break;
 		}
-		$headers = $this->hmw->headerVars(1, "/pm/", "Reports - ".$titre);
+		$headers = $this->tools->headerVars(1, "/pm/", "Reports - ".$titre);
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('jq_header_post', $headers['header_post']);
 		$this->load->view('pm/menu');
@@ -282,7 +282,7 @@ class Pm extends CI_Controller {
 	 */
 	function send($recipients = NULL, $subject = NULL, $body = NULL)
 	{
-		$this->hmw->isLoggedIn();
+		$this->tools->isLoggedIn();
 		
 		$current_user = $this->ion_auth->user()->row_array();
 		$group_info = $this->ion_auth_model->get_users_groups()->result();
@@ -291,21 +291,21 @@ class Pm extends CI_Controller {
 			$this->session->set_flashdata('message', 'You must be a gangsta to view this page');
 			redirect('/pm/');
 		}
-		$id_bu =  $this->session->userdata('bu_id');
+		$id_bu =  $this->session->userdata('id_bu');
 		/* SPECIFIC Recuperation depuis la base de donnees des informations users */
 		$this->db->select('users.username, users.last_name, users.first_name, users.email, users.id');
 		$this->db->distinct('users.username');
 		$this->db->join('users_bus', 'users.id = users_bus.user_id', 'left');
 		$this->db->where('users.active', 1);
-		$this->db->where('users_bus.bu_id', $id_bu);
-		$this->db->or_where('users_bus.bu_id', 0);
+		$this->db->where('users_bus.id_bu', $id_bu);
+		$this->db->or_where('users_bus.id_bu', 0);
 		$this->db->order_by('users.username', 'asc');
 		$query = $this->db->get("users");
 		$users = $query->result();
 		
 		/* SPECIFIC Recuperation depuis la base de donnees des informations subjects */
 		$this->db->select('report_subjects.name, report_subjects.id, report_subjects.text');
-		$this->db->where('report_subjects.bu_id', $id_bu);
+		$this->db->where('report_subjects.id_bu', $id_bu);
 		$this->db->order_by('report_subjects.name', 'asc');
 		$query = $this->db->get("report_subjects");
 		$sujets = $query->result();
@@ -367,7 +367,7 @@ class Pm extends CI_Controller {
 			{
 				if($this->pm_model->send_message($recipient_ids, $subject, $body))
 				{
-					$server_name = $this->hmw->getParam('server_name');
+					$server_name = $this->tools->getParam('server_name');
 
 					$this->load->library('mmail');
 					$bus = $this->input->post('bus');
@@ -427,7 +427,7 @@ class Pm extends CI_Controller {
 		}
 		$data['managers'] = $managers;
 		
-		$headers = $this->hmw->headerVars(0, "/pm/", "Reports - New report");
+		$headers = $this->tools->headerVars(0, "/pm/", "Reports - New report");
 		$data['bu_name'] = $headers['header_post']['bu_name'];
 		$this->load->view('jq_header_pre', $headers['header_pre']);
 		$this->load->view('pm/jq_header_spe');
