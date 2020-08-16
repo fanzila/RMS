@@ -111,8 +111,8 @@ class News extends CI_Controller {
 				redirect('/news/create');
 			}
 			$config['upload_path'] = './public/pictures';
-			$config['allowed_types'] = 'gif|jpg|png';
-			$config['max_size']	= '2000';
+			$config['allowed_types'] = 'gif|jpg|png|jpeg';
+			$config['max_size']	= '2200';
 			$this->load->library('upload', $config);
 			$checkUpload = $this->upload->do_upload();
 			$error = 0;
