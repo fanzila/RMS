@@ -897,8 +897,8 @@ class Cashier {
   public function getCashFund($id_bu) {
 		$CI = & get_instance();
 		$file	= $this->getPosDbDir($id_bu);
+		if(empty($file)) return 0;
 		$db = new SQLite3($file);
-
 		return floatval($db->querySingle('SELECT SUM(CASH_FLOAT_IN) FROM CASHFLOAT;')) / 1000;
   }
   
