@@ -238,12 +238,16 @@ class Cameras extends CI_Controller {
 			$sorted2['FR75GRAV']	= array();
 			$sorted2['FR75ROCH']	= array();
 			$sorted2['FR69OPERA']	= array();
+			$sorted2['FR750BER']	= array();
+			$sorted2['FR59CSE']		= array();
 
 			foreach ($sorted1 as $key) {
 				if($key['location_id'] == '3017bcc5-d766-488f-b466-bbb56bf5d0e1') $sorted2['FR75ARCH'][]	= $key;
 				if($key['location_id'] == 'de196513-8283-4ee7-9b2c-880d909d7a44') $sorted2['FR75GRAV'][]	= $key;
 				if($key['location_id'] == 'ac99b712-e2fc-4d3d-b12a-ca9e015767de') $sorted2['FR75ROCH'][]	= $key;
 				if($key['location_id'] == '9dd29ab8-4ccd-48e0-9170-7e5580442a1c') $sorted2['FR69OPERA'][]	= $key;
+				if($key['location_id'] == '5b4b7a9e-311b-4ccc-a384-23ce8e03b9e6') $sorted2['FR75OBER'][]	= $key;
+				if($key['location_id'] == 'c09f1dc5-c951-43b7-8345-dada0d70a975') $sorted2['FR59CSE'][]		= $key;
 			}
 
 			
