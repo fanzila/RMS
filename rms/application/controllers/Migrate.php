@@ -2,7 +2,7 @@
 
 class Migrate extends CI_Controller
 {
-  /**
+/**
   public function index()
   {
     $this->load->library('migration');
@@ -54,8 +54,44 @@ class Migrate extends CI_Controller
     echo "The end";
 
   }
-/**
-}
 
+  public function copyProducts($from, $to) {
+
+    $this->db->where('id_supplier', $from);
+    $this->db->where('active', 1);
+    $this->db->where('deleted', 0);
+    $query = $this->db->get("products");
+    
+    foreach ($query->result_array() as $row){
+      
+      $this->db->set('name', $row['name']);
+      $this->db->set('id_supplier', $to);
+      $this->db->set('price', $row['price']);
+      $this->db->set('id_unit', $row['id_unit']);
+      $this->db->set('packaging', $row['packaging']);
+      $this->db->set('active', $row['active']);
+      $this->db->set('id_category', $row['id_category']);
+      $this->db->set('freq_inventory', $row['freq_inventory']);
+      $this->db->set('daily_unit_conso', $row['daily_unit_conso']);
+      $this->db->set('supplier_reference', $row['supplier_reference']);
+      $this->db->set('comment', $row['comment']);
+      $this->db->set('deleted', $row['deleted']);
+      $this->db->set('manage_stock', 0);
+      $this->db->insert('products');
+      $inserted = $this->db->insert_id();
+      echo $inserted;
+
+      $this->db->set('id_product', $inserted);
+      $this->db->insert('products_stock');
+
+    }
+
+    echo "The end";
+
+  }
+
+
+}
+**/
 
 ?>
