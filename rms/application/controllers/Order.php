@@ -35,11 +35,15 @@ class Order extends CI_Controller {
 
 	public function index()
 	{
+
 		$this->tools->changeBu();// GENERIC changement de Bu
 		$this->tools->keyLogin();
 		$id_bu			=  $this->session->userdata('id_bu');
 		$user_groups	= $this->ion_auth->get_users_groups()->result();
 		$suppliers 		= $this->product->getSuppliers(true, null, $id_bu);
+
+
+
 
 		$data = array(
 			'keylogin'		=> $this->session->userdata('keylogin'),

@@ -41,7 +41,7 @@ class News extends CI_Controller {
 		$bu_test = $this->session->userdata('bu_name');
 		$this->tools->changeBu();// GENERIC changement de Bu
 		if($bu_test != $this->session->userdata('bu_name') && $login!='welcome'){
-			redirect('news');
+			redirect('/news');
 		}
 
 		$user					= $this->ion_auth->user()->row();
@@ -49,7 +49,7 @@ class News extends CI_Controller {
 		$bus_list = $this->tools->getBus(null, $user->id);
 
 		$config = array();
-		$config["base_url"] = base_url() . "news/index";
+		$config["base_url"] = base_url() . "/news/index";
 		$config["total_rows"] = $this->news_model->record_count();
 		$config["per_page"] = 10;
 		$config["uri_segment"] = 3;

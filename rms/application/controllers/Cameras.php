@@ -1,22 +1,23 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Cameras extends CI_Controller {
+class Cameras extends CI_Controller
+{
 
 	/**
-	* Index Page for this controller.
-	*
-	* Maps to the following URL
-	* 		http://example.com/index.php/welcome
-	*	- or -  
-	* 		http://example.com/index.php/welcome/index
-	*	- or -
-	* Since this controller is set as the default controller in 
-	* config/routes.php, it's displayed at http://example.com/
-	*
-	* So any other public methods not prefixed with an underscore will
-	* map to /index.php/welcome/<method_name>
-	* @see http://codeigniter.com/user_guide/general/urls.html
-	*/
+	 * Index Page for this controller.
+	 *
+	 * Maps to the following URL
+	 * 		http://example.com/index.php/welcome
+	 *	- or -  
+	 * 		http://example.com/index.php/welcome/index
+	 *	- or -
+	 * Since this controller is set as the default controller in 
+	 * config/routes.php, it's displayed at http://example.com/
+	 *
+	 * So any other public methods not prefixed with an underscore will
+	 * map to /index.php/welcome/<method_name>
+	 * @see http://codeigniter.com/user_guide/general/urls.html
+	 */
 
 	public function index($onebu = false)
 	{
@@ -26,7 +27,7 @@ class Cameras extends CI_Controller {
 		$this->load->library('session');
 		$this->load->library('cashier');
 
-		$this->tools->changeBu();// GENERIC changement de Bu
+		$this->tools->changeBu(); // GENERIC changement de Bu
 
 		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 		header("Cache-Control: post-check=0, pre-check=0", false);
@@ -52,12 +53,12 @@ class Cameras extends CI_Controller {
 		$buinfo 		= $this->tools->getBuInfo($id_bu);
 		$date 			= new DateTime("now");
 		$curr_date 		= $date->format('Y-m-d ');
-		 
+
 		$bal_ca = $this->db->get('turnover');
 		$ca = $bal_ca->result_array();
 
 		$this->db->select('date, id_bu, to, id');
-		$this->db->where('DATE(date)',$curr_date);
+		$this->db->where('DATE(date)', $curr_date);
 		$query = $this->db->get('infos_close');
 		$data['infos_close'] = $query->result_array();
 
@@ -67,228 +68,147 @@ class Cameras extends CI_Controller {
 			'type'		=>  'user_access_cam',
 			'val1'		=> $_SERVER['HTTP_USER_AGENT'],
 			'val2' 		=> $_SERVER['REMOTE_ADDR']
-			);
-			$this->tools->LogRecord($p, $this->session->userdata('id_bu'));
+		);
+		$this->tools->LogRecord($p, $this->session->userdata('id_bu'));
 
-			$user					= $this->ion_auth->user()->row();
-			$data['bus_list']		= $this->tools->getBus(null, $user->id);
-			$data['all_bus']		= $this->tools->getBus(null, null);
-			$data['id_bu']			= $id_bu;
+		$user					= $this->ion_auth->user()->row();
+		$data['bus_list']		= $this->tools->getBus(null, $user->id);
+		$data['all_bus']		= $this->tools->getBus(null, null);
+		$data['id_bu']			= $id_bu;
 
-			$planning 				= $this->snapplanning();
-			$data['bu_postion_id']	= explode (',',$buinfo->humanity_positions);
-			$data['info_bu'] 		= $buinfo;
-			$data['ca']				= $ca;
-			$data['planning'] 		= $planning;
-			$data['cameras'] 		= $cameras;
-			$session_data['cam'] 	= $url;
+		$planning 				= $this->tools->snapplanning();
+		$data['bu_postion_id']	= explode(',', $buinfo->humanity_positions);
+		$data['info_bu'] 		= $buinfo;
+		$data['ca']				= $ca;
+		$data['planning'] 		= $planning;
+		$data['cameras'] 		= $cameras;
+		$session_data['cam'] 	= $url;
 
-			$data['cash_fund'] = $this->cashier->getCashFund($id_bu);
+		$data['cash_fund'] = $this->cashier->getCashFund($id_bu);
 
-			$this->session->set_userdata($session_data);
-			$this->load->view('camera/cameras', $data);
-		}
+		$this->session->set_userdata($session_data);
+		$this->load->view('camera/cameras', $data);
+	}
 
-		private function getCamerasNamesFromDb($id_bu = null)
-		{
-			$this->load->library('tools');
+	private function getCamerasNamesFromDb($id_bu = null)
+	{
+		$this->load->library('tools');
 
-			if (!$this->tools->isLoggedIn())
-				die();
-			$this->db->select('name, id_bu');
-			if (!empty($id_bu)) $this->db->where('id_bu', $id_bu);
-			$this->db->where('active', true);
-			$query = $this->db->get('cameras');
-			if ($query->result_array() != NULL)
-				$cameras = $query->result_array();
-			else
-				$cameras = false;
-			return ($cameras);
-		}
+		if (!$this->tools->isLoggedIn())
+			die();
+		$this->db->select('name, id_bu');
+		if (!empty($id_bu)) $this->db->where('id_bu', $id_bu);
+		$this->db->where('active', true);
+		$query = $this->db->get('cameras');
+		if ($query->result_array() != NULL)
+			$cameras = $query->result_array();
+		else
+			$cameras = false;
+		return ($cameras);
+	}
 
-		function getStream($camera_name) 
-		{
+	function getStream($camera_name)
+	{
 
-			$this->load->database();
-			$this->load->library('ion_auth');
-			$this->load->library('ion_auth_acl');
-			$camera_proxy = $this->load->library('camera_proxy');
-			$this->load->library('tools');
+		$this->load->database();
+		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
+		$camera_proxy = $this->load->library('camera_proxy');
+		$this->load->library('tools');
 
-			if (!$this->tools->isLoggedIn())
-				die();
+		if (!$this->tools->isLoggedIn())
+			die();
 
-			session_write_close();
+		session_write_close();
 
-			$this->db->where('id_bu', $this->session->userdata('id_bu'));
-			$this->db->where('name', $camera_name);
-			$query = $this->db->get('cameras');
-			$camera = $query->row_array();
+		$this->db->where('id_bu', $this->session->userdata('id_bu'));
+		$this->db->where('name', $camera_name);
+		$query = $this->db->get('cameras');
+		$camera = $query->row_array();
 
-			if (empty($camera))
-				die('Camera not found in DB');
+		if (empty($camera))
+			die('Camera not found in DB');
 
-			if($camera['type'] == 'image') {
+		if ($camera['type'] == 'image') {
 
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, $camera['address']);
-				curl_setopt($ch, CURLOPT_HEADER, 0);
-				curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
-				//curl_setopt($ch, CURLOPT_HTTPAUTH);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
-				$picture = curl_exec($ch);
-				curl_close($ch);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $camera['address']);
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
+			//curl_setopt($ch, CURLOPT_HTTPAUTH);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+			$picture = curl_exec($ch);
+			curl_close($ch);
 
-				//Display the image in the browser
-				header('Content-type: image/jpeg');
-				echo $picture;
-				exit;
+			//Display the image in the browser
+			header('Content-type: image/jpeg');
+			echo $picture;
+			exit;
+		} else {
 
-			} else { 
+			// Register the wrapper
+			stream_wrapper_register("stream", "camera_proxy")
+				or die("Failed to register protocol");
 
-				// Register the wrapper
-				stream_wrapper_register("stream", "camera_proxy")
-					or die("Failed to register protocol");
-
-				// Open the "file"
-				$fp = fopen("stream://CameraCGIStreamContent", "r+")
+			// Open the "file"
+			$fp = fopen("stream://CameraCGIStreamContent", "r+")
 				or die;
-				# On envoie les memes headers que la Camera Axis
-					header('Content-Type: multipart/x-mixed-replace; boundary=myboundary');
+			# On envoie les memes headers que la Camera Axis
+			header('Content-Type: multipart/x-mixed-replace; boundary=myboundary');
 
-				$ch = curl_init($camera['address']);
-				curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_FILE, $fp);
-				curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-				curl_exec($ch);
+			$ch = curl_init($camera['address']);
+			curl_setopt($ch, CURLOPT_USERPWD, "$camera[login]:$camera[password]");
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt($ch, CURLOPT_FILE, $fp);
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+			curl_exec($ch);
 
-				if (curl_error($ch))
-				{
-					echo curl_error($ch);
-					exit;
-				}
-
-				curl_close($ch);
-				fclose($fp);
+			if (curl_error($ch)) {
+				echo curl_error($ch);
+				exit;
 			}
+
+			curl_close($ch);
+			fclose($fp);
 		}
+	}
 
-		private function Snapplanning() 
-		{
 
-			$this->load->library('tools');
-			$snapshift_token	= $this->tools->getParam('snapshift_token'); 
-			$snapshift_url 		= $this->tools->getParam('snapshift_url'); 
+	public function frame($num)
+	{
+		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+		header("Cache-Control: post-check=0, pre-check=0", false);
+		header("Pragma: no-cache");
+		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 
-			$snapshift_path		= "/api/v1/plannings?start_date=".date('Y-m-d');
-			$header 			= ["Authorization: Bearer $snapshift_token"];
+		$this->load->library('ion_auth');
+		$this->load->library('ion_auth_acl');
+		$this->load->library('tools');
+		$this->load->library('session');
 
-			$this->db->select('data, ts');
-			$query = $this->db->get('snapshift');
-			$snap = $query->row_array();
-
-			$snap_ts	= new DateTime($snap['ts']);
-			$db_ts		= $snap_ts->getTimestamp();
-			$out_db		= $snap['data'];
-			$cache 		= $db_ts+(60*10);
-			$curl_error = 0;
-						
-			if($cache < time()) {
-
-				$ch = curl_init($snapshift_url.$snapshift_path);
-				curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 16); 
-				curl_setopt($ch, CURLOPT_TIMEOUT, 16); //timeout in seconds
-				$out = curl_exec($ch);
-
-				if (curl_error($ch))
-				{
-					$errno = curl_errno($ch);
-					$errtx = curl_error($ch);
-					$curl_error = "CURL error : $errno -  $errtx";
-					curl_close($ch);
-				} else { 
-					curl_close($ch);
-					$this->db->set('data', $out);
-					if (!$this->db->update('snapshift')) {
-						$reponse = "Can't place the insert sql request, error message: ".$this->db->_error_message();
-					}
-				}	
-			}
-
-			$this->db->select('data, ts');
-			$query = $this->db->get('snapshift');
-			$snap = $query->row_array();
-			$out = $snap['data'];
-			
-			$planning = json_decode($out, true);
-			$sorted1 = array();
-
-			foreach ($planning as $key) {
-				if( $key['date'] == date('Y-m-d')) { 
-					$sorted1[] = $key;
-				}
-			}
-
-			$sorted2 = array();
-			$sorted2['FR75ARCH']	= array();
-			$sorted2['FR75GRAV']	= array();
-			$sorted2['FR75ROCH']	= array();
-			$sorted2['FR69OPERA']	= array();
-			$sorted2['FR750BER']	= array();
-			$sorted2['FR59CSE']		= array();
-
-			foreach ($sorted1 as $key) {
-				if($key['location_id'] == '3017bcc5-d766-488f-b466-bbb56bf5d0e1') $sorted2['FR75ARCH'][]	= $key;
-				if($key['location_id'] == 'de196513-8283-4ee7-9b2c-880d909d7a44') $sorted2['FR75GRAV'][]	= $key;
-				if($key['location_id'] == 'ac99b712-e2fc-4d3d-b12a-ca9e015767de') $sorted2['FR75ROCH'][]	= $key;
-				if($key['location_id'] == '9dd29ab8-4ccd-48e0-9170-7e5580442a1c') $sorted2['FR69OPERA'][]	= $key;
-				if($key['location_id'] == '5b4b7a9e-311b-4ccc-a384-23ce8e03b9e6') $sorted2['FR75OBER'][]	= $key;
-				if($key['location_id'] == 'c09f1dc5-c951-43b7-8345-dada0d70a975') $sorted2['FR59CSE'][]		= $key;
-			}
-
-			
-			return $sorted2;
+		if (!$this->ion_auth->logged_in()) {
+			exit;
 		}
+		$data['cams'] = $this->session->userdata('cam');
+		$data['num']  = $num;
+		$this->load->view('camera/frame', $data);
+	}
+}
 
-			public function frame($num)
-			{		
-				header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-				header("Cache-Control: post-check=0, pre-check=0", false);
-				header("Pragma: no-cache");
-				header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+class Camera_proxy
+{
 
-				$this->load->library('ion_auth');
-				$this->load->library('ion_auth_acl');
-				$this->load->library('tools');
-				$this->load->library('session');
+	function stream_open($path, $mode, $options, &$opened_path)
+	{
+		// Has to be declared, it seems...
+		return true;
+	}
 
-				if (!$this->ion_auth->logged_in())
-				{
-					exit;
-				}
-				$data['cams'] = $this->session->userdata('cam');
-				$data['num']  = $num;
-				$this->load->view('camera/frame', $data);
-			}
-		}
+	public function stream_write($data)
+	{
+		echo $data;
 
-		Class Camera_proxy {
-
-			function stream_open($path, $mode, $options, &$opened_path)
-			{
-				// Has to be declared, it seems...
-				return true;
-			}
-
-			public function stream_write($data)
-			{
-				echo $data;
-
-				return strlen($data);
-			}
-
-		}
+		return strlen($data);
+	}
+}
